@@ -13,6 +13,7 @@
 > ⚠️ **Beta Notice**: This project is in early beta. It's currently solo-developed, so bugs and rough edges exist. We're iterating fast — feel free to open an Issue!
 
 <img width="1676" height="540" alt="chat" src="https://github.com/user-attachments/assets/30c6fcf6-b605-48da-a571-7b7aead3df8d" />
+<img width="1676" height="540" alt="chat1" src="https://github.com/user-attachments/assets/40d583a2-223a-46d9-b96b-a966390d44f8" />
 
 一款基于 AI 技术的短剧/漫画视频制作工具，支持从小说文本自动生成分镜、角色、场景，并制作成完整视频。
 
@@ -29,8 +30,6 @@ An AI-powered tool for creating short drama / comic videos — automatically gen
 | 📽️ | 分镜视频制作 - 自动生成分镜头并合成视频 | Storyboard Video - auto-generate shots and compose videos |
 | 🎙️ | AI 配音 - 多角色语音合成 | AI Voiceover - multi-character voice synthesis |
 | 🌐 | 多语言支持 - 中文 / 英文界面，右上角一键切换 | Bilingual UI - Chinese / English, switch in the top-right corner |
-
----
 
 ## 🚀 快速开始
 
@@ -108,7 +107,12 @@ After launching, go to **Settings** to configure your AI service API keys. A bui
 - **Styling**: Tailwind CSS v4
 - **Auth**: NextAuth.js
 
----
+## 📦 页面功能预览 / preview
+![4f7b913264f7f26438c12560340e958c67fa833a](https://github.com/user-attachments/assets/fa0e9c57-9ea0-4df3-893e-b76c4c9d304b)
+![67509361cbe6809d2496a550de5733b9f99a9702](https://github.com/user-attachments/assets/f2fb6a64-5ba8-4896-a064-be0ded213e42)
+![466e13c8fd1fc799d8f588c367ebfa24e1e99bf7](https://github.com/user-attachments/assets/09bbff39-e535-4c67-80a9-69421c3b05ee)
+![c067c197c20b0f1de456357c49cdf0b0973c9b31](https://github.com/user-attachments/assets/688e3147-6e95-43b0-b9e7-dd9af40db8a0)
+
 
 ## 🤝 参与方式 / Contributing
 
