@@ -86,17 +86,17 @@ export interface VideoPanel {
   videoUrl?: string
   videoGenerationMode?: VideoGenerationMode
   videoTaskRunning?: boolean
-  videoErrorMessage?: string  // 视频生成错误消息
+  videoErrorMessage?: string  // Video generation error
   videoModel?: string
   linkedToNextPanel?: boolean
   // Lip-sync
   lipSyncVideoUrl?: string
   lipSyncTaskRunning?: boolean
   lipSyncTaskId?: string
-  lipSyncErrorMessage?: string  // 口型同步错误消息
+  lipSyncErrorMessage?: string  // Lip-sync error
 }
 
-// 匹配的配音信息
+// Matched voice info
 export interface MatchedVoiceLine {
   id: string
   lineIndex: number
