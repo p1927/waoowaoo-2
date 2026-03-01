@@ -1,9 +1,9 @@
 /**
- * 统一的 Query Keys 定义
- * 所有缓存 key 在此集中管理，避免不一致
+ * Unified Query Keys definition
+ * All cache keys are centrally managed here to avoid inconsistency
  */
 export const queryKeys = {
-    // ============ 中心资产库（Asset Hub）============
+    // ============ Asset Hub ============
     globalAssets: {
         all: () => ['global-assets'] as const,
         characters: (folderId?: string | null) =>
@@ -15,7 +15,7 @@ export const queryKeys = {
         folders: () => ['global-assets', 'folders'] as const,
     },
 
-    // ============ 项目资产 ============
+    // ============ Project assets ============
     projectAssets: {
         all: (projectId: string) => ['project-assets', projectId] as const,
         characters: (projectId: string) => ['project-assets', projectId, 'characters'] as const,
@@ -23,20 +23,20 @@ export const queryKeys = {
         detail: (projectId: string) => ['project-assets', projectId, 'detail'] as const,
     },
 
-    // ============ 分镜（Storyboard）============
+    // ============ Storyboard ============
     storyboards: {
         all: (episodeId: string) => ['storyboards', episodeId] as const,
         panels: (episodeId: string) => ['storyboards', episodeId, 'panels'] as const,
         groups: (episodeId: string) => ['storyboards', episodeId, 'groups'] as const,
     },
 
-    // ============ 视频生成 ============
+    // ============ Video generation ============
     videos: {
         all: (episodeId: string) => ['videos', episodeId] as const,
         panels: (episodeId: string) => ['videos', episodeId, 'panels'] as const,
     },
 
-    // ============ 语音（Voice）============
+    // ============ Voice ============
     voiceLines: {
         all: (episodeId: string) => ['voice-lines', episodeId] as const,
         list: (episodeId: string) => ['voice-lines', episodeId, 'list'] as const,
@@ -44,12 +44,12 @@ export const queryKeys = {
             ['voice-lines', projectId, episodeId, 'matched'] as const,
     },
 
-    // ============ 用户模型 ============
+    // ============ User models ============
     userModels: {
         all: () => ['user-models'] as const,
     },
 
-    // ============ 任务轮询 ============
+    // ============ Task polling ============
     tasks: {
         all: (projectId: string) => ['tasks', projectId] as const,
         target: (projectId: string, targetType: string, targetId: string) =>
@@ -68,27 +68,27 @@ export const queryKeys = {
                 : ['pending-tasks', projectId] as const,
     },
 
-    // ============ 项目数据 ============
+    // ============ Project data ============
     project: {
         detail: (projectId: string) => ['project', projectId] as const,
         episodes: (projectId: string) => ['project', projectId, 'episodes'] as const,
         data: (projectId: string) => ['project', projectId, 'data'] as const,
     },
 
-    // ============ 顶层便捷函数 ============
+    // ============ Top-level convenience functions ============
     /**
-     * 项目基础数据
+     * Project base data
      */
     projectData: (projectId: string) => ['project-data', projectId] as const,
 
     /**
-     * 剧集详情数据
+     * Episode detail data
      */
     episodeData: (projectId: string, episodeId: string) =>
         ['episode-data', projectId, episodeId] as const,
 } as const
 
 /**
- * 类型导出，用于类型推断
+ * Type export for type inference
  */
 export type QueryKeys = typeof queryKeys

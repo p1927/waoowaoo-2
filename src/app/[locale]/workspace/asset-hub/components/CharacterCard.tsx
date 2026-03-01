@@ -53,7 +53,7 @@ interface CharacterCardProps {
 }
 
 export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDesign, onEdit, onVoiceSelect }: CharacterCardProps) {
-    // 🔥 使用 mutation hooks
+    // Use mutation hooks
     const generateImage = useGenerateCharacterImage()
     const selectImage = useSelectCharacterImage()
     const undoImage = useUndoCharacterImage()
@@ -72,12 +72,12 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
     const [showDeleteMenu, setShowDeleteMenu] = useState(false)
     const latestSelectRequestRef = useRef(0)
 
-    // 计算属性
+    // Computed props
     const appearance = character.appearances[activeAppearance] || character.appearances[0]
     const isPrimaryAppearance = appearance?.appearanceIndex === PRIMARY_APPEARANCE_INDEX
     const appearanceCount = character.appearances.length
 
-    // URL 验证函数
+    // URL validation function
     const isValidUrl = (url: string | null | undefined): boolean => {
         if (!url || url.trim() === '') return false
         if (url.startsWith('/')) return true
@@ -115,7 +115,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
         })
         : null
 
-    // 生成图片
+    // Generate image
     const handleGenerate = () => {
         generateImage.mutate(
             { characterId: character.id, appearanceIndex: appearance.appearanceIndex },
@@ -123,7 +123,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
         )
     }
 
-    // 选择图片（依赖 query 缓存乐观更新）
+    // Select image (relies on query cache optimistic update)
     const handleSelectImage = (imageIndex: number | null) => {
         if (imageIndex === effectiveSelectedIndex) return
         const requestId = latestSelectRequestRef.current + 1
@@ -141,7 +141,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
         })
     }
 
-    // 确认选择
+    // Confirm selection
     const handleConfirmSelection = () => {
         const requestId = latestSelectRequestRef.current + 1
         latestSelectRequestRef.current = requestId
@@ -158,12 +158,12 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
         })
     }
 
-    // 撤回
+    // Undo
     const handleUndo = () => {
         undoImage.mutate({ characterId: character.id, appearanceIndex: appearance.appearanceIndex })
     }
 
-    // 上传图片
+    // Upload image
     const handleUpload = () => {
         const file = fileInputRef.current?.files?.[0]
         if (!file) return
@@ -185,14 +185,14 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
         )
     }
 
-    // 删除角色
+    // Delete character
     const handleDelete = () => {
         deleteCharacter.mutate(character.id, {
             onSettled: () => setShowDeleteConfirm(false)
         })
     }
 
-    // 删除子形象
+    // Delete sub-appearance
     const handleDeleteAppearance = () => {
         deleteAppearance.mutate(
             { characterId: character.id, appearanceIndex: appearance.appearanceIndex },
@@ -203,7 +203,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
         )
     }
 
-    // 上传音色
+    // Upload voice
     const handleUploadVoice = () => {
         const file = voiceInputRef.current?.files?.[0]
         if (!file) return
@@ -218,15 +218,15 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
         )
     }
 
-    // 多图选择模式
+    // Multi-image selection mode
     if (hasMultipleImages) {
         return (
             <div className="col-span-3 glass-surface p-4 relative">
-                {/* 隐藏输入 */}
+                {/* Hidden input */}
                 <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
                 <input ref={voiceInputRef} type="file" accept="audio/*" onChange={handleUploadVoice} className="hidden" />
 
-                {/* 顶部：名字 + 操作 */}
+                {/* Top: name + actions */}
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-[var(--glass-text-primary)]">{character.name}</span>
@@ -252,7 +252,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                         )}
                         <button onClick={(e) => {
                             e.stopPropagation()
-                            _ulogInfo('[CharacterCard] 多图模式 - 删除按钮点击, characterId:', character.id, 'appearanceCount:', appearanceCount, 'showDeleteMenu:', showDeleteMenu)
+                            _ulogInfo('[CharacterCard] Multi-image mode - delete clicked, characterId:', character.id, 'appearanceCount:', appearanceCount, 'showDeleteMenu:', showDeleteMenu)
                             if (appearanceCount <= 1) {
                                 setShowDeleteConfirm(true)
                                 return
@@ -264,7 +264,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                     </div>
                 </div>
 
-                {/* 任务失败错误提示 */}
+                {/* Task failure error message */}
                 {taskErrorDisplay && !isAppearanceTaskRunning && (
                     <div className="flex items-center gap-2 mb-3 p-2 rounded-lg bg-[var(--glass-danger-ring)] text-[var(--glass-tone-danger-fg)]">
                         <AppIcon name="alert" className="w-4 h-4 shrink-0" />
@@ -272,7 +272,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                     </div>
                 )}
 
-                {/* 图片列表 */}
+                {/* Image list */}
                 <div className="grid grid-cols-3 gap-3">
                     {imageUrls.map((url, index) => {
                         if (!isValidUrl(url)) return null
@@ -305,7 +305,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                     })}
                 </div>
 
-                {/* 确认按钮 */}
+                {/* Confirm button */}
                 {effectiveSelectedIndex !== null && (
                     <div className="mt-4 flex justify-end">
                         <button onClick={handleConfirmSelection} disabled={selectImage.isPending} className="glass-btn-base glass-btn-tone-success px-4 py-2 rounded-lg flex items-center gap-2 text-sm">
@@ -373,7 +373,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                             className="w-full h-auto object-contain cursor-zoom-in"
                             onClick={() => onImageClick?.(displayImageUrl)}
                         />
-                        {/* 操作按钮 - 非生成时显示 */}
+                        {/* Action buttons - show when not generating */}
                         {!isAppearanceTaskRunning && (
                             <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button onClick={() => fileInputRef.current?.click()} disabled={uploadImage.isPending} className="glass-btn-base glass-btn-secondary h-7 w-7 rounded-full">

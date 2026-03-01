@@ -1,11 +1,11 @@
 /**
- * React Query Hooks 统一导出
- * 
- * 使用示例：
+ * React Query Hooks unified exports
+ *
+ * Usage example:
  * import { useProjectAssets, useGenerateProjectCharacterImage } from '@/lib/query/hooks'
  */
 
-// 中心资产库
+// Asset Hub
 export {
     useGlobalCharacters,
     useGlobalLocations,
@@ -55,7 +55,7 @@ export {
     useCreateAssetHubCharacter,
 } from '../mutations/useAssetHubMutations'
 
-// 项目资产
+// Project assets
 export {
     useProjectAssets,
     useProjectCharacters,
@@ -154,7 +154,7 @@ export type {
     LocationImage,
 } from '@/types/project'
 
-// 分镜
+// Storyboard
 export {
     useStoryboards,
     useRegeneratePanelImage,
@@ -169,7 +169,7 @@ export {
     type PanelCandidate,
 } from './useStoryboards'
 
-// 语音
+// Voice
 export {
     useVoiceLines,
     useMatchedVoiceLines,
@@ -183,7 +183,7 @@ export {
     type MatchedVoiceLinesData,
 } from './useVoiceLines'
 
-// 实时任务
+// Real-time tasks
 export {
     useSSE,
 } from './useSSE'
@@ -202,7 +202,7 @@ export {
     type TaskPresentationTarget,
 } from './useTaskPresentation'
 
-// 项目数据
+// Project data
 export {
     useProjectData,
     useRefreshProjectData,

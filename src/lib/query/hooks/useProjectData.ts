@@ -5,7 +5,7 @@ import { queryKeys } from '../keys'
 import { resolveTaskErrorMessage } from '@/lib/task/error-message'
 import type { Project, MediaRef } from '@/types/project'
 
-// ============ 项目数据 Hook ============
+// ============ Project data Hook ============
 
 interface ProjectDataResponse {
     project: Project
@@ -34,7 +34,7 @@ export function useProjectData(projectId: string | null) {
 }
 
 /**
- * 刷新项目数据
+ * Refresh project data
  */
 export function useRefreshProjectData(projectId: string | null) {
     const queryClient = useQueryClient()
@@ -46,7 +46,7 @@ export function useRefreshProjectData(projectId: string | null) {
     }
 }
 
-// ============ 剧集数据 Hook ============
+// ============ Episode data Hook ============
 
 export interface Episode {
     id: string
@@ -58,7 +58,7 @@ export interface Episode {
     media?: MediaRef | null
     srtContent?: string | null
     createdAt: string
-    // 剧集详情数据
+    // Episode detail data
     voiceLines?: VoiceLine[]
     storyboardData?: StoryboardData
 }
@@ -77,7 +77,7 @@ interface StoryboardData {
 }
 
 /**
- * 获取剧集详情
+ * Fetch episode detail
  */
 export function useEpisodeData(projectId: string | null, episodeId: string | null) {
     return useQuery({
@@ -98,7 +98,7 @@ export function useEpisodeData(projectId: string | null, episodeId: string | nul
 }
 
 /**
- * 获取项目的剧集列表（从项目数据中提取）
+ * Get project episode list (extracted from project data)
  */
 export function useEpisodes(projectId: string | null) {
     const { data: project } = useProjectData(projectId)
@@ -108,7 +108,7 @@ export function useEpisodes(projectId: string | null) {
 }
 
 /**
- * 刷新剧集数据
+ * Refresh episode data
  */
 export function useRefreshEpisodeData(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -123,7 +123,7 @@ export function useRefreshEpisodeData(projectId: string | null, episodeId: strin
 }
 
 /**
- * 刷新所有相关数据（项目 + 当前剧集）
+ * Refresh all related data (project + current episode)
  */
 export function useRefreshAll(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()

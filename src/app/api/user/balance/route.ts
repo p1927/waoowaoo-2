@@ -6,10 +6,10 @@ import { apiHandler } from '@/lib/api-errors'
 
 /**
  * GET /api/user/balance
- * 获取当前用户余额
+ * Get current user balance
  */
 export const GET = apiHandler(async () => {
-    // 🔐 统一权限验证
+    // Auth verification
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * 音色设置组件 - 从 CharacterCard 提取
- * 支持上传自定义音频和 AI 声音设计
+ * Voice settings component - extracted from CharacterCard
+ * Supports custom audio upload and AI voice design
  */
 
 import { useRef, useState } from 'react'
@@ -15,11 +15,11 @@ interface VoiceSettingsProps {
     characterId: string
     characterName: string
     customVoiceUrl: string | null | undefined
-    projectId?: string  // 可选，Asset Hub 不需要
+    projectId?: string  // Optional, Asset Hub doesn't need it
     onVoiceChange?: (characterId: string, customVoiceUrl?: string) => void
     onVoiceDesign?: (characterId: string, characterName: string) => void
-    onVoiceSelect?: (characterId: string) => void  // 从音色库选择
-    compact?: boolean  // 紧凑模式（单图卡片用）
+    onVoiceSelect?: (characterId: string) => void  // Select from voice library
+    compact?: boolean  // Compact mode (single-image card)
 }
 
 export default function VoiceSettings({
@@ -33,7 +33,7 @@ export default function VoiceSettings({
     compact = false
 }: VoiceSettingsProps) {
     const t = useTranslations('assetHub')
-    // 🔥 使用 mutation hook
+    // Use mutation hook
     const uploadVoice = useUploadCharacterVoice()
     void projectId
     const voiceFileInputRef = useRef<HTMLInputElement>(null)
@@ -43,11 +43,11 @@ export default function VoiceSettings({
 
     const hasCustomVoice = !!customVoiceUrl
 
-    // 预览音色（播放/暂停自定义音频）
+    // Preview voice (play/pause custom audio)
     const handlePreviewVoice = async () => {
         if (!customVoiceUrl) return
 
-        // 如果正在播放，点击则暂停
+        // If playing, click to pause
         if (isPreviewingVoice && audioRef.current) {
             audioRef.current.pause()
             setIsPreviewingVoice(false)
@@ -73,7 +73,7 @@ export default function VoiceSettings({
         }
     }
 
-    // 上传自定义音频
+    // Upload custom audio
     const handleUploadVoice = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
@@ -99,7 +99,7 @@ export default function VoiceSettings({
         )
     }
 
-    // 紧凑模式样式
+    // Compact mode styles
     const containerClass = compact
         ? 'glass-surface-soft border border-[var(--glass-stroke-base)] rounded-xl p-3'
         : 'mt-4 glass-surface-soft border border-[var(--glass-stroke-base)] rounded-xl p-4'
@@ -122,7 +122,7 @@ export default function VoiceSettings({
                 </span>
             </div>
 
-            {/* 隐藏的音频文件输入 */}
+            {/* Hidden audio file input */}
             <input
                 ref={voiceFileInputRef}
                 type="file"
@@ -168,7 +168,7 @@ export default function VoiceSettings({
                 )}
             </div>
 
-            {/* 试听按钮 - 仅在有音频时显示 */}
+            {/* Preview button - only show when audio exists */}
             {hasCustomVoice && (
                 <button
                     onClick={handlePreviewVoice}

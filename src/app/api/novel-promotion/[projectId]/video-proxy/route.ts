@@ -5,8 +5,8 @@ import { requireProjectAuthLight, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
- * 代理下载单个视频文件
- * 用于解决 COS 跨域下载问题
+ * Proxy download single video file
+ * Resolves COS cross-origin download issues
  */
 export const GET = apiHandler(async (
     request: NextRequest,
@@ -20,11 +20,11 @@ export const GET = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 🔐 统一权限验证
+    // Auth verification
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 
-    // 生成签名 URL 并下载
+    // Generate signed URL and download
     let fetchUrl: string
     if (videoKey.startsWith('http://') || videoKey.startsWith('https://')) {
         fetchUrl = videoKey
@@ -32,18 +32,18 @@ export const GET = apiHandler(async (
         fetchUrl = toFetchableUrl(getSignedUrl(videoKey, 3600))
     }
 
-    _ulogInfo(`[视频代理] 下载: ${fetchUrl.substring(0, 100)}...`)
+    _ulogInfo(`[Video proxy] Download: ${fetchUrl.substring(0, 100)}...`)
 
     const response = await fetch(fetchUrl)
     if (!response.ok) {
         throw new Error(`Failed to fetch video: ${response.statusText}`)
     }
 
-    // 获取内容类型和长度
+    // Get content type and length
     const contentType = response.headers.get('content-type') || 'video/mp4'
     const contentLength = response.headers.get('content-length')
 
-    // 流式返回视频数据
+    // Stream video data response
     const headers: HeadersInit = {
         'Content-Type': contentType,
         'Cache-Control': 'no-cache'

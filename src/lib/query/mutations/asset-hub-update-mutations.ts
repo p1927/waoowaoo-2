@@ -30,7 +30,7 @@ export function useUpdateCharacterName() {
           body: JSON.stringify({ type: 'character', id: characterId, newName: name }),
         })
       } catch (e) {
-        console.error('更新图片标签失败:', e)
+        console.error('Failed to update image label:', e)
       }
 
       return res
@@ -59,7 +59,7 @@ export function useUpdateLocationName() {
           body: JSON.stringify({ type: 'location', id: locationId, newName: name }),
         })
       } catch (e) {
-        console.error('更新图片标签失败:', e)
+        console.error('Failed to update image label:', e)
       }
 
       return res

@@ -7,7 +7,7 @@ import { useTaskTargetStateMap } from './useTaskTargetStateMap'
 import { resolveTaskErrorMessage } from '@/lib/task/error-message'
 import type { MediaRef } from '@/types/project'
 
-// ============ 类型定义 ============
+// ============ Type definitions ============
 export interface GlobalCharacterAppearance {
     id: string
     appearanceIndex: number
@@ -87,7 +87,7 @@ function isRunningPhase(phase: string | null | undefined) {
 // ============ 查询 Hooks ============
 
 /**
- * 获取中心资产库角色列表
+ * Fetch asset hub character list
  */
 export function useGlobalCharacters(folderId?: string | null) {
     const charactersQuery = useQuery({
@@ -161,7 +161,7 @@ export function useGlobalCharacters(folderId?: string | null) {
                 }
                 const characterState = getState('GlobalCharacter', character.id)
                 const hasCharacterTask = isRunningPhase(characterState?.phase)
-                // 优先取子索引级的错误，其次取 appearance 级，最后取 character 级
+                // Prefer sub-index level error, then appearance level, then character level
                 const lastError = appearanceError
                     || getState('GlobalCharacterAppearance', appearance.id)?.lastError
                     || characterState?.lastError
@@ -183,7 +183,7 @@ export function useGlobalCharacters(folderId?: string | null) {
 }
 
 /**
- * 获取中心资产库场景列表
+ * Fetch asset hub location list
  */
 export function useGlobalLocations(folderId?: string | null) {
     const locationsQuery = useQuery({
@@ -263,7 +263,7 @@ export function useGlobalLocations(folderId?: string | null) {
 }
 
 /**
- * 获取中心资产库音色列表
+ * Fetch asset hub voice list
  */
 export function useGlobalVoices(folderId?: string | null) {
     return useQuery({
@@ -280,7 +280,7 @@ export function useGlobalVoices(folderId?: string | null) {
 }
 
 /**
- * 获取中心资产库文件夹列表
+ * Fetch asset hub folder list
  */
 export function useGlobalFolders() {
     return useQuery({
@@ -294,10 +294,10 @@ export function useGlobalFolders() {
     })
 }
 
-// ============ 文件夹 Mutation Hooks ============
+// ============ Folder Mutation Hooks ============
 
 /**
- * 创建文件夹
+ * Create folder
  */
 export function useCreateFolder() {
     const queryClient = useQueryClient()
@@ -322,7 +322,7 @@ export function useCreateFolder() {
 }
 
 /**
- * 更新文件夹
+ * Update folder
  */
 export function useUpdateFolder() {
     const queryClient = useQueryClient()
@@ -347,7 +347,7 @@ export function useUpdateFolder() {
 }
 
 /**
- * 删除文件夹
+ * Delete folder
  */
 export function useDeleteFolder() {
     const queryClient = useQueryClient()
@@ -371,7 +371,7 @@ export function useDeleteFolder() {
 }
 
 /**
- * 刷新所有中心资产库数据
+ * Refresh all asset hub data
  */
 export function useRefreshGlobalAssets() {
     const queryClient = useQueryClient()

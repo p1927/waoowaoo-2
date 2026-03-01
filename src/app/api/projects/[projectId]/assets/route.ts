@@ -5,8 +5,8 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 import { attachMediaFieldsToProject } from '@/lib/media/attach'
 
 /**
- * ⚡ 延迟加载 API - 获取项目的 characters 和 locations 资产
- * 用于资产管理页面，避免首次加载时的性能开销
+ * Lazy-load API - fetch project characters and locations assets
+ * For asset management page, avoids performance cost on initial load
  */
 export const GET = apiHandler(async (
     request: NextRequest,
@@ -14,12 +14,12 @@ export const GET = apiHandler(async (
 ) => {
     const { projectId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth verification
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
 
-    // 验证项目所有权
+    // Verify project ownership
     const project = await prisma.project.findUnique({
         where: { id: projectId },
         select: { userId: true }
@@ -33,7 +33,7 @@ export const GET = apiHandler(async (
         throw new ApiError('FORBIDDEN')
     }
 
-    // 获取 characters 和 locations（包含嵌套数据）
+    // Fetch characters and locations (with nested data)
     const novelPromotionData = await prisma.novelPromotionProject.findUnique({
         where: { projectId },
         include: {
@@ -52,7 +52,7 @@ export const GET = apiHandler(async (
         throw new ApiError('NOT_FOUND')
     }
 
-    // 转换为稳定媒体 URL（并保留兼容字段）
+    // Convert to stable media URLs (preserve compatible fields)
     const dataWithSignedUrls = await attachMediaFieldsToProject(novelPromotionData)
 
     return NextResponse.json({

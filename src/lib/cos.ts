@@ -12,26 +12,26 @@ const _ulogInfo = (...args: unknown[]) => cosLogger.info(...args)
 const _ulogWarn = (...args: unknown[]) => cosLogger.warn(...args)
 const _ulogError = (...args: unknown[]) => cosLogger.error(...args)
 
-// ==================== 存储类型配置 ====================
+// ==================== Storage type config ====================
 // STORAGE_TYPE: 'cos' | 'local'
-// - cos: 使用腾讯云COS（需要配置COS_SECRET_ID等）
-// - local: 使用本地文件存储（适合内网部署）
+// - cos: Tencent Cloud COS (requires COS_SECRET_ID etc.)
+// - local: Local file storage (for intranet deployment)
 const STORAGE_TYPE = process.env.STORAGE_TYPE || 'cos'
 const UPLOAD_DIR = process.env.UPLOAD_DIR || './data/uploads'
 
-// 日志标识
+// Log identifier
 const isLocalStorage = STORAGE_TYPE === 'local'
 if (isLocalStorage) {
-  _ulogInfo(`[Storage] 使用本地存储模式，目录: ${UPLOAD_DIR}`)
+  _ulogInfo(`[Storage] Using local storage mode, directory: ${UPLOAD_DIR}`)
 } else {
-  _ulogInfo(`[Storage] 使用COS云存储模式`)
+  _ulogInfo(`[Storage] Using COS cloud storage mode`)
 }
 
-// COS 超时和重试配置
-const COS_TIMEOUT_MS = 60 * 1000  // 60秒超时
-const COS_MAX_RETRIES = 3         // 最大重试次数
-const COS_RETRY_DELAY_BASE_MS = 2000  // 重试延迟基数
-// 统一签名 URL 过期时间：24小时
+// COS timeout and retry config
+const COS_TIMEOUT_MS = 60 * 1000  // 60 second timeout
+const COS_MAX_RETRIES = 3         // Max retries
+const COS_RETRY_DELAY_BASE_MS = 2000  // Retry delay base
+// Unified signed URL expiry: 24 hours
 const SIGNED_URL_EXPIRES_SECONDS = 24 * 60 * 60
 
 type UnknownRecord = Record<string, unknown>
@@ -125,7 +125,7 @@ export function toFetchableUrl(inputUrl: string): string {
   return inputUrl
 }
 
-// COS客户端（仅在COS模式下初始化）
+// COS client (initialized only in COS mode)
 let cos: COS | null = null
 let BUCKET = ''
 let REGION = ''
@@ -141,45 +141,45 @@ if (!isLocalStorage) {
 }
 
 /**
- * 获取COS客户端实例（仅COS模式）
+ * Get COS client instance (COS mode only)
  */
 export function getCOSClient() {
   if (isLocalStorage) {
-    throw new Error('本地存储模式下不支持获取COS客户端')
+    throw new Error('COS client not available in local storage mode')
   }
   return cos!
 }
 
 /**
- * 上传文件到存储（COS或本地文件系统）
- * @param buffer 文件Buffer
- * @param key 文件路径（例如：images/character-xxx.png）
- * @param maxRetries 最大重试次数，默认3次
- * @returns 存储Key
+ * Upload file to storage (COS or local filesystem)
+ * @param buffer File buffer
+ * @param key File path (e.g. images/character-xxx.png)
+ * @param maxRetries Max retries, default 3
+ * @returns Storage key
  */
 export async function uploadToCOS(buffer: Buffer, key: string, maxRetries: number = COS_MAX_RETRIES): Promise<string> {
-  // ==================== 本地存储模式 ====================
+  // ==================== Local storage mode ====================
   if (isLocalStorage) {
     try {
       const filePath = path.join(UPLOAD_DIR, key)
       await fs.mkdir(path.dirname(filePath), { recursive: true })
       await fs.writeFile(filePath, buffer)
-      _ulogInfo(`[Local上传] 成功: ${key}`)
+      _ulogInfo(`[Local Upload] Success: ${key}`)
       return key
     } catch (error: unknown) {
       const errorInfo = extractErrorInfo(error)
-      _ulogError(`[Local上传] 失败: ${key}`, errorInfo.message)
-      throw new Error(`本地存储上传失败: ${key}`)
+      _ulogError(`[Local Upload] Failed: ${key}`, errorInfo.message)
+      throw new Error(`Local storage upload failed: ${key}`)
     }
   }
 
-  // ==================== COS云存储模式 ====================
+  // ==================== COS cloud storage mode ====================
   let lastError: unknown = null
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       if (attempt > 1) {
-        _ulogInfo(`[COS上传] 第 ${attempt}/${maxRetries} 次尝试上传: ${key}`)
+        _ulogInfo(`[COS Upload] Attempt ${attempt}/${maxRetries}: ${key}`)
       }
 
       const result = await new Promise<string>((resolve, reject) => {
@@ -189,13 +189,13 @@ export async function uploadToCOS(buffer: Buffer, key: string, maxRetries: numbe
             Region: REGION,
             Key: key,
             Body: buffer,
-            // 不设置ACL，保持私有（默认）
+            // No ACL, keep private (default)
           },
           (err) => {
             if (err) {
               reject(err)
             } else {
-              // 返回COS Key（不是完整URL）
+              // Return COS Key (not full URL)
               resolve(key)
             }
           }
@@ -203,7 +203,7 @@ export async function uploadToCOS(buffer: Buffer, key: string, maxRetries: numbe
       })
 
       if (attempt > 1) {
-        _ulogInfo(`[COS上传] 第 ${attempt} 次尝试成功: ${key}`)
+        _ulogInfo(`[COS Upload] Attempt ${attempt} succeeded: ${key}`)
       }
       return result
 
@@ -211,7 +211,7 @@ export async function uploadToCOS(buffer: Buffer, key: string, maxRetries: numbe
       const errorInfo = extractErrorInfo(error)
       lastError = error
 
-      // 详细记录错误信息
+      // Log error details
       const errorDetails = {
         attempt,
         maxRetries,
@@ -220,44 +220,44 @@ export async function uploadToCOS(buffer: Buffer, key: string, maxRetries: numbe
         errorMessage: errorInfo.message,
         isTimeoutError: errorInfo.code === 'ETIMEDOUT' || errorInfo.code === 'ESOCKETTIMEDOUT'
       }
-      _ulogError(`[COS上传] 第 ${attempt}/${maxRetries} 次尝试失败:`, JSON.stringify(errorDetails, null, 2))
+      _ulogError(`[COS Upload] Attempt ${attempt}/${maxRetries} failed:`, JSON.stringify(errorDetails, null, 2))
 
-      // 如果不是最后一次尝试，等待后重试
+      // If not last attempt, wait and retry
       if (attempt < maxRetries) {
-        const delayMs = COS_RETRY_DELAY_BASE_MS * Math.pow(2, attempt - 1)  // 指数退避：2s, 4s, 8s
-        _ulogInfo(`[COS上传] 等待 ${delayMs / 1000} 秒后重试...`)
+        const delayMs = COS_RETRY_DELAY_BASE_MS * Math.pow(2, attempt - 1)  // Exponential backoff: 2s, 4s, 8s
+        _ulogInfo(`[COS Upload] Waiting ${delayMs / 1000}s before retry...`)
         await new Promise(resolve => setTimeout(resolve, delayMs))
       }
     }
   }
 
-  // 所有重试都失败
-  _ulogError(`[COS上传] 所有 ${maxRetries} 次重试都失败: ${key}`)
-  throw lastError || new Error(`COS上传失败: ${key}`)
+  // All retries failed
+  _ulogError(`[COS Upload] All ${maxRetries} retries failed: ${key}`)
+  throw lastError || new Error(`COS upload failed: ${key}`)
 }
 
 /**
- * 删除存储对象（COS或本地文件）
- * @param key 存储Key（例如：images/xxx.png）
+ * Delete storage object (COS or local file)
+ * @param key Storage key (e.g. images/xxx.png)
  */
 export async function deleteCOSObject(key: string): Promise<void> {
-  // ==================== 本地存储模式 ====================
+  // ==================== Local storage mode ====================
   if (isLocalStorage) {
     try {
       const filePath = path.join(UPLOAD_DIR, key)
       await fs.unlink(filePath)
-      _ulogInfo(`[Local删除] 成功: ${key}`)
+      _ulogInfo(`[Local Delete] Success: ${key}`)
     } catch (error: unknown) {
       const errorInfo = extractErrorInfo(error)
-      // 文件不存在时忽略错误
+      // Ignore error when file does not exist
       if (errorInfo.code !== 'ENOENT') {
-        _ulogError(`[Local删除] 失败: ${key}`, errorInfo.message)
+        _ulogError(`[Local Delete] Failed: ${key}`, errorInfo.message)
       }
     }
     return
   }
 
-  // ==================== COS云存储模式 ====================
+  // ==================== COS cloud storage mode ====================
   return new Promise((resolve, reject) => {
     cos!.deleteObject(
       {
@@ -278,20 +278,20 @@ export async function deleteCOSObject(key: string): Promise<void> {
 }
 
 /**
- * 批量删除存储对象（COS或本地文件）
- * @param keys 存储Key数组
- * @returns 删除结果统计
+ * Batch delete storage objects (COS or local file)
+ * @param keys Storage key array
+ * @returns Delete result stats
  */
 export async function deleteCOSObjects(keys: string[]): Promise<{ success: number; failed: number }> {
   if (keys.length === 0) return { success: 0, failed: 0 }
 
-  // 过滤掉空值和无效的 key
+  // Filter out empty and invalid keys
   const validKeys = keys.filter(key => key && typeof key === 'string' && key.trim().length > 0)
   if (validKeys.length === 0) return { success: 0, failed: 0 }
 
-  // ==================== 本地存储模式 ====================
+  // ==================== Local storage mode ====================
   if (isLocalStorage) {
-    _ulogInfo(`[Local] 准备删除 ${validKeys.length} 个文件`)
+    _ulogInfo(`[Local] Preparing to delete ${validKeys.length} files`)
     let success = 0
     let failed = 0
 
@@ -305,19 +305,19 @@ export async function deleteCOSObjects(keys: string[]): Promise<{ success: numbe
         if (errorInfo.code !== 'ENOENT') {
           failed++
         } else {
-          success++ // 文件不存在也算成功
+          success++ // File not found counts as success
         }
       }
     }
 
-    _ulogInfo(`[Local] 删除完成: 成功 ${success}, 失败 ${failed}`)
+    _ulogInfo(`[Local] Delete complete: ${success} succeeded, ${failed} failed`)
     return { success, failed }
   }
 
-  // ==================== COS云存储模式 ====================
-  _ulogInfo(`[COS] 准备删除 ${validKeys.length} 个文件`)
+  // ==================== COS cloud storage mode ====================
+  _ulogInfo(`[COS] Preparing to delete ${validKeys.length} files`)
 
-  // COS 批量删除 API 每次最多 1000 个
+  // COS batch delete API max 1000 per call
   const batchSize = 1000
   let success = 0
   let failed = 0
@@ -335,18 +335,18 @@ export async function deleteCOSObjects(keys: string[]): Promise<{ success: numbe
           },
           (err, data) => {
             if (err) {
-              _ulogError('[COS] 批量删除错误:', err)
+              _ulogError('[COS] Batch delete error:', err)
               failed += batch.length
-              resolve() // 不中断，继续处理其他批次
+              resolve() // Continue with other batches
             } else {
-              // 统计成功和失败
+              // Count success and failure
               const deletedCount = data.Deleted?.length || 0
               const errorCount = data.Error?.length || 0
               success += deletedCount
               failed += errorCount
 
               if (errorCount > 0) {
-                _ulogWarn('[COS] 部分文件删除失败:', data.Error)
+                _ulogWarn('[COS] Some files failed to delete:', data.Error)
               }
               resolve()
             }
@@ -354,36 +354,36 @@ export async function deleteCOSObjects(keys: string[]): Promise<{ success: numbe
         )
       })
     } catch (error) {
-      _ulogError('[COS] 批量删除异常:', error)
+      _ulogError('[COS] Batch delete exception:', error)
       failed += batch.length
     }
   }
 
-  _ulogInfo(`[COS] 删除完成: 成功 ${success}, 失败 ${failed}`)
+  _ulogInfo(`[COS] Delete complete: ${success} succeeded, ${failed} failed`)
   return { success, failed }
 }
 
 /**
- * 从URL或COS Key中提取COS Key
- * 支持完整URL和纯Key两种格式
+ * Extract COS Key from URL or COS Key
+ * Supports full URL and raw Key formats
  */
 export function extractCOSKey(urlOrKey: string | null | undefined): string | null {
   if (!urlOrKey) return null
 
-  // 🔧 本地模式修复：处理 /api/files/xxx 格式的本地 URL
+  // Local mode: handle /api/files/xxx local URL format
   if (urlOrKey.startsWith('/api/files/')) {
     return decodeURIComponent(urlOrKey.replace('/api/files/', ''))
   }
 
-  // 如果已经是纯 Key（不包含 http 且不是相对路径），直接返回
+  // If already raw Key (no http and not relative path), return as-is
   if (!urlOrKey.startsWith('http') && !urlOrKey.startsWith('/')) {
     return urlOrKey
   }
 
-  // 从完整 URL 中提取 Key
+  // Extract Key from full URL
   try {
     const url = new URL(urlOrKey)
-    // 移除开头的 /
+    // Remove leading /
     return url.pathname.startsWith('/') ? url.pathname.slice(1) : url.pathname
   } catch {
     return null
@@ -391,10 +391,10 @@ export function extractCOSKey(urlOrKey: string | null | undefined): string | nul
 }
 
 /**
- * 从URL下载图片并上传到COS（带压缩、超时和重试）
- * @param imageUrl 原始图片URL
- * @param key 文件路径
- * @param maxRetries 最大重试次数，默认3次
+ * Download image from URL and upload to COS (with compression, timeout, retry)
+ * @param imageUrl Source image URL
+ * @param key File path
+ * @param maxRetries Max retries, default 3
  * @returns COS Key
  */
 export async function downloadAndUploadToCOS(imageUrl: string, key: string, maxRetries: number = COS_MAX_RETRIES): Promise<string> {
@@ -404,16 +404,16 @@ export async function downloadAndUploadToCOS(imageUrl: string, key: string, maxR
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       if (attempt > 1) {
-        _ulogInfo(`[图片下载上传] 第 ${attempt}/${maxRetries} 次尝试: ${imageUrl.substring(0, 80)}...`)
+        _ulogInfo(`[Image Download Upload] Attempt ${attempt}/${maxRetries}: ${imageUrl.substring(0, 80)}...`)
       }
 
       const sharp = (await import('sharp')).default
 
-      // 使用 AbortController 设置超时（60秒）
+      // AbortController timeout (60 seconds)
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), COS_TIMEOUT_MS)
 
-      // 下载图片
+      // Download image
       const response = await fetch(fetchUrl, {
         signal: controller.signal
       })
@@ -426,39 +426,39 @@ export async function downloadAndUploadToCOS(imageUrl: string, key: string, maxR
       const arrayBuffer = await response.arrayBuffer()
       const buffer = Buffer.from(arrayBuffer)
 
-      // 压缩图片（保持原始分辨率，不超过10MB）
+      // Compress image (keep resolution, max 10MB)
       let processedBuffer: Buffer
-      let quality = 95 // 初始高质量
+      let quality = 95 // Initial high quality
       const maxSizeMB = 10
       const maxSizeBytes = maxSizeMB * 1024 * 1024
 
-      // 先尝试高质量压缩
+      // Try high quality first
       processedBuffer = await sharp(buffer)
         .jpeg({ quality, mozjpeg: true })
         .toBuffer()
 
-      // 如果超过10MB，逐步降低质量
+      // If over 10MB, reduce quality gradually
       while (processedBuffer.length > maxSizeBytes && quality > 60) {
         quality -= 5
-        _ulogInfo(`图片大小 ${(processedBuffer.length / 1024 / 1024).toFixed(2)}MB 超过 ${maxSizeMB}MB，降低质量到 ${quality}%`)
+        _ulogInfo(`Image size ${(processedBuffer.length / 1024 / 1024).toFixed(2)}MB exceeds ${maxSizeMB}MB, reducing quality to ${quality}%`)
         processedBuffer = await sharp(buffer)
           .jpeg({ quality, mozjpeg: true })
           .toBuffer()
       }
 
-      _ulogInfo(`最终图片大小: ${(processedBuffer.length / 1024 / 1024).toFixed(2)}MB, 质量: ${quality}%`)
+      _ulogInfo(`Final image size: ${(processedBuffer.length / 1024 / 1024).toFixed(2)}MB, quality: ${quality}%`)
 
-      // 修改key的扩展名为.jpg
+      // Change key extension to .jpg
       const jpgKey = key.replace(/\.(png|webp)$/i, '.jpg')
 
-      // 上传到COS（uploadToCOS 已有重试机制）
+      // Upload to COS (uploadToCOS has retry)
       return await uploadToCOS(processedBuffer, jpgKey)
 
     } catch (error: unknown) {
       const errorInfo = extractErrorInfo(error)
       lastError = error
 
-      // 详细记录错误信息
+      // Log error details
       const errorDetails = {
         attempt,
         maxRetries,
@@ -469,12 +469,12 @@ export async function downloadAndUploadToCOS(imageUrl: string, key: string, maxR
         imageUrl: imageUrl.substring(0, 80) + '...',
         fetchUrl: fetchUrl.substring(0, 80) + '...'
       }
-      _ulogError(`[图片下载上传] 第 ${attempt}/${maxRetries} 次尝试失败:`, JSON.stringify(errorDetails, null, 2))
+      _ulogError(`[Image Download Upload] Attempt ${attempt}/${maxRetries} failed:`, JSON.stringify(errorDetails, null, 2))
 
-      // 如果不是最后一次尝试，等待后重试
+      // If not last attempt, wait and retry
       if (attempt < maxRetries) {
         const delayMs = COS_RETRY_DELAY_BASE_MS * Math.pow(2, attempt - 1)
-        _ulogInfo(`[图片下载上传] 等待 ${delayMs / 1000} 秒后重试...`)
+        _ulogInfo(`[Image Download Upload] Waiting ${delayMs / 1000}s before retry...`)
         await new Promise(resolve => setTimeout(resolve, delayMs))
       }
     }
@@ -581,10 +581,10 @@ export async function downloadAndUploadVideoToCOS(
 }
 
 /**
- * 生成唯一的文件名
- * @param prefix 前缀（例如：character, location, shot）
- * @param ext 扩展名（例如：png, jpg）
- * @returns 唯一文件名
+ * Generate unique filename
+ * @param prefix Prefix (e.g. character, location, shot)
+ * @param ext Extension (e.g. png, jpg)
+ * @returns Unique filename
  */
 export function generateUniqueKey(prefix: string, ext: string = 'png'): string {
   const timestamp = Date.now()
@@ -600,13 +600,13 @@ export function generateUniqueKey(prefix: string, ext: string = 'png'): string {
  */
 export function getSignedUrl(key: string, _expires: number = SIGNED_URL_EXPIRES_SECONDS): string {
   void _expires
-  // ==================== 本地存储模式 ====================
+  // ==================== Local storage mode ====================
   if (isLocalStorage) {
     // 返回API路由路径，由文件服务API提供访问
     return `/api/files/${encodeURIComponent(key)}`
   }
 
-  // ==================== COS云存储模式 ====================
+  // ==================== COS cloud storage mode ====================
   // 统一固定为24小时，忽略外部传入的 expires 值
   const url = cos!.getObjectUrl({
     Bucket: BUCKET,

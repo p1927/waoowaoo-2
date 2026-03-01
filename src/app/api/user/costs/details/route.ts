@@ -6,10 +6,10 @@ import { apiHandler } from '@/lib/api-errors'
 
 /**
  * GET /api/user/costs/details
- * 获取用户费用明细（分页）
+ * Get user cost details (paginated)
  */
 export const GET = apiHandler(async (request: NextRequest) => {
-    // 🔐 统一权限验证
+    // Auth verification
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

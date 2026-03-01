@@ -3,14 +3,14 @@ import { prisma } from '@/lib/prisma'
 import { requireUserAuth, isErrorResponse } from '@/lib/api-auth'
 import { ApiError, apiHandler } from '@/lib/api-errors'
 
-// GET - 获取用户偏好配置
+// GET - Get user preference config
 export const GET = apiHandler(async () => {
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const { session } = authResult
 
-  // 获取或创建用户偏好
+  // Fetch or create user preference
   const preference = await prisma.userPreference.upsert({
     where: { userId: session.user.id },
     update: {},
@@ -20,16 +20,16 @@ export const GET = apiHandler(async () => {
   return NextResponse.json({ preference })
 })
 
-// PATCH - 更新用户偏好配置
+// PATCH - Update user preference config
 export const PATCH = apiHandler(async (request: NextRequest) => {
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const { session } = authResult
 
   const body = await request.json()
 
-  // 只允许更新特定字段
+  // Only allow updating specific fields
   const allowedFields = [
     'analysisModel',
     'characterModel',
@@ -54,7 +54,7 @@ export const PATCH = apiHandler(async (request: NextRequest) => {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 更新或创建用户偏好
+  // Update or create user preference
   const preference = await prisma.userPreference.upsert({
     where: { userId: session.user.id },
     update: updateData,

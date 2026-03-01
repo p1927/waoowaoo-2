@@ -37,7 +37,7 @@ export function deriveRunStreamView(args: {
     const stepOutput = getStageOutput(selectedStep)
     if (stepOutput) return stepOutput
     if (runState?.status === 'failed' && runState.errorMessage) {
-      return `【错误】\n${runState.errorMessage}`
+      return `[Error]\n${runState.errorMessage}`
     }
     return ''
   })()

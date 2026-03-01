@@ -83,7 +83,7 @@ export default function WorkspacePage() {
     }
   }, [session, status, router])
 
-  // 获取项目列表
+  // Fetch project list
   const fetchProjects = useCallback(async (page: number = 1, search: string = '') => {
     try {
       setLoading(true)
@@ -102,26 +102,26 @@ export default function WorkspacePage() {
         setPagination(data.pagination)
       }
     } catch (error) {
-      _ulogError('获取项目失败:', error)
+      _ulogError('Fetch projects failed:', error)
     } finally {
       setLoading(false)
     }
   }, [])
 
-  // 初始加载和搜索/分页变化时重新获取
+  // Re-fetch on initial load and search/pagination change
   useEffect(() => {
     if (session) {
       fetchProjects(pagination.page, searchQuery)
     }
   }, [session, pagination.page, searchQuery, fetchProjects])
 
-  // 搜索处理
+  // Search handler
   const handleSearch = () => {
     setSearchQuery(searchInput)
     setPagination(prev => ({ ...prev, page: 1 }))
   }
 
-  // 分页处理
+  // Pagination handler
   const handlePageChange = (newPage: number) => {
     setPagination(prev => ({ ...prev, page: newPage }))
   }
@@ -139,12 +139,12 @@ export default function WorkspacePage() {
         },
         body: JSON.stringify({
           ...formData,
-          mode: 'novel-promotion' // 固定为 novel-promotion
+          mode: 'novel-promotion' // Fixed to novel-promotion
         })
       })
 
       if (response.ok) {
-        // 创建成功后刷新第一页
+        // Refresh first page after create success
         setSearchQuery('')
         setSearchInput('')
         setPagination(prev => ({ ...prev, page: 1 }))
@@ -155,7 +155,7 @@ export default function WorkspacePage() {
         alert(t('createFailed'))
       }
     } catch (error) {
-      _ulogError('创建项目失败:', error)
+      _ulogError('Create project failed:', error)
       alert(t('createFailed'))
     } finally {
       setCreateLoading(false)
@@ -164,7 +164,7 @@ export default function WorkspacePage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    // 转换为北京时间 (UTC+8)
+    // Convert to Beijing time (UTC+8)
     const beijingTime = new Date(date.getTime() + 8 * 60 * 60 * 1000)
     return beijingTime.toLocaleDateString('zh-CN', {
       year: 'numeric',
@@ -218,7 +218,7 @@ export default function WorkspacePage() {
       })
 
       if (response.ok) {
-        // 删除成功后重新获取当前页
+        // Re-fetch current page after delete success
         fetchProjects(pagination.page, searchQuery)
       } else {
         alert(t('deleteFailed'))
@@ -232,7 +232,7 @@ export default function WorkspacePage() {
   }
 
   const openDeleteConfirm = (project: Project, e: React.MouseEvent) => {
-    e.preventDefault()  // 阻止 Link 导航
+    e.preventDefault()  // Prevent Link navigation
     e.stopPropagation()
     setProjectToDelete(project)
     setShowDeleteConfirm(true)
@@ -244,7 +244,7 @@ export default function WorkspacePage() {
   }
 
   const openEditModal = (project: Project, e: React.MouseEvent) => {
-    e.preventDefault()  // 阻止 Link 导航
+    e.preventDefault()  // Prevent Link navigation
     e.stopPropagation()
     setEditingProject(project)
     setEditFormData({
@@ -264,7 +264,7 @@ export default function WorkspacePage() {
 
   return (
     <div className="glass-page min-h-screen">
-      {/* Header - 统一导航栏 */}
+      {/* Header - unified nav bar */}
       <Navbar />
 
       {/* Main Content */}
@@ -275,7 +275,7 @@ export default function WorkspacePage() {
             <p className="text-[var(--glass-text-secondary)]">{t('subtitle')}</p>
           </div>
 
-          {/* 搜索框 */}
+          {/* Search box */}
           <div className="flex gap-2">
             <input
               type="text"
@@ -338,11 +338,11 @@ export default function WorkspacePage() {
                 href={`/workspace/${project.id}`}
                 className="glass-surface cursor-pointer relative group block hover:border-[var(--glass-tone-info-fg)]/40 transition-all duration-300 overflow-hidden"
               >
-                {/* 悬停光效 */}
+                {/* Hover glow effect */}
                 <div className="absolute inset-0 rounded-[inherit] bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                 <div className="p-5 relative z-10">
-                  {/* 操作按钮 */}
+                  {/* Action buttons */}
                   <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                     <button
                       onClick={(e) => openEditModal(project, e)}
@@ -373,12 +373,12 @@ export default function WorkspacePage() {
                     </button>
                   </div>
 
-                  {/* 标题 */}
+                  {/* Title */}
                   <h3 className="text-lg font-bold text-[var(--glass-text-primary)] mb-2 line-clamp-2 pr-20 group-hover:text-[var(--glass-tone-info-fg)] transition-colors">
                     {project.name}
                   </h3>
 
-                  {/* 描述：优先用户描述，fallback 到第一集故事 */}
+                  {/* Description: prefer user description, fallback to first episode story */}
                   {(project.description || project.stats?.firstEpisodePreview) && (
                     <div className="flex items-start gap-2 mb-4">
                       <AppIcon name="fileText" className="w-4 h-4 text-[var(--glass-text-tertiary)] mt-0.5 flex-shrink-0" />
@@ -388,10 +388,10 @@ export default function WorkspacePage() {
                     </div>
                   )}
 
-                  {/* 统计信息 - 整行统一渐变 */}
+                  {/* Stats - unified gradient row */}
                   {project.stats && (project.stats.episodes > 0 || project.stats.images > 0 || project.stats.videos > 0) ? (
                     <div className="flex items-center gap-2 mb-3">
-                      {/* 共享渐变定义 */}
+                      {/* Shared gradient definition */}
                       <IconGradientDefs className="w-0 h-0 absolute" aria-hidden="true" />
                       <AppIcon name="statsBarGradient" className="w-4 h-4 flex-shrink-0" />
                       <div className="flex items-center gap-3 text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
@@ -422,7 +422,7 @@ export default function WorkspacePage() {
                     </div>
                   )}
 
-                  {/* 底部信息 */}
+                  {/* Bottom info */}
                   <div className="flex items-center justify-between text-[11px] text-[var(--glass-text-tertiary)]">
                     <div className="flex items-center gap-1">
                       <AppIcon name="clock" className="w-3 h-3" />
@@ -463,7 +463,7 @@ export default function WorkspacePage() {
           </div>
         )}
 
-        {/* 分页控件 */}
+        {/* Pagination controls */}
         {!loading && pagination.totalPages > 1 && (
           <div className="mt-8 flex items-center justify-center gap-2">
             <button
@@ -474,17 +474,17 @@ export default function WorkspacePage() {
               <AppIcon name="chevronLeft" className="w-5 h-5" />
             </button>
 
-            {/* 页码按钮 */}
+            {/* Page number buttons */}
             {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
               .filter(page => {
-                // 显示第一页、最后一页、当前页及其前后两页
+                // Show first page, last page, current page and adjacent pages
                 return page === 1 ||
                   page === pagination.totalPages ||
                   Math.abs(page - pagination.page) <= 2
               })
               .map((page, index, array) => (
                 <span key={page} className="flex items-center">
-                  {/* 显示省略号 */}
+                  {/* Show ellipsis */}
                   {index > 0 && array[index - 1] !== page - 1 && (
                     <span className="px-2 text-[var(--glass-text-tertiary)]">...</span>
                   )}
@@ -515,7 +515,7 @@ export default function WorkspacePage() {
         )}
       </main>
 
-      {/* Create Project Modal - 简化版，只有名称和描述 */}
+      {/* Create Project Modal - simplified, name and description only */}
       {showCreateModal && (
         <div className="fixed inset-0 glass-overlay flex items-center justify-center z-50 backdrop-blur-sm">
           <div className="glass-surface-modal p-6 w-full max-w-md mx-4">
@@ -637,7 +637,7 @@ export default function WorkspacePage() {
         </div>
       )}
 
-      {/* 删除确认对话框 */}
+      {/* Delete confirmation dialog */}
       <ConfirmDialog
         show={showDeleteConfirm}
         title={t('deleteProject')}

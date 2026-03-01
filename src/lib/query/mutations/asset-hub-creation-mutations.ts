@@ -57,7 +57,7 @@ export function useUploadAssetHubTempMedia() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         },
-        '上传失败',
+        'Upload failed',
       ),
   })
 }
@@ -117,7 +117,7 @@ export function useCreateAssetHubCharacter() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      }, '创建角色失败'),
+      }, 'Failed to create character'),
     onSuccess: invalidateCharacters,
   })
 }

@@ -86,7 +86,7 @@ export function useSaveDesignedAssetHubVoice() {
           gender: null,
           language: 'zh',
         }),
-      }, '保存失败')
+      }, 'Save failed')
       return res
     },
     onSuccess: invalidateVoices,
@@ -112,7 +112,7 @@ export function useUploadAssetHubVoice() {
       return await requestJsonWithError('/api/asset-hub/voices/upload', {
         method: 'POST',
         body: formData,
-      }, '上传失败')
+      }, 'Upload failed')
     },
     onSuccess: invalidateVoices,
   })

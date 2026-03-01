@@ -40,7 +40,7 @@ interface UploadAssetImageDb {
 
 /**
  * POST /api/novel-promotion/[projectId]/upload-asset-image
- * 上传用户自定义图片作为角色或场景资产
+ * Upload user custom image as character or location asset
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -49,31 +49,31 @@ export const POST = apiHandler(async (
   const { projectId } = await context.params
   const db = prisma as unknown as UploadAssetImageDb
 
-  // 初始化字体（在 Vercel 环境中需要）
+  // Initialize fonts (required in Vercel env)
   await initializeFonts()
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
-  // 解析表单数据
+  // Parse form data
   const formData = await request.formData()
   const file = formData.get('file') as File
   const type = formData.get('type') as string // 'character' | 'location'
-  const id = formData.get('id') as string // characterId 或 locationId
+  const id = formData.get('id') as string // characterId or locationId
   const appearanceId = formData.get('appearanceId') as string | null  // UUID
   const imageIndex = formData.get('imageIndex') as string | null
-  const labelText = formData.get('labelText') as string // 文字标识符
+  const labelText = formData.get('labelText') as string // Label text
 
   if (!file || !type || !id || !labelText) {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 读取文件
+  // Read file
   const arrayBuffer = await file.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)
 
-  // 添加文字标识符
+  // Add label text
   const meta = await sharp(buffer).metadata()
   const w = meta.width || 2160
   const h = meta.height || 2160
@@ -81,26 +81,26 @@ export const POST = apiHandler(async (
   const pad = Math.floor(fontSize * 0.5)
   const barH = fontSize + pad * 2
 
-  // 创建SVG文字条
+  // Create SVG label bar
   const svg = await createLabelSVG(w, barH, fontSize, pad, labelText)
 
-  // 添加文字条到图片顶部
+  // Add label bar to image top
   const processed = await sharp(buffer)
     .extend({ top: barH, bottom: 0, left: 0, right: 0, background: { r: 0, g: 0, b: 0, alpha: 1 } })
     .composite([{ input: svg, top: 0, left: 0 }])
     .jpeg({ quality: 90, mozjpeg: true })
     .toBuffer()
 
-  // 生成唯一key并上传
+  // Generate unique key and upload
   const keyPrefix = type === 'character'
     ? `char-${id}-${appearanceId}-upload`
     : `loc-${id}-upload`
   const key = generateUniqueKey(keyPrefix, 'jpg')
   await uploadToCOS(processed, key)
 
-  // 更新数据库
+  // Update database
   if (type === 'character' && appearanceId !== null) {
-    // 更新角色形象图片 - 使用 UUID 直接查询
+    // Update character appearance image - query by UUID
     const appearance = await db.characterAppearance.findUnique({
       where: { id: appearanceId }
     })
@@ -109,26 +109,26 @@ export const POST = apiHandler(async (
       throw new ApiError('NOT_FOUND')
     }
 
-    // 解析现有图片数组
+    // Parse existing image array
     const imageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'characterAppearance.imageUrls')
 
-    // 如果指定了imageIndex，替换对应位置的图片
+    // If imageIndex specified, replace image at that position
     const targetIndex = imageIndex !== null ? parseInt(imageIndex) : imageUrls.length
 
-    // 确保数组足够大
+    // Ensure array is large enough
     while (imageUrls.length <= targetIndex) {
       imageUrls.push('')
     }
 
     imageUrls[targetIndex] = key
 
-    // 计算是否需要同步更新 imageUrl
-    // 当上传的图片是选中的图片时，或者是第一张图片且没有选中任何图片时
+    // Compute whether to sync update imageUrl
+    // When uploaded image is selected, or first image when none selected
     const selectedIndex = appearance.selectedIndex
     const shouldUpdateImageUrl =
-      selectedIndex === targetIndex ||  // 上传的是选中的图片
-      (selectedIndex === null && targetIndex === 0) ||  // 没有选中任何图片，上传的是第一张
-      imageUrls.filter(u => !!u).length === 1  // 只有一张有效图片
+      selectedIndex === targetIndex ||  // Uploaded image is selected
+      (selectedIndex === null && targetIndex === 0) ||  // No selection, uploaded is first
+      imageUrls.filter(u => !!u).length === 1  // Only one valid image
 
     const updateData: Record<string, unknown> = {
       imageUrls: encodeImageUrls(imageUrls)

@@ -69,7 +69,7 @@ async function withVoiceLineMedia<T extends Record<string, unknown>>(line: T) {
 
 /**
  * GET /api/novel-promotion/[projectId]/voice-lines?episodeId=xxx
- * 获取剧集的台词列表
+ * Get episode voice lines list
  */
 export const GET = apiHandler(async (
   request: NextRequest,
@@ -77,7 +77,7 @@ export const GET = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -114,7 +114,7 @@ export const GET = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取台词列表（包含匹配的 Panel 信息）
+  // Fetch voice lines (with matched Panel info)
   const voiceLines = await prisma.novelPromotionVoiceLine.findMany({
     where: { episodeId },
     orderBy: { lineIndex: 'asc' },
@@ -129,10 +129,10 @@ export const GET = apiHandler(async (
     }
   })
 
-  // 转换为稳定媒体 URL，并添加兼容字段
+  // Convert to stable media URLs and add compatible fields
   const voiceLinesWithUrls = await Promise.all(voiceLines.map(withVoiceLineMedia))
 
-  // 统计发言人
+  // Count speakers
   const speakerStats: Record<string, number> = {}
   for (const line of voiceLines) {
     speakerStats[line.speaker] = (speakerStats[line.speaker] || 0) + 1
@@ -147,7 +147,7 @@ export const GET = apiHandler(async (
 
 /**
  * POST /api/novel-promotion/[projectId]/voice-lines
- * 新增单条台词
+ * Add single voice line
  * Body: { episodeId, content, speaker, matchedPanelId?: string | null }
  */
 export const POST = apiHandler(async (
@@ -156,7 +156,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -233,9 +233,9 @@ export const POST = apiHandler(async (
 
 /**
  * PATCH /api/novel-promotion/[projectId]/voice-lines
- * 更新台词设置（内容、发言人、情绪设置、音频URL）
- * Body: { lineId, content, speaker, emotionPrompt, emotionStrength, audioUrl } 
- *    或 { speaker, episodeId, voicePresetId } (批量更新同一发言人的音色)
+ * Update voice line settings (content, speaker, emotion, audio URL)
+ * Body: { lineId, content, speaker, emotionPrompt, emotionStrength, audioUrl }
+ *    or { speaker, episodeId, voicePresetId } (batch update same speaker's voice)
  */
 export const PATCH = apiHandler(async (
   request: NextRequest,
@@ -243,7 +243,7 @@ export const PATCH = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -260,7 +260,7 @@ export const PATCH = apiHandler(async (
     matchedPanelId
   } = body
 
-  // 单条更新
+  // Single line update
   if (lineId) {
     const updateData: Prisma.NovelPromotionVoiceLineUncheckedUpdateInput = {}
     if (voicePresetId !== undefined) updateData.voicePresetId = voicePresetId
@@ -279,7 +279,7 @@ export const PATCH = apiHandler(async (
       updateData.speaker = speaker.trim()
     }
     if (audioUrl !== undefined) {
-      updateData.audioUrl = audioUrl // 支持清空音频 (传 null)
+      updateData.audioUrl = audioUrl // Support clearing audio (pass null)
       const media = await resolveMediaRefFromLegacyValue(audioUrl)
       updateData.audioMediaId = media?.id || null
     }
@@ -319,7 +319,7 @@ export const PATCH = apiHandler(async (
     })
   }
 
-  // 批量更新同一发言人（仅支持更新音色）
+  // Batch update same speaker (voice only)
   if (speaker && episodeId) {
     const result = await prisma.novelPromotionVoiceLine.updateMany({
       where: {
@@ -341,7 +341,7 @@ export const PATCH = apiHandler(async (
 
 /**
  * DELETE /api/novel-promotion/[projectId]/voice-lines?lineId=xxx
- * 删除单条台词
+ * Delete single voice line
  */
 export const DELETE = apiHandler(async (
   request: NextRequest,
@@ -349,7 +349,7 @@ export const DELETE = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -360,7 +360,7 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取要删除的台词
+  // Fetch line to delete
   const lineToDelete = await prisma.novelPromotionVoiceLine.findUnique({
     where: { id: lineId }
   })
@@ -369,18 +369,18 @@ export const DELETE = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 删除台词
+  // Delete voice line
   await prisma.novelPromotionVoiceLine.delete({
     where: { id: lineId }
   })
 
-  // 重新排序剩余台词的 lineIndex
+  // Reorder remaining lines' lineIndex
   const remainingLines = await prisma.novelPromotionVoiceLine.findMany({
     where: { episodeId: lineToDelete.episodeId },
     orderBy: { lineIndex: 'asc' }
   })
 
-  // 更新每条台词的 lineIndex
+  // Update each line's lineIndex
   for (let i = 0; i < remainingLines.length; i++) {
     if (remainingLines[i].lineIndex !== i + 1) {
       await prisma.novelPromotionVoiceLine.update({

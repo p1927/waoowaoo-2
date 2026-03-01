@@ -348,7 +348,7 @@ export function useDeleteProjectAppearance(projectId: string) {
 }
 
 /**
- * 更新项目角色名字
+ * Update project character name
  */
 
 export function useUpdateProjectCharacterName(projectId: string) {
@@ -364,7 +364,7 @@ export function useUpdateProjectCharacterName(projectId: string) {
                 body: JSON.stringify({ characterId, name })
             }, 'Failed to update character name')
 
-            // 等待图片标签更新完成，确保 onSuccess invalidate 后前端能立即看到新标签
+            // Wait for image label update to complete so frontend sees new label immediately after onSuccess invalidate
             try {
                 await fetch(`/api/novel-promotion/${projectId}/update-asset-label`, {
                     method: 'POST',
@@ -376,7 +376,7 @@ export function useUpdateProjectCharacterName(projectId: string) {
                     })
                 })
             } catch (e) {
-                _ulogError('更新图片标签失败:', e)
+                _ulogError('Failed to update image label:', e)
             }
 
             return res

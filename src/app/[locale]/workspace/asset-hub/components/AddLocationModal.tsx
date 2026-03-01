@@ -15,7 +15,7 @@ interface AddLocationModalProps {
     onSuccess: () => void
 }
 
-// 内联 SVG 图标
+// Inline SVG icons
 const XMarkIcon = ({ className }: { className?: string }) => (
     <AppIcon name="close" className={className} />
 )
@@ -27,7 +27,7 @@ const SparklesIcon = ({ className }: { className?: string }) => (
 export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationModalProps) {
     const t = useTranslations('assetHub')
 
-    // 表单字段
+    // Form fields
     const [name, setName] = useState('')
     const [summary, setSummary] = useState('')
     const [aiInstruction, setAiInstruction] = useState('')
@@ -54,7 +54,7 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
         })
         : null
 
-    // AI 设计描述
+    // AI design description
     const handleAiDesign = async () => {
         if (!aiInstruction.trim()) return
 

@@ -156,7 +156,7 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
                 contents: [{ parts: contentParts }],
                 config: {
                     safetySettings,
-                    // 🔥 关键：告诉 Gemini 返回图片
+                    // Tell Gemini to return image
                     responseModalities: ['IMAGE', 'TEXT'],
                     ...(aspectRatio || resolution
                         ? {
@@ -188,7 +188,7 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
                 }
             }
 
-            // 检查失败原因
+            // Check failure reason
             const finishReason = candidate?.finishReason
             if (finishReason === 'IMAGE_SAFETY' || finishReason === 'SAFETY') {
                 throw new Error('Content filtered by safety policy')
@@ -213,7 +213,7 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
         } catch (error: unknown) {
             const message = getErrorMessage(error)
 
-            // 🔥 增强诊断：解析代理/SDK 返回的结构化错误信息
+            // Enhanced diagnostics: parse structured error from proxy/SDK
             const errorObj = error as Record<string, unknown> | undefined
             const innerError = (errorObj?.error ?? errorObj) as Record<string, unknown> | undefined
             const errorType = innerError?.type as string | undefined

@@ -26,8 +26,8 @@ interface EpisodeData {
 }
 
 /**
- * 获取视频下载链接列表（不在服务端下载打包）
- * 适用于客户端直接下载场景，避免大文件传输问题
+ * Get video download URL list (no server-side download/pack)
+ * For client direct download, avoids large file transfer
  */
 export const POST = apiHandler(async (
     request: NextRequest,
@@ -35,23 +35,23 @@ export const POST = apiHandler(async (
 ) => {
     const { projectId } = await context.params
 
-    // 解析请求体
+    // Parse request body
     const body = await request.json()
     const { episodeId, panelPreferences } = body as {
         episodeId?: string
-        panelPreferences?: Record<string, boolean>  // key: panelKey, value: true=口型同步, false=原始
+        panelPreferences?: Record<string, boolean>  // key: panelKey, value: true=lip sync, false=original
     }
 
-    // 🔐 统一权限验证
+    // Auth verification
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
     const project = authResult.project
 
-    // 根据是否指定 episodeId 来获取数据
+    // Fetch data based on whether episodeId is specified
     let episodes: EpisodeData[] = []
 
     if (episodeId) {
-        // 只获取指定剧集的数据
+        // Fetch only specified episode data
         const episode = await prisma.novelPromotionEpisode.findUnique({
             where: { id: episodeId },
             include: {
@@ -70,7 +70,7 @@ export const POST = apiHandler(async (
             episodes = [episode]
         }
     } else {
-        // 获取所有剧集的数据
+        // Fetch all episodes data
         const npData = await prisma.novelPromotionProject.findFirst({
             where: { projectId },
             include: {
@@ -96,15 +96,15 @@ export const POST = apiHandler(async (
         throw new ApiError('NOT_FOUND')
     }
 
-    // 收集所有有视频的 panel
+    // Collect all panels with video
     interface VideoItem {
         fileName: string
-        videoUrl: string  // 签名后的完整URL
+        videoUrl: string  // Signed full URL
         clipIndex: number
         panelIndex: number
     }
 
-    // 从 episodes 中获取所有 storyboards 和 clips
+    // Get all storyboards and clips from episodes
     const allStoryboards: StoryboardData[] = []
     const allClips: ClipData[] = []
     for (const episode of episodes) {
@@ -118,17 +118,17 @@ export const POST = apiHandler(async (
     }
     const videoCandidates: VideoCandidate[] = []
 
-    // 遍历所有 storyboard 和 panel
+    // Iterate all storyboards and panels
     for (const storyboard of allStoryboards) {
         const clipIndex = allClips.findIndex((clip) => clip.id === storyboard.clipId)
 
         const panels = storyboard.panels || []
         for (const panel of panels) {
-            // 构建 panelKey 用于查找偏好
+            // Build panelKey for preference lookup
             const panelKey = `${storyboard.id}-${panel.panelIndex || 0}`
             const preferLipSync = panelPreferences?.[panelKey] ?? true
 
-            // 根据用户偏好选择视频类型
+            // Select video type by user preference
             let videoKey: string | null = null
 
             if (preferLipSync) {
@@ -138,8 +138,8 @@ export const POST = apiHandler(async (
             }
 
             if (videoKey) {
-                // 文件名使用描述，清理非法字符
-                const safeDesc = (panel.description || '镜头').slice(0, 50).replace(/[\\/:*?"<>|]/g, '_')
+                // Use description for filename, sanitize invalid chars
+                const safeDesc = (panel.description || 'shot').slice(0, 50).replace(/[\\/:*?"<>|]/g, '_')
 
                 videoCandidates.push({
                     fileName: '',
@@ -152,7 +152,7 @@ export const POST = apiHandler(async (
         }
     }
 
-    // 按 clipIndex 和 panelIndex 排序
+    // Sort by clipIndex and panelIndex
     videoCandidates.sort((a, b) => {
         if (a.clipIndex !== b.clipIndex) {
             return a.clipIndex - b.clipIndex
@@ -160,14 +160,14 @@ export const POST = apiHandler(async (
         return a.panelIndex - b.panelIndex
     })
 
-    // 重新分配连续的全局索引并生成代理URL
+    // Reassign consecutive global indices and generate proxy URLs
     const result = videoCandidates.map((video, idx) => {
         const videoKey = video.videoKey
         const safeDesc = video.desc
         const index = idx + 1
         const fileName = `${String(index).padStart(3, '0')}_${safeDesc}.mp4`
 
-        // 使用代理 URL，避免 CORS 问题
+        // Use proxy URL to avoid CORS
         const proxyUrl = `/api/novel-promotion/${projectId}/video-proxy?key=${encodeURIComponent(videoKey)}`
 
         return {

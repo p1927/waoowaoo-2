@@ -389,10 +389,10 @@ export function applyRunStreamEvent(prev: RunState | null, event: RunStreamEvent
 export function getStageOutput(step: RunStepState | null) {
   if (!step) return ''
   if (step.reasoningOutput && step.textOutput) {
-    return `【思考过程】\n${step.reasoningOutput}\n\n【最终结果】\n${step.textOutput}`
+    return `[Reasoning]\n${step.reasoningOutput}\n\n[Result]\n${step.textOutput}`
   }
-  if (step.reasoningOutput) return `【思考过程】\n${step.reasoningOutput}`
-  if (step.textOutput) return `【最终结果】\n${step.textOutput}`
-  if (step.status === 'failed' && step.errorMessage) return `【错误】\n${step.errorMessage}`
+  if (step.reasoningOutput) return `[Reasoning]\n${step.reasoningOutput}`
+  if (step.textOutput) return `[Result]\n${step.textOutput}`
+  if (step.status === 'failed' && step.errorMessage) return `[Error]\n${step.errorMessage}`
   return ''
 }

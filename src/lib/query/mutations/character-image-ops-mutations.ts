@@ -55,7 +55,7 @@ export function useModifyProjectCharacterImage(projectId: string) {
 }
 
 /**
- * Modify project location image
+ * Modify project character image
  */
 
 export function useRegenerateCharacterGroup(projectId: string) {

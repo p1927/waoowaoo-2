@@ -6,8 +6,8 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 import { attachMediaFieldsToProject } from '@/lib/media/attach'
 
 /**
- * 统一的项目数据加载API
- * 返回项目基础信息、全局配置、全局资产和剧集列表
+ * Unified project data loading API
+ * Returns project base info, global config, global assets and episode list
  */
 export const GET = apiHandler(async (
   request: NextRequest,
@@ -15,12 +15,12 @@ export const GET = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const { session } = authResult
 
-  // 获取基础项目信息
+  // Fetch base project info
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     include: { user: true }
@@ -38,18 +38,18 @@ export const GET = apiHandler(async (
   prisma.project.update({
     where: { id: projectId },
     data: { lastAccessedAt: new Date() }
-  }).catch(err => _ulogError('更新访问时间失败:', err))
+  }).catch(err => _ulogError('Failed to update access time:', err))
 
-  // ⚡ 并行执行：加载 novel-promotion 数据
-  // 注意：characters/locations 延迟加载，首次只获取 episodes 列表
+  // Parallel: load novel-promotion data
+  // Note: characters/locations are lazy-loaded, first fetch only episodes list
   const novelPromotionData = await prisma.novelPromotionProject.findUnique({
     where: { projectId },
     include: {
-      // 剧集列表（基础信息）- 首页必需
+      // Episode list (base info) - required for home page
       episodes: {
         orderBy: { episodeNumber: 'asc' }
       },
-      // ⚡ 角色和场景数据 - 资产显示必需
+      // Characters and locations - required for asset display
       characters: {
         include: {
           appearances: true
@@ -69,14 +69,14 @@ export const GET = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 转换为稳定媒体 URL（并保留兼容字段）
+  // Convert to stable media URLs (preserve compatible fields)
   const novelPromotionDataWithSignedUrls = await attachMediaFieldsToProject(novelPromotionData)
 
   const fullProject = {
     ...project,
     novelPromotionData: novelPromotionDataWithSignedUrls
-    // 🔥 不再用 userPreference 覆盖任何字段
-    // editModel 等配置应该直接使用 novelPromotionData 中的值
+    // No longer override any fields with userPreference
+    // editModel etc. should use values from novelPromotionData directly
   }
 
   return NextResponse.json({ project: fullProject })

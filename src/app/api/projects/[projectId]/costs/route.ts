@@ -7,20 +7,20 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * GET /api/projects/[projectId]/costs
- * 获取项目费用详情
+ * Get project cost details
  */
 export const GET = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const { session } = authResult
 
   const { projectId } = await context.params
 
-  // 验证项目归属
+  // Verify project ownership
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     select: { userId: true, name: true }
@@ -34,7 +34,7 @@ export const GET = apiHandler(async (
     throw new ApiError('FORBIDDEN')
   }
 
-  // 获取费用详情
+  // Fetch cost details
   const costDetails = await getProjectCostDetails(projectId)
 
   return NextResponse.json({

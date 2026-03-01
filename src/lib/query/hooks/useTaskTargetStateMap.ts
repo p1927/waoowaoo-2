@@ -169,7 +169,7 @@ function logMergeDecision(params: {
   })
 }
 
-/** 将数组分成固定大小的块 */
+/** Split array into fixed-size chunks */
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const chunks: T[][] = []
   for (let i = 0; i < arr.length; i += size) {
@@ -178,7 +178,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return chunks
 }
 
-/** 发送单个 targets 请求（targets 长度必须 <= TARGET_STATE_CHUNK_SIZE） */
+/** Send single targets request (targets length must be <= TARGET_STATE_CHUNK_SIZE) */
 async function fetchTargetStatesChunk(
   projectId: string,
   targets: TaskTargetStateQuery[],
@@ -204,15 +204,15 @@ async function flushTaskTargetStateBatch(projectId: string) {
   const subscribers = batch.subscribers.slice()
 
   try {
-    // 将 targets 按 TARGET_STATE_CHUNK_SIZE 分片，并行请求
+    // Split targets by TARGET_STATE_CHUNK_SIZE, request in parallel
     const chunks = chunkArray(mergedTargets, TARGET_STATE_CHUNK_SIZE)
     const chunkResults = await Promise.all(
       chunks.map((chunk) => fetchTargetStatesChunk(projectId, chunk)),
     )
 
-    // 合并所有分片的结果到统一索引
-    // 用 targetQueryKey（含 types）做精确索引，避免同一 (targetType, targetId)
-    // 的不同 types 的状态互相覆盖（例如 image 的 processing 被 lip_sync 的 idle 覆盖）
+    // Merge all chunk results into unified index
+    // Use targetQueryKey (with types) for precise indexing to avoid different types
+    // of same (targetType, targetId) overwriting each other (e.g. image processing overwritten by lip_sync idle)
     const byTargetQueryKey = new Map<string, TaskTargetState>()
     for (let chunkIdx = 0; chunkIdx < chunks.length; chunkIdx++) {
       const chunkTargets = chunks[chunkIdx]

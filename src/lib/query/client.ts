@@ -1,35 +1,35 @@
 import { QueryClient } from '@tanstack/react-query'
 
 /**
- * 全局 QueryClient 配置
- * 用于统一管理所有数据请求的缓存和状态
+ * Global QueryClient configuration
+ * For unified management of all data request cache and state
  */
 export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            // 数据在 5 秒内认为是新鲜的，不会重新请求
+            // Data considered fresh for 5 seconds, no refetch
             staleTime: 5000,
-            // 缓存数据保留 10 分钟
+            // Cache data retained for 10 minutes
             gcTime: 10 * 60 * 1000,
-            // 窗口聚焦时自动刷新
+            // Auto refetch on window focus
             refetchOnWindowFocus: true,
-            // 网络恢复时自动刷新
+            // Auto refetch on network reconnect
             refetchOnReconnect: true,
-            // 失败后重试 1 次
+            // Retry once on failure
             retry: 1,
-            // 重试延迟
+            // Retry delay
             retryDelay: 1000,
         },
         mutations: {
-            // mutation 不重试
+            // Mutations do not retry
             retry: 0,
         },
     },
 })
 
 /**
- * 获取全局 QueryClient 实例
- * 用于在非 React 组件中访问缓存
+ * Get global QueryClient instance
+ * For accessing cache outside React components
  */
 export function getQueryClient() {
     return queryClient

@@ -145,7 +145,7 @@ export function usePanelVariant({ projectId, episodeId, setLocalStoryboards }: U
                 includeLocationAsset: options.includeLocationAsset,
             })
 
-            // API 成功：Panel 已在服务端创建（无图片），用真实 panelId 替换临时 ID
+            // API success: Panel created on server (no image), replace temp ID with real panelId
             // So task state monitoring can match this panel correctly
             const realPanelId = data?.panelId
             _ulogInfo('[usePanelVariant] API success, realPanelId:', realPanelId)

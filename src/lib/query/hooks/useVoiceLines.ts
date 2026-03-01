@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '../keys'
 import { resolveTaskErrorMessage } from '@/lib/task/error-message'
 
-// ============ 类型定义 ============
+// ============ Type definitions ============
 export interface VoiceLine {
     id: string
     panelId: string
@@ -35,10 +35,10 @@ export interface MatchedVoiceLinesData {
     voiceLines: MatchedVoiceLine[]
 }
 
-// ============ 查询 Hooks ============
+// ============ Query Hooks ============
 
 /**
- * 获取语音数据
+ * Fetch voice data
  */
 export function useVoiceLines(episodeId: string | null) {
     return useQuery({
@@ -55,7 +55,7 @@ export function useVoiceLines(episodeId: string | null) {
 }
 
 /**
- * 获取项目剧集配音与镜头匹配数据
+ * Fetch project episode voice and panel match data
  */
 export function useMatchedVoiceLines(projectId: string | null, episodeId: string | null) {
     return useQuery({
@@ -74,7 +74,7 @@ export function useMatchedVoiceLines(projectId: string | null, episodeId: string
 // ============ Mutation Hooks ============
 
 /**
- * 生成单条语音
+ * Generate single voice line
  */
 export function useGenerateVoice(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -102,7 +102,7 @@ export function useGenerateVoice(projectId: string | null, episodeId: string | n
 }
 
 /**
- * 批量生成语音
+ * Batch generate voice
  */
 export function useBatchGenerateVoices(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -130,7 +130,7 @@ export function useBatchGenerateVoices(projectId: string | null, episodeId: stri
 }
 
 /**
- * 更新语音文本
+ * Update voice text
  */
 export function useUpdateVoiceText(episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -148,7 +148,7 @@ export function useUpdateVoiceText(episodeId: string | null) {
             }
             return res.json()
         },
-        // 乐观更新
+        // Optimistic update
         onMutate: async ({ lineId, text }) => {
             if (!episodeId) return
 
@@ -174,7 +174,7 @@ export function useUpdateVoiceText(episodeId: string | null) {
 }
 
 /**
- * 刷新语音数据
+ * Refresh voice data
  */
 export function useRefreshVoiceLines(episodeId: string | null) {
     const queryClient = useQueryClient()
