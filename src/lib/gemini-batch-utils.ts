@@ -86,7 +86,7 @@ export async function submitGeminiBatch(
       } else if (imageData.startsWith('http') || imageData.startsWith('/')) {
         // URL format (including local relative paths /api/files/...): download and convert to base64
         try {
-          // 🔧 本地模式修复：相对路径需要补全完整 URL
+          // Local mode fix: relative paths need full URL
           let fullUrl = imageData
           if (imageData.startsWith('/')) {
             const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
@@ -100,21 +100,21 @@ export async function submitGeminiBatch(
             contentParts.push({ inlineData: { mimeType, data } })
           }
         } catch (e: unknown) {
-          logInternal('GeminiBatch', 'WARN', `下载参考图片 ${i + 1} 失败`, { error: getErrorMessage(e) })
+          logInternal('GeminiBatch', 'WARN', `Failed to download reference image ${i + 1}`, { error: getErrorMessage(e) })
         }
       } else {
-        // 纯 base64
+        // Raw base64
         contentParts.push({
           inlineData: { mimeType: 'image/png', data: imageData }
         })
       }
     }
 
-    // 添加文本提示
+    // Add text prompt
     contentParts.push({ text: prompt })
 
-    // 构建内嵌请求（Inline Requests）
-    // 🔥 添加 imageConfig 以控制输出图片的比例和尺寸
+    // Build inline requests
+    // Add imageConfig to control output image aspect ratio and size
     const imageConfig: UnknownRecord = {}
     if (options?.aspectRatio) {
       imageConfig.aspectRatio = options.aspectRatio

@@ -1,27 +1,27 @@
 import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core'
 /**
- * 异步任务提交工具
- * 
- * 核心功能：
- * 1. 提交任务到外部平台（FAL/Ark）
- * 2. 查询任务状态
- * 3. 下载并保存结果
+ * Async task submission utilities
+ *
+ * Core features:
+ * 1. Submit tasks to external platforms (FAL/Ark)
+ * 2. Query task status
+ * 3. Download and save results
  */
 
-// 注意：API Key 现在通过参数传入，不再使用环境变量
+// Note: API Key is now passed via parameters, no longer uses env vars
 
-// ==================== FAL 队列模式 ====================
+// ==================== FAL Queue Mode ====================
 
 /**
- * 提交FAL任务到队列
- * @param endpoint FAL端点，如 'wan/v2.6/image-to-video'
- * @param input 请求参数
+ * Submit FAL task to queue
+ * @param endpoint FAL endpoint, e.g. 'wan/v2.6/image-to-video'
+ * @param input Request parameters
  * @param apiKey FAL API Key
  * @returns request_id
  */
 export async function submitFalTask(endpoint: string, input: Record<string, unknown>, apiKey: string): Promise<string> {
     if (!apiKey) {
-        throw new Error('请配置 FAL API Key')
+        throw new Error('Please configure FAL API Key')
     }
 
     const response = await fetch(`https://queue.fal.run/${endpoint}`, {
@@ -35,17 +35,17 @@ export async function submitFalTask(endpoint: string, input: Record<string, unkn
 
     if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`FAL提交失败 (${response.status}): ${errorText}`)
+        throw new Error(`FAL submit failed (${response.status}): ${errorText}`)
     }
 
     const data = await response.json()
     const requestId = data.request_id
 
     if (!requestId) {
-        throw new Error('FAL未返回request_id')
+        throw new Error('FAL did not return request_id')
     }
 
-    _ulogInfo(`[FAL Queue] 任务已提交: ${requestId}`)
+    _ulogInfo(`[FAL Queue] Task submitted: ${requestId}`)
     return requestId
 }
 
@@ -80,7 +80,7 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
     error?: string
 }> {
     if (!apiKey) {
-        throw new Error('请配置 FAL API Key')
+        throw new Error('Please configure FAL API Key')
     }
 
     // 🔥 根据 FAL 官方客户端逻辑解析端点 ID

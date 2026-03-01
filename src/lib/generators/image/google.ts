@@ -171,10 +171,10 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
 }
 
 /**
- * Google Imagen 4 图片生成器
- * 
- * 使用 Imagen 4 API（与 Gemini 不同的 API）
- * 支持：imagen-4.0-generate-001, imagen-4.0-fast-generate-001, imagen-4.0-ultra-generate-001
+ * Google Imagen 4 image generator
+ *
+ * Uses Imagen 4 API (different from Gemini API)
+ * Supports: imagen-4.0-generate-001, imagen-4.0-fast-generate-001, imagen-4.0-ultra-generate-001
  */
 export class GoogleImagenGenerator extends BaseImageGenerator {
     private modelId: string
@@ -195,7 +195,7 @@ export class GoogleImagenGenerator extends BaseImageGenerator {
         const ai = new GoogleGenAI({ apiKey })
 
         try {
-            // 使用 Imagen API（不同于 Gemini generateContent）
+            // Use Imagen API (different from Gemini generateContent)
             const response = await ai.models.generateImages({
                 model: this.modelId,
                 prompt,
@@ -205,7 +205,7 @@ export class GoogleImagenGenerator extends BaseImageGenerator {
                 }
             })
 
-            // 提取图片
+            // Extract image
             const generatedImages = (response as ImagenResponse).generatedImages
             if (generatedImages && generatedImages.length > 0) {
                 const imageBytes = generatedImages[0].image?.imageBytes
@@ -218,12 +218,12 @@ export class GoogleImagenGenerator extends BaseImageGenerator {
                 }
             }
 
-            throw new Error('Imagen 未返回图片')
+            throw new Error('Imagen did not return image')
         } catch (error: unknown) {
             const message = getErrorMessage(error)
-            // 检查安全过滤
+            // Check safety filter
             if (message.includes('SAFETY') || message.includes('blocked')) {
-                throw new Error('内容因安全策略被过滤')
+                throw new Error('Content filtered by safety policy')
             }
             throw error
         }
@@ -231,10 +231,10 @@ export class GoogleImagenGenerator extends BaseImageGenerator {
 }
 
 /**
- * Google Gemini Batch 图片生成器（异步模式）
- * 
- * 使用 ai.batches.create() 提交批量任务
- * 价格是标准 API 的 50%，处理时间 24 小时内
+ * Google Gemini Batch image generator (async mode)
+ *
+ * Uses ai.batches.create() to submit batch tasks
+ * 50% of standard API price, processing within 24 hours
  */
 export class GoogleGeminiBatchImageGenerator extends BaseImageGenerator {
     protected async doGenerate(params: ImageGenerateParams): Promise<GenerateResult> {

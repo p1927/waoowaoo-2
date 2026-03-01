@@ -1,5 +1,5 @@
 /**
- * SRT字幕条目
+ * SRT subtitle entry
  */
 export interface SRTEntry {
   index: number
@@ -52,19 +52,19 @@ export function parseSRT(srtText: string): SRTEntry[] {
 export function sliceSRT(srtText: string, start: number, end: number): string {
   const entries = parseSRT(srtText)
   
-  // 过滤指定范围的条目
+  // Filter entries in the specified range
   const slicedEntries = entries.filter(entry => entry.index >= start && entry.index <= end)
   
-  // 重新组装为SRT格式
+  // Reassemble as SRT format
   return slicedEntries.map(entry => 
     `${entry.index}\n${entry.startTime} --> ${entry.endTime}\n${entry.text}`
   ).join('\n\n')
 }
 
 /**
- * 计算SRT片段的总时长（秒）
- * @param srtText SRT文本
- * @returns 总时长（秒）
+ * Calculate total duration of SRT segment (seconds)
+ * @param srtText SRT text
+ * @returns Total duration in seconds
  */
 export function calculateSRTDuration(srtText: string): number {
   const entries = parseSRT(srtText)
@@ -80,9 +80,9 @@ export function calculateSRTDuration(srtText: string): number {
 }
 
 /**
- * 将SRT时间格式转换为秒
- * @param timeStr 时间字符串（例如：00:00:02,500）
- * @returns 秒数
+ * Convert SRT time format to seconds
+ * @param timeStr Time string (e.g. 00:00:02,500)
+ * @returns Seconds
  */
 function timeToSeconds(timeStr: string): number {
   // 格式：HH:MM:SS,mmm
