@@ -214,7 +214,7 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
         // preview: content after numeric prefix (skip "1." etc., not whole line)
         const markerPositionInContent = match.index - startIndex
         // length of numeric prefix
-        const markerPrefix = match.text.match(/^(?:第[一二三四五六七八九十百千\d]+[集章幕]|Episode\s*\d+|Chapter\s*\d+|\*\*\d+\*\*|\d+)[\.、：:\s]*/i)?.[0] || ''
+        const markerPrefix = match.text.match(/^(?:Episode\s*\d+|Chapter\s*\d+|\*\*\d+\*\*|\d+)[\.、：:\s]*/i)?.[0] || ''
         const prefixLength = markerPrefix.length || match.text.length
         const previewStart = markerPositionInContent + prefixLength
         const preview = episodeContent.slice(previewStart, previewStart + 50).trim().slice(0, 20)

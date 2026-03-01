@@ -176,7 +176,7 @@ export default function ScriptViewAssetsPanel({
       }
     })
 
-    // 用当前右侧面板实际展示的“已选角色/形象”做兜底，确保编辑弹层能正确显示选中态
+    // Fallback to current right-panel selected character/appearance so edit modal shows selection
     activeCharIds.forEach((characterId) => {
       const character = characters.find((item) => item.id === characterId)
       if (!character) return

@@ -17,7 +17,7 @@ export function fuzzyMatchLocation(clipLocName: string, libraryLocName: string):
   if (clipLower.includes(libLower)) return true
   if (libLower.includes(clipLower)) return true
 
-  const suffixPattern = /[_\-·](内景|外景|白天|夜晚|黄昏|清晨|傍晚|雨天|晴天|阴天|室内|室外|日|夜|晨|昏)+$/gi
+  const suffixPattern = /[_\-·](INT|EXT|interior|exterior|day|night|dusk|dawn|morning|evening|rain|sunny|indoor|outdoor)+$/gi
   const clipClean = clipLower.replace(suffixPattern, '')
   const libClean = libLower.replace(suffixPattern, '')
   if (clipClean === libClean) return true
