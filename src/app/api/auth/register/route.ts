@@ -10,7 +10,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
   name = body.name || 'unknown'
   const { password } = body
 
-  // 验证输入
+  // Validate input
   if (!name || !password) {
     logAuthAction('REGISTER', name, { error: 'Missing credentials' })
     throw new ApiError('INVALID_PARAMS')
@@ -34,16 +34,16 @@ export const POST = apiHandler(async (request: NextRequest) => {
   // 哈希密码
   const hashedPassword = await bcrypt.hash(password, 12)
 
-  // 创建用户（事务）
+  // Create user (transaction)
   const user = await prisma.$transaction(async (tx) => {
-    // 创建用户
+    // Create user
     const newUser = await tx.user.create({
       data: {
         name,
         password: hashedPassword}
     })
 
-    // 💰 创建用户余额记录（初始余额为0）
+    // 💰 Create user余额记录（初始余额为0）
     await tx.userBalance.create({
       data: {
         userId: newUser.id,

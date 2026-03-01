@@ -7,13 +7,13 @@ import { requireProjectAuthLight, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
- * POST - 确认场景选择并删除未选中的候选图片
+ * POST - Confirm location selection and delete unselected candidates
  * Body: { locationId }
  * 
- * 工作流程：
- * 1. 验证已经选择了一张图片（有 isSelected 的图片）
- * 2. 删除其他未选中的图片（从 COS 和数据库）
- * 3. 将选中的图片设为唯一图片
+ * Workflow:
+ * 1. Verify one image is selected (isSelected)
+ * 2. Delete other unselected images (COS + DB)
+ * 3. Set selected as sole image
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -21,7 +21,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -32,7 +32,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取场景及其图片
+  // Get location and its images
   const location = await prisma.novelPromotionLocation.findUnique({
     where: { id: locationId },
     include: { images: { orderBy: { imageIndex: 'asc' } } }
@@ -45,15 +45,15 @@ export const POST = apiHandler(async (
   const images = location.images || []
 
   if (images.length <= 1) {
-    // 已经只有一张图片，无需操作
+    // Already single image, no-op
     return NextResponse.json({
       success: true,
-      message: '已确认选择',
+      message: 'Selection confirmed',
       deletedCount: 0
     })
   }
 
-  // 找到选中的图片
+  // Find selected image
   const selectedImage = location.selectedImageId
     ? images.find((img) => img.id === location.selectedImageId)
     : images.find((img) => img.isSelected)
@@ -61,7 +61,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 删除未选中的图片
+  // Delete unselected images
   const deletedImages: string[] = []
   const imagesToDelete = images.filter((img) => img.id !== selectedImage.id)
 
@@ -79,9 +79,9 @@ export const POST = apiHandler(async (
     }
   }
 
-  // 在事务中更新数据库
+  // Update DB in transaction
   await prisma.$transaction(async (tx) => {
-    // 删除未选中的图片记录（排除选中的图片 ID）
+    // Delete unselected image records (exclude selected ID)
     await tx.locationImage.deleteMany({
       where: {
         locationId,
@@ -89,7 +89,7 @@ export const POST = apiHandler(async (
       }
     })
 
-    // 更新选中图片的索引为 0
+    // Set selected image index to 0
     await tx.locationImage.update({
       where: { id: selectedImage.id },
       data: { imageIndex: 0 }
@@ -102,11 +102,11 @@ export const POST = apiHandler(async (
   })
 
   _ulogInfo(`✓ 场景确认选择: ${location.name}`)
-  _ulogInfo(`✓ 删除了 ${deletedImages.length} 张未选中的图片`)
+  _ulogInfo(`✓ Deleted ${deletedImages.length} unselected images`)
 
   return NextResponse.json({
     success: true,
-    message: '已确认选择，其他候选图片已删除',
+    message: 'Selection confirmed, other candidates deleted',
     deletedCount: deletedImages.length
   })
 })

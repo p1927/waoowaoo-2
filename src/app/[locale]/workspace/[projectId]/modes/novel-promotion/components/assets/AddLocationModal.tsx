@@ -90,7 +90,7 @@ export default function AddLocationModal({
       if (getErrorStatus(error) === 402) {
         alert(getErrorMessage(error, tc('insufficientBalanceDetail')))
       } else {
-        _ulogError('AI设计失败:', error)
+        _ulogError('AI设计failed:', error)
         if (shouldShowError(error)) {
           alert(getErrorMessage(error, t('errors.aiDesignFailed')))
         }

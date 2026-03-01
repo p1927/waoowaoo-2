@@ -11,7 +11,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * POST /api/asset-hub/update-asset-label
- * 更新资产中心图片上的黑边标识符（修改名字后调用）
+ * Update asset hub image border label (after name change)
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     await initializeFonts()
@@ -114,7 +114,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
 })
 
 /**
- * 更新图片的黑边标签
+ * Update image border label
  * 生成新 COS key 上传，URL 变化后浏览器缓存失效，前端能立即看到新标签
  */
 async function updateImageLabel(imageUrl: string, newLabelText: string): Promise<string> {

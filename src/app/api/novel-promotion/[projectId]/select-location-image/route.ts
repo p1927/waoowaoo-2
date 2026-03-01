@@ -6,8 +6,8 @@ import { requireProjectAuthLight, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
- * POST - 选择场景图片
- * 直接更新独立的 LocationImage 表
+ * POST - Select location image
+ * Update LocationImage table directly
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -15,7 +15,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -25,7 +25,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取场景和所有图片
+  // Get location and all images
   const location = await prisma.novelPromotionLocation.findUnique({
     where: { id: locationId },
     include: { images: { orderBy: { imageIndex: 'asc' } } }
@@ -35,7 +35,7 @@ export const POST = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 验证索引
+  // Validate index
   if (selectedIndex !== null) {
     const targetImage = location.images.find(img => img.imageIndex === selectedIndex)
     if (!targetImage || !targetImage.imageUrl) {
@@ -43,13 +43,13 @@ export const POST = apiHandler(async (
     }
   }
 
-  // 先取消所有选中状态（兼容旧字段）
+  // Clear all selected state (backward compat)
   await prisma.locationImage.updateMany({
     where: { locationId },
     data: { isSelected: false }
   })
 
-  // 选中指定的图片
+  // Select given image
   let signedUrl: string | null = null
   if (selectedIndex !== null) {
     const updated = await prisma.locationImage.update({
@@ -61,13 +61,13 @@ export const POST = apiHandler(async (
       where: { id: locationId },
       data: { selectedImageId: updated.id }
     })
-    _ulogInfo(`✓ 场景 ${location.name}: 选择了索引 ${selectedIndex}`)
+    _ulogInfo(`✓ Location ${location.name}: selected index ${selectedIndex}`)
   } else {
     await prisma.novelPromotionLocation.update({
       where: { id: locationId },
       data: { selectedImageId: null }
     })
-    _ulogInfo(`✓ 场景 ${location.name}: 取消选择`)
+    _ulogInfo(`✓ Location ${location.name}: selection cleared`)
   }
 
   return NextResponse.json({

@@ -43,7 +43,7 @@ function parseScreenplay(value: string | null | undefined): ScreenplayData | nul
     if (!Array.isArray(scenes)) return null
     return parsed as ScreenplayData
   } catch (error) {
-    _ulogWarn('解析剧本JSON失败:', error)
+    _ulogWarn('解析剧本JSONfailed:', error)
     return null
   }
 }

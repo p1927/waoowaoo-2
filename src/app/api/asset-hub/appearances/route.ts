@@ -39,7 +39,7 @@ interface AssetHubAppearancesDb {
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubAppearancesDb
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -78,11 +78,11 @@ export const POST = apiHandler(async (request: NextRequest) => {
 
 /**
  * PATCH /api/asset-hub/appearances
- * 更新子形象描述
+ * Update sub-appearance description
  */
 export const PATCH = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubAppearancesDb
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -127,11 +127,11 @@ export const PATCH = apiHandler(async (request: NextRequest) => {
 
 /**
  * DELETE /api/asset-hub/appearances
- * 删除子形象
+ * Delete sub-appearance
  */
 export const DELETE = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubAppearancesDb
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

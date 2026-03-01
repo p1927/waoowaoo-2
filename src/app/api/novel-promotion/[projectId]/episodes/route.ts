@@ -4,7 +4,7 @@ import { requireProjectAuth, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
- * GET - 获取项目的所有剧集
+ * GET - Get all episodes for project
  */
 export const GET = apiHandler(async (
   request: NextRequest,
@@ -12,7 +12,7 @@ export const GET = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuth(projectId)
   if (isErrorResponse(authResult)) return authResult
   const { novelData } = authResult
@@ -26,7 +26,7 @@ export const GET = apiHandler(async (
 })
 
 /**
- * POST - 创建新剧集
+ * POST - Create new episode
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -34,7 +34,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuth(projectId)
   if (isErrorResponse(authResult)) return authResult
   const { novelData } = authResult
@@ -53,7 +53,7 @@ export const POST = apiHandler(async (
   })
   const nextEpisodeNumber = (lastEpisode?.episodeNumber || 0) + 1
 
-  // 创建剧集
+  // Create episode
   const episode = await prisma.novelPromotionEpisode.create({
     data: {
       novelPromotionProjectId: novelData.id,
@@ -63,7 +63,7 @@ export const POST = apiHandler(async (
     }
   })
 
-  // 更新最后编辑的剧集ID
+  // Update last edited episode ID
   await prisma.novelPromotionProject.update({
     where: { id: novelData.id },
     data: { lastEpisodeId: episode.id }

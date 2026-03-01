@@ -166,7 +166,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
     )
   }
 
-  // 删除场景
+  // Delete location
   const handleDelete = () => {
     deleteLocation.mutate(location.id, {
       onSettled: () => setShowDeleteConfirm(false)
@@ -213,7 +213,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
           </div>
         </div>
 
-        {/* 任务失败错误提示 */}
+        {/* 任务failed错误提示 */}
         {taskErrorDisplay && !isTaskRunning && (
           <div className="flex items-center gap-2 mb-3 p-2 rounded-lg bg-[var(--glass-danger-ring)] text-[var(--glass-tone-danger-fg)]">
             <AppIcon name="alert" className="w-4 h-4 shrink-0" />

@@ -32,8 +32,7 @@ interface TimelineProps {
 }
 
 /**
- * 时间轴主组件
- * 使用 dnd-kit 实现拖拽排序
+ * Timeline - dnd-kit drag-and-drop order
  */
 export const Timeline: React.FC<TimelineProps> = ({
     clips,
@@ -45,13 +44,13 @@ export const Timeline: React.FC<TimelineProps> = ({
     onSeek
 }) => {
     const t = useTranslations('video')
-    // 计算总时长和播放头位置
+    // Total duration and playhead
     const totalDuration = clips.reduce((sum, clip) => sum + clip.durationInFrames, 0)
     const playheadPosition = totalDuration > 0 ? (timelineState.currentFrame / totalDuration) * 100 : 0
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 5 // 5px 移动才开始拖拽
+                distance: 5 // 5px before drag starts
             }
         }),
         useSensor(KeyboardSensor, {
@@ -80,7 +79,7 @@ export const Timeline: React.FC<TimelineProps> = ({
             border: '1px solid var(--glass-stroke-base)',
             height: '100%'
         }}>
-            {/* 缩放控制 */}
+            {/* Zoom */}
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -101,7 +100,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 </span>
             </div>
 
-            {/* 进度条 + 播放头 */}
+            {/* Progress + playhead */}
             <div
                 style={{
                     position: 'relative',
@@ -110,7 +109,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                     border: '1px solid var(--glass-stroke-base)',
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    marginLeft: '70px'  // 与轨道标签对齐
+                    marginLeft: '70px'  // Align with track labels
                 }}
                 onClick={(e) => {
                     if (!onSeek || totalDuration === 0) return
@@ -121,7 +120,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                     onSeek(Math.max(0, Math.min(totalDuration, frame)))
                 }}
             >
-                {/* 已播放部分 */}
+                {/* Played */}
                 <div style={{
                     position: 'absolute',
                     left: 0,
@@ -132,7 +131,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                     borderRadius: '4px 0 0 4px',
                     transition: timelineState.playing ? 'none' : 'width 0.1s'
                 }} />
-                {/* 播放头指示器 */}
+                {/* Playhead */}
                 <div style={{
                     position: 'absolute',
                     left: `${playheadPosition}%`,
@@ -145,7 +144,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                     transform: 'translateX(-50%)',
                     transition: timelineState.playing ? 'none' : 'left 0.1s'
                 }} />
-                {/* 时间标记 */}
+                {/* Time marks */}
                 <div style={{
                     position: 'absolute',
                     right: '8px',
@@ -158,7 +157,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 </div>
             </div>
 
-            {/* 视频轨道 */}
+            {/* Video track */}
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -214,7 +213,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 </DndContext>
             </div>
 
-            {/* 配音轨道 (显示附属音频) */}
+            {/* Voice track (attached audio) */}
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -255,7 +254,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 </div>
             </div>
 
-            {/* BGM 轨道 */}
+            {/* BGM track */}
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -279,7 +278,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 }
 
 /**
- * 可拖拽的片段组件
+ * Draggable clip
  */
 interface SortableClipProps {
     clip: VideoClip
@@ -350,7 +349,7 @@ const SortableClip: React.FC<SortableClipProps> = ({
                 {framesToTime(clip.durationInFrames, fps)}
             </span>
 
-            {/* 转场指示器 */}
+            {/* Transition indicator */}
             {clip.transition && clip.transition.type !== 'none' && (
                 <div style={{
                     position: 'absolute',

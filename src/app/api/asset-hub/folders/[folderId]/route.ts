@@ -3,14 +3,14 @@ import { prisma } from '@/lib/prisma'
 import { requireUserAuth, isErrorResponse } from '@/lib/api-auth'
 import { ApiError, apiHandler } from '@/lib/api-errors'
 
-// 更新文件夹
+// Update folder
 export const PATCH = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ folderId: string }> }
 ) => {
     const { folderId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -22,7 +22,7 @@ export const PATCH = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 验证所有权
+    // Verify ownership
     const folder = await prisma.globalAssetFolder.findUnique({
         where: { id: folderId }
     })
@@ -39,19 +39,19 @@ export const PATCH = apiHandler(async (
     return NextResponse.json({ success: true, folder: updatedFolder })
 })
 
-// 删除文件夹
+// Delete folder
 export const DELETE = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ folderId: string }> }
 ) => {
     const { folderId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
 
-    // 验证所有权
+    // Verify ownership
     const folder = await prisma.globalAssetFolder.findUnique({
         where: { id: folderId }
     })
@@ -60,7 +60,7 @@ export const DELETE = apiHandler(async (
         throw new ApiError('FORBIDDEN')
     }
 
-    // 删除前，将文件夹内的资产移动到根目录（folderId = null）
+    // Before delete, move folder assets to root (folderId = null)
     await prisma.globalCharacter.updateMany({
         where: { folderId },
         data: { folderId: null }
@@ -71,7 +71,7 @@ export const DELETE = apiHandler(async (
         data: { folderId: null }
     })
 
-    // 删除文件夹
+    // Delete folder
     await prisma.globalAssetFolder.delete({
         where: { id: folderId }
     })

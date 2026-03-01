@@ -7,7 +7,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * PATCH /api/novel-promotion/[projectId]/character-voice
- * 更新角色的配音音色设置
+ * Update character voice settings
  * Body: { characterId, voiceType, voiceId, customVoiceUrl }
  */
 export const PATCH = apiHandler(async (
@@ -16,7 +16,7 @@ export const PATCH = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -27,7 +27,7 @@ export const PATCH = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 更新角色音色设置
+  // Update character voice settings
   const character = await prisma.novelPromotionCharacter.update({
     where: { id: characterId },
     data: {
@@ -52,7 +52,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -79,7 +79,7 @@ export const POST = apiHandler(async (
     const key = generateUniqueKey(`voice/custom/${projectId}/${characterId}`, 'wav')
     const cosUrl = await uploadToCOS(audioBuffer, key)
 
-    // 更新角色音色设置
+    // Update character voice settings
     const character = await prisma.novelPromotionCharacter.update({
       where: { id: characterId },
       data: {
@@ -113,7 +113,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 验证文件类型
+  // Validate file type
   const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/x-m4a']
   if (!allowedTypes.includes(file.type) && !file.name.match(/\.(mp3|wav|ogg|m4a)$/i)) {
     throw new ApiError('INVALID_PARAMS')
@@ -130,7 +130,7 @@ export const POST = apiHandler(async (
   const key = generateUniqueKey(`voice/custom/${projectId}/${characterId}`, ext)
   const audioUrl = await uploadToCOS(buffer, key)
 
-  // 更新角色音色设置为自定义
+  // Update character voice settings为自定义
   const character = await prisma.novelPromotionCharacter.update({
     where: { id: characterId },
     data: {

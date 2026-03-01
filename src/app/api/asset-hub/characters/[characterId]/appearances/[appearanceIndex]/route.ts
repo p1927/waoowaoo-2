@@ -4,14 +4,14 @@ import { requireUserAuth, isErrorResponse } from '@/lib/api-auth'
 import { encodeImageUrls } from '@/lib/contracts/image-urls-contract'
 import { ApiError, apiHandler } from '@/lib/api-errors'
 
-// 更新形象描述
+// Update appearance description
 export const PATCH = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ characterId: string; appearanceIndex: string }> }
 ) => {
     const { characterId, appearanceIndex } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -74,7 +74,7 @@ export const POST = apiHandler(async (
 ) => {
     const { characterId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -112,14 +112,14 @@ export const POST = apiHandler(async (
     return NextResponse.json({ success: true, appearance })
 })
 
-// 删除形象
+// Delete appearance
 export const DELETE = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ characterId: string; appearanceIndex: string }> }
 ) => {
     const { characterId, appearanceIndex } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

@@ -110,9 +110,9 @@ export default function InsertPanelModal({
 
                 {/* 内容 */}
                 <div className="p-5 space-y-4">
-                    {/* 前后镜头预览 - 更紧凑 */}
+                    {/* 前后Shot预览 - 更紧凑 */}
                     <div className="flex gap-3 items-center">
-                        {/* 前一个镜头 */}
+                        {/* 前一个Shot */}
                         <div className="flex-1 bg-[var(--glass-bg-muted)] rounded-lg p-2 text-center">
                             {prevPanel.imageUrl ? (
                                 <MediaImageWithLoading
@@ -136,7 +136,7 @@ export default function InsertPanelModal({
                             </div>
                         </div>
 
-                        {/* 后一个镜头 */}
+                        {/* 后一个Shot */}
                         <div className="flex-1 bg-[var(--glass-bg-muted)] rounded-lg p-2 text-center">
                             {nextPanel ? (
                                 <>

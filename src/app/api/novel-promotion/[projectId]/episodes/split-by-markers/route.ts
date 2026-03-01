@@ -1,7 +1,7 @@
 import { logInfo as _ulogInfo } from '@/lib/logging/core'
 /**
- * 标识符分集 API
- * 根据检测到的分集标记直接切割文本，不调用 AI
+ * Marker-based episode split API
+ * Split text by detected markers, no AI
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -15,11 +15,11 @@ export const POST = apiHandler(async (
     request: NextRequest,
     { params }: { params: Promise<{ projectId: string }> }
 ) => {
-    _ulogInfo('[Split-By-Markers API] ========== 开始处理请求 ==========')
+    _ulogInfo('[Split-By-Markers API] ========== Start processing request ==========')
 
     const { projectId } = await params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
     const session = authResult.session
@@ -36,7 +36,7 @@ export const POST = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 验证项目存在
+    // Verify project exists
     const project = await prisma.novelPromotionProject.findFirst({
         where: { projectId },
         include: { project: true }
@@ -48,22 +48,22 @@ export const POST = apiHandler(async (
 
     const projectName = project.project?.name || projectId
 
-    // 执行分集标记检测
+    // Run episode marker detection
     const markerResult = detectEpisodeMarkers(content)
 
     if (!markerResult.hasMarkers || markerResult.matches.length < 2) {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 根据标记分割内容
+    // Split content by markers
     const episodes = splitByMarkers(content, markerResult)
 
-    // 记录日志
+    // Log
     logUserAction(
         'EPISODE_SPLIT_BY_MARKERS',
         userId,
         username,
-        `标识符分集完成 - ${episodes.length} 集，标记类型: ${markerResult.markerType}`,
+        `Marker split done - ${episodes.length} 集，标记类型: ${markerResult.markerType}`,
         {
             markerType: markerResult.markerType,
             confidence: markerResult.confidence,

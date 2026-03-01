@@ -1,5 +1,5 @@
 /**
- * 批量创建剧集 API
+ * 批量Create episode API
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -19,7 +19,7 @@ export const POST = apiHandler(async (
 ) => {
     const { projectId } = await params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
     const { episodes, clearExisting = false, importStatus } = await request.json()
@@ -28,7 +28,7 @@ export const POST = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 验证项目存在
+    // Verify project exists
     const project = await prisma.novelPromotionProject.findFirst({
         where: { projectId }
     })
@@ -44,7 +44,7 @@ export const POST = apiHandler(async (
         })
     }
 
-    // 如果剧集数组为空，只更新 importStatus
+    // If episodes array empty, only update importStatus
     if (episodes.length === 0) {
         if (importStatus) {
             await prisma.novelPromotionProject.update({
@@ -67,7 +67,7 @@ export const POST = apiHandler(async (
 
     const startNumber = clearExisting ? 1 : (lastEpisode?.episodeNumber || 0) + 1
 
-    // 批量创建剧集
+    // 批量Create episode
     const createdEpisodes = await prisma.$transaction(
         (episodes as BatchEpisode[]).map((ep, idx) =>
             prisma.novelPromotionEpisode.create({
@@ -82,7 +82,7 @@ export const POST = apiHandler(async (
         )
     )
 
-    // 更新项目的 lastEpisodeId 和 importStatus
+    // Update project lastEpisodeId and importStatus
     const updateData: { lastEpisodeId: string; importStatus?: string } = { lastEpisodeId: createdEpisodes[0].id }
     if (importStatus) {
         updateData.importStatus = importStatus

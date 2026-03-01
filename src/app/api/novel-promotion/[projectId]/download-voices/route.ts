@@ -15,12 +15,12 @@ export const GET = apiHandler(async (
   const { searchParams } = new URL(request.url)
   const episodeId = searchParams.get('episodeId')
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
   const { project } = authResult
 
-  // 获取配音台词
+  // Get voice lines
   const whereClause: Record<string, unknown> = {
     audioUrl: { not: null }
   }
@@ -28,7 +28,7 @@ export const GET = apiHandler(async (
   if (episodeId) {
     whereClause.episodeId = episodeId
   } else {
-    // 如果没有指定 episodeId，获取该项目所有剧集的配音
+    // If no episodeId, get all episode voices for project
     const npData = await prisma.novelPromotionProject.findFirst({
       where: { projectId },
       include: { episodes: { select: { id: true } } }
@@ -41,7 +41,7 @@ export const GET = apiHandler(async (
   const voiceLines = await prisma.novelPromotionVoiceLine.findMany({
     where: whereClause,
     orderBy: [
-      { lineIndex: 'asc' }  // 按台词序号排序（绝对顺序）
+      { lineIndex: 'asc' }  // Sort by line index (absolute order)
     ]
   })
 
@@ -115,17 +115,17 @@ export const GET = apiHandler(async (
           audioData = Buffer.from(arrayBuffer)
         }
 
-        // 清理发言人名称中的非法字符
+        // Sanitize speaker name
         const safeSpeaker = line.speaker.replace(/[\\/:*?"<>|]/g, '_')
 
-        // 截取台词内容前15字作为文件名的一部分
+        // First 15 chars of line as filename part
         const safeContent = line.content.slice(0, 15).replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, '_')
 
-        // 确定文件扩展名
+        // Determine file extension
         const extSource = storageKey || line.audioUrl
         const ext = extSource.endsWith('.wav') ? 'wav' : 'mp3'
 
-        // 文件名格式: 序号_名字_语音内容.mp3（按绝对顺序排列，不按发言人分文件夹）
+        // Filename: index_name_content.mp3 (absolute order)
         const fileName = `${String(line.lineIndex).padStart(3, '0')}_${safeSpeaker}_${safeContent}.${ext}`
 
         archive.append(audioData, { name: fileName })

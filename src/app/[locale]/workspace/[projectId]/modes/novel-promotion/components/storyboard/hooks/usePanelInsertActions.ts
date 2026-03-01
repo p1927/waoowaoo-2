@@ -60,7 +60,7 @@ export function usePanelInsertActions({
         _ulogInfo('请求被中断（可能是页面刷新）')
         return
       }
-      _ulogError('插入分镜失败:', error)
+      _ulogError('插入分镜failed:', error)
       alert(
         t('messages.insertPanelFailed', {
           error: getErrorMessage(error, t('common.unknownError')),

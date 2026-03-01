@@ -51,7 +51,7 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
     useEffect(() => {
         if (!isOpen) return
         refetchVoices().catch((error) => {
-            _ulogError('加载音色失败:', error)
+            _ulogError('加载音色failed:', error)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])

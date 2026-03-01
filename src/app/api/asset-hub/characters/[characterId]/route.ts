@@ -10,7 +10,7 @@ export const GET = apiHandler(async (
 ) => {
     const { characterId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -27,14 +27,14 @@ export const GET = apiHandler(async (
     return NextResponse.json({ character })
 })
 
-// 更新角色
+// Update character
 export const PATCH = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ characterId: string }> }
 ) => {
     const { characterId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -80,14 +80,14 @@ export const PATCH = apiHandler(async (
     return NextResponse.json({ success: true, character: updatedCharacter })
 })
 
-// 删除角色
+// Delete character
 export const DELETE = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ characterId: string }> }
 ) => {
     const { characterId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

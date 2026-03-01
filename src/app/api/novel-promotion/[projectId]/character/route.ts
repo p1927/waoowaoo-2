@@ -12,14 +12,14 @@ function toObject(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>
 }
 
-// 更新角色信息（名字或介绍）
+// Update character信息（名字或介绍）
 export const PATCH = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -34,12 +34,12 @@ export const PATCH = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 构建更新数据
+  // Build update payload
   const updateData: { name?: string; introduction?: string } = {}
   if (name) updateData.name = name.trim()
   if (introduction !== undefined) updateData.introduction = introduction.trim()
 
-  // 更新角色
+  // Update character
   const character = await prisma.novelPromotionCharacter.update({
     where: { id: characterId },
     data: updateData
@@ -48,14 +48,14 @@ export const PATCH = apiHandler(async (
   return NextResponse.json({ success: true, character })
 })
 
-// 删除角色（级联删除关联的形象记录）
+// Delete character（级联删除关联的形象记录）
 export const DELETE = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -66,7 +66,7 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 删除角色（CharacterAppearance 会级联删除）
+  // Delete character（CharacterAppearance 会级联删除）
   await prisma.novelPromotionCharacter.delete({
     where: { id: characterId }
   })
@@ -81,7 +81,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuth(projectId)
   if (isErrorResponse(authResult)) return authResult
   const { novelData } = authResult
@@ -112,7 +112,7 @@ export const POST = apiHandler(async (
     allReferenceImages = [referenceImageUrl]
   }
 
-  // 创建角色
+  // Create character
   const character = await prisma.novelPromotionCharacter.create({
     data: {
       novelPromotionProjectId: novelData.id,
@@ -121,7 +121,7 @@ export const POST = apiHandler(async (
     }
   })
 
-  // 创建初始形象（独立表）
+  // Create initial appearance (separate table)
   const descText = description?.trim() || `Character setting for ${name.trim()}`
   const appearance = await prisma.characterAppearance.create({
     data: {
@@ -159,10 +159,10 @@ export const POST = apiHandler(async (
         },
       })
     }).catch(err => {
-      _ulogError('[Character API] 参考图后台生成任务触发失败:', err)
+      _ulogError('[Character API] 参考图后台生成任务触发failed:', err)
     })
   } else if (description?.trim()) {
-    // 普通创建：触发后台图片生成
+    // Normal create: trigger background image generation
     const { getBaseUrl } = await import('@/lib/env')
     const baseUrl = getBaseUrl()
     fetch(`${baseUrl}/api/novel-promotion/${projectId}/generate-character-image`, {
@@ -183,7 +183,7 @@ export const POST = apiHandler(async (
         },
       })
     }).catch(err => {
-      _ulogError('[Character API] 后台图片生成任务触发失败:', err)
+      _ulogError('[Character API] 后台图片生成任务触发failed:', err)
     })
   }
 

@@ -123,7 +123,7 @@ export function useProfileManagement({
         }
     }, [batchConfirmProfilesMutation, refreshAssets, showToast, t, unconfirmedCharacters.length])
 
-    // 删除角色档案（同时删除角色）
+    // Delete character档案（同时Delete character）
     const handleDeleteProfile = useCallback(async (characterId: string) => {
         if (!confirm(t('characterProfile.deleteConfirm'))) {
             return

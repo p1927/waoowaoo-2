@@ -313,7 +313,7 @@ export function useBatchGeneration({
         }
     }
 
-    // 清除单个本地兜底状态（仅用于提交失败场景）
+    // 清除单个本地兜底状态（仅用于提交failed场景）
     const clearTransientTaskKey = useCallback((key: string) => {
         setPendingRegenerationKeys(prev => {
             const next = new Set(prev)

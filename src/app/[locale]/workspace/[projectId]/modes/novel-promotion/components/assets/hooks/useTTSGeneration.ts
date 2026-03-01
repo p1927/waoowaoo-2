@@ -64,7 +64,7 @@ export function useTTSGeneration({
             // 🔥 刷新缓存
             refreshAssets()
         } catch (error: unknown) {
-            _ulogError('更新音色失败:', getErrorMessage(error, t('common.unknownError')))
+            _ulogError('Update voicefailed:', getErrorMessage(error, t('common.unknownError')))
         }
     }
 

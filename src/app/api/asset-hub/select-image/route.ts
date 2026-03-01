@@ -48,7 +48,7 @@ interface AssetHubSelectDb {
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubSelectDb
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -79,7 +79,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
                     where: { id: appearance.id },
                     data: {
                         imageUrl: selectedUrl,
-                        imageUrls: encodeImageUrls([selectedUrl]), // 只保留选中的图片
+                        imageUrls: encodeImageUrls([selectedUrl]), // Keep only selected images
                         selectedIndex: 0
                     }
                 })
@@ -104,7 +104,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             throw new ApiError('NOT_FOUND')
         }
 
-        // 更新选中状态
+        // Update selected state
         await db.globalLocationImage.updateMany({
             where: { locationId: id },
             data: { isSelected: false }

@@ -35,16 +35,16 @@ export const GET = apiHandler(async (
   const { searchParams } = new URL(request.url)
   const episodeId = searchParams.get('episodeId')
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
   const { project } = authResult
 
-  // 根据是否指定 episodeId 来获取数据
+  // Get data by episodeId or all
   let episodes: EpisodeData[] = []
 
   if (episodeId) {
-    // 只获取指定剧集的数据
+    // Get specified episode only
     const episode = await prisma.novelPromotionEpisode.findUnique({
       where: { id: episodeId },
       include: {
@@ -63,7 +63,7 @@ export const GET = apiHandler(async (
       episodes = [episode]
     }
   } else {
-    // 获取所有剧集的数据
+    // Get all episodes
     const npData = await prisma.novelPromotionProject.findFirst({
       where: { projectId },
       include: {
@@ -89,7 +89,7 @@ export const GET = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 收集所有有图片的 panel
+  // Collect panels with images
   interface ImageItem {
     description: string
     imageUrl: string
@@ -98,7 +98,7 @@ export const GET = apiHandler(async (
   }
   const images: ImageItem[] = []
 
-  // 从 episodes 中获取所有 storyboards 和 clips
+  // Get storyboards and clips from episodes
   const allStoryboards: StoryboardData[] = []
   const allClips: ClipData[] = []
   for (const episode of episodes) {
@@ -108,15 +108,15 @@ export const GET = apiHandler(async (
 
   // 遍历所有 storyboard 和 panel
   for (const storyboard of allStoryboards) {
-    // 使用 clip 在 clips 数组中的索引来排序
+    // Sort by clip index in clips array
     const clipIndex = allClips.findIndex((clip) => clip.id === storyboard.clipId)
 
-    // 使用独立的 Panel 记录
+    // Use standalone Panel record
     const panels = storyboard.panels || []
     for (const panel of panels) {
       if (panel.imageUrl) {
         images.push({
-          description: panel.description || `镜头`,
+          description: panel.description || `Shot`,
           imageUrl: panel.imageUrl,
           clipIndex: clipIndex >= 0 ? clipIndex : 999,
           panelIndex: panel.panelIndex || 0
@@ -125,7 +125,7 @@ export const GET = apiHandler(async (
     }
   }
 
-  // 按 clipIndex 和 panelIndex 排序
+  // Sort by clipIndex and panelIndex
   images.sort((a, b) => {
     if (a.clipIndex !== b.clipIndex) {
       return a.clipIndex - b.clipIndex
@@ -133,7 +133,7 @@ export const GET = apiHandler(async (
     return a.panelIndex - b.panelIndex
   })
 
-  // 重新分配连续的全局索引
+  // Reassign consecutive global index
   const indexedImages = images.map((v, idx) => ({
     ...v,
     index: idx + 1
@@ -168,7 +168,7 @@ export const GET = apiHandler(async (
         const storageKey = await resolveStorageKeyFromMediaValue(image.imageUrl)
 
         if (image.imageUrl.startsWith('http://') || image.imageUrl.startsWith('https://')) {
-          // 外部 URL，直接下载
+          // External URL, download directly
           const response = await fetch(toFetchableUrl(image.imageUrl))
           if (!response.ok) {
             throw new Error(`Failed to fetch: ${response.statusText}`)
@@ -184,7 +184,7 @@ export const GET = apiHandler(async (
           }
         } else if (storageKey) {
           if (isLocal) {
-            // 本地存储：通过文件服务 API 获取
+            // Local: fetch via file API
             const { getSignedUrl } = await import('@/lib/cos')
             const localUrl = toFetchableUrl(getSignedUrl(storageKey))
             const response = await fetch(localUrl)
@@ -193,7 +193,7 @@ export const GET = apiHandler(async (
             }
             imageData = Buffer.from(await response.arrayBuffer())
           } else {
-            // COS：从 COS 下载
+            // COS: download from COS
             const cos = getCOSClient()
             imageData = await new Promise<Buffer>((resolve, reject) => {
               cos.getObject(
@@ -223,7 +223,7 @@ export const GET = apiHandler(async (
           imageData = Buffer.from(arrayBuffer)
         }
 
-        // 文件名使用描述，清理非法字符
+        // Filename from description, sanitize
         const safeDesc = image.description.slice(0, 50).replace(/[\\/:*?"<>|]/g, '_')
         const fileName = `${String(image.index).padStart(3, '0')}_${safeDesc}.${extension}`
         archive.append(imageData, { name: fileName })

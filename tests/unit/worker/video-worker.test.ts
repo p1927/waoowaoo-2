@@ -133,7 +133,7 @@ describe('worker video processor behavior', () => {
     mod.createVideoWorker()
   })
 
-  it('VIDEO_PANEL: 缺少 payload.videoModel 时显式失败', async () => {
+  it('VIDEO_PANEL: 缺少 payload.videoModel 时显式failed', async () => {
     const processor = workerState.processor
     expect(processor).toBeTruthy()
 
@@ -179,7 +179,7 @@ describe('worker video processor behavior', () => {
     )
   })
 
-  it('LIP_SYNC: 缺少 panel 时显式失败', async () => {
+  it('LIP_SYNC: 缺少 panel 时显式failed', async () => {
     const processor = workerState.processor
     expect(processor).toBeTruthy()
 

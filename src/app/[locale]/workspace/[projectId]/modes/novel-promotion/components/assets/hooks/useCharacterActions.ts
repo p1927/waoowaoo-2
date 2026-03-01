@@ -65,7 +65,7 @@ export function useCharacterActions({
         return character.appearances || []
     }, [])
 
-    // 删除角色
+    // Delete character
     const handleDeleteCharacter = useCallback(async (characterId: string) => {
         if (!confirm(t('character.deleteConfirm'))) return
         try {
@@ -158,7 +158,7 @@ export function useCharacterActions({
         )
     }, [regenerateGroup, t])
 
-    // 更新形象描述 - 🔥 仍需保存到服务器
+    // Update appearance description - 🔥 仍需保存到服务器
     const handleUpdateAppearanceDescription = useCallback(async (
         characterId: string,
         appearanceId: string,
@@ -175,7 +175,7 @@ export function useCharacterActions({
             refreshAssets()
         } catch (error: unknown) {
             if (!isAbortError(error)) {
-                _ulogError('更新描述失败:', getErrorMessage(error, t('common.unknownError')))
+                _ulogError('Update descriptionfailed:', getErrorMessage(error, t('common.unknownError')))
             }
         }
     }, [refreshAssets, updateAppearanceDescriptionMutation, t])

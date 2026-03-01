@@ -211,7 +211,7 @@ export default function ProfilePage() {
         setTransactionPagination(data.pagination || null)
       }
     } catch (error) {
-      _ulogError('获取交易记录失败:', error)
+      _ulogError('获取交易记录failed:', error)
     }
   }, [txEndDate, txPage, txStartDate, txType])
 
@@ -239,7 +239,7 @@ export default function ProfilePage() {
       }
       await fetchTransactions()
     } catch (error) {
-      _ulogError('获取数据失败:', error)
+      _ulogError('获取数据failed:', error)
     } finally {
       setLoading(false)
     }
@@ -281,7 +281,7 @@ export default function ProfilePage() {
         })
       }
     } catch (error) {
-      _ulogError('获取项目费用失败:', error)
+      _ulogError('获取项目费用failed:', error)
     } finally {
       setDetailsLoading(false)
     }

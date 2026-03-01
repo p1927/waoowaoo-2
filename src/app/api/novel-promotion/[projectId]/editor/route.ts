@@ -5,7 +5,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * GET /api/novel-promotion/[projectId]/editor
- * 获取剧集的编辑器项目数据
+ * Get episode的编辑器项目数据
  */
 export const GET = apiHandler(async (
     request: NextRequest,
@@ -13,7 +13,7 @@ export const GET = apiHandler(async (
 ) => {
     const { projectId } = await params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 
@@ -52,7 +52,7 @@ export const PUT = apiHandler(async (
 ) => {
     const { projectId } = await params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 
@@ -75,7 +75,7 @@ export const PUT = apiHandler(async (
         throw new ApiError('NOT_FOUND')
     }
 
-    // 保存或更新编辑器项目
+    // Save or update editor project
     const editorProject = await prisma.videoEditorProject.upsert({
         where: { episodeId },
         create: {
@@ -97,7 +97,7 @@ export const PUT = apiHandler(async (
 
 /**
  * DELETE /api/novel-promotion/[projectId]/editor
- * 删除编辑器项目
+ * Delete editor project
  */
 export const DELETE = apiHandler(async (
     request: NextRequest,
@@ -105,7 +105,7 @@ export const DELETE = apiHandler(async (
 ) => {
     const { projectId } = await params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 

@@ -12,8 +12,8 @@ function toObject(value: unknown): Record<string, unknown> {
 
 /**
  * POST /api/novel-promotion/[projectId]/generate-character-image
- * 专门用于后台触发角色图片生成的简化 API
- * 内部调用 generate-image API
+ * Simplified API to trigger character image generation
+ * 内部Call generate-image API
  */
 export const POST = apiHandler(async (
     request: NextRequest,
@@ -21,7 +21,7 @@ export const POST = apiHandler(async (
 ) => {
     const { projectId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 
@@ -35,7 +35,7 @@ export const POST = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 如果没有传 appearanceId，获取第一个 appearance 的 id
+    // If no appearanceId, get first appearance id
     let targetAppearanceId = appearanceId
     if (!targetAppearanceId) {
         const character = await prisma.novelPromotionCharacter.findUnique({
@@ -52,11 +52,11 @@ export const POST = apiHandler(async (
         targetAppearanceId = firstAppearance.id
     }
 
-    // 如果设置了 artStyle，需要更新到 novelPromotionProject 中（供 generate-image 使用）
+    // If artStyle set, update novelPromotionProject for generate-image
     if (artStyle) {
         const novelData = await prisma.novelPromotionProject.findUnique({ where: { projectId } })
         if (novelData) {
-            // 将风格转换为提示词
+            // Map style to prompt
             const ART_STYLES = [
                 { value: 'american-comic', prompt: 'American comic style' },
                 { value: 'chinese-comic', prompt: 'Refined comic style' },
@@ -73,7 +73,7 @@ export const POST = apiHandler(async (
         }
     }
 
-    // 调用 generate-image API
+    // Call generate-image API
     const { getBaseUrl } = await import('@/lib/env')
     const baseUrl = getBaseUrl()
     const generateRes = await fetch(`${baseUrl}/api/novel-promotion/${projectId}/generate-image`, {
@@ -86,7 +86,7 @@ export const POST = apiHandler(async (
         body: JSON.stringify({
             type: 'character',
             id: characterId,
-            appearanceId: targetAppearanceId,  // 使用真正的 UUID
+            appearanceId: targetAppearanceId,  // Use actual UUID
             locale: taskLocale || undefined,
             meta: {
                 ...bodyMeta,
@@ -98,7 +98,7 @@ export const POST = apiHandler(async (
     const result = await generateRes.json()
 
     if (!generateRes.ok) {
-        _ulogError('[Generate Character Image] 失败:', result.error)
+        _ulogError('[Generate Character Image] failed:', result.error)
         throw new ApiError('GENERATION_FAILED')
     }
 

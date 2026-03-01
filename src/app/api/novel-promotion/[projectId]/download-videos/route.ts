@@ -35,23 +35,23 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 解析请求体
+  // Parse request body
   const body = await request.json()
   const { episodeId, panelPreferences } = body as {
     episodeId?: string
-    panelPreferences?: Record<string, boolean>  // key: panelKey, value: true=口型同步, false=原始
+    panelPreferences?: Record<string, boolean>  // key: panelKey, value: true=lip-sync, false=original
   }
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
   const { project } = authResult
 
-  // 根据是否指定 episodeId 来获取数据
+  // Get data by episodeId or all
   let episodes: EpisodeData[] = []
 
   if (episodeId) {
-    // 只获取指定剧集的数据
+    // Get specified episode only
     const episode = await prisma.novelPromotionEpisode.findUnique({
       where: { id: episodeId },
       include: {
@@ -70,7 +70,7 @@ export const POST = apiHandler(async (
       episodes = [episode]
     }
   } else {
-    // 获取所有剧集的数据
+    // Get all episodes
     const npData = await prisma.novelPromotionProject.findFirst({
       where: { projectId },
       include: {
@@ -96,17 +96,17 @@ export const POST = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 收集所有有视频的 panel
+  // Collect panels with video
   interface VideoItem {
     description: string
     videoUrl: string
-    clipIndex: number  // 使用 clip 在数组中的索引
+    clipIndex: number  // Use clip index in array
     panelIndex: number
-    isLipSync?: boolean  // 是否为口型同步视频
+    isLipSync?: boolean  // Whether lip-sync video
   }
   const videos: VideoItem[] = []
 
-  // 从 episodes 中获取所有 storyboards 和 clips
+  // Get storyboards and clips from episodes
   const allStoryboards: StoryboardData[] = []
   const allClips: ClipData[] = []
   for (const episode of episodes) {
@@ -116,36 +116,36 @@ export const POST = apiHandler(async (
 
   // 遍历所有 storyboard 和 panel
   for (const storyboard of allStoryboards) {
-    // 使用 clip 在 clips 数组中的索引来排序（兼容 Agent 模式）
+    // Sort by clip index in clips array
     const clipIndex = allClips.findIndex((clip) => clip.id === storyboard.clipId)
 
-    // 使用独立的 Panel 记录
+    // Use standalone Panel record
     const panels = storyboard.panels || []
     for (const panel of panels) {
-      // 构建 panelKey 用于查找偏好
+      // Build panelKey for preference lookup
       const panelKey = `${storyboard.id}-${panel.panelIndex || 0}`
-      // 获取该 panel 的偏好，默认 true（口型同步优先）
+      // Get panel preference, default true (lip-sync)
       const preferLipSync = panelPreferences?.[panelKey] ?? true
 
-      // 根据用户偏好选择视频类型
+      // Pick video type by user preference
       let videoUrl: string | null = null
       let isLipSync = false
 
       if (preferLipSync) {
-        // 优先口型同步视频，其次原始视频
+        // Prefer lip-sync then original
         videoUrl = panel.lipSyncVideoUrl || panel.videoUrl
         isLipSync = !!panel.lipSyncVideoUrl
       } else {
-        // 优先原始视频，其次口型同步视频（如果只有口型同步视频也下载）
+        // Prefer original then lip-sync (fallback lip-sync if only that)
         videoUrl = panel.videoUrl || panel.lipSyncVideoUrl
         isLipSync = !panel.videoUrl && !!panel.lipSyncVideoUrl
       }
 
       if (videoUrl) {
         videos.push({
-          description: panel.description || `镜头`,
+          description: panel.description || `Shot`,
           videoUrl: videoUrl,
-          clipIndex: clipIndex >= 0 ? clipIndex : 999,  // 找不到时排最后
+          clipIndex: clipIndex >= 0 ? clipIndex : 999,  // When not found put last
           panelIndex: panel.panelIndex || 0,
           isLipSync
         })
@@ -153,7 +153,7 @@ export const POST = apiHandler(async (
     }
   }
 
-  // 按 clipIndex 和 panelIndex 排序
+  // Sort by clipIndex and panelIndex
   videos.sort((a, b) => {
     if (a.clipIndex !== b.clipIndex) {
       return a.clipIndex - b.clipIndex
@@ -161,7 +161,7 @@ export const POST = apiHandler(async (
     return a.panelIndex - b.panelIndex
   })
 
-  // 重新分配连续的全局索引
+  // Reassign consecutive global index
   const indexedVideos = videos.map((v, idx) => ({
     ...v,
     index: idx + 1
@@ -175,7 +175,7 @@ export const POST = apiHandler(async (
 
   const archive = archiver('zip', { zlib: { level: 9 } })
 
-  // 创建一个 Promise 来追踪归档完成状态
+  // Promise to track archive completion
   const archiveFinished = new Promise<void>((resolve, reject) => {
     archive.on('end', () => resolve())
     archive.on('error', (err) => {
@@ -189,7 +189,7 @@ export const POST = apiHandler(async (
     chunks.push(chunk)
   })
 
-  // 处理视频并打包
+  // Process video and pack
   const isLocal = process.env.STORAGE_TYPE === 'local'
 
   for (const video of indexedVideos) {
@@ -240,7 +240,7 @@ export const POST = apiHandler(async (
         videoData = Buffer.from(arrayBuffer)
       }
 
-      // 文件名使用描述，清理非法字符
+      // Filename from description, sanitize
       const safeDesc = video.description.slice(0, 50).replace(/[\\/:*?"<>|]/g, '_')
       const fileName = `${String(video.index).padStart(3, '0')}_${safeDesc}.mp4`
       archive.append(videoData, { name: fileName })
@@ -250,14 +250,14 @@ export const POST = apiHandler(async (
     }
   }
 
-  // 完成归档
+  // Archive complete
   await archive.finalize()
   _ulogInfo('Archive finalized')
 
-  // 等待归档完成
+  // Wait for archive
   await archiveFinished
 
-  // 合并所有数据块
+  // Merge all chunks
   const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0)
   const result = new Uint8Array(totalLength)
   let offset = 0

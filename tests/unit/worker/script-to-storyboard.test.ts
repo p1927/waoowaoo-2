@@ -287,7 +287,7 @@ describe('worker script-to-storyboard behavior', () => {
     parseVoiceLinesJsonMock.mockReturnValue(baseVoiceRows())
   })
 
-  it('缺少 episodeId -> 显式失败', async () => {
+  it('缺少 episodeId -> 显式failed', async () => {
     const job = buildJob({}, null)
     await expect(handleScriptToStoryboardTask(job)).rejects.toThrow('episodeId is required')
   })
@@ -317,7 +317,7 @@ describe('worker script-to-storyboard behavior', () => {
     }))
   })
 
-  it('voice 解析失败后会重试一次再成功', async () => {
+  it('voice 解析failed后会重试一次再成功', async () => {
     parseVoiceLinesJsonMock
       .mockImplementationOnce(() => {
         throw new Error('invalid voice json')
@@ -351,7 +351,7 @@ describe('worker script-to-storyboard behavior', () => {
         stage: 'script_to_storyboard_step',
         stepId: 'voice_analyze',
         stepAttempt: 2,
-        message: '台词分析失败，准备重试 (2/2)',
+        message: '台词分析failed，准备重试 (2/2)',
       }),
     )
   })

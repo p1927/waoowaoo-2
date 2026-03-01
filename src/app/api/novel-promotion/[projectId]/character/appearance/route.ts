@@ -8,7 +8,7 @@ import { requireProjectAuthLight, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
- * POST - 为现有角色添加子形象
+ * POST - Add sub-appearance to character
  * Body: { characterId, changeReason, description }
  */
 export const POST = apiHandler(async (
@@ -17,7 +17,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -28,7 +28,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 验证角色存在
+  // Verify character exists
   const character = await prisma.novelPromotionCharacter.findUnique({
     where: { id: characterId },
     include: {
@@ -41,19 +41,19 @@ export const POST = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 验证角色属于当前项目
+  // Verify character belongs to project
   if (character.novelPromotionProject.projectId !== projectId) {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 计算新的 appearanceIndex
+  // Compute new appearanceIndex
   const maxIndex = character.appearances.reduce(
     (max, app) => Math.max(max, app.appearanceIndex),
     0
   )
   const newIndex = maxIndex + 1
 
-  // 创建子形象
+  // Create sub-appearance
   const newAppearance = await prisma.characterAppearance.create({
     data: {
       characterId,
@@ -74,7 +74,7 @@ export const POST = apiHandler(async (
 })
 
 /**
- * PATCH - 更新角色形象描述
+ * PATCH - Update appearance description
  * Body: { characterId, appearanceId, description, descriptionIndex }
  */
 export const PATCH = apiHandler(async (
@@ -83,7 +83,7 @@ export const PATCH = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -94,7 +94,7 @@ export const PATCH = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 验证形象存在
+  // Verify appearance exists
   const appearance = await prisma.characterAppearance.findUnique({
     where: { id: appearanceId },
     include: { character: { include: { novelPromotionProject: true } } }
@@ -108,15 +108,15 @@ export const PATCH = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 验证角色属于当前项目
+  // Verify character belongs to project
   if (appearance.character.novelPromotionProject.projectId !== projectId) {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 更新描述
+  // Update description
   const trimmedDesc = description.trim()
 
-  // 更新 descriptions 数组
+  // Update descriptions array
   let descriptions: string[] = []
   try {
     descriptions = appearance.descriptions ? JSON.parse(appearance.descriptions) : []
@@ -124,7 +124,7 @@ export const PATCH = apiHandler(async (
     descriptions = []
   }
 
-  // 如果指定了 descriptionIndex，更新对应位置；否则更新/添加第一个
+  // If descriptionIndex set, update that slot; else update/add first
   const idx = typeof descriptionIndex === 'number' ? descriptionIndex : 0
   if (idx >= 0 && idx < descriptions.length) {
     descriptions[idx] = trimmedDesc
@@ -140,7 +140,7 @@ export const PATCH = apiHandler(async (
     }
   })
 
-  _ulogInfo(`✓ 更新形象描述: ${appearance.character.name} - ${appearance.changeReason || '形象' + appearance.appearanceIndex}`)
+  _ulogInfo(`✓ Update appearance description: ${appearance.character.name} - ${appearance.changeReason || '形象' + appearance.appearanceIndex}`)
 
   return NextResponse.json({
     success: true
@@ -148,7 +148,7 @@ export const PATCH = apiHandler(async (
 })
 
 /**
- * DELETE - 删除单个角色形象
+ * DELETE - Delete single appearance
  * Query params: characterId, appearanceId
  */
 export const DELETE = apiHandler(async (
@@ -157,7 +157,7 @@ export const DELETE = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -169,7 +169,7 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取形象记录
+  // Get appearance record
   const appearance = await prisma.characterAppearance.findUnique({
     where: { id: appearanceId },
     include: { character: true }
@@ -192,10 +192,10 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 删除 COS 中的图片
+  // Delete images from COS
   const deletedImages: string[] = []
 
-  // 删除主图片
+  // Delete main image
   if (appearance.imageUrl) {
     const key = await resolveStorageKeyFromMediaValue(appearance.imageUrl)
     if (key) {
@@ -208,7 +208,7 @@ export const DELETE = apiHandler(async (
     }
   }
 
-  // 删除图片数组中的所有图片
+  // Delete all images in array
   try {
     const urls = decodeImageUrlsFromDb(appearance.imageUrls, 'characterAppearance.imageUrls')
     for (const url of urls) {
@@ -228,12 +228,12 @@ export const DELETE = apiHandler(async (
     // contract violation is surfaced by migration/validation scripts; keep delete idempotent
   }
 
-  // 删除数据库记录
+  // Delete DB record
   await prisma.characterAppearance.delete({
     where: { id: appearanceId }
   })
 
-  // 重新排序剩余形象的 appearanceIndex
+  // Reorder remaining appearanceIndex
   const remainingAppearances = await prisma.characterAppearance.findMany({
     where: { characterId },
     orderBy: { appearanceIndex: 'asc' }
@@ -248,7 +248,7 @@ export const DELETE = apiHandler(async (
     }
   }
 
-  _ulogInfo(`✓ 删除形象: ${appearance.character.name} - ${appearance.changeReason || '形象' + appearance.appearanceIndex}`)
+  _ulogInfo(`✓ Delete appearance: ${appearance.character.name} - ${appearance.changeReason || '形象' + appearance.appearanceIndex}`)
   _ulogInfo(`✓ 删除了 ${deletedImages.length} 张 COS 图片`)
 
   return NextResponse.json({

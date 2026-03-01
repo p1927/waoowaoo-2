@@ -14,7 +14,7 @@ export const REQUIREMENTS_MATRIX: ReadonlyArray<RequirementCoverageEntry> = [
     id: 'REQ-ASSETHUB-CHARACTER-EDIT',
     feature: 'Asset Hub character edit',
     userValue: '角色信息编辑后立即可见并正确保存',
-    risk: '字段映射漂移导致保存失败或误写',
+    risk: '字段映射漂移导致保存failed或误写',
     priority: 'P0',
     tests: [
       'tests/integration/api/contract/crud-routes.test.ts',

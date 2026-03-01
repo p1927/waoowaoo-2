@@ -45,8 +45,8 @@ interface PanelCardProps {
   onClearError: () => void
   onUndo?: (panelId: string) => void  // 撤回到上一版本
   onPreviewImage?: (url: string) => void  // 放大预览图片
-  onInsertAfter?: () => void  // 在此镜头后插入
-  onVariant?: () => void  // 生成镜头变体
+  onInsertAfter?: () => void  // 在此Shot后插入
+  onVariant?: () => void  // 生成Shot变体
   isInsertDisabled?: boolean  // 插入按钮是否禁用
 }
 
@@ -105,7 +105,7 @@ export default function PanelCard({
         </button>
       )}
 
-      {/* 镜头图片区域 - 包含插入按钮 */}
+      {/* Shot图片区域 - 包含插入按钮 */}
       <div className="relative">
         <ImageSection
           panelId={panel.id}
@@ -129,7 +129,7 @@ export default function PanelCard({
           onUndo={onUndo}
           onPreviewImage={onPreviewImage}
         />
-        {/* 插入分镜/镜头变体按钮 - 在图片区域右侧垂直居中 */}
+        {/* 插入分镜/Shot变体按钮 - 在图片区域右侧垂直居中 */}
         {(onInsertAfter || onVariant) && (
           <div className="absolute -right-[22px] top-1/2 -translate-y-1/2 z-50">
             <PanelActionButtons

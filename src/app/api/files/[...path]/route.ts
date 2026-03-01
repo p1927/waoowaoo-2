@@ -76,7 +76,7 @@ export async function GET(
             return NextResponse.json({ error: 'File not found' }, { status: 404 })
         }
 
-        _ulogError('[Files API] 读取文件失败:', error)
+        _ulogError('[Files API] 读取文件failed:', error)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }

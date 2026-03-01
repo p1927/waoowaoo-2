@@ -91,7 +91,7 @@ describe('worker voice processor behavior', () => {
     mod.createVoiceWorker()
   })
 
-  it('VOICE_LINE: lineId/episodeId 缺失时显式失败', async () => {
+  it('VOICE_LINE: lineId/episodeId 缺失时显式failed', async () => {
     const processor = workerState.processor
     expect(processor).toBeTruthy()
 

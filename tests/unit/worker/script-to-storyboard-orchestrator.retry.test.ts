@@ -19,7 +19,7 @@ describe('script-to-storyboard orchestrator retry', () => {
           throw new TypeError('terminated')
         }
         return {
-          text: JSON.stringify([{ panel_number: 1, description: '镜头', location: '场景A', source_text: '原文', characters: [] }]),
+          text: JSON.stringify([{ panel_number: 1, description: 'Shot', location: '场景A', source_text: '原文', characters: [] }]),
           reasoning: '',
         }
       }
@@ -31,7 +31,7 @@ describe('script-to-storyboard orchestrator retry', () => {
         return { text: JSON.stringify([{ panel_number: 1, characters: [] }]), reasoning: '' }
       }
       return {
-        text: JSON.stringify([{ panel_number: 1, description: '镜头', location: '场景A', source_text: '原文', characters: [] }]),
+        text: JSON.stringify([{ panel_number: 1, description: 'Shot', location: '场景A', source_text: '原文', characters: [] }]),
         reasoning: '',
       }
     })

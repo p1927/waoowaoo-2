@@ -53,7 +53,7 @@ interface AssetHubUndoDb {
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubUndoDb
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

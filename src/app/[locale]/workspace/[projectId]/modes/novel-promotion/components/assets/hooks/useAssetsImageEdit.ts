@@ -127,7 +127,7 @@ export function useAssetsImageEdit({
           showToast(`${locationName} ${t('image.editSuccess')}${descNote}`, 'success')
         },
         onError: (error: unknown) => {
-          _ulogInfo(`[场景编辑] ❌ 失败: ${locationName}`, error)
+          _ulogInfo(`[场景编辑] ❌ failed: ${locationName}`, error)
           if (isAbortError(error)) return
           showToast(`${t('image.editFailed')}: ${getErrorMessage(error)}`, 'error')
         },
@@ -153,7 +153,7 @@ export function useAssetsImageEdit({
           showToast(`${characterName} ${t('image.editSuccess')}${descNote}`, 'success')
         },
         onError: (error: unknown) => {
-          _ulogInfo(`[角色编辑] ❌ 失败: ${characterName}`, error)
+          _ulogInfo(`[角色编辑] ❌ failed: ${characterName}`, error)
           if (isAbortError(error)) return
           showToast(`${t('image.editFailed')}: ${getErrorMessage(error)}`, 'error')
         },

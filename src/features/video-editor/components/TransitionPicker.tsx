@@ -49,7 +49,7 @@ export const TransitionPicker: React.FC<TransitionPickerProps> = ({
                 {t('editor.transition.title')}
             </div>
 
-            {/* 转场类型选择 */}
+            {/* Transition type */}
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
@@ -84,7 +84,7 @@ export const TransitionPicker: React.FC<TransitionPickerProps> = ({
                 ))}
             </div>
 
-            {/* 持续时间选择 */}
+            {/* Duration */}
             {value !== 'none' && (
                 <div style={{ marginTop: '8px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--glass-text-tertiary)', marginBottom: '4px' }}>

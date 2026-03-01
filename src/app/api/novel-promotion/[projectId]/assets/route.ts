@@ -5,7 +5,7 @@ import { apiHandler } from '@/lib/api-errors'
 import { attachMediaFieldsToProject } from '@/lib/media/attach'
 
 /**
- * GET - 获取项目资产（角色 + 场景）
+ * GET - Get project assets (characters + locations)
  * 🔥 V6.5: 为 useProjectAssets hook 提供统一的资产数据接口
  */
 export const GET = apiHandler(async (
@@ -14,11 +14,11 @@ export const GET = apiHandler(async (
 ) => {
     const { projectId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 
-    // 获取项目的角色和场景数据
+    // Get project characters and locations
     const novelData = await prisma.novelPromotionProject.findUnique({
         where: { projectId },
         include: {

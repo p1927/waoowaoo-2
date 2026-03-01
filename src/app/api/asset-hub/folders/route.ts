@@ -5,7 +5,7 @@ import { ApiError, apiHandler } from '@/lib/api-errors'
 
 // 获取用户所有文件夹
 export const GET = apiHandler(async () => {
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -18,9 +18,9 @@ export const GET = apiHandler(async () => {
     return NextResponse.json({ folders })
 })
 
-// 创建文件夹
+// Create folder
 export const POST = apiHandler(async (request: NextRequest) => {
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

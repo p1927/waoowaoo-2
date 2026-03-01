@@ -41,7 +41,7 @@ export function useStoryboardGroupActions({
       await deleteStoryboardMutation.mutateAsync({ storyboardId })
       await onRefresh()
     } catch (error: unknown) {
-      _ulogError('删除分镜组失败:', error)
+      _ulogError('删除分镜组failed:', error)
       alert(
         t('messages.deleteGroupFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -67,7 +67,7 @@ export function useStoryboardGroupActions({
         _ulogInfo('请求被中断（可能是页面刷新），后端仍在执行')
         return
       }
-      _ulogError('重新生成分镜失败:', error)
+      _ulogError('重新生成分镜failed:', error)
       alert(
         t('messages.regenerateGroupFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -89,7 +89,7 @@ export function useStoryboardGroupActions({
       await addStoryboardGroupMutation.mutateAsync({ episodeId, insertIndex })
       await onRefresh()
     } catch (error: unknown) {
-      _ulogError('添加分镜组失败:', error)
+      _ulogError('添加分镜组failed:', error)
       alert(
         t('messages.addGroupFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -107,7 +107,7 @@ export function useStoryboardGroupActions({
       await moveStoryboardGroupMutation.mutateAsync({ episodeId, clipId, direction })
       await onRefresh()
     } catch (error: unknown) {
-      _ulogError('移动分镜组失败:', error)
+      _ulogError('移动分镜组failed:', error)
       alert(
         t('messages.moveGroupFailed', {
           error: getErrorMessage(error, t('common.unknownError')),

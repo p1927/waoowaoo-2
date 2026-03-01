@@ -10,7 +10,7 @@ export const GET = apiHandler(async (
 ) => {
     const { locationId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -27,14 +27,14 @@ export const GET = apiHandler(async (
     return NextResponse.json({ location })
 })
 
-// 更新场景
+// Update location
 export const PATCH = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ locationId: string }> }
 ) => {
     const { locationId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -74,14 +74,14 @@ export const PATCH = apiHandler(async (
     return NextResponse.json({ success: true, location: updatedLocation })
 })
 
-// 删除场景
+// Delete location
 export const DELETE = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ locationId: string }> }
 ) => {
     const { locationId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

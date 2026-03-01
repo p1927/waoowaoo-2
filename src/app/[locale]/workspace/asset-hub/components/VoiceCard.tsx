@@ -51,7 +51,7 @@ export function VoiceCard({ voice, onSelect, isSelected = false, selectionMode =
         setIsPlaying(true)
     }
 
-    // 删除音色
+    // Delete voice
     const handleDelete = () => {
         deleteVoice.mutate(voice.id, {
             onSettled: () => setShowDeleteConfirm(false)

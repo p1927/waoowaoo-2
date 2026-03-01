@@ -74,7 +74,7 @@ export default function VideoPanelCardHeader({ runtime }: VideoPanelCardHeaderPr
         <AppIcon name="playCircle" className="w-16 h-16 text-[var(--glass-text-tertiary)]" />
       )}
 
-      {/* 镜头编号 */}
+      {/* Shot编号 */}
       <div className="absolute top-2 left-2 bg-[var(--glass-overlay)] text-white px-2 py-0.5 rounded text-xs font-medium">
         {panelIndex + 1}
       </div>

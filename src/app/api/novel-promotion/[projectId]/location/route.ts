@@ -11,14 +11,14 @@ function toObject(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>
 }
 
-// 删除场景（级联删除关联的图片记录）
+// Delete location（级联删除关联的图片记录）
 export const DELETE = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -29,7 +29,7 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 删除场景（LocationImage 会级联删除）
+  // Delete location（LocationImage 会级联删除）
   await prisma.novelPromotionLocation.delete({
     where: { id: locationId }
   })
@@ -44,7 +44,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuth(projectId)
   if (isErrorResponse(authResult)) return authResult
   const { novelData } = authResult
@@ -59,7 +59,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 如果传入了 artStyle，更新项目的 artStylePrompt
+  // If artStyle provided, update project artStylePrompt
   if (artStyle) {
     const ART_STYLES = [
       { value: 'american-comic', prompt: 'American comic style' },
@@ -76,7 +76,7 @@ export const POST = apiHandler(async (
     }
   }
 
-  // 创建场景
+  // Create location
   const cleanDescription = removeLocationPromptSuffix(description.trim())
   const location = await prisma.novelPromotionLocation.create({
     data: {
@@ -86,7 +86,7 @@ export const POST = apiHandler(async (
     }
   })
 
-  // 创建初始图片记录
+  // Create initial image record
   await prisma.locationImage.create({
     data: {
       locationId: location.id,
@@ -115,7 +115,7 @@ export const POST = apiHandler(async (
       },
     })
   }).catch(err => {
-    _ulogError('[Location API] 后台图片生成任务触发失败:', err)
+    _ulogError('[Location API] 后台图片生成任务触发failed:', err)
   })
 
   // 返回包含图片的场景数据
@@ -127,14 +127,14 @@ export const POST = apiHandler(async (
   return NextResponse.json({ success: true, location: locationWithImages })
 })
 
-// 更新场景（名字或图片描述）
+// Update location（名字或图片描述）
 export const PATCH = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -145,7 +145,7 @@ export const PATCH = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 如果提供了 name 或 summary，更新场景信息
+  // 如果提供了 name 或 summary，Update location信息
   if (name !== undefined || body.summary !== undefined) {
     const updateData: { name?: string; summary?: string | null } = {}
     if (name !== undefined) updateData.name = name.trim()
@@ -158,7 +158,7 @@ export const PATCH = apiHandler(async (
     return NextResponse.json({ success: true, location })
   }
 
-  // 如果提供了 description 和 imageIndex，更新图片描述
+  // If description and imageIndex provided, update image description
   if (imageIndex !== undefined && description) {
     const cleanDescription = removeLocationPromptSuffix(description.trim())
     const image = await prisma.locationImage.update({

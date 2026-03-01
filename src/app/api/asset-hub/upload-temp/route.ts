@@ -9,7 +9,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
  * 支持图片和音频格式
  */
 export const POST = apiHandler(async (request: NextRequest) => {
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult

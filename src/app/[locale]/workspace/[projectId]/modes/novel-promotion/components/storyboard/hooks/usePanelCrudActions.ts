@@ -98,7 +98,7 @@ export function usePanelCrudActions({
         })
       },
       resolveErrorMessage: (error) => {
-        _ulogError('保存失败:', error)
+        _ulogError('保存failed:', error)
         return getErrorMessage(error, t('common.unknownError'))
       },
     })
@@ -137,7 +137,7 @@ export function usePanelCrudActions({
       })
     },
     resolveErrorMessage: (error) => {
-      _ulogError('保存失败:', error)
+      _ulogError('保存failed:', error)
       return getErrorMessage(error, t('common.unknownError'))
     },
   })
@@ -209,7 +209,7 @@ export function usePanelCrudActions({
       })
       await onRefresh()
     } catch (error: unknown) {
-      _ulogError('添加分镜失败:', error)
+      _ulogError('添加分镜failed:', error)
       alert(
         t('messages.addPanelFailed', {
           error: getErrorMessage(error, t('common.unknownError')),

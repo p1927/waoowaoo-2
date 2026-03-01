@@ -30,7 +30,7 @@ interface AssetHubCharacterVoiceDb {
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubCharacterVoiceDb
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -51,7 +51,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             throw new ApiError('INVALID_PARAMS')
         }
 
-        // 验证角色属于用户
+        // Verify character belongs to user
         const character = await db.globalCharacter.findFirst({
             where: { id: characterId, userId: session.user.id }
         })
@@ -89,7 +89,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 验证角色属于用户
+    // Verify character belongs to user
     const character = await db.globalCharacter.findFirst({
         where: { id: characterId, userId: session.user.id }
     })
@@ -97,7 +97,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
         throw new ApiError('NOT_FOUND')
     }
 
-    // 验证文件类型
+    // Validate file type
     const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/x-m4a']
     if (!allowedTypes.includes(file.type) && !file.name.match(/\.(mp3|wav|ogg|m4a)$/i)) {
         throw new ApiError('INVALID_PARAMS')
@@ -128,11 +128,11 @@ export const POST = apiHandler(async (request: NextRequest) => {
 
 /**
  * PATCH /api/asset-hub/character-voice
- * 更新角色音色设置
+ * Update character voice settings
  */
 export const PATCH = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubCharacterVoiceDb
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -144,7 +144,7 @@ export const PATCH = apiHandler(async (request: NextRequest) => {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 验证角色属于用户
+    // Verify character belongs to user
     const character = await db.globalCharacter.findFirst({
         where: { id: characterId, userId: session.user.id }
     })

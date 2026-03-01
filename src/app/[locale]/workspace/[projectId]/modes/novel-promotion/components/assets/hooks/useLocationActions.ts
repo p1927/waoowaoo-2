@@ -56,7 +56,7 @@ export function useLocationActions({
     const confirmLocationSelectionMutation = useConfirmProjectLocationSelection(projectId)
     const updateLocationDescriptionMutation = useUpdateProjectLocationDescription(projectId)
 
-    // 删除场景
+    // Delete location
     const handleDeleteLocation = useCallback(async (locationId: string) => {
         if (!confirm(t('location.deleteConfirm'))) return
         try {
@@ -123,7 +123,7 @@ export function useLocationActions({
         )
     }, [regenerateGroup, t])
 
-    // 更新场景描述 - 🔥 保存到服务器
+    // Update location描述 - 🔥 保存到服务器
     const handleUpdateLocationDescription = useCallback(async (
         locationId: string,
         newDescription: string
@@ -136,7 +136,7 @@ export function useLocationActions({
             refreshAssets()
         } catch (error: unknown) {
             if (!isAbortError(error)) {
-                _ulogError('更新描述失败:', getErrorMessage(error, t('common.unknownError')))
+                _ulogError('Update descriptionfailed:', getErrorMessage(error, t('common.unknownError')))
             }
         }
     }, [refreshAssets, updateLocationDescriptionMutation, t])

@@ -84,7 +84,7 @@ export function useStoryboardBatchPanelGeneration({
 
       const succeeded = results.filter((result) => result.status === 'fulfilled').length
       const failed = results.filter((result) => result.status === 'rejected').length
-      _ulogInfo(`[批量生成] 完成: 成功 ${succeeded}, 失败 ${failed}`)
+      _ulogInfo(`[批量生成] 完成: 成功 ${succeeded}, failed ${failed}`)
 
       if (failed > 0) {
         const failedReasons = results

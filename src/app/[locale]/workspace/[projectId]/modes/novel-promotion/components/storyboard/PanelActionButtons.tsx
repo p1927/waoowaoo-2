@@ -6,14 +6,14 @@ import { AppIcon } from '@/components/ui/icons'
  * PanelActionButtons - 面板间操作按钮组
  * 包含两个按钮：
  * - + 插入分镜（原有功能）
- * - 镜头变体（新功能）
+ * - Shot变体（新功能）
  */
 
 interface PanelActionButtonsProps {
     onInsertPanel: () => void
     onVariant: () => void
     disabled?: boolean
-    hasImage: boolean // 原镜头是否有图片（没图片不能做变体）
+    hasImage: boolean // 原Shot是否有图片（没图片不能做变体）
 }
 
 export default function PanelActionButtons({
@@ -65,7 +65,7 @@ export default function PanelActionButtons({
                 </span>
             </button>
 
-            {/* 镜头变体按钮 */}
+            {/* Shot变体按钮 */}
             <button
                 onClick={onVariant}
                 disabled={disabled || !hasImage}

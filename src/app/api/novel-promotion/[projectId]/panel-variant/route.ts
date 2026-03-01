@@ -33,8 +33,8 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 在 API route 中同步创建 panel（无图片），确保新 panel 立即存在于数据库，
-  // 避免乐观更新与 worker 之间的状态真空期
+  // Create panel synchronously in API (no image) so it exists in DB immediately;
+  // avoid state gap between optimistic update and worker
   const sourcePanel = await prisma.novelPromotionPanel.findUnique({ where: { id: sourcePanelId } })
   if (!sourcePanel) {
     throw new ApiError('NOT_FOUND')
@@ -99,7 +99,7 @@ export const POST = apiHandler(async (
     const message = err instanceof Error ? err.message : 'Image model capability not configured'
     throw new ApiError('INVALID_PARAMS', { code: 'IMAGE_MODEL_CAPABILITY_NOT_CONFIGURED', message })
   }
-  // Task target 指向新创建的 panel，使 task state 监控系统正确追踪
+  // Task target points to new panel for task state tracking
   const result = await submitTask({
     userId: session.user.id,
     locale,

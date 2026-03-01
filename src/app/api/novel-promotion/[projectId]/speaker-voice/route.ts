@@ -13,7 +13,7 @@ interface SpeakerVoiceConfig {
 
 /**
  * GET /api/novel-promotion/[projectId]/speaker-voice?episodeId=xxx
- * 获取剧集的发言人音色配置
+ * Get episode speaker voice config
  */
 export const GET = apiHandler(async (
   request: NextRequest,
@@ -23,7 +23,7 @@ export const GET = apiHandler(async (
   const { searchParams } = new URL(request.url)
   const episodeId = searchParams.get('episodeId')
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -31,7 +31,7 @@ export const GET = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取剧集
+  // Get episode
   const episode = await prisma.novelPromotionEpisode.findUnique({
     where: { id: episodeId }
   })
@@ -40,12 +40,12 @@ export const GET = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 解析发言人音色
+  // Parse speaker voice
   let speakerVoices: Record<string, SpeakerVoiceConfig> = {}
   if (episode.speakerVoices) {
     try {
       speakerVoices = JSON.parse(episode.speakerVoices)
-      // 为音频URL生成签名
+      // Sign audio URL
       for (const speaker of Object.keys(speakerVoices)) {
         if (speakerVoices[speaker].audioUrl && !speakerVoices[speaker].audioUrl.startsWith('http')) {
           speakerVoices[speaker].audioUrl = getSignedUrl(speakerVoices[speaker].audioUrl, 7200)
@@ -61,8 +61,8 @@ export const GET = apiHandler(async (
 
 /**
  * PATCH /api/novel-promotion/[projectId]/speaker-voice
- * 为指定发言人直接设置音色（写入 episode.speakerVoices JSON）
- * 用于不在资产库中的角色在配音阶段内联绑定音色
+ * Set speaker voice (write episode.speakerVoices JSON)
+ * For characters not in asset hub, bind voice inline in dubbing
  */
 export const PATCH = apiHandler(async (
   request: NextRequest,
@@ -106,7 +106,7 @@ export const PATCH = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 解析现有 speakerVoices，合并新条目
+  // Parse existing speakerVoices, merge new entries
   let speakerVoices: Record<string, SpeakerVoiceConfig> = {}
   if (episode.speakerVoices) {
     try {
@@ -116,8 +116,8 @@ export const PATCH = apiHandler(async (
     }
   }
 
-  // 将前端传来的 audioUrl（可能是 /m/m_xxx 媒体路由）还原为原始 storageKey
-  // 保证与资产库角色的 customVoiceUrl 格式一致，Worker 端能正确处理
+  // Resolve frontend audioUrl to storageKey
+  // Match asset hub customVoiceUrl format for worker
   const resolvedStorageKey = await resolveStorageKeyFromMediaValue(audioUrl)
   const audioUrlToStore = resolvedStorageKey || audioUrl
 

@@ -16,11 +16,11 @@ export const GET = apiHandler(async (
 ) => {
   const { projectId, episodeId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
-  // 获取剧集及其关联数据
+  // Get episode及其关联数据
   const episode = await prisma.novelPromotionEpisode.findUnique({
     where: { id: episodeId },
     include: {
@@ -47,11 +47,11 @@ export const GET = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 更新最后编辑的剧集ID（异步，不阻塞响应）
+  // Update last edited episode ID（异步，不阻塞响应）
   prisma.novelPromotionProject.update({
     where: { projectId },
     data: { lastEpisodeId: episodeId }
-  }).catch(err => _ulogError('更新 lastEpisodeId 失败:', err))
+  }).catch(err => _ulogError('Update lastEpisodeId failed:', err))
 
   // 转换为稳定媒体 URL（并保留兼容字段）
   const episodeWithSignedUrls = await attachMediaFieldsToProject(episode)
@@ -60,7 +60,7 @@ export const GET = apiHandler(async (
 })
 
 /**
- * PATCH - 更新剧集信息
+ * PATCH - Update episode
  */
 export const PATCH = apiHandler(async (
   request: NextRequest,
@@ -68,7 +68,7 @@ export const PATCH = apiHandler(async (
 ) => {
   const { projectId, episodeId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -95,7 +95,7 @@ export const PATCH = apiHandler(async (
 })
 
 /**
- * DELETE - 删除剧集
+ * DELETE - Delete episode
  */
 export const DELETE = apiHandler(async (
   request: NextRequest,
@@ -103,16 +103,16 @@ export const DELETE = apiHandler(async (
 ) => {
   const { projectId, episodeId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
-  // 删除剧集（关联数据会级联删除）
+  // Delete episode (cascade)
   await prisma.novelPromotionEpisode.delete({
     where: { id: episodeId }
   })
 
-  // 如果删除的是最后编辑的剧集，更新 lastEpisodeId
+  // If deleted was last edited, update lastEpisodeId
   const novelPromotionProject = await prisma.novelPromotionProject.findUnique({
     where: { projectId }
   })

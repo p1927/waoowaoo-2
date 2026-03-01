@@ -16,7 +16,7 @@ function toObject(value: unknown): Record<string, unknown> {
 
 // 获取用户所有角色（支持 folderId 筛选）
 export const GET = apiHandler(async (request: NextRequest) => {
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -46,7 +46,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
 
 // 新建角色
 export const POST = apiHandler(async (request: NextRequest) => {
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -136,7 +136,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
                 },
             })
         }).catch(err => {
-            _ulogError('[Characters API] 后台生成任务触发失败:', err)
+            _ulogError('[Characters API] 后台生成任务触发failed:', err)
         })
     }
 

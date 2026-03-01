@@ -17,8 +17,7 @@ interface RemotionPreviewProps {
 }
 
 /**
- * Remotion Player 预览封装
- * 支持双向同步：timelineState ↔ Player
+ * Remotion Player wrapper - sync timelineState <-> Player
  */
 export const RemotionPreview: React.FC<RemotionPreviewProps> = ({
     project,
@@ -36,19 +35,19 @@ export const RemotionPreview: React.FC<RemotionPreviewProps> = ({
         [project.timeline]
     )
 
-    // 当 currentFrame 从外部改变时，同步到 Player
+    // Sync external currentFrame to Player
     useEffect(() => {
         const player = playerRef.current
         if (!player) return
 
-        // 避免循环更新：只有当帧差距大于 1 时才 seek
+        // Avoid loop: only seek when frame diff > 1
         if (Math.abs(currentFrame - lastSyncedFrame.current) > 1) {
             player.seekTo(currentFrame)
             lastSyncedFrame.current = currentFrame
         }
     }, [currentFrame])
 
-    // 当 playing 状态改变时，控制 Player 播放/暂停
+    // Control play/pause when playing changes
     useEffect(() => {
         const player = playerRef.current
         if (!player) return
@@ -60,7 +59,7 @@ export const RemotionPreview: React.FC<RemotionPreviewProps> = ({
         }
     }, [playing])
 
-    // 监听 Player 的帧变化，同步到 timelineState
+    // Sync Player frame to timelineState
     useEffect(() => {
         const player = playerRef.current
         if (!player) return
@@ -71,7 +70,7 @@ export const RemotionPreview: React.FC<RemotionPreviewProps> = ({
             onFrameChange?.(frame)
         }
 
-        // Remotion Player 触发 timeupdate 事件
+        // Remotion Player timeupdate
         player.addEventListener('frameupdate', handleFrameUpdate)
 
         return () => {
@@ -79,7 +78,7 @@ export const RemotionPreview: React.FC<RemotionPreviewProps> = ({
         }
     }, [onFrameChange])
 
-    // 监听 Player 播放状态变化
+    // Listen to Player play state
     useEffect(() => {
         const player = playerRef.current
         if (!player) return
@@ -99,7 +98,7 @@ export const RemotionPreview: React.FC<RemotionPreviewProps> = ({
         }
     }, [onPlayingChange])
 
-    // 如果没有片段，显示占位
+    // Placeholder when no clips
     if (project.timeline.length === 0) {
         return (
             <div style={{
@@ -149,9 +148,9 @@ export const RemotionPreview: React.FC<RemotionPreviewProps> = ({
                     width: '100%',
                     height: '100%'
                 }}
-                controls={false}  // 使用自定义控制
+                controls={false}  // Custom controls
                 loop={false}
-                clickToPlay={false}  // 禁用点击播放，由外部控制
+                clickToPlay={false}  // Playback controlled externally
             />
         </div>
     )

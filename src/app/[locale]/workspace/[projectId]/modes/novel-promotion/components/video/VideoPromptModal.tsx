@@ -36,7 +36,7 @@ export default function VideoPromptModal({
         </div>
 
         <div className="p-6 space-y-4">
-          {/* 镜头信息 */}
+          {/* Shot信息 */}
           <div className="p-3 bg-[var(--glass-bg-muted)] rounded-lg text-sm space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-[var(--glass-text-tertiary)]">{t('promptModal.shotType')}</span>

@@ -20,19 +20,8 @@ interface VideoEditorStageProps {
 }
 
 /**
- * 视频编辑器主页面
- * 
- * 布局:
- * ┌──────────────────────────────────────────────────────────┐
- * │ Toolbar (返回 | 保存 | 导出)                              │
- * ├──────────────┬───────────────────────────────────────────┤
- * │  素材库       │       Preview (Remotion Player)           │
- * │              │                                           │
- * │              ├───────────────────────────────────────────┤
- * │              │       Properties Panel                    │
- * ├──────────────┴───────────────────────────────────────────┤
- * │                      Timeline                            │
- * └──────────────────────────────────────────────────────────┘
+ * Video editor main page
+ * Layout: Toolbar (Back | Save | Export) | Asset library | Preview | Properties | Timeline
  */
 export function VideoEditorStage({
     projectId,
@@ -226,7 +215,7 @@ export function VideoEditorStage({
                     </h3>
                     {selectedClip ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            {/* 基础信息 */}
+                            {/* Basic info */}
                             <div style={{ fontSize: '12px' }}>
                                 <p style={{ margin: '0 0 8px 0' }}>
                                     <span style={{ color: 'var(--glass-text-secondary)' }}>{t('editor.right.clipLabel')}</span> {selectedClip.metadata?.description || t('editor.right.clipFallback', { index: project.timeline.findIndex(c => c.id === selectedClip.id) + 1 })}
@@ -236,7 +225,7 @@ export function VideoEditorStage({
                                 </p>
                             </div>
 
-                            {/* 转场设置 */}
+                            {/* Transition */}
                             <div>
                                 <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: 'var(--glass-text-secondary)' }}>
                                     {t('editor.right.transitionLabel')}
@@ -252,7 +241,7 @@ export function VideoEditorStage({
                                 />
                             </div>
 
-                            {/* 删除按钮 */}
+                            {/* Delete */}
                             <button
                                 onClick={() => {
                                     if (confirm(t('editor.right.deleteConfirm'))) {

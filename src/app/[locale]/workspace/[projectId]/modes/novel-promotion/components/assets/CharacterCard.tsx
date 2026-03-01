@@ -79,7 +79,7 @@ export default function CharacterCard({
   // 处理删除按钮点击
   const handleDeleteClick = () => {
     if (appearanceCount <= 1) {
-      // 只有一个形象，直接删除角色
+      // 只有一个形象，直接Delete character
       onDelete()
     } else {
       // 多个形象，显示菜单

@@ -7,8 +7,8 @@ import { requireProjectAuthLight, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
- * POST - 选择角色形象的图片
- * 直接更新独立的 CharacterAppearance 表
+ * POST - Select character appearance image
+ * Update CharacterAppearance table directly
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -16,7 +16,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -36,10 +36,10 @@ export const POST = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 解析图片URLs
+  // Parse image URLs
   const imageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'characterAppearance.imageUrls')
 
-  // 验证索引
+  // Validate index
   if (selectedIndex !== null) {
     if (selectedIndex < 0 || selectedIndex >= imageUrls.length || !imageUrls[selectedIndex]) {
       throw new ApiError('INVALID_PARAMS')
@@ -48,7 +48,7 @@ export const POST = apiHandler(async (
 
   const selectedImageKey = selectedIndex !== null ? imageUrls[selectedIndex] : null
 
-  // 直接更新独立记录（无并发风险）
+  // Update record directly (no concurrency risk)
   await prisma.characterAppearance.update({
     where: { id: appearance.id },
     data: {

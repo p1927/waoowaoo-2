@@ -8,8 +8,8 @@ import { requireProjectAuth, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler } from '@/lib/api-errors'
 
 /**
- * POST - 清理未选中的图片
- * 在用户确认资产进入下一步时调用
+ * POST - Cleanup unselected images
+ * Called when user confirms assets for next step
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -17,7 +17,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuth(projectId)
   if (isErrorResponse(authResult)) return authResult
   const { novelData } = authResult
@@ -37,7 +37,7 @@ export const POST = apiHandler(async (
       const imageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'characterAppearance.imageUrls')
       if (imageUrls.length <= 1) continue
 
-      // 删除未选中的图片
+      // Delete unselected images
       for (let i = 0; i < imageUrls.length; i++) {
         if (i !== appearance.selectedIndex && imageUrls[i]) {
           try {
@@ -51,7 +51,7 @@ export const POST = apiHandler(async (
         }
       }
 
-      // 只保留选中的图片
+      // Keep only selected images
       const selectedUrl = imageUrls[appearance.selectedIndex]
       if (!selectedUrl) continue
       await prisma.characterAppearance.update({
@@ -76,7 +76,7 @@ export const POST = apiHandler(async (
       : location.images.find(img => img.isSelected)
     if (!selectedImage) continue
 
-    // 删除未选中的图片
+    // Delete unselected images
     for (const img of location.images) {
       if (!img.isSelected && img.imageUrl) {
         try {
@@ -88,12 +88,12 @@ export const POST = apiHandler(async (
           }
         } catch { }
 
-        // 删除图片记录
+        // Delete image records
         await prisma.locationImage.delete({ where: { id: img.id } })
       }
     }
 
-    // 重置选中图片的索引为0
+    // Reset selected image index to 0
     await prisma.locationImage.update({
       where: { id: selectedImage.id },
       data: { imageIndex: 0 }

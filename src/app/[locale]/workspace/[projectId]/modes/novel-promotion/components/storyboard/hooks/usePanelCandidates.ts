@@ -90,7 +90,7 @@ export function usePanelCandidates({
       refreshStoryboards()
       _ulogInfo('[confirmPanelCandidate] ✅ 数据刷新完成')
     } catch (error: unknown) {
-      _ulogError('[confirmPanelCandidate] ❌ 确认失败:', error)
+      _ulogError('[confirmPanelCandidate] ❌ 确认failed:', error)
       alert(
         t('messages.selectCandidateFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -127,7 +127,7 @@ export function usePanelCandidates({
       refreshEpisode()
       refreshStoryboards()
     } catch (error: unknown) {
-      _ulogError('取消选择失败:', error)
+      _ulogError('取消选择failed:', error)
     }
   }, [
     candidateSystem,

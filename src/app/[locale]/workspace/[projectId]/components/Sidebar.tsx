@@ -83,7 +83,7 @@ export default function Sidebar({
         }
     }, [isDragging])
 
-    // 创建剧集
+    // Create episode
     const handleCreate = async () => {
         if (!newEpisodeName.trim()) return
         try {
@@ -91,7 +91,7 @@ export default function Sidebar({
             setNewEpisodeName('')
             setIsCreating(false)
         } catch (err) {
-            _ulogError('创建剧集失败:', err)
+            _ulogError('Create episodefailed:', err)
         }
     }
 
@@ -103,7 +103,7 @@ export default function Sidebar({
             setEditingId(null)
             setEditingName('')
         } catch (err) {
-            _ulogError('重命名失败:', err)
+            _ulogError('重命名failed:', err)
         }
     }
 
@@ -113,7 +113,7 @@ export default function Sidebar({
             await onEpisodeDelete(id)
             setDeleteConfirmId(null)
         } catch (err) {
-            _ulogError('删除失败:', err)
+            _ulogError('删除failed:', err)
         }
     }
 

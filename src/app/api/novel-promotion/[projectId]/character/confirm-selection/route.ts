@@ -8,13 +8,13 @@ import { requireProjectAuthLight, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
- * POST - 确认选择并删除未选中的候选图片
+ * POST - Confirm selection and delete unselected candidates
  * Body: { characterId, appearanceId }
  * 
  * 工作流程：
- * 1. 验证已经选择了一张图片（selectedIndex 不为 null）
- * 2. 删除 imageUrls 中未选中的图片（从 COS 和数据库）
- * 3. 将选中的图片设为唯一图片
+ * 1. Verify one image selected (selectedIndex not null)
+ * 2. Delete unselected from imageUrls (COS + DB)
+ * 3. Set selected as sole image
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -22,7 +22,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -33,7 +33,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取形象记录 - 使用 UUID 直接查询
+  // Get appearance by UUID
   const appearance = await prisma.characterAppearance.findUnique({
     where: { id: appearanceId },
     include: { character: true }
@@ -48,11 +48,11 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 解析图片数组
+  // Parse image array
   const imageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'characterAppearance.imageUrls')
 
   if (imageUrls.length <= 1) {
-    // 已经只有一张图片，无需操作
+    // Already single image, no-op
     return NextResponse.json({
       success: true,
       message: '已确认选择',
@@ -67,7 +67,7 @@ export const POST = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 删除未选中的图片
+  // Delete unselected images
   const deletedImages: string[] = []
   for (let i = 0; i < imageUrls.length; i++) {
     if (i !== selectedIndex && imageUrls[i]) {
@@ -83,7 +83,7 @@ export const POST = apiHandler(async (
     }
   }
 
-  // 同样处理 descriptions，只保留选中的描述
+  // Same for descriptions, keep only selected
   let descriptions: string[] = []
   if (appearance.descriptions) {
     try {
@@ -92,12 +92,12 @@ export const POST = apiHandler(async (
   }
   const selectedDescription = descriptions[selectedIndex] || appearance.description || ''
 
-  // 更新数据库：只保留选中的图片
+  // 更新数据库：Keep only selected images
   await prisma.characterAppearance.update({
     where: { id: appearance.id },
     data: {
       imageUrl: selectedImageUrl,
-      imageUrls: encodeImageUrls([selectedImageUrl]),  // 只保留选中的图片
+      imageUrls: encodeImageUrls([selectedImageUrl]),  // Keep only selected images
       selectedIndex: 0,  // 现在只有一张，索引为0
       description: selectedDescription,
       descriptions: JSON.stringify([selectedDescription])
@@ -109,7 +109,7 @@ export const POST = apiHandler(async (
 
   return NextResponse.json({
     success: true,
-    message: '已确认选择，其他候选图片已删除',
+    message: 'Selection confirmed, other candidates deleted',
     deletedCount: deletedImages.length
   })
 })

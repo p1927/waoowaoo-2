@@ -6,7 +6,7 @@ import { attachMediaFieldsToProject } from '@/lib/media/attach'
 
 /**
  * GET /api/novel-promotion/[projectId]/storyboards
- * 获取剧集的分镜数据（用于测试页面）
+ * Get episode storyboard data (for test page)
  */
 export const GET = apiHandler(async (
     request: NextRequest,
@@ -14,7 +14,7 @@ export const GET = apiHandler(async (
 ) => {
     const { projectId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 
@@ -25,7 +25,7 @@ export const GET = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 获取剧集的分镜数据
+    // Get episode storyboard data
     const storyboards = await prisma.novelPromotionStoryboard.findMany({
         where: { episodeId },
         include: {
@@ -43,7 +43,7 @@ export const GET = apiHandler(async (
 
 /**
  * PATCH /api/novel-promotion/[projectId]/storyboards
- * 清除指定 storyboard 的 lastError
+ * Clear storyboard lastError
  */
 export const PATCH = apiHandler(async (
     request: NextRequest,
@@ -51,7 +51,7 @@ export const PATCH = apiHandler(async (
 ) => {
     const { projectId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 

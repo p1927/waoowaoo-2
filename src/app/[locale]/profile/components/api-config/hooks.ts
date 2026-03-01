@@ -267,7 +267,7 @@ export function useProviders(): UseProvidersReturn {
             }
             loadedSuccessfully = true
         } catch (error) {
-            _ulogError('获取配置失败:', error)
+            _ulogError('获取配置failed:', error)
             setSaveStatus('error')
         } finally {
             setLoading(false)
@@ -282,7 +282,7 @@ export function useProviders(): UseProvidersReturn {
 
     /**
      * 核心保存函数：始终从 ref 读取最新值，支持传入覆盖值（解决异步闭包旧值问题）
-     * optimistic=true 时立刻显示「已保存」，不经历「保存中」状态，失败时才回退为「保存失败」
+     * optimistic=true 时立刻显示「已保存」，不经历「保存中」状态，failed时才回退为「保存failed」
      */
     const performSave = useCallback(async (overrides?: {
         defaultModels?: DefaultModels
@@ -324,7 +324,7 @@ export function useProviders(): UseProvidersReturn {
                 setSaveStatus('error')
             }
         } catch (error) {
-            _ulogError('保存失败:', error)
+            _ulogError('保存failed:', error)
             setSaveStatus('error')
         }
     }, []) // 无依赖，所有值均从 ref 读取

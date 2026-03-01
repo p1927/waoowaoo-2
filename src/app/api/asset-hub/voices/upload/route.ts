@@ -9,7 +9,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
  * 上传音频文件到音色库
  */
 export const POST = apiHandler(async (request: NextRequest) => {
-    // 🔐 统一权限验证
+    // Auth check
     const authResult = await requireUserAuth()
     if (isErrorResponse(authResult)) return authResult
     const { session } = authResult
@@ -36,7 +36,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 验证 folderId（如果提供）
+    // Validate folderId if provided
     if (folderId) {
         const folder = await prisma.globalAssetFolder.findUnique({
             where: { id: folderId }
@@ -54,7 +54,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
     const key = generateUniqueKey(`voices/${session.user.id}/${Date.now()}`, audioExt)
     const cosUrl = await uploadToCOS(buffer, key)
 
-    // 创建音色记录
+    // Create voice record
     const voice = await prisma.globalVoice.create({
         data: {
             userId: session.user.id,
