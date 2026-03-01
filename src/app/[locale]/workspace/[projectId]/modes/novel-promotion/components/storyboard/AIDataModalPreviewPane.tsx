@@ -21,7 +21,7 @@ export default function AIDataModalPreviewPane({
             if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
               navigator.clipboard.writeText(text).catch(() => { })
             } else {
-              // HTTP 环境 fallback
+              // HTTP env fallback
               const el = document.createElement('textarea')
               el.value = text
               el.style.position = 'fixed'

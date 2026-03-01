@@ -47,7 +47,7 @@ export default function WorkspaceAssetLibraryModal({
         <div className="flex items-center justify-between px-8 py-5 border-b border-[var(--glass-stroke-base)] flex-shrink-0">
           <h2 className="text-2xl font-bold text-[var(--glass-text-primary)] flex items-center gap-3">
             <AppIcon name="package" className="h-7 w-7 text-[var(--glass-text-secondary)]" />
-            资产库
+            Asset library
           </h2>
           <button
             onClick={onClose}

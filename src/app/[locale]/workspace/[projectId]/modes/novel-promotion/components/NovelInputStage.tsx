@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * 小说推文模式 - 故事输入阶段 (Story View)
- * V3.2 UI: 极简版，专注剧本输入，资产管理移至资产库
+ * Novel promotion - story input stage (Story View)
+ * V3.2: minimal UI, script input; assets in asset library
  */
 
 import { useTranslations } from 'next-intl'
@@ -14,14 +14,14 @@ import { resolveTaskPresentationState } from '@/lib/task/presentation'
 import { AppIcon, RatioPreviewIcon } from '@/components/ui/icons'
 
 /**
- * RatioIcon - 比例预览图标组件
+ * RatioIcon - ratio preview icon
  */
 function RatioIcon({ ratio, size = 24, selected = false }: { ratio: string; size?: number; selected?: boolean }) {
   return <RatioPreviewIcon ratio={ratio} size={size} selected={selected} />
 }
 
 /**
- * RatioSelector - 比例选择下拉组件
+ * RatioSelector - ratio dropdown
  */
 function RatioSelector({
   value,
@@ -49,7 +49,7 @@ function RatioSelector({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* 触发按钮 */}
+      {/* Trigger button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -62,7 +62,7 @@ function RatioSelector({
         <AppIcon name="chevronDown" className={`w-4 h-4 text-[var(--glass-text-tertiary)] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* 下拉面板 - 横向网格布局 */}
+      {/* Dropdown - grid */}
       {isOpen && (
         <div className="glass-surface-modal absolute z-50 mt-1 left-0 right-0 p-3 max-h-60 overflow-y-auto custom-scrollbar" style={{ minWidth: '280px' }}>
           <div className="grid grid-cols-5 gap-2">
@@ -93,7 +93,7 @@ function RatioSelector({
 }
 
 /**
- * StyleSelector - 视觉风格选择抽屉组件
+ * StyleSelector - visual style drawer
  */
 function StyleSelector({
   value,
@@ -121,7 +121,7 @@ function StyleSelector({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* 触发按钮 */}
+      {/* Trigger button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -134,7 +134,7 @@ function StyleSelector({
         <AppIcon name="chevronDown" className={`w-4 h-4 text-[var(--glass-text-tertiary)] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* 下拉面板 */}
+      {/* Dropdown panel */}
       {isOpen && (
         <div className="glass-surface-modal absolute z-50 mt-1 left-0 right-0 p-3">
           <div className="grid grid-cols-2 gap-2">
@@ -163,20 +163,20 @@ function StyleSelector({
 }
 
 interface NovelInputStageProps {
-  // 核心数据
+  // Core data
   novelText: string
-  // 当前剧集名称
+  // Current episode name
   episodeName?: string
-  // 回调函数
+  // Callbacks
   onNovelTextChange: (value: string) => void
   onNext: () => void
-  // 状态
+  // State
   isSubmittingTask?: boolean
   isSwitchingStage?: boolean
-  // 旁白开关
+  // Narration toggle
   enableNarration?: boolean
   onEnableNarrationChange?: (enabled: boolean) => void
-  // 配置项 - 比例与风格
+  // Config - ratio and style
   videoRatio?: string
   artStyle?: string
   onVideoRatioChange?: (value: string) => void
@@ -211,7 +211,7 @@ export default function NovelInputStage({
   return (
     <div className="max-w-5xl mx-auto space-y-5">
 
-      {/* 当前编辑剧集提示 - 顶部居中醒目显示 */}
+      {/* Current episode hint - top center */}
       {episodeName && (
         <div className="text-center py-1">
           <div className="text-lg font-semibold text-[var(--glass-text-primary)]">
@@ -221,34 +221,34 @@ export default function NovelInputStage({
         </div>
       )}
 
-      {/* 主输入区域 */}
+      {/* Main input area */}
       <div className="glass-surface-elevated overflow-hidden">
         <div className="p-6">
-          {/* 字数统计 */}
+          {/* Word count */}
           <div className="flex items-center justify-end mb-3">
             <span className="glass-chip glass-chip-neutral text-xs">
               {t("storyInput.wordCount")} {novelText.length}
             </span>
           </div>
 
-          {/* 剧本输入框 */}
+          {/* Script textarea */}
           <textarea
             value={novelText}
             onChange={(e) => onNovelTextChange(e.target.value)}
-            placeholder={`请输入您的剧本或小说内容...
+            placeholder={`Enter your script or story...
 
-AI 将根据您的文本智能分析：
-• 自动识别场景切换
-• 提取角色对话和动作
-• 生成分镜脚本
+AI will analyze your text to:
+• Detect scene changes
+• Extract character dialogue and action
+• Generate storyboard script
 
-例如：
-清晨，阳光透过窗帘洒进房间。小明揉着惺忪的睡眼从床上坐起，看了一眼床头的闹钟——已经八点了！他猛地跳下床，手忙脚乱地开始穿衣服...`}
+Example:
+Morning light through the curtains. Xiao Ming sits up, rubs his eyes, checks the clock—eight already! He jumps out of bed and hurries to get dressed...`}
             className="glass-textarea-base custom-scrollbar h-80 px-4 py-3 text-base resize-none placeholder:text-[var(--glass-text-tertiary)]"
             disabled={isSubmittingTask || isSwitchingStage}
           />
 
-          {/* 资产库引导提示 */}
+          {/* Asset library tip */}
           <div className="mt-5 p-4 glass-surface-soft">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 glass-surface-soft rounded-xl flex items-center justify-center flex-shrink-0">
@@ -265,10 +265,10 @@ AI 将根据您的文本智能分析：
         </div>
       </div>
 
-      {/* 画面比例与视觉风格配置 */}
+      {/* Aspect ratio and style config */}
       <div className="glass-surface p-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* 画面比例 */}
+          {/* Aspect ratio */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-[var(--glass-text-muted)] tracking-[0.01em]">{t("storyInput.videoRatio")}</h3>
             <RatioSelector
@@ -278,7 +278,7 @@ AI 将根据您的文本智能分析：
             />
           </div>
 
-          {/* 视觉风格 */}
+          {/* Visual style */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-[var(--glass-text-muted)] tracking-[0.01em]">{t("storyInput.visualStyle")}</h3>
             <StyleSelector
@@ -293,9 +293,9 @@ AI 将根据您的文本智能分析：
         </p>
       </div>
 
-      {/* 旁白开关 + 操作按钮 */}
+      {/* Narration toggle + actions */}
       <div className="glass-surface p-6">
-        {/* 旁白开关 */}
+        {/* Narration toggle */}
         {onEnableNarrationChange && (
           <div className="glass-surface-soft flex items-center justify-between p-4 rounded-xl mb-6">
             <div className="flex items-center gap-3">
@@ -320,7 +320,7 @@ AI 将根据您的文本智能分析：
           </div>
         )}
 
-        {/* 开始创作按钮 */}
+        {/* Start creating button */}
         <button
           onClick={onNext}
           disabled={!hasContent || isSubmittingTask || isSwitchingStage}

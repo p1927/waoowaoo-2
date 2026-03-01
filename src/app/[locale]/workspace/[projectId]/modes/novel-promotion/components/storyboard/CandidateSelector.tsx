@@ -10,8 +10,8 @@ import { AppIcon } from '@/components/ui/icons'
 interface CandidateSelectorProps {
   originalImageUrl: string | null
   candidates: string[]
-  selectedIndex: number  // 0 = 原图, 1-n = 候选图
-  videoRatio: string  // 完整比例字符串，如 "16:9", "3:2" 等
+  selectedIndex: number  // 0 = original, 1-n = candidate
+  videoRatio: string  // e.g. "16:9", "3:2"
   onSelect: (index: number) => void
   onConfirm: () => void
   onCancel: () => void
@@ -41,7 +41,7 @@ export default function CandidateSelector({
     })
     : null
 
-  // 根据比例计算缩略图尺寸（固定宽度 120px）
+  // Thumbnail size from ratio (width 120px)
   const [w, h] = videoRatio.split(':').map(Number)
   const thumbWidth = 120
   const thumbHeight = Math.round(thumbWidth * h / w)
@@ -61,9 +61,9 @@ export default function CandidateSelector({
         </button>
       </div>
 
-      {/* 缩略图选择 - 横向排列 */}
+      {/* Thumbnail selection - horizontal */}
       <div className="flex gap-3 flex-wrap">
-        {/* 原图 */}
+        {/* Original */}
         <div className="flex flex-col items-center gap-1">
           <button
             onClick={() => {
@@ -93,7 +93,7 @@ export default function CandidateSelector({
                 <AppIcon name="checkSm" className="w-3 h-3" />
               </div>
             )}
-            {/* 放大图标 */}
+            {/* Zoom icon */}
             <div className="absolute bottom-1 right-1 w-5 h-5 bg-[var(--glass-overlay)] text-white rounded flex items-center justify-center">
               <AppIcon name="searchPlus" className="w-3 h-3" />
             </div>
@@ -101,7 +101,7 @@ export default function CandidateSelector({
           <span className="text-xs text-[var(--glass-text-secondary)]">{t('candidate.original')}</span>
         </div>
 
-        {/* 候选图片 */}
+        {/* Candidate images */}
         {candidates.map((url, index) => (
           <div key={index} className="flex flex-col items-center gap-1">
             <button
@@ -126,7 +126,7 @@ export default function CandidateSelector({
                   <AppIcon name="checkSm" className="w-3 h-3" />
                 </div>
               )}
-              {/* 放大图标 */}
+              {/* Zoom icon */}
               <div className="absolute bottom-1 right-1 w-5 h-5 bg-[var(--glass-overlay)] text-white rounded flex items-center justify-center">
                 <AppIcon name="searchPlus" className="w-3 h-3" />
               </div>
@@ -136,7 +136,7 @@ export default function CandidateSelector({
         ))}
       </div>
 
-      {/* 底部按钮 */}
+      {/* Bottom buttons */}
       <div className="mt-4 flex justify-between items-center">
         <span className="text-sm text-[var(--glass-text-secondary)] font-medium">
           {t('image.confirmCandidate')}: <span className="text-[var(--glass-tone-info-fg)]">{selectedIndex === 0 ? t('candidate.original') : t('image.candidateCount', { count: selectedIndex })}</span>

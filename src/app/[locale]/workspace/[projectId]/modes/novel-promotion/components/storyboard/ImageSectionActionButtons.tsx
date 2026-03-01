@@ -41,7 +41,7 @@ export default function ImageSectionActionButtons({
               onClick={() => {
                 _ulogInfo('[ImageSection] Regenerate button clicked')
                 _ulogInfo('[ImageSection] isSubmittingPanelImageTask:', isSubmittingPanelImageTask)
-                _ulogInfo('[ImageSection] 将传递 force:', isSubmittingPanelImageTask)
+                _ulogInfo('[ImageSection] Passing force:', isSubmittingPanelImageTask)
                 triggerPulse()
                 onRegeneratePanelImage(panelId, 1, isSubmittingPanelImageTask)
               }}

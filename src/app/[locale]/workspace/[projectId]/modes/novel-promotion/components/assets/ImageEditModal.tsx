@@ -3,8 +3,8 @@ import { useTranslations } from 'next-intl'
 import { MediaImageWithLoading } from '@/components/media/MediaImageWithLoading'
 
 /**
- * 图片编辑弹窗 - 统一的 AI 修图组件
- * 支持角色和场景图片的 AI 编辑
+ * ImageEditModal - unified AI image edit
+ * Character and location image AI edit
  */
 
 import { useState, useRef } from 'react'
@@ -41,7 +41,7 @@ export default function ImageEditModal({
         onConfirm(modifyPrompt, editImages.length > 0 ? editImages : undefined)
     }
 
-    // 处理粘贴事件
+    // Handle paste
     const handlePaste = async (e: React.ClipboardEvent) => {
         const items = e.clipboardData?.items
         if (!items) return
@@ -62,7 +62,7 @@ export default function ImageEditModal({
         }
     }
 
-    // 处理文件上传
+    // Handle file upload
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files
         if (!files) return
