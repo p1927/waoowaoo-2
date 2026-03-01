@@ -6,7 +6,7 @@
  * - Ark: ../ark.ts
  */
 
-// 向后兼容：从合并文件重新导出
+// Backward compat: re-export from merged file
 export { FalVideoGenerator } from '../fal'
 export { ArkSeedanceVideoGenerator, ArkVideoGenerator } from '../ark'
 export { GoogleVeoVideoGenerator } from './google'

@@ -1,6 +1,6 @@
 import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core'
 /**
- * 口型同步统一入口（FAL / Vidu）
+ * Lip-sync unified entry (FAL / Vidu)
  */
 
 import { submitFalTask } from '@/lib/async-submit'
@@ -8,7 +8,7 @@ import { getProviderConfig, getProviderKey, resolveModelSelectionOrSingle } from
 import { imageUrlToBase64 } from '@/lib/cos'
 
 /**
- * 口型同步结果
+ * Lip-sync result
  */
 export interface LipSyncResult {
   videoUrl?: string
@@ -18,11 +18,11 @@ export interface LipSyncResult {
 }
 
 /**
- * 口型同步参数
+ * Lip-sync params
  */
 export interface LipSyncParams {
-  videoUrl: string    // 视频 URL (支持 .mp4/.mov, ≤100MB, 2-10s, 720p/1080p, width/height 720-1920px)
-  audioUrl: string    // 音频 URL (最小2s, 最大60s, 最大5MB)
+  videoUrl: string    // Video URL (.mp4/.mov, ≤100MB, 2-10s, 720p/1080p, width/height 720-1920px)
+  audioUrl: string   // Audio URL (min 2s, max 60s, max 5MB)
 }
 
 interface ViduLipSyncSubmitResponse {
@@ -32,18 +32,18 @@ interface ViduLipSyncSubmitResponse {
 }
 
 /**
- * 提交口型同步任务（异步模式）
- * 
- * @param params 口型同步参数
- * @param userId 用户ID，用于获取API Key
- * @returns 任务ID，由前端轮询或Cron处理
+ * Submit lip-sync task (async mode).
+ *
+ * @param params Lip-sync params
+ * @param userId User ID for API Key
+ * @returns Task ID for frontend polling or Cron
  */
 export async function generateLipSync(
   params: LipSyncParams,
   userId: string,
   modelKey?: string,
 ): Promise<LipSyncResult> {
-  _ulogInfo('[LipSync Async] 开始提交口型同步任务')
+  _ulogInfo('[LipSync Async] Submitting lip-sync task')
 
   try {
     const selection = await resolveModelSelectionOrSingle(userId, modelKey, 'lipsync')
@@ -61,7 +61,7 @@ export async function generateLipSync(
       const audioDataUrl = params.audioUrl.startsWith('data:')
         ? params.audioUrl
         : await imageUrlToBase64(params.audioUrl)
-      _ulogInfo('[LipSync Async] FAL 入参已转换为 Data URL')
+      _ulogInfo('[LipSync Async] FAL input converted to Data URL')
 
       const input = {
         video_url: videoDataUrl,
@@ -70,7 +70,7 @@ export async function generateLipSync(
 
       const { apiKey } = await getProviderConfig(userId, selection.provider)
       const requestId = await submitFalTask(endpoint, input, apiKey)
-      _ulogInfo(`[LipSync Async] FAL 任务已提交: ${requestId}`)
+      _ulogInfo(`[LipSync Async] FAL task submitted: ${requestId}`)
 
       return {
         requestId,
@@ -107,7 +107,7 @@ export async function generateLipSync(
         throw new Error(`VIDU_LIPSYNC_SUBMIT_FAILED: ${data.err_code || 'unknown'}`)
       }
 
-      _ulogInfo(`[LipSync Async] Vidu 任务已提交: ${taskId}`)
+      _ulogInfo(`[LipSync Async] Vidu task submitted: ${taskId}`)
       return {
         requestId: taskId,
         externalId: `VIDU:VIDEO:${taskId}`,
@@ -122,20 +122,20 @@ export async function generateLipSync(
       typeof error === 'object' && error !== null
         ? (error as { message?: unknown; body?: unknown })
         : null
-    _ulogError('[LipSync Async] 错误:', error)
+    _ulogError('[LipSync Async] Error:', error)
     let errorDetails =
-      typeof errorObject?.message === 'string' ? errorObject.message : '未知错误'
+      typeof errorObject?.message === 'string' ? errorObject.message : 'Unknown error'
     const body = (errorObject?.body && typeof errorObject.body === 'object')
       ? (errorObject.body as { detail?: unknown })
       : null
     if (body) {
-      _ulogError('[LipSync Async] 错误详情:', JSON.stringify(body, null, 2))
+      _ulogError('[LipSync Async] Error details:', JSON.stringify(body, null, 2))
       if (body.detail) {
         errorDetails = typeof body.detail === 'string'
           ? body.detail
           : JSON.stringify(body.detail)
       }
     }
-    throw new Error(`口型同步任务提交失败: ${errorDetails}`)
+    throw new Error(`Lip-sync task submit failed: ${errorDetails}`)
   }
 }

@@ -104,7 +104,7 @@ export async function chatCompletion(
     try {
       if (providerKey === 'google' || providerKey === 'gemini-compatible') {
         const config = await getProviderConfig(userId, provider)
-        // gemini-compatible 可能有自定义 baseUrl（指向第三方兼容服务）
+        // gemini-compatible may have custom baseUrl (points to third-party compatible service)
         const googleAiOptions = config.baseUrl
           ? { apiKey: config.apiKey, httpOptions: { baseUrl: config.baseUrl } }
           : { apiKey: config.apiKey }
@@ -238,8 +238,8 @@ export async function chatCompletion(
           apiKey: config.apiKey,
           name: providerName,
         })
-        // 只有原生 OpenAI 推理模型才支持 forceReasoning/reasoningEffort
-        // gemini-compatible 等 OAI-compat 提供商传这些参数会导致空响应
+        // Only native OpenAI reasoning models support forceReasoning/reasoningEffort
+        // gemini-compatible and other OAI-compat providers may return empty if these are passed
         const isNativeOpenAIReasoning = shouldUseOpenAIReasoningProviderOptions({
           providerKey,
           providerApiMode: config.apiMode,
@@ -257,7 +257,7 @@ export async function chatCompletion(
           model: aiOpenAI.chat(resolvedModelId),
           system: getSystemPrompt(messages),
           messages: getConversationMessages(messages) as ModelMessage[],
-          // 推理模型不支持 temperature，仅在非推理模式下传递
+          // Reasoning models do not support temperature; only pass in non-reasoning mode
           ...(reasoning ? {} : { temperature }),
           maxRetries,
           ...(aiSdkProviderOptions ? { providerOptions: aiSdkProviderOptions } : {}),
@@ -364,20 +364,20 @@ export async function chatCompletion(
       })
       const errorBody = toRecord(toRecord(error)?.error) || toRecord(error)
       if (errorBody?.message === 'PROHIBITED_CONTENT' || errorBody?.code === 502) {
-        _ulogError('[LLM] ❌ 内容安全检测失败 - Google AI Studio 拒绝处理此内容')
-        throw new Error('SENSITIVE_CONTENT: 内容包含敏感信息,无法处理。请修改内容后重试')
+        _ulogError('[LLM] Content safety check failed - Google AI Studio rejected this content')
+        throw new Error('SENSITIVE_CONTENT: Content contains sensitive material and cannot be processed. Please modify and retry.')
       }
 
-      // Google Gemini 返回空响应时，视为可重试错误（不抛出，继续重试循环）
+      // When Google Gemini returns empty, treat as retryable (do not throw, continue retry loop)
       if (error instanceof GoogleEmptyResponseError) {
-        _ulogWarn(`[LLM] Google 返回空响应，将重试 (${attempt}/${maxRetries + 1}): ${errorMessage(error)}`)
+        _ulogWarn(`[LLM] Google returned empty response, will retry (${attempt}/${maxRetries + 1}): ${errorMessage(error)}`)
         if (attempt > maxRetries) break
         const delayMs = Math.min(2000 * attempt, 8000)
         await new Promise((resolve) => setTimeout(resolve, delayMs))
         continue
       }
 
-      _ulogWarn(`[LLM] 调用失败 (${attempt}/${maxRetries + 1}): ${errorMessage(error)}`)
+      _ulogWarn(`[LLM] Call failed (${attempt}/${maxRetries + 1}): ${errorMessage(error)}`)
 
       if (!isRetryableError(error) || attempt > maxRetries) break
       const delayMs = Math.min(1000 * Math.pow(2, attempt - 1), 5000)
@@ -385,5 +385,5 @@ export async function chatCompletion(
     }
   }
 
-  throw lastError || new Error('LLM 调用失败')
+  throw lastError || new Error('LLM call failed')
 }

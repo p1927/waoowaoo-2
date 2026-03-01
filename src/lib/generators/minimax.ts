@@ -1,9 +1,9 @@
 import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core'
 /**
- * MiniMax (海螺) 视频生成器
- * 
- * 支持模型：
- * 视频：MiniMax-Hailuo-2.3, MiniMax-Hailuo-2.3-Fast, MiniMax-Hailuo-02, T2V-01, T2V-01-Director
+* MiniMax (Hailuo) video generator
+ *
+ * Supported models:
+ * Video: MiniMax-Hailuo-2.3, MiniMax-Hailuo-2.3-Fast, MiniMax-Hailuo-02, T2V-01, T2V-01-Director
  */
 
 import { BaseVideoGenerator, VideoGenerateParams, GenerateResult } from './base'
@@ -158,7 +158,7 @@ function validateResolutionAndDuration(input: {
     }
 }
 
-// ==================== 视频生成器 ====================
+// ==================== Video generator ====================
 
 export class MinimaxVideoGenerator extends BaseVideoGenerator {
     protected async doGenerate(params: VideoGenerateParams): Promise<GenerateResult> {
@@ -220,8 +220,8 @@ export class MinimaxVideoGenerator extends BaseVideoGenerator {
             throw new Error('MINIMAX_VIDEO_OPTION_REQUIRED: firstFrameImage for resolution=512P')
         }
 
-        // aspectRatio 由 worker 层统一注入（来自项目 videoRatio），
-        // MiniMax 不使用此参数（通过 resolution 控制输出规格），在白名单内静默忽略。
+        // aspectRatio is injected by worker layer (from project videoRatio);
+        // MiniMax does not use it (output via resolution), silently ignore when in whitelist.
         const allowedOptionKeys = new Set([
             'provider',
             'modelId',
@@ -231,7 +231,7 @@ export class MinimaxVideoGenerator extends BaseVideoGenerator {
             'generationMode',
             'generateAudio',
             'lastFrameImageUrl',
-            'aspectRatio',  // 接受但不传给 API，避免 worker 层统一注入时报错
+            'aspectRatio',  // Accept but do not pass to API, avoid worker injection errors
         ])
         for (const [key, value] of Object.entries(options)) {
             if (value === undefined) continue
@@ -262,14 +262,14 @@ export class MinimaxVideoGenerator extends BaseVideoGenerator {
                     ? lastFrameImageUrl
                     : await imageUrlToBase64(lastFrameImageUrl)
                 requestBody.last_frame_image = lastFrameDataUrl
-                _ulogInfo(`${logPrefix} 使用首尾帧图片 (已转Data URL)`)
+                _ulogInfo(`${logPrefix} Using first+last frame images (converted to Data URL)`)
             } else {
-                _ulogInfo(`${logPrefix} 使用首帧图片 (已转Data URL)`)
+                _ulogInfo(`${logPrefix} Using first frame image (converted to Data URL)`)
             }
         }
 
         _ulogInfo(
-            `${logPrefix} 提交任务，mode=${generationMode}，duration=${duration ?? '(provider default)'}s，resolution=${normalizedResolution ?? '(provider default)'}`,
+            `${logPrefix} Submitting task, mode=${generationMode}, duration=${duration ?? '(provider default)'}s, resolution=${normalizedResolution ?? '(provider default)'}`,
         )
 
         try {
@@ -284,7 +284,7 @@ export class MinimaxVideoGenerator extends BaseVideoGenerator {
 
             if (!response.ok) {
                 const errorText = await response.text()
-                _ulogError(`${logPrefix} API请求失败:`, response.status, errorText)
+                _ulogError(`${logPrefix} API request failed:`, response.status, errorText)
                 throw new Error(`MiniMax API Error: ${response.status} - ${errorText}`)
             }
 
@@ -299,11 +299,11 @@ export class MinimaxVideoGenerator extends BaseVideoGenerator {
 
             const taskId = data.task_id
             if (!taskId) {
-                _ulogError(`${logPrefix} 响应中缺少 task_id:`, data)
-                throw new Error('MiniMax未返回task_id')
+                _ulogError(`${logPrefix} Response missing task_id:`, data)
+                throw new Error('MiniMax did not return task_id')
             }
 
-            _ulogInfo(`${logPrefix} 任务已提交，task_id=${taskId}`)
+            _ulogInfo(`${logPrefix} Task submitted, task_id=${taskId}`)
 
             return {
                 success: true,
@@ -312,7 +312,7 @@ export class MinimaxVideoGenerator extends BaseVideoGenerator {
                 externalId: `MINIMAX:VIDEO:${taskId}`
             }
         } catch (error: unknown) {
-            _ulogError(`${logPrefix} 生成失败:`, error)
+            _ulogError(`${logPrefix} Generation failed:`, error)
             throw error
         }
     }

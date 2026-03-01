@@ -95,8 +95,8 @@ export async function maybeSubmitLLMTask(params: {
       ? payload.flowStageTitle.trim()
       : defaultFlowMeta.flowStageTitle
 
-  // 确保 payload 中包含真实的 analysisModel，用于精确计费
-  // 根据 worker 实际使用的 model 来源选择对应的配置
+  // Ensure payload contains real analysisModel for accurate billing
+  // Select config based on the model source actually used by the worker
   const hasModel = typeof payload.analysisModel === 'string' && payload.analysisModel.trim()
     || typeof payload.model === 'string' && payload.model.trim()
   if (!hasModel && isBillableTaskType(params.type)) {

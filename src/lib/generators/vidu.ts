@@ -1,6 +1,6 @@
 import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core'
 /**
- * Vidu 视频生成器
+ * Vidu video generator
  */
 
 import { BaseVideoGenerator, VideoGenerateParams, GenerateResult } from './base'
@@ -626,13 +626,13 @@ export class ViduVideoGenerator extends BaseVideoGenerator {
 
         const endpoint = resolveViduEndpoint(generationMode)
 
-        _ulogInfo(`${logPrefix} 提交任务`)
+        _ulogInfo(`${logPrefix} Submitting task`)
         _ulogInfo(`${logPrefix} - Model: ${modelId}`)
         _ulogInfo(`${logPrefix} - Duration: ${duration}s`)
         _ulogInfo(`${logPrefix} - Resolution: ${pickedResolution}`)
         _ulogInfo(`${logPrefix} - Mode: ${generationMode}`)
         _ulogInfo(`${logPrefix} - GenerateAudio: ${resolvedGenerateAudio}`)
-        _ulogInfo(`${logPrefix} - 完整请求体:`, JSON.stringify(requestBody, null, 2))
+        _ulogInfo(`${logPrefix} - Full request body:`, JSON.stringify(requestBody, null, 2))
 
         try {
             const response = await fetch(`${VIDU_BASE_URL}${endpoint}`, {
@@ -646,7 +646,7 @@ export class ViduVideoGenerator extends BaseVideoGenerator {
 
             if (!response.ok) {
                 const errorText = await response.text()
-                _ulogError(`${logPrefix} API请求失败:`, response.status, errorText)
+                _ulogError(`${logPrefix} API request failed:`, response.status, errorText)
                 throw new Error(`Vidu API Error: ${response.status} - ${errorText}`)
             }
 
@@ -654,17 +654,17 @@ export class ViduVideoGenerator extends BaseVideoGenerator {
 
             const taskId = data.task_id
             if (!taskId) {
-                _ulogError(`${logPrefix} 响应中缺少 task_id:`, data)
-                throw new Error('Vidu未返回task_id')
+                _ulogError(`${logPrefix} Response missing task_id:`, data)
+                throw new Error('Vidu did not return task_id')
             }
 
             const state = data.state
             if (state === 'failed') {
-                _ulogError(`${logPrefix} 任务提交失败:`, data)
-                throw new Error('Vidu: 任务提交失败')
+                _ulogError(`${logPrefix} Task submit failed:`, data)
+                throw new Error('Vidu: task submit failed')
             }
 
-            _ulogInfo(`${logPrefix} 任务已提交，task_id=${taskId}, state=${state}`)
+            _ulogInfo(`${logPrefix} Task submitted, task_id=${taskId}, state=${state}`)
 
             return {
                 success: true,
@@ -673,7 +673,7 @@ export class ViduVideoGenerator extends BaseVideoGenerator {
                 externalId: `VIDU:VIDEO:${taskId}`,
             }
         } catch (error: unknown) {
-            _ulogError(`${logPrefix} 生成失败:`, error)
+            _ulogError(`${logPrefix} Generation failed:`, error)
             throw error
         }
     }

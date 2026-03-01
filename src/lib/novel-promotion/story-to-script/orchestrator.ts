@@ -203,7 +203,7 @@ function escapeControlCharsInJsonStrings(input: string): string {
 /**
  * Attempt to fix unescaped double quotes inside JSON string values.
  *
- * The LLM sometimes converts Chinese curly quotes ("") to straight ASCII
+ * The LLM sometimes converts curly quotes ("") to straight ASCII
  * double quotes (") inside a JSON string value without escaping them.
  * This produces invalid JSON such as:
  *   "text":"Character said, \"I am here to replace you\""
@@ -250,7 +250,7 @@ function fixUnescapedQuotesInJson(input: string): string {
         inString = false
         out += ch
       } else {
-        // Stray interior quote – replace with Chinese quote
+        // Stray interior quote – replace with fullwidth quote
         out += '\u201C'
       }
       continue

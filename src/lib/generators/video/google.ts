@@ -1,5 +1,5 @@
 /**
- * Google Veo 视频生成器
+ * Google Veo video generator
  */
 
 import { GoogleGenAI } from '@google/genai'
@@ -88,7 +88,7 @@ export class GoogleVeoVideoGenerator extends BaseVideoGenerator {
         if (typeof duration === 'number') config.durationSeconds = duration
 
         let hasImageInput = false
-        // 添加首帧图片（图生视频）
+        // Add first frame image (image-to-video)
         if (imageUrl) {
             const dataUrl = imageUrl.startsWith('data:') ? imageUrl : await imageUrlToBase64(imageUrl)
             const inlineData = dataUrlToInlineData(dataUrl)
@@ -99,7 +99,7 @@ export class GoogleVeoVideoGenerator extends BaseVideoGenerator {
         }
 
         if (lastFrameImageUrl) {
-            // 官方要求：lastFrame 仅支持 image-to-video，必须与 image 同时使用
+            // Official: lastFrame only for image-to-video, must be used with image
             if (!hasImageInput) {
                 throw new Error('Veo lastFrame requires image input')
             }
@@ -123,7 +123,7 @@ export class GoogleVeoVideoGenerator extends BaseVideoGenerator {
         const operationName = extractOperationName(response)
 
         if (!operationName) {
-            throw new Error('Veo 未返回 operation name')
+            throw new Error('Veo did not return operation name')
         }
 
         return {

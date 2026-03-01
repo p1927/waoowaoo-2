@@ -129,8 +129,8 @@ async function toUploadFileFromImageUrl(imageUrl: string): Promise<File> {
 }
 
 /**
- * Fallback: POST /video/create (非 OpenAI 标准，部分网关使用此格式)
- * 返回 { id, status } 格式
+ * Fallback: POST /video/create (non-OpenAI standard, some gateways use this)
+ * Returns { id, status }
  */
 async function createVideoViaFetchFallback(
   baseUrl: string,
@@ -161,7 +161,7 @@ async function createVideoViaFetchFallback(
 }
 
 /**
- * 判断是否为端点不支持的错误（404/405/500 无 body 等）
+ * Detect endpoint-unsupported errors (404/405/500 with no body, etc.)
  */
 function isEndpointUnsupportedError(error: unknown): boolean {
   if (!(error instanceof Error)) return false
