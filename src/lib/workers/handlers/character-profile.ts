@@ -43,7 +43,7 @@ async function handleConfirmProfile(
   let finalProfileData = character.profileData
   if (payload.profileData) {
     if (!validateProfileData(payload.profileData)) {
-      throw new Error('档案数据格式错误')
+      throw new Error('Profile data format error')
     }
     finalProfileData = stringifyProfileData(payload.profileData)
     await assertTaskActive(job, 'character_profile_confirm_update_profile')
@@ -54,7 +54,7 @@ async function handleConfirmProfile(
   }
 
   if (!finalProfileData) {
-    throw new Error('角色缺少档案数据')
+    throw new Error('Character is missing profile data')
   }
 
   const parsedProfile = JSON.parse(finalProfileData) as AnyObj
@@ -78,7 +78,7 @@ async function handleConfirmProfile(
   if (!suppressProgress) {
     await reportTaskProgress(job, 20, {
       stage: 'character_profile_confirm_prepare',
-      stageLabel: '准备角色档案确认参数',
+      stageLabel: 'Preparing character profile confirmation parameters',
       displayMode: 'detail',
     })
   }
@@ -98,7 +98,7 @@ async function handleConfirmProfile(
         action: 'generate_character_visual',
         meta: {
           stepId: 'character_profile_confirm',
-          stepTitle: '角色档案确认',
+          stepTitle: 'Character profile confirmation',
           stepIndex: 1,
           stepTotal: 1,
         },
@@ -117,13 +117,13 @@ async function handleConfirmProfile(
     ? (firstCharacter!.appearances as Array<AnyObj>)
     : []
   if (appearances.length === 0) {
-    throw new Error('AI返回格式错误: 缺少 appearances')
+    throw new Error('AI returned invalid format: missing appearances')
   }
 
   if (!suppressProgress) {
     await reportTaskProgress(job, 78, {
       stage: 'character_profile_confirm_persist',
-      stageLabel: '保存角色档案确认结果',
+      stageLabel: 'Saving character profile confirmation results',
       displayMode: 'detail',
     })
   }
@@ -138,7 +138,7 @@ async function handleConfirmProfile(
       data: {
         characterId: character.id,
         appearanceIndex: appIndex,
-        changeReason: readText(app.change_reason) || '初始形象',
+        changeReason: readText(app.change_reason) || 'Initial appearance',
         description: normalizedDescriptions[0] || '',
         descriptions: JSON.stringify(normalizedDescriptions),
         imageUrls: encodeImageUrls([]),
@@ -155,7 +155,7 @@ async function handleConfirmProfile(
   if (!suppressProgress) {
     await reportTaskProgress(job, 96, {
       stage: 'character_profile_confirm_done',
-      stageLabel: '角色档案确认完成',
+      stageLabel: 'Character profile confirmation completed',
       displayMode: 'detail',
       meta: { characterId },
     })
@@ -186,15 +186,15 @@ async function handleBatchConfirmProfile(job: Job<TaskJobData>) {
     return {
       success: true,
       count: 0,
-      message: '没有待确认的角色',
+      message: 'No characters pending confirmation',
     }
   }
 
   await reportTaskProgress(job, 18, {
     stage: 'character_profile_batch_prepare',
-    stageLabel: '准备批量角色档案确认参数',
+    stageLabel: 'Preparing batch character profile confirmation parameters',
     displayMode: 'detail',
-    message: `共 ${unconfirmedCharacters.length} 个角色`,
+    message: `${unconfirmedCharacters.length} characters total`,
   })
   await assertTaskActive(job, 'character_profile_batch_prepare')
 
@@ -207,7 +207,7 @@ async function handleBatchConfirmProfile(job: Job<TaskJobData>) {
     const progress = 18 + Math.floor(((index + 1) / totalCount) * 78)
     await reportTaskProgress(job, progress, {
       stage: 'character_profile_batch_loop_character',
-      stageLabel: '批量角色档案确认中',
+      stageLabel: 'Batch character profile confirmation in progress',
       displayMode: 'detail',
       message: `${index + 1}/${totalCount} ${character.name}`,
       meta: { characterId: character.id, index: index + 1, total: totalCount },
@@ -218,7 +218,7 @@ async function handleBatchConfirmProfile(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 96, {
     stage: 'character_profile_batch_done',
-    stageLabel: '批量角色档案确认完成',
+    stageLabel: 'Batch character profile confirmation completed',
     displayMode: 'detail',
     meta: { count: successCount },
   })

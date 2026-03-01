@@ -464,7 +464,7 @@ async function handleInsertPanelTask(job: Job<TaskJobData>) {
       null,
       2,
     )
-    : '无'
+    : 'None'
 
   const relatedCharacters = Array.from(new Set([...parsePanelCharacters(prevPanel), ...parsePanelCharacters(nextPanel)]))
   const relatedLocations = Array.from(new Set([prevPanel.location, nextPanel?.location].filter((v): v is string => Boolean(v))))
@@ -473,7 +473,7 @@ async function handleInsertPanelTask(job: Job<TaskJobData>) {
     .filter((character) => relatedCharacters.length === 0 || relatedCharacters.includes(character.name))
     .map((character) => {
       const appearances = character.appearances || []
-      if (appearances.length === 0) return `${character.name}: 无形象信息`
+      if (appearances.length === 0) return `${character.name}: No appearance info`
       const appearanceText = appearances
         .map((appearance) => {
           const descriptions = appearance.descriptions ? (() => {
@@ -485,22 +485,22 @@ async function handleInsertPanelTask(job: Job<TaskJobData>) {
             }
           })() : []
           const selectedIndex = appearance.selectedIndex ?? 0
-          const selectedDescription = descriptions[selectedIndex] || appearance.description || '无描述'
-          return `${appearance.changeReason || '默认'}: ${selectedDescription}`
+          const selectedDescription = descriptions[selectedIndex] || appearance.description || 'No description'
+          return `${appearance.changeReason || 'Default'}: ${selectedDescription}`
         })
         .join(' | ')
       return `${character.name}: ${appearanceText}`
     })
-    .join('\n') || '无'
+    .join('\n') || 'None'
 
   const locationsDescription = (projectData.locations || [])
     .filter((location) => relatedLocations.length === 0 || relatedLocations.includes(location.name))
     .map((location) => {
       const images = location.images || []
       const selectedImage = images.find((img) => img.isSelected) || images[0]
-      return `${location.name}: ${selectedImage?.description || '无描述'}`
+      return `${location.name}: ${selectedImage?.description || 'No description'}`
     })
-    .join('\n') || '无'
+    .join('\n') || 'None'
 
   const prompt = buildPrompt({
     promptId: PROMPT_IDS.NP_AGENT_STORYBOARD_INSERT,
@@ -530,7 +530,7 @@ async function handleInsertPanelTask(job: Job<TaskJobData>) {
         action: 'insert_panel',
         meta: {
           stepId: 'insert_panel',
-          stepTitle: '插入分镜',
+          stepTitle: 'Insert storyboard panel',
           stepIndex: 1,
           stepTotal: 1,
         },

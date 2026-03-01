@@ -2,26 +2,26 @@ import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from '@/i18n';
 
 export default createMiddleware({
-    // 支持的所有语言
+    // All supported languages
     locales,
 
-    // 默认语言
+    // Default language
     defaultLocale,
 
-    // URL 路径策略: 始终显示语言前缀
+    // URL path strategy: always show language prefix
     localePrefix: 'always',
 
-    // 语言检测: 根据 Accept-Language header 自动检测
+    // Language detection: auto-detect based on Accept-Language header
     localeDetection: true
 });
 
 export const config = {
-    // 匹配所有路径，除了 api、_next/static、_next/image、favicon.ico 等
+    // Match all paths except api, _next/static, _next/image, favicon.ico, etc.
     matcher: [
-        // 匹配根路径和所有带语言前缀的路径
+        // Match root path and all paths with language prefix
         '/',
-        '/(zh|en)/:path*',
-        // 匹配所有其他路径（用于重定向到带语言前缀的路径）
+        '/(en)/:path*',
+        // Match all other paths (for redirecting to paths with language prefix)
         '/((?!api|m|_next/static|_next/image|favicon.ico|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.svg|.*\\.gif|.*\\.ico).*)'
     ]
 };

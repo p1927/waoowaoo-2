@@ -105,11 +105,11 @@ export async function handleClipsBuildTask(job: Job<TaskJobData>) {
   }
 
   const locationsLibName = novelData.locations.length > 0
-    ? novelData.locations.map((item) => item.name).join('、')
-    : '无'
+    ? novelData.locations.map((item) => item.name).join(', ')
+    : 'None'
   const charactersLibName = novelData.characters.length > 0
-    ? novelData.characters.map((item) => item.name).join('、')
-    : '无'
+    ? novelData.characters.map((item) => item.name).join(', ')
+    : 'None'
   const charactersIntroduction = buildCharactersIntroduction(novelData.characters)
   const promptTemplateBase = buildPrompt({
     promptId: PROMPT_IDS.NP_AGENT_CLIP,
@@ -125,7 +125,7 @@ export async function handleClipsBuildTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 20, {
     stage: 'clips_build_prepare',
-    stageLabel: '准备片段切分参数',
+    stageLabel: 'Preparing clip split parameters',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'clips_build_prepare')
@@ -156,7 +156,7 @@ export async function handleClipsBuildTask(job: Job<TaskJobData>) {
             meta: {
               stepId: 'split_clips',
               stepAttempt: attempt,
-              stepTitle: '片段切分',
+              stepTitle: 'Clip split',
               stepIndex: 1,
               stepTotal: 1,
             },
@@ -218,7 +218,7 @@ export async function handleClipsBuildTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 75, {
     stage: 'clips_build_persist',
-    stageLabel: '保存片段切分结果',
+    stageLabel: 'Saving clip split results',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'clips_build_persist')
@@ -248,7 +248,7 @@ export async function handleClipsBuildTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 96, {
     stage: 'clips_build_done',
-    stageLabel: '片段切分已完成',
+    stageLabel: 'Clip split completed',
     displayMode: 'detail',
   })
 

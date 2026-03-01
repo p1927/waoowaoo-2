@@ -50,8 +50,8 @@ export async function handleModifyAssetImageTask(job: Job<TaskJobData>) {
   const editModel = projectModels.editModel
   if (!editModel) throw new Error('Edit model not configured')
 
-  // 从 payload.generationOptions 读取 resolution（由 route 层 buildImageBillingPayload 注入）
-  // 与老版本 getModelResolution 等价，但数据来源改为 capabilityDefaults/capabilityOverrides 体系
+  // Read resolution from payload.generationOptions (injected by route layer buildImageBillingPayload)
+  // Equivalent to legacy getModelResolution but data source changed to capabilityDefaults/capabilityOverrides
   const generationOptions = payload.generationOptions as Record<string, unknown> | undefined
   const resolution = typeof generationOptions?.resolution === 'string'
     ? generationOptions.resolution
@@ -85,7 +85,7 @@ export async function handleModifyAssetImageTask(job: Job<TaskJobData>) {
     const normalizedExtras = await normalizeReferenceImagesForGeneration(extraReferenceInputs)
     const referenceImages = Array.from(new Set([requiredReference, ...normalizedExtras]))
 
-    const prompt = `请根据以下指令修改图片，保持人物核心特征一致：\n${modifyPrompt}`
+    const prompt = `Modify the image according to the following instructions, keeping the character's core features consistent:\n${modifyPrompt}`
     const source = await resolveImageSourceFromGeneration(job, {
       userId: job.data.userId,
       modelId: editModel,
@@ -97,7 +97,7 @@ export async function handleModifyAssetImageTask(job: Job<TaskJobData>) {
       },
     })
 
-    const label = `${appearance.character?.name || '角色'} - ${appearance.changeReason || '形象'}`
+    const label = `${appearance.character?.name || 'Character'} - ${appearance.changeReason || 'Appearance'}`
     const labeled = await withLabelBar(source, label)
     const cosKey = await uploadImageSourceToCos(labeled, 'character-modify', appearance.id)
 
@@ -107,7 +107,7 @@ export async function handleModifyAssetImageTask(job: Job<TaskJobData>) {
     const selectedIndex = appearance.selectedIndex
     const shouldUpdateMain = selectedIndex === imageIndex || (selectedIndex === null && imageIndex === 0) || imageUrls.length === 1
 
-    // 如果有参考图，尝试用 AI 分析参考图来更新描述词（后台静默完成，不影响主流程）
+    // If reference images exist, try AI analysis to update description (background, does not affect main flow)
     let extractedDescription: string | undefined
     if (normalizedExtras.length > 0) {
       try {
@@ -125,7 +125,7 @@ export async function handleModifyAssetImageTask(job: Job<TaskJobData>) {
           extractedDescription = completion.text || undefined
         }
       } catch (err) {
-        logger.warn({ message: '参考图描述提取失败，不影响改图结果', details: { error: String(err) } })
+        logger.warn({ message: 'Reference image description extraction failed, does not affect edit result', details: { error: String(err) } })
       }
     }
 
@@ -181,7 +181,7 @@ export async function handleModifyAssetImageTask(job: Job<TaskJobData>) {
     const normalizedExtras = await normalizeReferenceImagesForGeneration(extraReferenceInputs)
     const referenceImages = Array.from(new Set([requiredReference, ...normalizedExtras]))
 
-    const prompt = `请根据以下指令修改场景图片，保持整体风格一致：\n${modifyPrompt}`
+    const prompt = `Modify the location image according to the following instructions, keeping the overall style consistent:\n${modifyPrompt}`
     const source = await resolveImageSourceFromGeneration(job, {
       userId: job.data.userId,
       modelId: editModel,
@@ -193,7 +193,7 @@ export async function handleModifyAssetImageTask(job: Job<TaskJobData>) {
       },
     })
 
-    const label = locationImage.location?.name || '场景'
+    const label = locationImage.location?.name || 'Location'
     const labeled = await withLabelBar(source, label)
     const cosKey = await uploadImageSourceToCos(labeled, 'location-modify', locationImage.id)
 
@@ -275,7 +275,7 @@ export async function handleModifyAssetImageTask(job: Job<TaskJobData>) {
 
     const normalizedExtras = await normalizeReferenceImagesForGeneration(extraReferenceInputs)
     const uniqueReferences = Array.from(new Set([requiredReference, ...normalizedExtras]))
-    const prompt = `请根据以下指令修改分镜图片，保持镜头语言和主体一致：\n${modifyPrompt}`
+    const prompt = `Modify the storyboard image according to the following instructions, keeping shot language and subject consistent:\n${modifyPrompt}`
     const source = await resolveImageSourceFromGeneration(job, {
       userId: job.data.userId,
       modelId: editModel,

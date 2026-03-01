@@ -67,7 +67,7 @@ export function buildStoryboardJson(storyboards: StoryboardLike[]): string {
   }
 
   if (panelsData.length === 0) {
-    return '无分镜数据'
+    return 'No storyboard data'
   }
 
   return JSON.stringify(panelsData, null, 2)

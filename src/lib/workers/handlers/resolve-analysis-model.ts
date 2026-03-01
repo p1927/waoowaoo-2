@@ -30,5 +30,5 @@ export async function resolveAnalysisModel(input: ResolveAnalysisModelInput): Pr
   const modelFromUserPreference = normalizeModelKey(userPreference?.analysisModel)
   if (modelFromUserPreference) return modelFromUserPreference
 
-  throw new Error('ANALYSIS_MODEL_NOT_CONFIGURED: 请先在设置页面配置分析模型')
+  throw new Error('ANALYSIS_MODEL_NOT_CONFIGURED: Please configure the analysis model in settings first')
 }

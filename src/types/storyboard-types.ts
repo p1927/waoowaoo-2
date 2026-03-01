@@ -1,20 +1,20 @@
 /**
- * 分镜相关的类型守卫和工具类型
- * 解决 (storyboard as any).panels 类型断言问题
+ * Type guards and utility types for storyboard
+ * Resolves (storyboard as any).panels type assertion issue
  */
 
 import { NovelPromotionStoryboard, NovelPromotionPanel } from './project'
 
 /**
- * 带有已加载 panels 的 Storyboard 类型
- * 用于数据库查询后包含 panels 的情况
+ * Storyboard type with loaded panels
+ * Used when database query includes panels
  */
 export interface StoryboardWithPanels extends NovelPromotionStoryboard {
     panels: NovelPromotionPanel[]
 }
 
 /**
- * 类型守卫：检查 storyboard 是否包含已加载的 panels
+ * Type guard: check if storyboard contains loaded panels
  */
 export function hasLoadedPanels(
     storyboard: NovelPromotionStoryboard
@@ -23,8 +23,8 @@ export function hasLoadedPanels(
 }
 
 /**
- * 安全获取 panels 数组
- * 如果 panels 不存在则返回空数组
+ * Safely get panels array
+ * Returns empty array if panels do not exist
  */
 export function getPanels(storyboard: NovelPromotionStoryboard): NovelPromotionPanel[] {
     if (hasLoadedPanels(storyboard)) {
@@ -34,8 +34,8 @@ export function getPanels(storyboard: NovelPromotionStoryboard): NovelPromotionP
 }
 
 /**
- * 获取 panel 的候选图片
- * 处理 candidateImages JSON 字符串解析
+ * Get panel candidate images
+ * Handles candidateImages JSON string parsing
  */
 export function getPanelCandidates(panel: NovelPromotionPanel): string[] {
     if (!panel.imageHistory) return []

@@ -135,7 +135,7 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
   const characterId = readString(payload.characterId)
   const extractOnly = readBoolean(payload.extractOnly)
   const customDescription = readString(payload.customDescription)
-  const characterName = readString(payload.characterName) || '新角色 - 初始形象'
+  const characterName = readString(payload.characterName) || 'New character - Initial appearance'
   const artStyle = readString(payload.artStyle)
 
   if (isBackgroundJob && (!characterId || !appearanceId)) {
@@ -144,7 +144,7 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 15, {
     stage: 'reference_to_character_prepare',
-    stageLabel: '准备参考图转换参数',
+    stageLabel: 'Preparing reference image conversion parameters',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'reference_to_character_prepare')
@@ -155,16 +155,16 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
   const imageModel = readString(userConfig.characterModel)
   const analysisModel = readString(userConfig.analysisModel)
   if (!imageModel && !extractOnly) {
-    throw new Error('请先在设置页面配置角色图片模型')
+    throw new Error('Please configure the character image model in settings first')
   }
   if (!analysisModel && extractOnly) {
-    throw new Error('请先在设置页面配置分析模型')
+    throw new Error('Please configure the analysis model in settings first')
   }
 
   if (extractOnly) {
     await reportTaskProgress(job, 45, {
       stage: 'reference_to_character_extract',
-      stageLabel: '提取参考图描述',
+      stageLabel: 'Extracting reference image description',
       displayMode: 'detail',
     })
     const completion = await executeAiVisionStep({
@@ -181,7 +181,7 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
     await assertTaskActive(job, 'reference_to_character_extract_done')
     await reportTaskProgress(job, 96, {
       stage: 'reference_to_character_extract_done',
-      stageLabel: '参考图描述提取完成',
+      stageLabel: 'Reference image description extraction completed',
       displayMode: 'detail',
     })
     return {
@@ -198,7 +198,7 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
   })
   let prompt = addCharacterPromptSuffix(basePrompt)
   if (artStylePrompt) {
-    prompt = `${prompt}，${artStylePrompt}`
+    prompt = `${prompt}, ${artStylePrompt}`
   }
 
   const useReferenceImages = !customDescription
@@ -207,7 +207,7 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 35, {
     stage: 'reference_to_character_generate',
-    stageLabel: '生成角色三视图',
+    stageLabel: 'Generating character three-view sheet',
     displayMode: 'detail',
   })
 
@@ -244,7 +244,7 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
 
   const successfulCosKeys = imageResults.filter((item): item is string => Boolean(item))
   if (successfulCosKeys.length === 0) {
-    throw new Error('图片生成失败')
+    throw new Error('Image generation failed')
   }
 
   await assertTaskActive(job, 'reference_to_character_persist')
@@ -270,7 +270,7 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
     }
     await reportTaskProgress(job, 96, {
       stage: 'reference_to_character_done',
-      stageLabel: '参考图转换完成',
+      stageLabel: 'Reference image conversion completed',
       displayMode: 'detail',
     })
     return { success: true }

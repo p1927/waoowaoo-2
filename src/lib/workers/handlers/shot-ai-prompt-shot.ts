@@ -29,23 +29,23 @@ export async function handleModifyShotPromptTask(job: Job<TaskJobData>, payload:
       return `${name}(${description})`
     })
     .filter(Boolean)
-    .join('，')
+    .join(', ')
   const userInput = assetDescriptions
-    ? `${modifyInstruction}\n\n引用的资产描述：${assetDescriptions}`
+    ? `${modifyInstruction}\n\nReferenced asset descriptions: ${assetDescriptions}`
     : modifyInstruction
   const finalPrompt = buildPrompt({
     promptId: PROMPT_IDS.NP_IMAGE_PROMPT_MODIFY,
     locale: job.data.locale,
     variables: {
       prompt_input: currentPrompt,
-      video_prompt_input: currentVideoPrompt || '无',
+      video_prompt_input: currentVideoPrompt || 'None',
       user_input: userInput,
     },
   })
 
   await reportTaskProgress(job, 22, {
     stage: 'ai_modify_shot_prompt_prepare',
-    stageLabel: '准备镜头提示词修改参数',
+    stageLabel: 'Preparing shot prompt modification parameters',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'ai_modify_shot_prompt_prepare')
@@ -57,7 +57,7 @@ export async function handleModifyShotPromptTask(job: Job<TaskJobData>, payload:
     action: 'ai_modify_shot_prompt',
     streamContextKey: 'ai_modify_shot_prompt',
     streamStepId: 'ai_modify_shot_prompt',
-    streamStepTitle: '镜头提示词修改',
+    streamStepTitle: 'Shot prompt modification',
   })
   await assertTaskActive(job, 'ai_modify_shot_prompt_parse')
 
@@ -65,7 +65,7 @@ export async function handleModifyShotPromptTask(job: Job<TaskJobData>, payload:
 
   await reportTaskProgress(job, 96, {
     stage: 'ai_modify_shot_prompt_done',
-    stageLabel: '镜头提示词修改完成',
+    stageLabel: 'Shot prompt modification completed',
     displayMode: 'detail',
   })
 

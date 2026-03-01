@@ -7,15 +7,15 @@ export { locales, type Locale, routing };
 export const defaultLocale = routing.defaultLocale;
 
 export default getRequestConfig(async ({ requestLocale }) => {
-    // 获取请求的 locale
+    // Get the requested locale
     const locale = await requestLocale;
 
-    // 验证传入的 locale 是否有效
+    // Validate if the passed locale is valid
     if (!locale || !locales.includes(locale as Locale)) {
         notFound();
     }
 
-    // 加载所有模块化的翻译文件
+    // Load all modularized translation files
     const [
         common,
         stages,

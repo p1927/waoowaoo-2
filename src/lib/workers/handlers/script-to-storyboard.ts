@@ -298,8 +298,8 @@ export async function handleScriptToStoryboardTask(job: Job<TaskJobData>) {
     variables: {
       input: episode.novelText,
       characters_lib_name: (novelData.characters || []).length > 0
-        ? (novelData.characters || []).map((item) => item.name).join('、')
-        : '无',
+        ? (novelData.characters || []).map((item) => item.name).join(', ')
+        : 'None',
       characters_introduction: buildCharactersIntroduction(novelData.characters || []),
       storyboard_json: buildStoryboardJson(persistedStoryboards),
     },
@@ -336,7 +336,7 @@ export async function handleScriptToStoryboardTask(job: Job<TaskJobData>) {
             stage: 'script_to_storyboard_step',
             stageLabel: 'progress.stage.scriptToStoryboardStep',
             displayMode: 'detail',
-            message: `台词分析失败，准备重试 (${voiceAttempt + 1}/${MAX_VOICE_ANALYZE_ATTEMPTS})`,
+            message: `Dialogue analysis failed, preparing retry (${voiceAttempt + 1}/${MAX_VOICE_ANALYZE_ATTEMPTS})`,
             stepId: voiceStepMeta.stepId,
             stepAttempt: voiceAttempt + 1,
             stepTitle: voiceStepMeta.stepTitle,

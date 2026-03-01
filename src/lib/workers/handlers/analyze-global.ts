@@ -61,15 +61,15 @@ export async function handleAnalyzeGlobalTask(job: Job<TaskJobData>) {
 
   let allContent = ''
   if (readText(novelData.globalAssetText).trim()) {
-    allContent += `【全局设定】\n${readText(novelData.globalAssetText)}\n\n`
+    allContent += `[Global Settings]\n${readText(novelData.globalAssetText)}\n\n`
   }
   for (const ep of novelData.episodes) {
     const text = readText(ep.novelText)
     if (!text.trim()) continue
-    allContent += `【${ep.name}】\n${text}\n\n`
+    allContent += `[${ep.name}]\n${text}\n\n`
   }
   if (!allContent.trim()) {
-    throw new Error('没有可分析的内容，请先添加剧集或全局设定')
+    throw new Error('No content to analyze, please add episodes or global settings first')
   }
 
   const chunks = chunkContent(allContent, CHUNK_SIZE)
@@ -90,9 +90,9 @@ export async function handleAnalyzeGlobalTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 10, {
     stage: 'analyze_global_prepare',
-    stageLabel: '准备全局资产分析参数',
+    stageLabel: 'Preparing global asset analysis parameters',
     displayMode: 'detail',
-    message: `共 ${chunks.length} 个切片`,
+    message: `${chunks.length} chunks total`,
   })
   await assertTaskActive(job, 'analyze_global_prepare')
 
@@ -106,11 +106,11 @@ export async function handleAnalyzeGlobalTask(job: Job<TaskJobData>) {
       const progress = 15 + Math.min(60, Math.floor(((i + 1) / Math.max(1, chunks.length)) * 60))
       await reportTaskProgress(job, progress, {
         stage: 'analyze_global_chunk',
-        stageLabel: '分析全局资产切片',
+        stageLabel: 'Analyzing global asset chunk',
         displayMode: 'detail',
-        message: `切片 ${i + 1}/${chunks.length}`,
+        message: `Chunk ${i + 1}/${chunks.length}`,
         stepId: `analyze_global_chunk_${i + 1}`,
-        stepTitle: `全局资产分析 ${i + 1}/${chunks.length}`,
+        stepTitle: `Global asset analysis ${i + 1}/${chunks.length}`,
         stepIndex: i + 1,
         stepTotal: chunks.length,
       })
@@ -135,7 +135,7 @@ export async function handleAnalyzeGlobalTask(job: Job<TaskJobData>) {
               action: 'analyze_global_characters',
               meta: {
                 stepId: `analyze_global_characters_${i + 1}`,
-                stepTitle: `角色分析 ${i + 1}/${chunks.length}`,
+                stepTitle: `Character analysis ${i + 1}/${chunks.length}`,
                 stepIndex: i + 1,
                 stepTotal: chunks.length,
               },
@@ -149,7 +149,7 @@ export async function handleAnalyzeGlobalTask(job: Job<TaskJobData>) {
               action: 'analyze_global_locations',
               meta: {
                 stepId: `analyze_global_locations_${i + 1}`,
-                stepTitle: `场景分析 ${i + 1}/${chunks.length}`,
+                stepTitle: `Location analysis ${i + 1}/${chunks.length}`,
                 stepIndex: i + 1,
                 stepTotal: chunks.length,
               },
@@ -181,7 +181,7 @@ export async function handleAnalyzeGlobalTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 96, {
     stage: 'analyze_global_done',
-    stageLabel: '全局资产分析完成',
+    stageLabel: 'Global asset analysis completed',
     displayMode: 'detail',
   })
 

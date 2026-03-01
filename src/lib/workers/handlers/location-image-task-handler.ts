@@ -56,11 +56,11 @@ export async function handleLocationImageTask(job: Job<TaskJobData>) {
   })
 
   let locationImages: LocationImageRecord[] = []
-  // 用于存储 locationId -> name 的映射，避免 images 子集缺少 location 关联
+  // Store locationId -> name mapping for when images subset lacks location association
   const locationNameMap: Record<string, string> = {}
 
   if (maybeLocationImage) {
-    // 来源 location 名字已 include，先记录
+    // Source location name already included, record it
     if (maybeLocationImage.location?.name) {
       locationNameMap[maybeLocationImage.locationId] = maybeLocationImage.location.name
     }
@@ -89,7 +89,7 @@ export async function handleLocationImageTask(job: Job<TaskJobData>) {
       throw new Error('Location images not found')
     }
 
-    // 记录 location 名字
+    // Record location name
     locationNameMap[locationId] = location.name
 
     if (payload.imageIndex !== undefined) {
@@ -101,7 +101,7 @@ export async function handleLocationImageTask(job: Job<TaskJobData>) {
     }
   }
 
-  // 补充查询缺失的 location 名字（兜底）
+  // Fallback: query missing location names
   const missingLocationIds = Array.from(new Set(locationImages.map((it) => it.locationId)))
     .filter((id) => !locationNameMap[id])
   if (missingLocationIds.length > 0) {
@@ -117,8 +117,8 @@ export async function handleLocationImageTask(job: Job<TaskJobData>) {
 
   for (let i = 0; i < locationImages.length; i++) {
     const item = locationImages[i]
-    // 优先用映射表中的名字，回退到 item.location?.name，最后才用默认值
-    const name = locationNameMap[item.locationId] || item.location?.name || '场景'
+    // Prefer name from map, fallback to item.location?.name, then default
+    const name = locationNameMap[item.locationId] || item.location?.name || 'Location'
     const promptBody = item.description || ''
     if (!promptBody) continue
 

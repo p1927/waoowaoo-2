@@ -25,7 +25,7 @@ export function buildAnalyzeGlobalPrompts(params: {
     .replace('{characters_lib_info}', buildCharactersLibInfo(params.existingCharacters))
   const locationPrompt = params.templates.locationPromptTemplate
     .replace('{input}', params.chunk)
-    .replace('{locations_lib_name}', params.existingLocationInfo.join(', ') || '无')
+    .replace('{locations_lib_name}', params.existingLocationInfo.join(', ') || 'None')
   return {
     characterPrompt,
     locationPrompt,

@@ -7,20 +7,20 @@ import { apiHandler } from '@/lib/api-errors'
 
 /**
  * GET /api/user/costs
- * 获取当前用户所有项目费用汇总
+ * Get current user's cost summary across all projects
  */
 export const GET = apiHandler(async () => {
-  // 🔐 统一权限验证
+  // Auth check
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const { session } = authResult
 
   const userId = session.user.id
 
-  // 获取用户费用汇总
+  // Get user cost summary
   const costSummary = await getUserCostSummary(userId)
 
-  // 获取项目名称
+  // Get project names
   const projectIds = costSummary.byProject.map(p => p.projectId)
   const projects = await prisma.project.findMany({
     where: { id: { in: projectIds } },
@@ -29,10 +29,10 @@ export const GET = apiHandler(async () => {
 
   const projectMap = new Map(projects.map(p => [p.id, p.name]))
 
-  // 合并项目名称
+  // Merge project names
   const byProjectWithNames = costSummary.byProject.map(p => ({
     projectId: p.projectId,
-    projectName: projectMap.get(p.projectId) || '未知项目',
+    projectName: projectMap.get(p.projectId) || 'Unknown project',
     totalCost: p._sum.cost || 0,
     recordCount: p._count
   }))

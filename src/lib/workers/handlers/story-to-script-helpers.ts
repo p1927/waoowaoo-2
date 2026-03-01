@@ -85,7 +85,7 @@ export async function persistAnalyzedLocations(params: {
   analyzedLocations: Record<string, unknown>[]
 }) {
   const created: Array<{ id: string; name: string }> = []
-  const invalidKeywords = ['幻想', '抽象', '无明确', '空间锚点', '未说明', '不明确']
+  const invalidKeywords = ['fantasy', 'abstract', 'unspecified', 'spatial anchor', 'unstated', 'ambiguous']
 
   for (const item of params.analyzedLocations) {
     const name = asString(item.name).trim()

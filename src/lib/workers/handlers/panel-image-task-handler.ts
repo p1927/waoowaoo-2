@@ -56,7 +56,7 @@ function pickAppearanceDescription(appearance: {
   if (typeof appearance.description === 'string' && appearance.description.trim()) {
     return appearance.description.trim()
   }
-  return '无描述'
+  return 'No description'
 }
 
 function buildPanelPromptContext(params: {
@@ -81,7 +81,7 @@ function buildPanelPromptContext(params: {
       return {
         name: reference.name,
         appearance: reference.appearance || null,
-        description: '无角色外貌数据',
+        description: 'No character appearance data',
       }
     }
 
@@ -94,7 +94,7 @@ function buildPanelPromptContext(params: {
     return {
       name: character.name,
       appearance: matchedAppearance?.changeReason || null,
-      description: matchedAppearance ? pickAppearanceDescription(matchedAppearance) : '无角色外貌数据',
+      description: matchedAppearance ? pickAppearanceDescription(matchedAppearance) : 'No character appearance data',
     }
   })
 
@@ -144,7 +144,7 @@ function buildPanelPrompt(params: {
     variables: {
       aspect_ratio: params.aspectRatio,
       storyboard_text_json_input: params.contextJson,
-      source_text: params.sourceText || '无',
+      source_text: params.sourceText || 'None',
       style: params.styleText,
     },
   })
@@ -216,7 +216,7 @@ export async function handlePanelImageTask(job: Job<TaskJobData>) {
   const prompt = buildPanelPrompt({
     locale: job.data.locale,
     aspectRatio,
-    styleText: artStyle || '与参考图风格一致',
+    styleText: artStyle || 'Match reference image style',
     sourceText: panel.srtSegment || panel.description || '',
     contextJson,
   })

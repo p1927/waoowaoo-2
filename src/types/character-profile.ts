@@ -1,6 +1,6 @@
 /**
- * 角色档案数据结构
- * 用于两阶段角色生成系统
+ * Character profile data structure
+ * Used by two-phase character generation system
  */
 
 export type RoleLevel = 'S' | 'A' | 'B' | 'C' | 'D'
@@ -8,45 +8,45 @@ export type RoleLevel = 'S' | 'A' | 'B' | 'C' | 'D'
 export type CostumeTier = 1 | 2 | 3 | 4 | 5
 
 export interface CharacterProfileData {
-    /** 角色重要性层级 */
+    /** Character importance tier */
     role_level: RoleLevel
 
-    /** 角色原型 (如: 霸道总裁, 心机婊) */
+    /** Character archetype (e.g. domineering CEO, schemer) */
     archetype: string
 
-    /** 性格标签 */
+    /** Personality tags */
     personality_tags: string[]
 
-    /** 时代背景 */
+    /** Era/period setting */
     era_period: string
 
-    /** 社会阶层 */
+    /** Social class */
     social_class: string
 
-    /** 职业 (可选) */
+    /** Occupation (optional) */
     occupation?: string
 
-    /** 服装华丽度 (1-5) */
+    /** Costume extravagance (1-5) */
     costume_tier: CostumeTier
 
-    /** 建议色彩 */
+    /** Suggested colors */
     suggested_colors: string[]
 
-    /** 主要辨识标志 (S/A级角色必须) */
+    /** Primary identifier (required for S/A tier characters) */
     primary_identifier?: string
 
-    /** 视觉关键词 */
+    /** Visual keywords */
     visual_keywords: string[]
 
-    /** 性别 */
+    /** Gender */
     gender: string
 
-    /** 年龄段描述 */
+    /** Age range description */
     age_range: string
 }
 
 /**
- * 从JSON字符串解析角色档案
+ * Parse character profile from JSON string
  */
 export function parseProfileData(profileDataJson: string | null): CharacterProfileData | null {
     if (!profileDataJson) return null
@@ -58,14 +58,14 @@ export function parseProfileData(profileDataJson: string | null): CharacterProfi
 }
 
 /**
- * 将角色档案序列化为JSON字符串
+ * Serialize character profile to JSON string
  */
 export function stringifyProfileData(profileData: CharacterProfileData): string {
     return JSON.stringify(profileData)
 }
 
 /**
- * 验证角色档案数据完整性
+ * Validate character profile data completeness
  */
 export function validateProfileData(data: unknown): data is CharacterProfileData {
     if (!data || typeof data !== 'object') return false

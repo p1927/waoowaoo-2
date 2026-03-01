@@ -69,7 +69,7 @@ export async function handleCharacterImageTask(job: Job<TaskJobData>) {
 
   const appearanceId = pickFirstString(job.data.targetId, payload.appearanceId)
   let appearance: CharacterAppearanceRecord | null = null
-  let characterName = '角色'
+  let characterName = 'Character'
 
   if (appearanceId) {
     const appearanceWithCharacter = await db.characterAppearance.findUnique({
@@ -100,7 +100,7 @@ export async function handleCharacterImageTask(job: Job<TaskJobData>) {
   const descriptions = parseJsonStringArray(appearance.descriptions)
   const baseDescriptions = descriptions.length > 0 ? descriptions : [appearance.description || '']
 
-  // 子形象（不是主形象）生成时，引用主形象图片保持一致性
+  // For non-primary appearance generation, reference primary appearance image for consistency
   const primaryReferenceInputs: string[] = []
   if (appearance.appearanceIndex > PRIMARY_APPEARANCE_INDEX) {
     const primaryAppearance = await db.characterAppearance.findFirst({
@@ -128,7 +128,7 @@ export async function handleCharacterImageTask(job: Job<TaskJobData>) {
 
   const imageUrls = parseImageUrls(appearance.imageUrls, 'characterAppearance.imageUrls')
   const nextImageUrls = [...imageUrls]
-  const label = `${characterName} - ${appearance.changeReason || '形象'}`
+  const label = `${characterName} - ${appearance.changeReason || 'Appearance'}`
 
   for (let i = 0; i < indexes.length; i++) {
     const index = indexes[i]

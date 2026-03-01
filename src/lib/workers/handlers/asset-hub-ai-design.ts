@@ -36,12 +36,12 @@ export async function handleAssetHubAIDesignTask(job: Job<TaskJobData>) {
       : null
   const analysisModel = analysisModelFromPayload || userConfig.analysisModel || ''
   if (!analysisModel) {
-    throw new Error('ANALYSIS_MODEL_NOT_CONFIGURED: 请先在设置页面配置分析模型')
+    throw new Error('ANALYSIS_MODEL_NOT_CONFIGURED: Please configure the analysis model in settings first')
   }
 
   await reportTaskProgress(job, 25, {
     stage: 'asset_hub_ai_design_prepare',
-    stageLabel: '准备资产设计参数',
+    stageLabel: 'Preparing asset design parameters',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'asset_hub_ai_design_prepare')
@@ -62,7 +62,7 @@ export async function handleAssetHubAIDesignTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 96, {
     stage: 'asset_hub_ai_design_done',
-    stageLabel: '资产设计结果已生成',
+    stageLabel: 'Asset design result generated',
     displayMode: 'detail',
   })
 

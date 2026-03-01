@@ -23,7 +23,7 @@ const DEFAULT_POLL_TIMEOUT_MS = Number.parseInt(process.env.WORKER_EXTERNAL_TIME
 const DEFAULT_POLL_INTERVAL_MS = Number.parseInt(process.env.WORKER_EXTERNAL_POLL_MS || '3000', 10)
 
 /**
- * 查询 DB 中任务是否已有 externalId（服务重启后续接轮询用，避免重复提交外部 API）
+ * Check if task already has externalId in DB (for resuming poll after service restart, avoid duplicate external API submission)
  */
 async function getTaskExistingExternalId(taskId: string): Promise<string | null> {
   try {
@@ -179,7 +179,7 @@ export async function resolveImageSourceFromGeneration(
   const logger = scopedWorkerUtilLogger(job, 'worker.image.generate_source')
   const startedAt = Date.now()
 
-  // 服务重启续接：若 DB 中已有 externalId，直接恢复轮询，不重新提交外部 API
+  // Service restart resume: if DB already has externalId, resume polling without resubmitting to external API
   const resumeExternalId = await getTaskExistingExternalId(job.data.taskId)
   if (resumeExternalId) {
     logger.info({
@@ -295,7 +295,7 @@ export async function resolveVideoSourceFromGeneration(
   const logger = scopedWorkerUtilLogger(job, 'worker.video.generate_source')
   const startedAt = Date.now()
 
-  // 服务重启续接：若 DB 中已有 externalId，直接恢复轮询，不重新提交外部 API（避免重复扣费）
+  // Service restart resume: if DB already has externalId, resume polling without resubmitting (avoid duplicate charges)
   const resumeExternalId = await getTaskExistingExternalId(job.data.taskId)
   if (resumeExternalId) {
     logger.info({
@@ -411,7 +411,7 @@ export async function resolveLipSyncVideoSource(
   const logger = scopedWorkerUtilLogger(job, 'worker.video.lip_sync')
   const startedAt = Date.now()
 
-  // 服务重启续接：若 DB 中已有 externalId，直接恢复轮询，不重新提交（避免重复扣费）
+  // Service restart resume: if DB already has externalId, resume polling without resubmitting (avoid duplicate charges)
   const resumeExternalId = await getTaskExistingExternalId(job.data.taskId)
   if (resumeExternalId) {
     logger.info({
@@ -471,8 +471,8 @@ export async function resolveLipSyncVideoSource(
 }
 
 /**
- * 裁掉图片顶部的黑边标签区域，返回纯净内容的 base64 data URL
- * 用于改图前去除旧黑边，避免 AI 参考图携带黑边导致叠加
+ * Crop the black bar label area from top of image, return clean content as base64 data URL
+ * Used before image edit to remove old black bar, avoid AI reference carrying bar causing overlay
  */
 export async function stripLabelBar(imageSource: string): Promise<string> {
   const response = await fetch(toFetchableUrl(imageSource))

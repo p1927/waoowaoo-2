@@ -37,8 +37,8 @@ export type LLMStageStreamCardProps = {
 }
 
 const PROGRESS_KEY_PREFIX = 'progress.'
-const REASONING_HEADER = '【思考过程】'
-const FINAL_HEADER = '【最终结果】'
+const REASONING_HEADER = '[Thinking Process]'
+const FINAL_HEADER = '[Final Result]'
 
 function statusClass(status: LLMStageViewStatus): string {
   if (status === 'completed') return 'glass-chip glass-chip-success'

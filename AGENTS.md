@@ -1,56 +1,55 @@
 # AGENTS.md
 
-## 适用范围
-- 本规范适用于本仓库的所有目录与文件。
-- 若下级目录存在新的 `AGENTS.md`，下级规范仅可补充，不可弱化本文件的强约束。
+## Scope of Application
+- This specification applies to all directories and files in this repository.
+- If a subdirectory has a new `AGENTS.md`, the lower-level specification can only supplement, not weaken, the mandatory constraints of this file.
 
-## 项目目标与编码原则
-- 项目定位为全新系统，`统一` 与 `简洁` 是最高优先级。
-- 禁止以“兼容旧代码/旧行为”为理由引入冗余分支、兼容层、双轨逻辑或临时补丁。
-- 新功能与重构应优先服务于一致性、可维护性、可读性，而非历史包袱。
-- 禁止使用任何any类型，必须明确类型
-## 文件与模块化要求
-- 大文件必须拆分为清晰模块，按职责边界组织。
-- 单个文件若同时承担多类职责（如 UI、状态、数据请求、转换逻辑混杂）必须拆分。
-- 公共能力应抽离为可复用模块，避免复制粘贴。
-- 命名必须体现职责，目录结构应支持快速定位与阅读。
+## Project Goals and Coding Principles
+- This project is positioned as a brand-new system, with `uniformity` and `simplicity` as the highest priorities.
+- Do not introduce redundant branches, compatibility layers, dual-track logic, or temporary patches under the excuse of "compatibility with old code/old behavior."
+- New features and refactoring should prioritize consistency, maintainability, and readability over historical baggage.
+- Prohibit the use of any `any` type; types must be explicitly defined.
 
-## 数据安全与高风险操作
-- 任何可能导致数据 `删除`、`丢失`、`覆盖`、`结构变更`、`不可逆修改` 的操作，执行前必须获得用户明确同意。
-- 未获得明确同意时，仅允许进行只读分析、方案设计与风险说明，不得落地执行。
-- 涉及数据库、文件批量改写、迁移脚本、清理脚本、覆盖写入等场景，一律按高风险处理。
-- 但可以运行测试、构建等无害的操作。
-- 可以执行测试，构建等没有毁灭性的命令
+## File and Modularization Requirements
+- Large files must be split into clear modules, organized by responsibility boundaries.
+- If a single file handles multiple types of responsibilities (e.g., UI, state, data requests, transformation logic mixed together), it must be split.
+- Common capabilities should be extracted into reusable modules to avoid copy-pasting.
+- Naming must reflect responsibilities, and the directory structure should support quick navigation and reading.
 
+## Data Security and High-Risk Operations
+- Any operation that may lead to data `deletion`, `loss`, `overwriting`, `structural changes`, or `irreversible modifications` must obtain explicit user consent before execution.
+- Without explicit consent, only read-only analysis, solution design, and risk explanation are allowed; implementation is not permitted.
+- Scenarios involving databases, batch file rewrites, migration scripts, cleanup scripts, and overwrite operations are all treated as high-risk.
+- However, harmless operations such as running tests and builds are allowed.
+- Tests, builds, lint, and other non-destructive commands can be executed.
 
-## 思维与决策方法
-- 所有方案必须采用第一性原理：先明确目标、约束与事实，再推导实现路径。
-- 禁止基于“惯例如此”或“历史如此”直接做决策；必须说明核心假设与取舍依据。
-- 实现应追求最小必要复杂度，避免无效抽象与过度设计。
+## Thinking and Decision-Making Methods
+- All solutions must adopt first principles: first clarify objectives, constraints, and facts, then derive implementation paths.
+- Do not make decisions based on "convention" or "history"; you must explain core assumptions and trade-off rationale.
+- Implementations should pursue minimal necessary complexity, avoiding ineffective abstractions and over-design.
 
-## 命令与 Git 操作限制
-- 禁止执行除 `Git 只读查询` 以外的任何命令。
-- 允许的 Git 只读操作仅包括状态与历史查询，例如：`git status`、`git log`、`git diff`、`git show`、`git branch`（只读用法）。
-- 任何会改变 Git 状态或历史的操作必须先获得用户明确同意，包括但不限于：`commit`、`push`、`pull`、`merge`、`rebase`、`cherry-pick`、`reset`、`checkout`（修改性用法）、创建/删除分支、打标签。
-- 在未获同意前，不得进行代码改写、暂存、提交、同步、回滚或历史重写。
-- 可以执行测试构建 build lint等测试命令
+## Command and Git Operation Restrictions
+- Only `Git read-only queries` are allowed; no other commands are permitted.
+- Allowed Git read-only operations include status and history queries, such as: `git status`, `git log`, `git diff`, `git show`, `git branch` (read-only usage).
+- Any operations that change Git state or history require explicit user consent, including but not limited to: `commit`, `push`, `pull`, `merge`, `rebase`, `cherry-pick`, `reset`, `checkout` (modifying usage), creating/deleting branches, and tagging.
+- Without consent, code rewriting, staging, committing, syncing, rollback, or history rewriting are not allowed.
+- Tests, builds, lint, and other testing commands can be executed.
 
-## 不掩盖任何问题
-- 不要做任何不必要的回退逻辑，特别是有可能隐藏问题的，除非用户允许，否则禁止做，如发现一个模型不可用时自动跳转到新的模型，或代码失效时，报错时直接略过，或者没有的时候提供默认值等错误操作，或制造假数据等。
--系统执行必须遵循显式失败与零隐式回退原则：严禁静默跳过错误、隐式配置兜底或自动模型降级，确保所有非预期行为原地崩溃并如实上报。
+## Do Not Mask Any Issues
+- Do not implement any unnecessary fallback logic, especially logic that may hide problems. Unless the user permits, do not automatically switch to a new model when one is unavailable, skip errors when code fails, provide default values when none exist, or fabricate fake data.
+- System execution must follow the principle of explicit failure and zero implicit fallback: strictly prohibit silent error skipping, implicit configuration fallback, or automatic model degradation, ensuring all unexpected behavior crashes in place and is reported truthfully.
 
+## Dare to Reasonably Challenge the User and Understand Their True Needs
+- Ask questions to understand what I truly need (not just what I say).
+- The user may not understand the code well, and their technical understanding may not be as good as yours.
+- What the user says is for reference, not absolute truth. If something doesn't make sense, challenge my assumptions.
 
-## 敢于合理质疑用户 了解用户真实需求
-- 提问以了解我真正需要什么（不仅仅是我说什么）。
-- 用户可能不够了解代码 对技术的理解可能不如你 
-- 用户和你说的作为参考 而不是绝对值 如果某些事情说不通，请挑战我的假设。
+## Testing Specifications
 
-## 测试规范
+For detailed specifications, see [`agent/testing.md`](agent/testing.md). The following are mandatory core constraints:
 
-详细规范见 [`agent/testing.md`](agent/testing.md)，以下为强制核心约束：
-
-- 新增功能或修改功能逻辑必须进行测试，新增功能必须增加测试，如修改文件导致需修改测试文件务必一起进行修改，确保测试百分百跟随
-- 改 worker 逻辑 / 修 bug / 加 route 或 task type → 必须写或更新测试
-- 修 bug 必须同步新增回归测试，`it()` 名称体现该 bug 场景
-- 断言必须检查具体值（DB 写入字段值、函数入参、返回值），禁止只用 `toHaveBeenCalled()`
-- 禁止"自给自答"：mock 返回 X 再断言 X，没有经过任何业务逻辑
+- New features or modified functionality logic must be tested. New features must include tests. If modifying a file requires modifying test files, they must be modified together to ensure 100% test coverage follows.
+- Changing worker logic / fixing bugs / adding routes or task types → must write or update tests.
+- Bug fixes must include new regression tests, with the `it()` name reflecting the bug scenario.
+- Assertions must check specific values (DB field values, function parameters, return values). Do not use only `toHaveBeenCalled()`.
+- Prohibit "self-answered questions": mocking return X and then asserting X without going through any business logic.

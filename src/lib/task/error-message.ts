@@ -30,8 +30,7 @@ function looksCancelledMessage(value: string | null): boolean {
     lower.includes('task cancelled') ||
     lower.includes('task canceled') ||
     lower.includes('cancelled by user') ||
-    lower.includes('canceled by user') ||
-    lower.includes('任务已取消')
+    lower.includes('canceled by user')
   )
 }
 

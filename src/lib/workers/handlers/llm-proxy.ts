@@ -102,9 +102,9 @@ export async function handleLLMProxyTask(job: Job<TaskJobData>) {
   await assertTaskActive(job, 'llm_proxy_persist')
   await reportTaskProgress(job, 92, {
     stage: 'llm_proxy_persist',
-    stageLabel: '保存模型结果',
+    stageLabel: 'Saving model results',
     displayMode: 'detail',
-    message: '模型输出完成，正在保存结果...',
+    message: 'Model output complete, saving results...',
     meta: {
       route,
     },

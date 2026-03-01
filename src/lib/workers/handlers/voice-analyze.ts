@@ -89,8 +89,8 @@ export async function handleVoiceAnalyzeTask(job: Job<TaskJobData>) {
   })
 
   const charactersLibName = novelPromotionData.characters.length > 0
-    ? novelPromotionData.characters.map((c) => c.name).join('、')
-    : '无'
+    ? novelPromotionData.characters.map((c) => c.name).join(', ')
+    : 'None'
   const charactersIntroduction = buildCharactersIntroduction(novelPromotionData.characters)
   const storyboardJson = buildStoryboardJson(episode.storyboards || [])
   const promptTemplate = buildPrompt({
@@ -106,7 +106,7 @@ export async function handleVoiceAnalyzeTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 20, {
     stage: 'voice_analyze_prepare',
-    stageLabel: '准备台词分析参数',
+    stageLabel: 'Preparing dialogue analysis parameters',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'voice_analyze_prepare')
@@ -150,7 +150,7 @@ export async function handleVoiceAnalyzeTask(job: Job<TaskJobData>) {
               meta: {
                 stepId: 'voice_analyze',
                 stepAttempt: attempt,
-                stepTitle: '台词分析',
+                stepTitle: 'Dialogue analysis',
                 stepIndex: 1,
                 stepTotal: 1,
               },
@@ -235,7 +235,7 @@ export async function handleVoiceAnalyzeTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 82, {
     stage: 'voice_analyze_persist',
-    stageLabel: '保存台词分析结果',
+    stageLabel: 'Saving dialogue analysis results',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'voice_analyze_persist')
@@ -285,7 +285,7 @@ export async function handleVoiceAnalyzeTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 96, {
     stage: 'voice_analyze_persist_done',
-    stageLabel: '台词分析结果已保存',
+    stageLabel: 'Dialogue analysis results saved',
     displayMode: 'detail',
   })
 

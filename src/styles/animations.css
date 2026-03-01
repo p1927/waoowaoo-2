@@ -118,7 +118,7 @@
   animation: slideInRight 0.3s ease-out;
 }
 
-/* Gradient Flow Animation - 渐变流动效果 */
+/* Gradient Flow Animation */
 @keyframes gradientFlow {
   0% {
     background-position: 0% 50%;
@@ -138,7 +138,7 @@
   animation: gradientFlow 3s ease infinite;
 }
 
-/* Page Transition Animation - 页面切换动画 */
+/* Page Transition Animation */
 @keyframes pageSlideIn {
   from {
     opacity: 0;

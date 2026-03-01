@@ -1,5 +1,5 @@
 export const CHUNK_SIZE = 3000
-const INVALID_LOCATION_KEYWORDS = ['幻想', '抽象', '无明确', '空间锚点', '未说明', '不明确']
+const INVALID_LOCATION_KEYWORDS = ['fantasy', 'abstract', 'unspecified', 'spatial anchor', 'unstated', 'ambiguous']
 
 export type CharacterBrief = {
   id: string
@@ -69,11 +69,11 @@ export function parseAliases(raw: string | null): string[] {
 }
 
 export function buildCharactersLibInfo(characters: CharacterBrief[]): string {
-  if (characters.length === 0) return '暂无已有角色'
+  if (characters.length === 0) return 'No existing characters yet'
   return characters
     .map((c, i) => {
-      const aliasStr = c.aliases.length > 0 ? `别名：${c.aliases.join('、')}` : '别名：无'
-      const introStr = c.introduction ? `介绍：${c.introduction}` : '介绍：暂无'
+      const aliasStr = c.aliases.length > 0 ? `Aliases: ${c.aliases.join(', ')}` : 'Aliases: None'
+      const introStr = c.introduction ? `Intro: ${c.introduction}` : 'Intro: None'
       return `${i + 1}. ${c.name}\n   ${aliasStr}\n   ${introStr}`
     })
     .join('\n\n')

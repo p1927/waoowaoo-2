@@ -94,7 +94,7 @@ export async function handleAssetHubImageTask(job: Job<TaskJobData>) {
         userId,
         modelId,
         prompt,
-        label: `${character.name} - ${appearance.changeReason || '形象'}`,
+        label: `${character.name} - ${appearance.changeReason || 'Appearance'}`,
         targetId: `${appearance.id}-${i}`,
         keyPrefix: 'global-character',
         options: {

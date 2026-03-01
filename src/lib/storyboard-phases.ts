@@ -1,9 +1,9 @@
  import { logInfo as _ulogInfo, logWarn as _ulogWarn, logError as _ulogError } from '@/lib/logging/core'
 /**
- * 分镜生成多阶段处理器
- * 将分镜生成拆分为3个独立阶段，每阶段控制在Vercel时间限制内
- * 
- * 每个阶段失败后重试一次
+ * Multi-phase storyboard generation processor
+ * Splits storyboard generation into 3 independent phases, each within Vercel time limits
+ *
+ * Retries once after each phase failure
  */
 
 import { executeAiTextStep } from '@/lib/ai-runtime'
@@ -12,7 +12,7 @@ import { buildCharactersIntroduction } from '@/lib/constants'
 import type { Locale } from '@/i18n/routing'
 import { getPromptTemplate, PROMPT_IDS } from '@/lib/prompt-i18n'
 
-// 阶段类型
+// Phase types
 export type StoryboardPhase = 1 | '2-cinematography' | '2-acting' | 3
 
 type JsonRecord = Record<string, unknown>
@@ -128,12 +128,12 @@ function parseDescriptions(raw: string | null | undefined): string[] {
     }
 }
 
-// 阶段进度映射
+// Phase progress mapping
 export const PHASE_PROGRESS: Record<string, { start: number, end: number, label: string, labelKey: string }> = {
-    '1': { start: 10, end: 40, label: '规划分镜', labelKey: 'phases.planning' },
-    '2-cinematography': { start: 40, end: 55, label: '设计摄影', labelKey: 'phases.cinematography' },
-    '2-acting': { start: 55, end: 70, label: '设计演技', labelKey: 'phases.acting' },
-    '3': { start: 70, end: 100, label: '补充细节', labelKey: 'phases.detail' }
+    '1': { start: 10, end: 40, label: 'Planning storyboards', labelKey: 'phases.planning' },
+    '2-cinematography': { start: 40, end: 55, label: 'Cinematography design', labelKey: 'phases.cinematography' },
+    '2-acting': { start: 55, end: 70, label: 'Acting direction', labelKey: 'phases.acting' },
+    '3': { start: 70, end: 100, label: 'Detail refinement', labelKey: 'phases.detail' }
 }
 
 // 中间结果存储接口
@@ -141,13 +141,13 @@ export interface PhaseResult {
     clipId: string
     planPanels?: StoryboardPanel[]
     photographyRules?: PhotographyRule[]
-    actingDirections?: ActingDirection[]  // 演技指导数据
+    actingDirections?: ActingDirection[]  // Acting direction data
     finalPanels?: StoryboardPanel[]
 }
 
-// ========== 辅助函数 ==========
+// ========== Helper functions ==========
 
-// 🔥 辅助函数：从 clipCharacters 提取角色名（支持混合格式）
+// Helper: extract character names from clipCharacters (supports mixed format)
 function extractCharacterNames(clipCharacters: ClipCharacterRef[]): string[] {
     return clipCharacters.map(item => {
         if (typeof item === 'string') return item
@@ -157,8 +157,8 @@ function extractCharacterNames(clipCharacters: ClipCharacterRef[]): string[] {
 }
 
 /**
- * 按别名匹配检查角色名是否匹配引用名
- * 优先级：1. 精确全名  2. 按 '/' 拆分后别名精确匹配
+ * Check if character name matches reference by alias
+ * Priority: 1. Exact full name  2. Alias match after splitting by '/'
  */
 function characterNameMatches(characterName: string, referenceName: string): boolean {
     const charLower = characterName.toLowerCase().trim()
@@ -169,64 +169,64 @@ function characterNameMatches(characterName: string, referenceName: string): boo
     return refAliases.some(refAlias => charAliases.includes(refAlias))
 }
 
-// 根据 clip.characters 筛选角色形象列表
+// Filter character appearance list by clip.characters
 export function getFilteredAppearanceList(characters: CharacterAsset[], clipCharacters: ClipCharacterRef[]): string {
-    if (clipCharacters.length === 0) return '无'
+    if (clipCharacters.length === 0) return 'None'
     const charNames = extractCharacterNames(clipCharacters)
     return characters
         .filter((c) => charNames.some(name => characterNameMatches(c.name, name)))
         .map((c) => {
             const appearances = c.appearances || []
-            if (appearances.length === 0) return `${c.name}: ["初始形象"]`
-            const appearanceNames = appearances.map((app) => app.changeReason || '初始形象')
+            if (appearances.length === 0) return `${c.name}: ["Initial appearance"]`
+            const appearanceNames = appearances.map((app) => app.changeReason || 'Initial appearance')
             return `${c.name}: [${appearanceNames.map((n: string) => `"${n}"`).join(', ')}]`
-        }).join('\n') || '无'
+        }).join('\n') || 'None'
 }
 
-// 根据 clip.characters 筛选角色完整描述
+// Filter character full description by clip.characters
 export function getFilteredFullDescription(characters: CharacterAsset[], clipCharacters: ClipCharacterRef[]): string {
-    if (clipCharacters.length === 0) return '无'
+    if (clipCharacters.length === 0) return 'None'
     const charNames = extractCharacterNames(clipCharacters)
     return characters
         .filter((c) => charNames.some(name => characterNameMatches(c.name, name)))
         .map((c) => {
             const appearances = c.appearances || []
-            if (appearances.length === 0) return `【${c.name}】无形象描述`
+            if (appearances.length === 0) return `[${c.name}] No appearance description`
 
             return appearances.map((app) => {
-                const appearanceName = app.changeReason || '初始形象'
+                const appearanceName = app.changeReason || 'Initial appearance'
                 const descriptions = parseDescriptions(app.descriptions)
                 const selectedIndex = typeof app.selectedIndex === 'number' ? app.selectedIndex : 0
-                const finalDesc = descriptions[selectedIndex] || app.description || '无描述'
-                return `【${c.name} - ${appearanceName}】${finalDesc}`
+                const finalDesc = descriptions[selectedIndex] || app.description || 'No description'
+                return `[${c.name} - ${appearanceName}] ${finalDesc}`
             }).join('\n')
-        }).join('\n') || '无'
+        }).join('\n') || 'None'
 }
 
-// 根据 clip.location 筛选场景描述
+// Filter location description by clip.location
 export function getFilteredLocationsDescription(locations: LocationAsset[], clipLocation: string | null): string {
-    if (!clipLocation) return '无'
+    if (!clipLocation) return 'None'
     const location = locations.find((l) => l.name.toLowerCase() === clipLocation.toLowerCase())
-    if (!location) return '无'
+    if (!location) return 'None'
     const selectedImage = location.images?.find((img) => img.isSelected) || location.images?.[0]
-    return selectedImage?.description || '无描述'
+    return selectedImage?.description || 'No description'
 }
 
-// 格式化Clip标识（支持SRT模式和Agent模式）
+// Format clip identifier (supports SRT and Agent modes)
 export function formatClipId(clip: ClipAsset): string {
-    // SRT 模式
+    // SRT mode
     if (clip.start !== undefined && clip.start !== null) {
         return `${clip.start}-${clip.end}`
     }
-    // Agent 模式
+    // Agent mode
     if (clip.startText && clip.endText) {
         return `${clip.startText.substring(0, 10)}...~...${clip.endText.substring(0, 10)}`
     }
-    // 回退
+    // Fallback
     return clip.id?.substring(0, 8) || 'unknown'
 }
 
-// 解析JSON响应
+// Parse JSON response
 function parseJsonResponse<T extends JsonRecord>(responseText: string, clipId: string, phase: number): T[] {
     let jsonText = responseText.trim()
     jsonText = jsonText.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '')
@@ -235,25 +235,25 @@ function parseJsonResponse<T extends JsonRecord>(responseText: string, clipId: s
     const lastBracket = jsonText.lastIndexOf(']')
 
     if (firstBracket === -1 || lastBracket === -1 || lastBracket <= firstBracket) {
-        throw new Error(`Phase ${phase}: JSON格式错误 clip ${clipId}`)
+        throw new Error(`Phase ${phase}: JSON format error clip ${clipId}`)
     }
 
     jsonText = jsonText.substring(firstBracket, lastBracket + 1)
     const result = JSON.parse(jsonText)
 
     if (!Array.isArray(result) || result.length === 0) {
-        throw new Error(`Phase ${phase}: 返回空数据 clip ${clipId}`)
+        throw new Error(`Phase ${phase}: Empty response clip ${clipId}`)
     }
 
     const normalized = result.filter(isJsonRecord) as T[]
     if (normalized.length === 0) {
-        throw new Error(`Phase ${phase}: 数据结构错误 clip ${clipId}`)
+        throw new Error(`Phase ${phase}: Data structure error clip ${clipId}`)
     }
 
     return normalized
 }
 
-// ========== Phase 1: 基础分镜规划 ==========
+// ========== Phase 1: Basic storyboard planning ==========
 export async function executePhase1(
     clip: ClipAsset,
     novelPromotionData: NovelPromotionAssetData,
@@ -265,23 +265,23 @@ export async function executePhase1(
 ): Promise<PhaseResult> {
     const clipId = formatClipId(clip)
     void taskId
-    _ulogInfo(`[Phase 1] Clip ${clipId}: 开始基础分镜规划...`)
+    _ulogInfo(`[Phase 1] Clip ${clipId}: Starting basic storyboard planning...`)
 
-    // 读取提示词模板
+    // Read prompt template
     const planPromptTemplate = getPromptTemplate(PROMPT_IDS.NP_AGENT_STORYBOARD_PLAN, locale)
 
-    // 解析clip数据
+    // Parse clip data
     const clipCharacters = parseClipCharacters(clip.characters)
     const clipLocation = clip.location || null
 
-    // 构建资产信息
-    const charactersLibName = novelPromotionData.characters.map((c) => c.name).join(', ') || '无'
-    const locationsLibName = novelPromotionData.locations.map((l) => l.name).join(', ') || '无'
+    // Build asset info
+    const charactersLibName = novelPromotionData.characters.map((c) => c.name).join(', ') || 'None'
+    const locationsLibName = novelPromotionData.locations.map((l) => l.name).join(', ') || 'None'
     const filteredAppearanceList = getFilteredAppearanceList(novelPromotionData.characters, clipCharacters)
     const filteredFullDescription = getFilteredFullDescription(novelPromotionData.characters, clipCharacters)
     const charactersIntroduction = buildCharactersIntroduction(novelPromotionData.characters)
 
-    // 构建clip JSON
+    // Build clip JSON
     const clipJson = JSON.stringify({
         id: clip.id,
         content: clip.content,
@@ -289,13 +289,13 @@ export async function executePhase1(
         location: clipLocation
     }, null, 2)
 
-    // 读取剧本
+    // Read screenplay
     const screenplay = parseScreenplay(clip.screenplay)
     if (clip.screenplay && !screenplay) {
-        _ulogWarn(`[Phase 1] Clip ${clipId}: 剧本JSON解析失败`)
+        _ulogWarn(`[Phase 1] Clip ${clipId}: Screenplay JSON parse failed`)
     }
 
-    // 构建提示词
+    // Build prompt
     let planPrompt = planPromptTemplate
         .replace('{characters_lib_name}', charactersLibName)
         .replace('{locations_lib_name}', locationsLibName)
@@ -305,19 +305,19 @@ export async function executePhase1(
         .replace('{clip_json}', clipJson)
 
     if (screenplay) {
-        planPrompt = planPrompt.replace('{clip_content}', `【剧本格式】\n${JSON.stringify(screenplay, null, 2)}`)
+        planPrompt = planPrompt.replace('{clip_content}', `[Screenplay format]\n${JSON.stringify(screenplay, null, 2)}`)
     } else {
         planPrompt = planPrompt.replace('{clip_content}', clip.content || '')
     }
 
-    // 记录发送给 AI 的完整 prompt
+    // Log full prompt sent to AI
     logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
         action: 'STORYBOARD_PHASE1_PROMPT',
-        input: { 片段标识: clipId, 完整提示词: planPrompt },
+        input: { clipId, planPrompt },
         model: novelPromotionData.analysisModel
     })
 
-    // 调用AI（失败后重试一次）
+    // Call AI (retry once on failure)
     let planPanels: StoryboardPanel[] = []
 
     for (let attempt = 1; attempt <= 2; attempt++) {
@@ -331,7 +331,7 @@ export async function executePhase1(
                 action: 'storyboard_phase1_plan',
                 meta: {
                     stepId: 'storyboard_phase1_plan',
-                    stepTitle: '分镜规划',
+                    stepTitle: 'Storyboard planning',
                     stepIndex: 1,
                     stepTotal: 1,
                 },
@@ -339,50 +339,50 @@ export async function executePhase1(
 
             const planResponseText = planResult.text
             if (!planResponseText) {
-                throw new Error(`Phase 1: 无响应 clip ${clipId}`)
+                throw new Error(`Phase 1: No response clip ${clipId}`)
             }
 
             planPanels = parseJsonResponse<StoryboardPanel>(planResponseText, clipId, 1)
 
-            // 统计有效分镜数量
+            // Count valid panels
             const validPanelCount = planPanels.filter(panel =>
-                panel.description && panel.description !== '无' && panel.location !== '无'
+                panel.description && panel.description !== 'None' && panel.location !== 'None'
             ).length
 
-            _ulogInfo(`[Phase 1] Clip ${clipId}: 共 ${planPanels.length} 个分镜，其中 ${validPanelCount} 个有效分镜`)
+            _ulogInfo(`[Phase 1] Clip ${clipId}: ${planPanels.length} panels total, ${validPanelCount} valid`)
 
             if (validPanelCount === 0) {
-                throw new Error(`Phase 1: 返回全部为空分镜 clip ${clipId}`)
+                throw new Error(`Phase 1: All panels empty clip ${clipId}`)
             }
 
-            // ========== 检测 source_text 字段，缺失则重试 ==========
+            // ========== Check source_text field, retry if missing ==========
             const missingSourceText = planPanels.some(panel => !panel.source_text)
             if (missingSourceText && attempt === 1) {
-                _ulogWarn(`[Phase 1] Clip ${clipId}: 有分镜缺少source_text，尝试重试...`)
+                _ulogWarn(`[Phase 1] Clip ${clipId}: Some panels missing source_text, retrying...`)
                 continue
             }
 
-            // 成功，跳出循环
+            // Success, break loop
             break
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : String(error)
-            _ulogError(`[Phase 1] Clip ${clipId}: 第${attempt}次尝试失败: ${message}`)
+            _ulogError(`[Phase 1] Clip ${clipId}: Attempt ${attempt} failed: ${message}`)
             if (attempt === 2) throw error
         }
     }
 
-    // 记录第一阶段完整输出
+    // Log Phase 1 full output
     logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
         action: 'STORYBOARD_PHASE1_OUTPUT',
         output: {
-            片段标识: clipId,
-            总分镜数: planPanels.length,
-            第一阶段完整结果: planPanels
+            clipId,
+            totalPanels: planPanels.length,
+            phase1Result: planPanels
         },
         model: novelPromotionData.analysisModel
     })
 
-    _ulogInfo(`[Phase 1] Clip ${clipId}: 生成 ${planPanels.length} 个基础分镜`)
+    _ulogInfo(`[Phase 1] Clip ${clipId}: Generated ${planPanels.length} basic panels`)
 
     return { clipId, planPanels }
 }
@@ -405,14 +405,14 @@ export async function executePhase2(
     // 读取提示词
     const cinematographerPromptTemplate = getPromptTemplate(PROMPT_IDS.NP_AGENT_CINEMATOGRAPHER, locale)
 
-    // 解析clip数据
+    // Parse clip data
     const clipCharacters = parseClipCharacters(clip.characters)
     const clipLocation = clip.location || null
 
     const filteredFullDescription = getFilteredFullDescription(novelPromotionData.characters, clipCharacters)
     const filteredLocationsDescription = getFilteredLocationsDescription(novelPromotionData.locations, clipLocation)
 
-    // 构建提示词
+    // Build prompt
     const cinematographerPrompt = cinematographerPromptTemplate
         .replace('{panels_json}', JSON.stringify(planPanels, null, 2))
         .replace('{panel_count}', planPanels.length.toString())
@@ -461,7 +461,7 @@ export async function executePhase2(
                 model: novelPromotionData.analysisModel
             })
 
-            // 成功，跳出循环
+            // Success, break loop
             break
         } catch (e: unknown) {
             const message = e instanceof Error ? e.message : String(e)
@@ -494,12 +494,12 @@ export async function executePhase2Acting(
     // 读取提示词
     const actingPromptTemplate = getPromptTemplate(PROMPT_IDS.NP_AGENT_ACTING_DIRECTION, locale)
 
-    // 解析clip数据
+    // Parse clip data
     const clipCharacters = parseClipCharacters(clip.characters)
 
     const filteredFullDescription = getFilteredFullDescription(novelPromotionData.characters, clipCharacters)
 
-    // 构建提示词
+    // Build prompt
     const actingPrompt = actingPromptTemplate
         .replace('{panels_json}', JSON.stringify(planPanels, null, 2))
         .replace('{panel_count}', planPanels.length.toString())
@@ -547,7 +547,7 @@ export async function executePhase2Acting(
                 model: novelPromotionData.analysisModel
             })
 
-            // 成功，跳出循环
+            // Success, break loop
             break
         } catch (e: unknown) {
             const message = e instanceof Error ? e.message : String(e)
@@ -578,20 +578,20 @@ export async function executePhase3(
     // 读取提示词
     const detailPromptTemplate = getPromptTemplate(PROMPT_IDS.NP_AGENT_STORYBOARD_DETAIL, locale)
 
-    // 解析clip数据
+    // Parse clip data
     const clipCharacters = parseClipCharacters(clip.characters)
     const clipLocation = clip.location || null
 
     const filteredFullDescription = getFilteredFullDescription(novelPromotionData.characters, clipCharacters)
     const filteredLocationsDescription = getFilteredLocationsDescription(novelPromotionData.locations, clipLocation)
 
-    // 构建提示词
+    // Build prompt
     const detailPrompt = detailPromptTemplate
         .replace('{panels_json}', JSON.stringify(planPanels, null, 2))
         .replace('{characters_age_gender}', filteredFullDescription)  // 改用完整描述
         .replace('{locations_description}', filteredLocationsDescription)
 
-    // 记录发送给 AI 的完整 prompt
+    // Log full prompt sent to AI
     logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
         action: 'STORYBOARD_PHASE3_PROMPT',
         input: { 片段标识: clipId, 完整提示词: detailPrompt },
@@ -662,7 +662,7 @@ export async function executePhase3(
                 model: novelPromotionData.analysisModel
             })
 
-            // 成功，跳出循环
+            // Success, break loop
             break
         } catch (e: unknown) {
             const message = e instanceof Error ? e.message : String(e)

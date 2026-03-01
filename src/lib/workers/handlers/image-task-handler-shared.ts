@@ -161,19 +161,19 @@ export function parsePanelCharacterReferences(value: string | null | undefined):
 }
 
 /**
- * 按角色名查找角色（支持别名匹配）
- * 优先级：1. 精确全名匹配  2. 按 '/' 拆分后别名精确匹配
- * 例：引用名 "顾娘子" 可匹配角色 "顾娘子/顾盼之"
+ * Find character by name (supports alias matching)
+ * Priority: 1. Exact full name match  2. Alias match after splitting by '/'
+ * Example: reference "Gu Niangzi" can match character "Gu Niangzi/Gu Panzhi"
  */
 export function findCharacterByName<T extends { name: string }>(characters: T[], referenceName: string): T | undefined {
   const refLower = referenceName.toLowerCase().trim()
   if (!refLower) return undefined
 
-  // 优先级 1：精确全名匹配
+  // Priority 1: exact full name match
   const exact = characters.find((c) => c.name.toLowerCase().trim() === refLower)
   if (exact) return exact
 
-  // 优先级 2：别名匹配 — 按 '/' 拆分后任一别名精确匹配
+  // Priority 2: alias match — split by '/' then exact match on any alias
   const refAliases = refLower.split('/').map((s) => s.trim()).filter(Boolean)
   for (const character of characters) {
     const charAliases = character.name.toLowerCase().split('/').map((s) => s.trim()).filter(Boolean)

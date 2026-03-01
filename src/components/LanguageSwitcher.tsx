@@ -8,19 +8,10 @@ import ConfirmDialog from './ConfirmDialog'
 import { AppIcon } from '@/components/ui/icons'
 
 const LANGUAGE_LABELS: Record<Locale, string> = {
-    zh: '简体中文',
     en: 'English',
 }
 
 const SWITCH_CONFIRM_COPY: Record<Locale, { title: string; message: string; action: string; cancel: string; triggerLabel: string }> = {
-    zh: {
-        title: '切换语言？',
-        message:
-            '切换到 {targetLanguage} 后，不仅界面文字会改变，整条流程的提示词模板、剧本生成和任务输出语言也会同步切换。是否继续？',
-        action: '确认切换',
-        cancel: '取消',
-        triggerLabel: '切换语言',
-    },
     en: {
         title: 'Switch language?',
         message:
@@ -32,7 +23,7 @@ const SWITCH_CONFIRM_COPY: Record<Locale, { title: string; message: string; acti
 }
 
 function isSupportedLocale(locale?: string): locale is Locale {
-    return locale === 'zh' || locale === 'en'
+    return locale === 'en'
 }
 
 export default function LanguageSwitcher() {
@@ -48,10 +39,10 @@ export default function LanguageSwitcher() {
         throw new Error('LanguageSwitcher requires a non-null pathname')
     }
     if (!isSupportedLocale(params?.locale)) {
-        throw new Error('LanguageSwitcher requires locale param to be zh or en')
+        throw new Error('LanguageSwitcher requires locale param to be en')
     }
     const currentLocale: Locale = params.locale
-    const targetLocale: Locale = currentLocale === 'zh' ? 'en' : 'zh'
+    const targetLocale: Locale = 'en'
     const activeLocaleForCopy: Locale = pendingLocale ?? targetLocale
     const confirmCopy = SWITCH_CONFIRM_COPY[activeLocaleForCopy]
 

@@ -26,7 +26,7 @@ export async function handleModifyAppearanceTask(job: Job<TaskJobData>, payload:
 
   await reportTaskProgress(job, 22, {
     stage: 'ai_modify_appearance_prepare',
-    stageLabel: '准备角色描述修改参数',
+    stageLabel: 'Preparing character description modification parameters',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'ai_modify_appearance_prepare')
@@ -38,7 +38,7 @@ export async function handleModifyAppearanceTask(job: Job<TaskJobData>, payload:
     action: 'ai_modify_appearance',
     streamContextKey: 'ai_modify_appearance',
     streamStepId: 'ai_modify_appearance',
-    streamStepTitle: '角色描述修改',
+    streamStepTitle: 'Character description modification',
   })
   await assertTaskActive(job, 'ai_modify_appearance_parse')
 
@@ -47,7 +47,7 @@ export async function handleModifyAppearanceTask(job: Job<TaskJobData>, payload:
 
   await reportTaskProgress(job, 96, {
     stage: 'ai_modify_appearance_done',
-    stageLabel: '角色描述修改完成',
+    stageLabel: 'Character description modification completed',
     displayMode: 'detail',
     meta: { characterId, appearanceId },
   })

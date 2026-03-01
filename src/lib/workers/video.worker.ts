@@ -51,14 +51,14 @@ async function fetchPanelByStoryboardIndex(storyboardId: string, panelIndex: num
 async function getPanelForVideoTask(job: Job<TaskJobData>) {
   const payload = (job.data.payload || {}) as AnyObj
 
-  // 优先使用 targetType=NovelPromotionPanel 直接定位
+  // Prefer targetType=NovelPromotionPanel for direct lookup
   if (job.data.targetType === 'NovelPromotionPanel') {
     const panel = await prisma.novelPromotionPanel.findUnique({ where: { id: job.data.targetId } })
     if (!panel) throw new Error('Panel not found')
     return panel
   }
 
-  // 兜底：通过 storyboardId + panelIndex 定位
+  // Fallback: locate by storyboardId + panelIndex
   const storyboardId = payload.storyboardId
   const panelIndex = payload.panelIndex
   if (typeof storyboardId !== 'string' || !storyboardId || panelIndex === undefined || panelIndex === null) {

@@ -36,10 +36,10 @@ function parseJsonArrayResponse(responseText: string): AnyObj[] {
 }
 
 function parsePanelCharacters(value: string | null): string {
-  if (!value) return '无'
+  if (!value) return 'None'
   try {
     const parsed = JSON.parse(value)
-    if (!Array.isArray(parsed) || parsed.length === 0) return '无'
+    if (!Array.isArray(parsed) || parsed.length === 0) return 'None'
     return parsed
       .map((item: unknown) => {
         if (typeof item === 'string') return item
@@ -50,9 +50,9 @@ function parsePanelCharacters(value: string | null): string {
         return appearance ? `${name}（${appearance}）` : name
       })
       .filter(Boolean)
-      .join('、') || '无'
+      .join(', ') || 'None'
   } catch {
-    return '无'
+    return 'None'
   }
 }
 
@@ -73,7 +73,7 @@ export async function handleAnalyzeShotVariantsTask(job: Job<TaskJobData>, paylo
     },
   })
   if (!panel) throw new Error('Panel not found')
-  if (!panel.imageUrl) throw new Error('该镜头还没有生成图片，无法分析变体')
+  if (!panel.imageUrl) throw new Error('This shot has no generated image yet, cannot analyze variants')
 
   const imageUrl = panel.imageUrl.startsWith('images/')
     ? getSignedUrl(panel.imageUrl, 3600)
@@ -84,17 +84,17 @@ export async function handleAnalyzeShotVariantsTask(job: Job<TaskJobData>, paylo
     promptId: PROMPT_IDS.NP_AGENT_SHOT_VARIANT_ANALYSIS,
     locale: job.data.locale,
     variables: {
-      panel_description: panel.description || '无',
-      shot_type: panel.shotType || '中景',
-      camera_move: panel.cameraMove || '固定',
-      location: panel.location || '未知',
+      panel_description: panel.description || 'None',
+      shot_type: panel.shotType || 'Medium shot',
+      camera_move: panel.cameraMove || 'Fixed',
+      location: panel.location || 'Unknown',
       characters_info: charactersInfo,
     },
   })
 
   await reportTaskProgress(job, 20, {
     stage: 'analyze_shot_variants_prepare',
-    stageLabel: '准备镜头变体分析参数',
+    stageLabel: 'Preparing shot variant analysis parameters',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'analyze_shot_variants_prepare')
@@ -116,7 +116,7 @@ export async function handleAnalyzeShotVariantsTask(job: Job<TaskJobData>, paylo
             action: 'analyze_shot_variants',
             meta: {
               stepId: 'analyze_shot_variants',
-              stepTitle: '镜头变体分析',
+              stepTitle: 'Shot variant analysis',
               stepIndex: 1,
               stepTotal: 1,
             },
@@ -131,12 +131,12 @@ export async function handleAnalyzeShotVariantsTask(job: Job<TaskJobData>, paylo
 
   const suggestions = parseJsonArrayResponse(responseText)
   if (!Array.isArray(suggestions) || suggestions.length < 3) {
-    throw new Error('生成的变体数量不足')
+    throw new Error('Insufficient number of variants generated')
   }
 
   await reportTaskProgress(job, 96, {
     stage: 'analyze_shot_variants_done',
-    stageLabel: '镜头变体分析完成',
+    stageLabel: 'Shot variant analysis completed',
     displayMode: 'detail',
   })
 

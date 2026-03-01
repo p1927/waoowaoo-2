@@ -88,7 +88,7 @@ export function buildStoryboardJson(storyboards: PersistedStoryboard[]) {
     }
   }
 
-  if (rows.length === 0) return '无分镜数据'
+  if (rows.length === 0) return 'No storyboard data'
   return JSON.stringify(rows, null, 2)
 }
 
@@ -121,8 +121,8 @@ export async function persistStoryboardsAndPanels(params: {
             storyboardId: storyboard.id,
             panelIndex: i,
             panelNumber: panel.panel_number || i + 1,
-            shotType: panel.shot_type || '中景',
-            cameraMove: panel.camera_move || '固定',
+            shotType: panel.shot_type || 'Medium shot',
+            cameraMove: panel.camera_move || 'Fixed',
             description: panel.description || null,
             videoPrompt: panel.video_prompt || null,
             location: panel.location || null,

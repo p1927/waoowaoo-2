@@ -33,7 +33,7 @@ export async function handleModifyLocationTask(job: Job<TaskJobData>, payload: A
 
   await reportTaskProgress(job, 22, {
     stage: 'ai_modify_location_prepare',
-    stageLabel: '准备场景描述修改参数',
+    stageLabel: 'Preparing location description modification parameters',
     displayMode: 'detail',
   })
   await assertTaskActive(job, 'ai_modify_location_prepare')
@@ -45,7 +45,7 @@ export async function handleModifyLocationTask(job: Job<TaskJobData>, payload: A
     action: 'ai_modify_location',
     streamContextKey: 'ai_modify_location',
     streamStepId: 'ai_modify_location',
-    streamStepTitle: '场景描述修改',
+    streamStepTitle: 'Location description modification',
   })
   await assertTaskActive(job, 'ai_modify_location_parse')
 
@@ -62,7 +62,7 @@ export async function handleModifyLocationTask(job: Job<TaskJobData>, payload: A
 
   await reportTaskProgress(job, 96, {
     stage: 'ai_modify_location_done',
-    stageLabel: '场景描述修改完成',
+    stageLabel: 'Location description modification completed',
     displayMode: 'detail',
     meta: { locationId, imageIndex },
   })
