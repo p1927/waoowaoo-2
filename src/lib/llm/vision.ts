@@ -95,7 +95,7 @@ export async function chatCompletionWithVision(
               parts.push({ inlineData: { mimeType, data } })
             }
           } catch (e) {
-            _ulogError('[LLM Vision] Google 图片转换失败:', e)
+            _ulogError('[LLM Vision] Google image conversion failed:', e)
           }
         }
         if (textPrompt) parts.push({ text: textPrompt })
@@ -139,7 +139,7 @@ export async function chatCompletionWithVision(
               finalUrl = await imageUrlToBase64(url)
             }
           } catch (e) {
-            _ulogError('[LLM Vision] Ark 图片转换失败:', e)
+            _ulogError('[LLM Vision] Ark image conversion failed:', e)
           }
           content.push({ type: 'input_image', image_url: finalUrl })
         }
@@ -191,9 +191,9 @@ export async function chatCompletionWithVision(
           try {
             const { imageUrlToBase64 } = await import('../cos')
             finalUrl = await imageUrlToBase64(url)
-            _ulogInfo('[LLM Vision] 转换本地图片为 Base64')
+            _ulogInfo('[LLM Vision] Converting local image to Base64')
           } catch (e) {
-            _ulogError('[LLM Vision] 转换本地图片失败:', e)
+            _ulogError('[LLM Vision] Local image conversion failed:', e)
             const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
             finalUrl = `${baseUrl}${url}`
           }
@@ -237,17 +237,17 @@ export async function chatCompletionWithVision(
       })
       const errorBody = getErrorBody(error)
       if (errorBody?.message === 'PROHIBITED_CONTENT' || errorBody?.code === 502) {
-        _ulogError('[LLM Vision] ❌ 内容安全检测失败 - Google AI Studio 拒绝处理此内容')
-        throw new Error('SENSITIVE_CONTENT: 图片或提示词包含敏感信息,无法处理')
+        _ulogError('[LLM Vision] Content safety check failed - Google AI Studio rejected this content')
+        throw new Error('SENSITIVE_CONTENT: Image or prompt contains sensitive content and cannot be processed')
       }
 
-      _ulogWarn(`[LLM Vision] 调用失败 (${attempt}/${maxRetries + 1}): ${errorMessage}`)
+      _ulogWarn(`[LLM Vision] Call failed (${attempt}/${maxRetries + 1}): ${errorMessage}`)
       if (!isRetryableError(error) || attempt > maxRetries) break
       const delayMs = Math.min(1000 * Math.pow(2, attempt - 1), 5000)
       await new Promise((resolve) => setTimeout(resolve, delayMs))
     }
   }
-  throw lastError || new Error('LLM Vision 调用失败')
+  throw lastError || new Error('LLM Vision call failed')
 }
 
 export async function chatCompletionWithVisionStream(

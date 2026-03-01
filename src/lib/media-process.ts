@@ -9,7 +9,7 @@ export interface ProcessMediaOptions {
 }
 
 /**
- * 处理媒体结果：下载 -> 上传 COS，返回 COS key。
+ * Process media result: download -> upload to COS, return COS key.
  */
 export async function processMediaResult(options: ProcessMediaOptions): Promise<string> {
   const { source, type, keyPrefix, targetId, downloadHeaders } = options
@@ -19,7 +19,7 @@ export async function processMediaResult(options: ProcessMediaOptions): Promise<
   if (typeof source === 'string') {
     if (source.startsWith('data:')) {
       const base64Start = source.indexOf(';base64,')
-      if (base64Start === -1) throw new Error('无法解析 data: URL')
+      if (base64Start === -1) throw new Error('Cannot parse data: URL')
       const base64Data = source.substring(base64Start + 8)
       const buffer = Buffer.from(base64Data, 'base64') as Buffer
       return await uploadToCOS(buffer, key)

@@ -206,14 +206,14 @@ function escapeControlCharsInJsonStrings(input: string): string {
  * The LLM sometimes converts Chinese curly quotes ("") to straight ASCII
  * double quotes (") inside a JSON string value without escaping them.
  * This produces invalid JSON such as:
- *   "text":"六耳嚣张地说，"弼马温，我是来取代你的""
+ *   "text":"Character said, \"I am here to replace you\""
  *                        ^ unescaped quote
  *
  * Strategy: walk char-by-char tracking JSON string boundaries.  When we
  * encounter a `"` that would *close* the current string but the character
  * after it is NOT a valid JSON structural char (`,`, `}`, `]`, `:`, or
  * whitespace), it is almost certainly a stray interior quote and we
- * replace it with the Chinese fullwidth left/right quote `"\u201D`.
+ * replace it with the fullwidth left/right quote `\u201D`.
  */
 function fixUnescapedQuotesInJson(input: string): string {
   const structuralAfterString = new Set([',', '}', ']', ':', ' ', '\t', '\n', '\r'])

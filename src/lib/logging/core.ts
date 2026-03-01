@@ -81,10 +81,10 @@ function parseLogArgs(args: unknown[]): { message: string; details: Record<strin
 
 function nowChinaISOString(): string {
   const now = new Date()
-  // UTC+8 偏移量（毫秒）
+  // UTC+8 offset (ms)
   const offsetMs = 8 * 60 * 60 * 1000
   const cstTime = new Date(now.getTime() + offsetMs)
-  // toISOString() 返回 UTC 格式，替换 Z 为 +08:00 即为北京时间
+  // toISOString() returns UTC; replace Z with +08:00 for Beijing time
   return cstTime.toISOString().replace('Z', '+08:00')
 }
 

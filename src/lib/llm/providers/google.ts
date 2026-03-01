@@ -36,13 +36,13 @@ function isThoughtPart(part: GoogleTextPart): boolean {
 }
 
 /**
- * Google Gemini API 返回空响应错误（但不是内容安全拒绝）
- * 通常是模型内部超时或某些边缘输入触发的问题，可以重试
+ * Google Gemini API returns empty response (not content-safety rejection).
+ * Usually model timeout or edge input; retry is appropriate.
  */
 export class GoogleEmptyResponseError extends Error {
     constructor(finishReason?: unknown) {
         const reason = finishReason ? ` (finishReason: ${String(finishReason)})` : ''
-        super(`Google Gemini 返回了空文本响应${reason}，请重试`)
+        super(`Google Gemini returned empty text response${reason}. Please retry.`)
         this.name = 'GoogleEmptyResponseError'
     }
 }
@@ -67,11 +67,11 @@ export function extractGoogleParts(response: unknown, throwOnEmpty = false): { t
         }
     }
 
-    // 如果有 candidates 但 text 为空，说明模型返回了空响应
-    // 只在 throwOnEmpty=true 时检查（用于非流式的最终响应），避免在流式 chunk 间误抛
+    // If candidates exist but text is empty, model returned empty response
+    // Only check when throwOnEmpty=true (final non-stream response), avoid false throw between stream chunks
     if (throwOnEmpty && candidates.length > 0 && !text) {
         const finishReason = firstCandidate?.finishReason
-        // SAFETY 表示内容安全拒绝，不重试；其他情况抛出可重试错误
+        // SAFETY means content-safety rejection, do not retry; otherwise throw retryable error
         if (finishReason !== 'SAFETY' && finishReason !== 'PROHIBITED_CONTENT') {
             throw new GoogleEmptyResponseError(finishReason)
         }

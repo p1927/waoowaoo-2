@@ -103,7 +103,7 @@ export function logLlmRawOutput(params: {
       output: {
         reasoning: params.reasoning,
         text: params.text,
-        // 空响应时显式标记，方便 grep
+        // Explicit marker when response is empty (for grep)
         empty: isEmpty || undefined,
       },
       usage: params.usage || null,

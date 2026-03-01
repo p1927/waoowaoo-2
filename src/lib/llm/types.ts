@@ -6,16 +6,16 @@ export interface ChatCompletionOptions {
     reasoning?: boolean
     reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'
     maxRetries?: number
-    // 💰 计费相关
-    projectId?: string   // 用于计费（如果不传，使用 'system' 作为默认值）
-    action?: string      // 计费操作名称
-    // 流式步骤元信息（用于任务控制台按步骤展示）
+    // Billing
+    projectId?: string   // For billing (default 'system' if not set)
+    action?: string     // Billing action name
+    // Stream step metadata (for task console step display)
     streamStepId?: string
     streamStepAttempt?: number
     streamStepTitle?: string
     streamStepIndex?: number
     streamStepTotal?: number
-    // 内部保护位：避免 chatCompletion 与 chatCompletionStream 互相递归
+    // Internal guard: prevent chatCompletion and chatCompletionStream from recursing
     __skipAutoStream?: boolean
 }
 

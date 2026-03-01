@@ -146,8 +146,8 @@ export async function getMediaObjectById(id: string) {
 }
 
 /**
- * 将任意媒体值（COS key / 签名URL / /m/publicId / 对象形态）归一化为 storageKey。
- * 这是服务端写路径（保存、比较、删除）应使用的唯一入口。
+ * Normalize any media value (COS key / signed URL / /m/publicId / object form) to storageKey.
+ * This is the single entry for server write path (save, compare, delete).
  */
 export async function resolveStorageKeyFromMediaValue(value: unknown): Promise<string | null> {
   if (typeof value === 'string') {

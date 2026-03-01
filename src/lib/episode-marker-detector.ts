@@ -95,7 +95,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /^第([一二三四五六七八九十百千\d]+)集[：:\s]*(.*)?/gm,
         typeKey: 'episode',
-        typeName: '第X集',
+        typeName: 'Episode X',
         extractNumber: (match) => chineseToNumber(match[1]),
         extractTitle: (match) => match[2]?.trim() || ''
     },
@@ -103,7 +103,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /^第([一二三四五六七八九十百千\d]+)章[：:\s]*(.*)?/gm,
         typeKey: 'chapter',
-        typeName: '第X章',
+        typeName: 'Chapter X',
         extractNumber: (match) => chineseToNumber(match[1]),
         extractTitle: (match) => match[2]?.trim() || ''
     },
@@ -111,7 +111,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /^第([一二三四五六七八九十百千\d]+)幕[：:\s]*(.*)?/gm,
         typeKey: 'act',
-        typeName: '第X幕',
+        typeName: 'Act X',
         extractNumber: (match) => chineseToNumber(match[1]),
         extractTitle: (match) => match[2]?.trim() || ''
     },
@@ -119,7 +119,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /^(\d+)-\d+[【\[](.*?)[】\]]/gm,
         typeKey: 'scene',
-        typeName: 'X-Y【场景】',
+        typeName: 'X-Y [Scene]',
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim() || ''
     },
@@ -127,7 +127,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /^(\d+)[\.、：:]\s*(.+)/gm,
         typeKey: 'numbered',
-        typeName: '数字编号',
+        typeName: 'Numeric prefix',
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim().slice(0, 20) || ''
     },
@@ -135,7 +135,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /^(\d+)\\\.\s*(.+)/gm,
         typeKey: 'numberedEscaped',
-        typeName: '数字编号(转义)',
+        typeName: 'Numeric prefix (escaped)',
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim().slice(0, 20) || ''
     },
@@ -143,7 +143,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /(?:^|\n\n)(\d+)([\u4e00-\u9fa5])/gm,
         typeKey: 'numberedDirect',
-        typeName: '数字+中文',
+        typeName: 'Number + text',
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim().slice(0, 20) || ''
     },
@@ -167,7 +167,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /\*\*(\d+)\*\*/g,
         typeKey: 'boldNumber',
-        typeName: '**数字**',
+        typeName: '**number**',
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: () => ''
     },
@@ -175,7 +175,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
     {
         regex: /^(\d+)\s*$/gm,
         typeKey: 'pureNumber',
-        typeName: '纯数字',
+        typeName: 'Plain number',
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: () => ''
     },
@@ -264,7 +264,7 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
                 const preview = episodeContent.slice(0, 50).trim().slice(0, 20)
                 previewSplits.push({
                     number: i,
-                    title: `第 ${i} 集`,
+                    title: `Episode ${i}`,
                     wordCount: countWords(episodeContent),
                     startIndex: 0,
                     endIndex: firstMatch.index,
@@ -285,7 +285,7 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
         const episodeContent = content.slice(startIndex, endIndex)
         const wordCount = countWords(episodeContent)
 
-        const title = `第 ${match.episodeNumber} 集`
+        const title = `Episode ${match.episodeNumber}`
 
         // preview: content after numeric prefix (skip "1." etc., not whole line)
         const markerPositionInContent = match.index - startIndex
@@ -329,7 +329,7 @@ export function splitByMarkers(content: string, markerResult: EpisodeMarkerResul
 
         return {
             number: split.number,
-            title: split.title || `第 ${split.number} 集`,
+            title: split.title || `Episode ${split.number}`,
             summary: '', // marker-based split does not generate summary
             content: episodeContent,
             wordCount: countWords(episodeContent)

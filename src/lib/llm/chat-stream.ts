@@ -64,7 +64,7 @@ export async function chatCompletionStream(
   const streamStep = resolveStreamStepMeta(options)
   emitStreamStage(callbacks, streamStep, 'submit')
   if (!model) {
-    const error = new Error('ANALYSIS_MODEL_NOT_CONFIGURED: 请先在设置页面配置分析模型')
+    const error = new Error('ANALYSIS_MODEL_NOT_CONFIGURED: Please configure the analysis model in settings first')
     callbacks?.onError?.(error, streamStep)
     throw error
   }
@@ -97,7 +97,7 @@ export async function chatCompletionStream(
   try {
     if (providerKey === 'google' || providerKey === 'gemini-compatible') {
       const config = await getProviderConfig(userId, provider)
-      // gemini-compatible 可能有自定义 baseUrl（指向第三方兼容服务）
+      // gemini-compatible may have custom baseUrl (points to third-party compatible service)
       const googleAiOptions = config.baseUrl
         ? { apiKey: config.apiKey, httpOptions: { baseUrl: config.baseUrl } }
         : { apiKey: config.apiKey }
@@ -178,7 +178,7 @@ export async function chatCompletionStream(
       }
 
       const usage = extractGoogleUsage(lastChunk)
-      // 如果流式传输结束后 text 仍然为空，抛出可重试错误
+      // If text is still empty after stream ends, throw retryable error
       if (!text) {
         throw new GoogleEmptyResponseError('stream_empty')
       }
@@ -341,8 +341,8 @@ export async function chatCompletionStream(
           apiKey: config.apiKey,
           name: providerName,
         })
-        // 只有确定是支持 OpenAI 推理参数的提供商（如 OpenAI 官方、deepseek-r1 等）才传 reasoning provider options
-        // gemini-compatible / 其他 OAI-compat 提供商不支持 forceReasoning/reasoningEffort，会导致空响应
+        // Only pass reasoning provider options for providers that support them (e.g. OpenAI, deepseek-r1)
+        // gemini-compatible and other OAI-compat providers do not support forceReasoning/reasoningEffort and may return empty
         const isNativeOpenAIReasoning = shouldUseOpenAIReasoningProviderOptions({
           providerKey,
           providerApiMode: config.apiMode,
@@ -361,7 +361,7 @@ export async function chatCompletionStream(
           model: aiOpenAI.chat(resolvedModelId),
           system: getSystemPrompt(messages),
           messages: getConversationMessages(messages),
-          // 推理模型不支持 temperature，仅在非推理模式下传递
+          // Reasoning models do not support temperature; only pass in non-reasoning mode
           ...(useReasoning ? {} : { temperature: options.temperature ?? 0.7 }),
           maxRetries: options.maxRetries ?? 2,
           ...(aiSdkProviderOptions ? { providerOptions: aiSdkProviderOptions } : {}),
@@ -372,13 +372,13 @@ export async function chatCompletionStream(
         let text = ''
         let reasoning = ''
         let seq = 1
-        // 用于诊断：记录每种 chunk type 的出现次数
+        // For diagnostics: count each chunk type
         const chunkTypeCounts: Record<string, number> = {}
-        // 记录 API 返回的原始错误（如有）
+        // Collect raw API error chunks if any
         const streamErrorChunks: unknown[] = []
-        // 记录 finishReason
+        // Record finishReason
         let streamFinishReason: string | undefined
-        // 记录所有未知类型 chunk 的原始内容（诊断 AI SDK 未解析的响应）
+        // Record raw content of unknown chunk types (diagnostics for unparsed AI SDK response)
         const unknownChunkSamples: unknown[] = []
         for await (const chunk of withStreamChunkTimeout(aiStreamResult.fullStream as AsyncIterable<AISdkStreamChunk>)) {
           const chunkType = chunk?.type || 'unknown'
@@ -403,23 +403,23 @@ export async function chatCompletionStream(
             })
             seq += 1
           }
-          // 捕获 error 类型 chunk（API 返回的原始错误）
+          // Capture error-type chunks (raw API errors)
           if (chunkType === 'error') {
             streamErrorChunks.push((chunk as Record<string, unknown>).error ?? chunk)
           }
-          // 捕获 finish-step 的 finishReason
+          // Capture finishReason from finish-step
           if (chunkType === 'finish-step' || chunkType === 'finish') {
             const reason = (chunk as Record<string, unknown>).finishReason as string | undefined
             if (reason) streamFinishReason = reason
           }
-          // 记录所有非标准 chunk 的原始内容（排除纯生命周期 chunk）
+          // Record raw content of non-lifecycle chunks
           const lifecycleTypes = new Set(['text-delta', 'reasoning-delta', 'start', 'start-step', 'finish-step', 'finish', 'error'])
           if (!lifecycleTypes.has(chunkType) && unknownChunkSamples.length < 5) {
             unknownChunkSamples.push(chunk)
           }
         }
 
-        // 读取 AI SDK warnings（如 temperature 不支持等）和最终 finishReason
+        // Read AI SDK warnings (e.g. temperature unsupported) and final finishReason
         let sdkWarnings: unknown[] = []
         let sdkFinishReason: string | undefined
         let sdkProviderMetadata: unknown = undefined
@@ -432,11 +432,11 @@ export async function chatCompletionStream(
         try {
           sdkFinishReason = await Promise.resolve(aiStreamResult.finishReason).catch(() => undefined) as string | undefined
         } catch { }
-        // 读取 providerMetadata（Gemini safetyRatings 等关键诊断信息）
+        // Read providerMetadata (Gemini safetyRatings etc. for diagnostics)
         try {
           sdkProviderMetadata = await Promise.resolve((aiStreamResult as unknown as { experimental_providerMetadata?: unknown }).experimental_providerMetadata).catch(() => undefined)
         } catch { }
-        // 读取 HTTP response 状态（诊断 API 层面是否正常）
+        // Read HTTP response status (diagnose API-level success)
         try {
           const resp = await Promise.resolve(aiStreamResult.response).catch(() => null)
           if (resp) {
@@ -491,7 +491,7 @@ export async function chatCompletionStream(
 
         let usage = await Promise.resolve(aiStreamResult.usage).catch(() => null)
 
-        // 显式回退：仅当“强制推理参数”模式返回空文本时，重试一次无推理 provider options 请求。
+        // Explicit fallback: when reasoning options return empty text, retry once without reasoning provider options.
         if (!finalText && aiSdkProviderOptions) {
           llmLogger.warn({
             audit: false,
@@ -558,13 +558,13 @@ export async function chatCompletionStream(
           }
         }
 
-        // 空响应诊断日志：当文本为空时记录详细信息并抛出可重试错误
+        // Empty response diagnostics: log details and throw retryable error when text is empty
         if (!finalText) {
-          // 同步写日志，确保不因竞态丢失，包含完整的原始 API 错误
+          // Sync log to avoid race and include full raw API error
           llmLogger.warn({
             audit: false,
             action: 'llm.stream.empty_response',
-            message: '[LLM] AI SDK 流式返回空内容',
+            message: '[LLM] AI SDK stream returned empty content',
             userId,
             projectId,
             provider: providerName,
@@ -576,16 +576,16 @@ export async function chatCompletionStream(
               reasoningEffort: options.reasoningEffort ?? 'high',
               chunkTypeCounts,
               sdkWarnings,
-              // 原始 API 错误 chunk
+              // Raw API error chunks
               streamErrors: streamErrorChunks.length > 0 ? streamErrorChunks : undefined,
-              // finish reason（如 error / content-filter / stop / other 等）
+              // finish reason (e.g. error / content-filter / stop / other)
               finishReason: sdkFinishReason ?? streamFinishReason ?? 'unknown',
-              // providerMetadata：Gemini safetyRatings、blockReason 等原始信息
+              // providerMetadata: Gemini safetyRatings, blockReason, etc.
               providerMetadata: sdkProviderMetadata,
-              // HTTP 响应状态（诊断 API 层面是否正常返回）
+              // HTTP response status (diagnose API-level success)
               httpStatus: sdkResponseStatus,
               httpHeaders: sdkResponseHeaders,
-              // 未被 AI SDK 识别的 chunk 原始内容（可能是模型返回了特殊格式）
+              // Raw content of chunks not recognized by AI SDK (model may have returned special format)
               unknownChunks: unknownChunkSamples.length > 0 ? unknownChunkSamples : undefined,
               streamedReasoningLength: finalReasoning.length,
             },
@@ -595,7 +595,7 @@ export async function chatCompletionStream(
             ? ` [apiError: ${JSON.stringify(streamErrorChunks[0])}]`
             : sdkWarnings.length > 0 ? ` [warnings: ${JSON.stringify(sdkWarnings)}]` : ''
           throw new Error(
-            `LLM_EMPTY_RESPONSE: ${providerName}::${resolvedModelId} 返回空内容` +
+            `LLM_EMPTY_RESPONSE: ${providerName}::${resolvedModelId} returned empty content` +
             ` [finishReason: ${finishInfo}]` +
             ` [httpStatus: ${sdkResponseStatus ?? 'unknown'}]` +
             errDetail +
@@ -651,7 +651,7 @@ export async function chatCompletionStream(
       const stream = await client.chat.completions.create({
         model: resolvedModelId,
         messages,
-        // OpenRouter 推理模型不支持 temperature
+        // OpenRouter reasoning models do not support temperature
         ...(isOpenRouterReasoning ? {} : { temperature: options.temperature ?? 0.7 }),
         stream: true,
         ...extraParams,
@@ -758,7 +758,7 @@ export async function chatCompletionStream(
     // (consistent with chat-completion.ts)
     const errMsg = error instanceof Error ? error.message : String(error)
     if (errMsg.includes('PROHIBITED_CONTENT') || errMsg.includes('request_body_blocked')) {
-      const sensitiveError = new Error('SENSITIVE_CONTENT: 内容包含敏感信息,无法处理。请修改内容后重试')
+      const sensitiveError = new Error('SENSITIVE_CONTENT: Content contains sensitive material and cannot be processed. Please modify and retry.')
       callbacks?.onError?.(sensitiveError, streamStep)
       throw sensitiveError
     }

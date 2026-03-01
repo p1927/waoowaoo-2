@@ -168,7 +168,7 @@ export function resolveEffectiveVideoCapabilityDefinitions(input: {
   const fieldI18nMap = collectFieldI18nMap(input.videoCapabilities)
   const capabilityDefinitions = buildDefinitionsFromCapabilities(input.videoCapabilities, fieldI18nMap)
 
-  // Capabilities 是参数字段唯一来源；pricing 只用于约束可选项范围。
+  // Capabilities are the single source for param fields; pricing only constrains option range.
   if (capabilityDefinitions.length > 0) {
     return capabilityDefinitions
   }

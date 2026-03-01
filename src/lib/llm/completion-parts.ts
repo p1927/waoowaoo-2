@@ -12,19 +12,19 @@ export function getCompletionParts(completion: OpenAI.Chat.Completions.ChatCompl
 } {
   if (!completion || !completion.choices || completion.choices.length === 0) {
     _ulogError(
-      '[LLM] ❌ 返回无效响应 - 完整对象:',
+      '[LLM] Invalid response - full object:',
       JSON.stringify(completion, null, 2).substring(0, 2000),
     )
-    throw new Error('LLM 返回无效响应')
+    throw new Error('LLM returned invalid response')
   }
 
   const message = completion.choices[0]?.message
   if (!message) {
     _ulogError(
-      '[LLM] ❌ 响应中没有消息内容 - choices[0]:',
+      '[LLM] Response has no message content - choices[0]:',
       JSON.stringify(completion.choices[0], null, 2).substring(0, 1000),
     )
-    throw new Error('LLM 响应中没有消息内容')
+    throw new Error('LLM response has no message content')
   }
 
   const content = message.content
