@@ -1,11 +1,11 @@
 /**
- * 主形象的 appearanceIndex 值。
- * 所有判断主/子形象的逻辑必须引用此常量，禁止硬编码数字。
- * 子形象的 appearanceIndex 从 PRIMARY_APPEARANCE_INDEX + 1 开始递增。
+ * Primary appearance index value.
+ * All logic that distinguishes primary/sub appearances must use this constant, no hardcoded numbers.
+ * Sub-appearance indices start at PRIMARY_APPEARANCE_INDEX + 1.
  */
 export const PRIMARY_APPEARANCE_INDEX = 0
 
-// 比例配置（nanobanana 支持的所有比例，按常用程度排序）
+// Aspect ratio config (all nanobanana-supported ratios, sorted by usage)
 export const ASPECT_RATIO_CONFIGS: Record<string, { label: string; isVertical: boolean }> = {
   '16:9': { label: '16:9', isVertical: false },
   '9:16': { label: '9:16', isVertical: true },
@@ -19,13 +19,13 @@ export const ASPECT_RATIO_CONFIGS: Record<string, { label: string; isVertical: b
   '21:9': { label: '21:9', isVertical: false },
 }
 
-// 配置页面使用的选项列表（从 ASPECT_RATIO_CONFIGS 派生）
+// Option list for config page (derived from ASPECT_RATIO_CONFIGS)
 export const VIDEO_RATIOS = Object.entries(ASPECT_RATIO_CONFIGS).map(([value, config]) => ({
   value,
   label: config.label
 }))
 
-// 获取比例配置
+// Get aspect ratio config
 export function getAspectRatioConfig(ratio: string) {
   return ASPECT_RATIO_CONFIGS[ratio] || ASPECT_RATIO_CONFIGS['16:9']
 }
@@ -42,12 +42,12 @@ export const IMAGE_MODELS = [
   { value: 'doubao-seedream-4-0-250828', label: 'Seedream 4.0' }
 ]
 
-// 图像模型选项（ 生成完整图片）
+// Image model options (full image generation)
 export const IMAGE_MODEL_OPTIONS = [
   { value: 'banana', label: 'Banana Pro (FAL)' },
   { value: 'banana-2', label: 'Banana 2 (FAL)' },
   { value: 'gemini-3-pro-image-preview', label: 'Banana (Google)' },
-  { value: 'gemini-3-pro-image-preview-batch', label: 'Banana (Google Batch) 省50%' },
+  { value: 'gemini-3-pro-image-preview-batch', label: 'Banana (Google Batch) 50% off' },
   { value: 'doubao-seedream-4-0-250828', label: 'Seedream 4.0' },
   { value: 'doubao-seedream-4-5-251128', label: 'Seedream 4.5' },
   { value: 'imagen-4.0-generate-001', label: 'Imagen 4.0 (Google)' },
@@ -55,24 +55,24 @@ export const IMAGE_MODEL_OPTIONS = [
   { value: 'imagen-4.0-fast-generate-001', label: 'Imagen 4.0 Fast' }
 ]
 
-// Banana 模型分辨率选项（仅用于九宫格分镜图，单张生成固定2K）
+// Banana model resolution options (for 9-panel storyboard only, single image fixed at 2K)
 export const BANANA_RESOLUTION_OPTIONS = [
   { value: '2K', label: '2K (推荐，快速)' },
   { value: '4K', label: '4K (高清，较慢)' }
 ]
 
-// 支持分辨率选择的 Banana 模型
+// Banana models that support resolution selection
 export const BANANA_MODELS = ['banana', 'banana-2', 'gemini-3-pro-image-preview', 'gemini-3-pro-image-preview-batch']
 
 export const VIDEO_MODELS = [
   { value: 'doubao-seedance-1-0-pro-fast-251015', label: 'Seedance 1.0 Pro Fast' },
-  { value: 'doubao-seedance-1-0-pro-fast-251015-batch', label: 'Seedance 1.0 Pro Fast (批量) 省50%' },
+  { value: 'doubao-seedance-1-0-pro-fast-251015-batch', label: 'Seedance 1.0 Pro Fast (Batch) 50% off' },
   { value: 'doubao-seedance-1-0-lite-i2v-250428', label: 'Seedance 1.0 Lite' },
-  { value: 'doubao-seedance-1-0-lite-i2v-250428-batch', label: 'Seedance 1.0 Lite (批量) 省50%' },
+  { value: 'doubao-seedance-1-0-lite-i2v-250428-batch', label: 'Seedance 1.0 Lite (Batch) 50% off' },
   { value: 'doubao-seedance-1-5-pro-251215', label: 'Seedance 1.5 Pro' },
-  { value: 'doubao-seedance-1-5-pro-251215-batch', label: 'Seedance 1.5 Pro (批量) 省50%' },
+  { value: 'doubao-seedance-1-5-pro-251215-batch', label: 'Seedance 1.5 Pro (Batch) 50% off' },
   { value: 'doubao-seedance-1-0-pro-250528', label: 'Seedance 1.0 Pro' },
-  { value: 'doubao-seedance-1-0-pro-250528-batch', label: 'Seedance 1.0 Pro (批量) 省50%' },
+  { value: 'doubao-seedance-1-0-pro-250528-batch', label: 'Seedance 1.0 Pro (Batch) 50% off' },
   { value: 'fal-wan25', label: 'Wan 2.6' },
   { value: 'fal-veo31', label: 'Veo 3.1 Fast' },
   { value: 'fal-sora2', label: 'Sora 2' },
@@ -81,7 +81,7 @@ export const VIDEO_MODELS = [
   { value: 'fal-ai/kling-video/v3/pro/image-to-video', label: 'Kling 3 Pro' }
 ]
 
-// SeeDream 批量模型列表（使用 GPU 空闲时间，成本降低50%）
+// SeeDream batch model list (uses GPU idle time, 50% cost reduction)
 export const SEEDANCE_BATCH_MODELS = [
   'doubao-seedance-1-5-pro-251215-batch',
   'doubao-seedance-1-0-pro-250528-batch',

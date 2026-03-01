@@ -491,13 +491,13 @@ async function pollViduTask(
     taskId: string,
     userId: string
 ): Promise<PollResult> {
-    _ulogInfo(`[Poll Vidu] 开始轮询 task_id=${taskId}, userId=${userId}`)
+    _ulogInfo(`[Poll Vidu] Starting poll task_id=${taskId}, userId=${userId}`)
 
     const { apiKey } = await getProviderConfig(userId, 'vidu')
-    _ulogInfo(`[Poll Vidu] API Key 长度: ${apiKey?.length || 0}`)
+    _ulogInfo(`[Poll Vidu] API Key length: ${apiKey?.length || 0}`)
 
     const result = await queryViduTaskStatus(taskId, apiKey)
-    _ulogInfo(`[Poll Vidu] 查询结果:`, result)
+    _ulogInfo(`[Poll Vidu] Query result:`, result)
 
     return {
         status: result.status,
@@ -508,7 +508,7 @@ async function pollViduTask(
 }
 
 /**
- * 查询 Vidu 任务状态
+ * Query Vidu task status
  */
 async function queryViduTaskStatus(
     taskId: string,
@@ -517,67 +517,67 @@ async function queryViduTaskStatus(
     const logPrefix = '[Vidu Query]'
 
     try {
-        _ulogInfo(`${logPrefix} 查询任务 task_id=${taskId}`)
+        _ulogInfo(`${logPrefix} Query task task_id=${taskId}`)
 
-        // 🔥 正确的查询接口路径：/tasks/{id}/creations
+        // Correct query path: /tasks/{id}/creations
         const response = await fetch(`https://api.vidu.cn/ent/v2/tasks/${taskId}/creations`, {
             headers: {
                 'Authorization': `Token ${apiKey}`
             }
         })
 
-        _ulogInfo(`${logPrefix} HTTP状态: ${response.status}`)
+        _ulogInfo(`${logPrefix} HTTP status: ${response.status}`)
 
         if (!response.ok) {
             const errorText = await response.text()
-            _ulogError(`${logPrefix} 查询失败:`, response.status, errorText)
+            _ulogError(`${logPrefix} Query failed:`, response.status, errorText)
             return {
                 status: 'failed',
-                error: `Vidu: 查询失败 ${response.status}`
+                error: `Vidu: Query failed ${response.status}`
             }
         }
 
         const data = await response.json()
-        _ulogInfo(`${logPrefix} 响应数据:`, JSON.stringify(data, null, 2))
+        _ulogInfo(`${logPrefix} Response:`, JSON.stringify(data, null, 2))
 
-        // 检查任务状态
+        // Check task status
         const state = data.state
 
         if (state === 'success') {
-            // 🔥 任务成功，从 creations 数组中获取视频URL
+            // Task success, get video URL from creations array
             const creations = data.creations
             if (!creations || creations.length === 0) {
-                _ulogError(`${logPrefix} task_id=${taskId} 成功但无生成物`)
+                _ulogError(`${logPrefix} task_id=${taskId} success but no creations`)
                 return {
                     status: 'failed',
-                    error: 'Vidu: 任务完成但未返回视频'
+                    error: 'Vidu: Task completed but no video returned'
                 }
             }
 
             const videoUrl = creations[0].url
             if (!videoUrl) {
-                _ulogError(`${logPrefix} task_id=${taskId} 成功但生成物无URL`)
+                _ulogError(`${logPrefix} task_id=${taskId} success but creation has no URL`)
                 return {
                     status: 'failed',
-                    error: 'Vidu: 任务完成但未返回视频URL'
+                    error: 'Vidu: Task completed but no video URL returned'
                 }
             }
 
-            _ulogInfo(`${logPrefix} task_id=${taskId} 完成，视频URL: ${videoUrl.substring(0, 80)}...`)
+            _ulogInfo(`${logPrefix} task_id=${taskId} complete, video URL: ${videoUrl.substring(0, 80)}...`)
             return {
                 status: 'completed',
                 videoUrl: videoUrl
             }
         } else if (state === 'failed') {
-            // 🔥 使用 err_code 作为错误消息，添加 Vidu: 前缀便于错误码映射
+            // Use err_code as error message, add Vidu: prefix for error mapping
             const errCode = data.err_code || 'Unknown'
-            _ulogError(`${logPrefix} task_id=${taskId} 失败: ${errCode}`)
+            _ulogError(`${logPrefix} task_id=${taskId} failed: ${errCode}`)
             return {
                 status: 'failed',
                 error: `Vidu: ${errCode}`  // 添加前缀以便错误映射识别
             }
         } else {
-            // created, queueing, processing 都视为 pending
+            // created, queueing, processing all treated as pending
             return {
                 status: 'pending'
             }
@@ -587,15 +587,15 @@ async function queryViduTaskStatus(
         _ulogError(`${logPrefix} task_id=${taskId} 异常:`, error)
         return {
             status: 'failed',
-            error: `Vidu: ${errorMessage}`  // 添加前缀
+            error: `Vidu: ${errorMessage}`  // Add prefix for error mapping
         }
     }
 }
 
-// ==================== 格式化辅助函数 ====================
+// ==================== Format helpers ====================
 
 /**
- * 创建标准格式的 externalId
+ * Create standard format externalId
  */
 export function formatExternalId(
     provider: 'FAL' | 'ARK' | 'GEMINI' | 'GOOGLE' | 'MINIMAX' | 'VIDU' | 'OPENAI',

@@ -19,19 +19,19 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 初始化字体（在 Vercel 环境中需要）
+  // Initialize fonts (required in Vercel env)
   await initializeFonts()
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
   const body = await request.json()
   const { type, id, newName, appearanceIndex } = body
   // type: 'character' | 'location'
-  // id: characterId 或 locationId
-  // newName: 新名字
-  // appearanceIndex: 角色形象索引（仅角色需要）
+  // id: characterId or locationId
+  // newName: new name
+  // appearanceIndex: character appearance index (character only)
 
   if (!type || !id || !newName) {
     throw new ApiError('INVALID_PARAMS')
@@ -48,14 +48,14 @@ export const POST = apiHandler(async (
       throw new ApiError('NOT_FOUND')
     }
 
-    // 更新每个形象的图片标签
+    // Update each appearance's image label
     const updatePromises = character.appearances.map(async (appearance) => {
-      // 如果指定了 appearanceIndex，只更新该形象
+      // If appearanceIndex specified, only update that appearance
       if (appearanceIndex !== undefined && appearance.appearanceIndex !== appearanceIndex) {
         return null
       }
 
-      // 获取图片 URLs
+      // Fetch image URLs
       let imageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'characterAppearance.imageUrls')
       if (imageUrls.length === 0 && appearance.imageUrl) {
         imageUrls = [appearance.imageUrl]
@@ -63,7 +63,7 @@ export const POST = apiHandler(async (
 
       if (imageUrls.length === 0) return null
 
-      // 更新每张图片的标签
+      // Update each image label
       const newLabelText = `${newName} - ${appearance.changeReason}`
       const newImageUrls: string[] = await Promise.all(
         imageUrls.map(async (url, i) => {
@@ -72,7 +72,7 @@ export const POST = apiHandler(async (
             return await updateImageLabel(url, newLabelText)
           } catch (e) {
             _ulogError(`Failed to update label for image ${i}:`, e)
-            return url // 保留原 URL
+            return url // Keep original URL
           }
         })
       )
@@ -95,7 +95,7 @@ export const POST = apiHandler(async (
     return NextResponse.json({ success: true, results: results.filter(r => r !== null) })
 
   } else if (type === 'location') {
-    // 获取场景
+    // Fetch location
     const location = await prisma.novelPromotionLocation.findUnique({
       where: { id: id },
       include: { images: true }

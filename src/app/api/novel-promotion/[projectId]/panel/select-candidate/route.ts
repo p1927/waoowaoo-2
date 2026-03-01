@@ -90,12 +90,12 @@ export const POST = apiHandler(async (
 
   if (!isValidCandidate) {
     _ulogInfo(
-      `[select-candidate] 选择失败: selectedCosKey=${selectedCosKey}, candidateKeys=${JSON.stringify(candidateKeys)}, candidateImages=${JSON.stringify(candidateImages)}`,
+      `[select-candidate] Select failed: selectedCosKey=${selectedCosKey}, candidateKeys=${JSON.stringify(candidateKeys)}, candidateImages=${JSON.stringify(candidateImages)}`,
     )
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 保存当前图片到历史记录
+  // Save current image to history
   const currentHistory = parsePanelHistory(panel.imageHistory)
   if (panel.imageUrl) {
     currentHistory.push({
@@ -104,7 +104,7 @@ export const POST = apiHandler(async (
     })
   }
 
-  // 选择候选图时优先复用已存在的 COS key，避免重复下载上传（也避免 /m/* 相对URL被 Node fetch 解析失败）
+  // When selecting candidate, prefer reusing existing COS key to avoid re-download/upload (and /m/* relative URL Node fetch parse failure)
   let finalImageKey = selectedCosKey as string
   const isReusableKey = !finalImageKey.startsWith('http://') && !finalImageKey.startsWith('https://') && !finalImageKey.startsWith('/')
 
@@ -130,6 +130,6 @@ export const POST = apiHandler(async (
     success: true,
     imageUrl: signedUrl,
     cosKey: finalImageKey,
-    message: '已选择图片'
+    message: 'Image selected'
   })
 })

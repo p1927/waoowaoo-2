@@ -180,7 +180,7 @@ async function undoLocationRegenerate(db: UndoRegenerateDb, locationId: string) 
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // Delete current image并恢复上一版本
+    // Delete current image and restore previous version
     await db.$transaction(async (tx) => {
         for (const img of location.images || []) {
             if (img.previousImageUrl) {
@@ -230,7 +230,7 @@ async function undoPanelRegenerate(db: UndoRegenerateDb, panelId: string) {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // Delete current image（如果存在）
+    // Delete current image (if exists)
     if (panel.imageUrl) {
         try {
             const storageKey = await resolveStorageKeyFromMediaValue(panel.imageUrl)
