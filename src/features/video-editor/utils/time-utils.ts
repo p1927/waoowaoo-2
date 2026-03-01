@@ -1,8 +1,7 @@
 import { VideoClip, ComputedClip, VideoEditorProject } from '../types/editor.types'
 
 /**
- * 计算时间轴总时长 (帧数)
- * 考虑转场重叠
+ * Compute total timeline duration in frames (account for transition overlap)
  */
 export function calculateTimelineDuration(clips: VideoClip[]): number {
     if (clips.length === 0) return 0
@@ -10,9 +9,9 @@ export function calculateTimelineDuration(clips: VideoClip[]): number {
     return clips.reduce((total, clip, index) => {
         let duration = clip.durationInFrames
 
-        // 最后一个片段不减去转场时间
+        // Last clip: do not subtract transition
         if (index < clips.length - 1 && clip.transition) {
-            // 转场会让总时长减少（重叠部分）
+            // Transition overlap shortens total
             duration -= Math.floor(clip.transition.durationInFrames / 2)
         }
 
@@ -21,8 +20,7 @@ export function calculateTimelineDuration(clips: VideoClip[]): number {
 }
 
 /**
- * 计算每个片段的起始帧位置
- * 用于渲染和 UI 显示
+ * Compute start frame for each clip (for render and UI)
  */
 export function computeClipPositions(clips: VideoClip[]): ComputedClip[] {
     let currentFrame = 0
@@ -31,7 +29,7 @@ export function computeClipPositions(clips: VideoClip[]): ComputedClip[] {
         const startFrame = currentFrame
         const endFrame = startFrame + clip.durationInFrames
 
-        // 计算下一个片段的起始位置（考虑转场重叠）
+        // Next clip start (transition overlap)
         if (clip.transition && index < clips.length - 1) {
             currentFrame = endFrame - Math.floor(clip.transition.durationInFrames / 2)
         } else {
@@ -47,7 +45,7 @@ export function computeClipPositions(clips: VideoClip[]): ComputedClip[] {
 }
 
 /**
- * 帧数转时间字符串
+ * Frames to time string
  */
 export function framesToTime(frames: number, fps: number): string {
     const totalSeconds = frames / fps
@@ -59,7 +57,7 @@ export function framesToTime(frames: number, fps: number): string {
 }
 
 /**
- * 时间字符串转帧数
+ * Time string to frames
  */
 export function timeToFrames(time: string, fps: number): number {
     const [minSec, ms] = time.split('.')
@@ -69,14 +67,14 @@ export function timeToFrames(time: string, fps: number): number {
 }
 
 /**
- * 生成唯一 ID
+ * Generate unique clip ID
  */
 export function generateClipId(): string {
     return `clip_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 }
 
 /**
- * 创建默认编辑器项目
+ * Create default editor project
  */
 export function createDefaultProject(episodeId: string): VideoEditorProject {
     return {

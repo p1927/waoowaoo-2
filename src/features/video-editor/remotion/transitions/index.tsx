@@ -9,8 +9,7 @@ interface TransitionWrapperProps {
 }
 
 /**
- * 转场效果包装器
- * 为片段添加进入/退出动画
+ * Transition wrapper - enter/exit animation for clips
  */
 export const TransitionWrapper: React.FC<TransitionWrapperProps> = ({
     type,
@@ -56,7 +55,7 @@ export const TransitionWrapper: React.FC<TransitionWrapperProps> = ({
 }
 
 /**
- * 淡入淡出转场
+ * Fade transition
  */
 export const CrossDissolve: React.FC<{
     durationInFrames: number
@@ -78,7 +77,7 @@ export const CrossDissolve: React.FC<{
 }
 
 /**
- * 滑动转场
+ * Slide transition
  */
 export const SlideTransition: React.FC<{
     direction: 'left' | 'right' | 'up' | 'down'

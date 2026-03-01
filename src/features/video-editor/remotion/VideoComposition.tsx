@@ -10,8 +10,7 @@ interface VideoCompositionProps {
 }
 
 /**
- * Remotion 主合成组件
- * 使用 Sequence 实现磁性时间轴布局，支持转场效果
+ * Remotion main composition - Sequence-based timeline with transitions
  */
 export const VideoComposition: React.FC<VideoCompositionProps> = ({
     clips,
@@ -22,7 +21,7 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
 
     return (
         <AbsoluteFill style={{ backgroundColor: 'black' }}>
-            {/* 视频轨道 - 带转场效果 */}
+            {/* Video track with transitions */}
             {computedClips.map((clip, index) => {
                 const transitionDuration = clip.transition?.durationInFrames || 0
 
@@ -44,7 +43,7 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
                 )
             })}
 
-            {/* BGM 轨道 */}
+            {/* BGM track */}
             {bgmTrack.map((bgm) => (
                 <Sequence
                     key={bgm.id}
@@ -60,7 +59,7 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
 }
 
 /**
- * BGM 渲染器 - 支持淡入淡出
+ * BGM renderer with fade in/out
  */
 interface BgmRendererProps {
     bgm: BgmClip
@@ -73,12 +72,12 @@ const BgmRenderer: React.FC<BgmRendererProps> = ({ bgm }) => {
 
     let volume = bgm.volume
 
-    // 淡入
+    // Fade in
     if (fadeIn > 0 && frame < fadeIn) {
         volume *= interpolate(frame, [0, fadeIn], [0, 1], { extrapolateRight: 'clamp' })
     }
 
-    // 淡出
+    // Fade out
     if (fadeOut > 0 && frame > bgm.durationInFrames - fadeOut) {
         volume *= interpolate(
             frame,
@@ -92,7 +91,7 @@ const BgmRenderer: React.FC<BgmRendererProps> = ({ bgm }) => {
 }
 
 /**
- * 单个片段渲染器 - 支持转场效果
+ * Single clip renderer with transition
  */
 interface ClipRendererProps {
     clip: VideoClip & { startFrame: number; endFrame: number }
@@ -113,12 +112,12 @@ const ClipRenderer: React.FC<ClipRendererProps> = ({
     const frame = useCurrentFrame()
     const clipDuration = clip.durationInFrames
 
-    // 计算转场效果
+    // Compute transition
     let opacity = 1
     let transform = 'none'
 
     if (transitionType !== 'none' && transitionDuration > 0) {
-        // 出场转场效果 (在片段末尾)
+        // Exit transition (end of clip)
         if (!isLastClip && frame > clipDuration - transitionDuration) {
             const exitProgress = interpolate(
                 frame,
@@ -138,7 +137,7 @@ const ClipRenderer: React.FC<ClipRendererProps> = ({
             }
         }
 
-        // 入场转场效果 (在片段开头)
+        // Enter transition (start of clip)
         if (frame < transitionDuration) {
             const enterProgress = interpolate(
                 frame,
@@ -161,7 +160,7 @@ const ClipRenderer: React.FC<ClipRendererProps> = ({
 
     return (
         <AbsoluteFill style={{ opacity, transform }}>
-            {/* 视频 */}
+            {/* Video */}
             <Video
                 src={clip.src}
                 startFrom={clip.trim?.from || 0}
@@ -172,7 +171,7 @@ const ClipRenderer: React.FC<ClipRendererProps> = ({
                 }}
             />
 
-            {/* 附属配音 */}
+            {/* Attached audio */}
             {clip.attachment?.audio && (
                 <Audio
                     src={clip.attachment.audio.src}
@@ -180,7 +179,7 @@ const ClipRenderer: React.FC<ClipRendererProps> = ({
                 />
             )}
 
-            {/* 附属字幕 */}
+            {/* Attached subtitle */}
             {clip.attachment?.subtitle && (
                 <SubtitleOverlay
                     text={clip.attachment.subtitle.text}
@@ -192,7 +191,7 @@ const ClipRenderer: React.FC<ClipRendererProps> = ({
 }
 
 /**
- * 字幕叠加层
+ * Subtitle overlay
  */
 interface SubtitleOverlayProps {
     text: string

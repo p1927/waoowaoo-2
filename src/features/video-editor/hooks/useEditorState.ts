@@ -16,12 +16,12 @@ interface UseEditorStateProps {
 }
 
 export function useEditorState({ episodeId, initialProject }: UseEditorStateProps) {
-    // 项目数据
+    // Project data
     const [project, setProject] = useState<VideoEditorProject>(
         initialProject || createDefaultProject(episodeId)
     )
 
-    // 时间轴 UI 状态
+    // Timeline UI state
     const [timelineState, setTimelineState] = useState<TimelineState>({
         currentFrame: 0,
         playing: false,
@@ -29,11 +29,11 @@ export function useEditorState({ episodeId, initialProject }: UseEditorStateProp
         zoom: 1
     })
 
-    // 是否有未保存的更改
+    // Unsaved changes
     const [isDirty, setIsDirty] = useState(false)
 
     // ========================================
-    // 时间轴片段操作
+    // Timeline clip actions
     // ========================================
 
     const addClip = useCallback((clip: Omit<VideoClip, 'id'>) => {
@@ -78,7 +78,7 @@ export function useEditorState({ episodeId, initialProject }: UseEditorStateProp
     }, [])
 
     // ========================================
-    // BGM 操作
+    // BGM actions
     // ========================================
 
     const addBgm = useCallback((bgm: Omit<BgmClip, 'id'>) => {
@@ -102,7 +102,7 @@ export function useEditorState({ episodeId, initialProject }: UseEditorStateProp
     }, [])
 
     // ========================================
-    // 播放控制
+    // Playback control
     // ========================================
 
     const play = useCallback(() => {
@@ -126,7 +126,7 @@ export function useEditorState({ episodeId, initialProject }: UseEditorStateProp
     }, [])
 
     // ========================================
-    // 项目操作
+    // Project actions
     // ========================================
 
     const resetProject = useCallback(() => {

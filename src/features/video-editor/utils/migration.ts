@@ -2,22 +2,21 @@ import { logWarn as _ulogWarn } from '@/lib/logging/core'
 import { VideoEditorProject } from '../types/editor.types'
 
 /**
- * 版本迁移函数
- * 将旧版本数据升级到最新版本
+ * Migrate project data from older schema to latest
  */
 export function migrateProjectData(data: unknown): VideoEditorProject {
     const project = data as Record<string, unknown>
 
-    // 检查 schema 版本
+    // Check schema version
     const version = project.schemaVersion as string
 
     switch (version) {
         case '1.0':
-            // 当前最新版本，无需迁移
+            // Already latest, no migration
             return project as unknown as VideoEditorProject
 
         default:
-            // 未知版本或无版本，尝试作为 1.0 处理
+            // Unknown or missing version, treat as 1.0
             _ulogWarn(`Unknown schema version: ${version}, treating as 1.0`)
             return {
                 ...project,
@@ -27,7 +26,7 @@ export function migrateProjectData(data: unknown): VideoEditorProject {
 }
 
 /**
- * 验证项目数据完整性
+ * Validate project data
  */
 export function validateProjectData(data: unknown): { valid: boolean; errors: string[] } {
     const errors: string[] = []

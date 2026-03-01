@@ -9,7 +9,7 @@ interface UseEditorActionsProps {
 }
 
 /**
- * 面板数据类型（灵活接受各种格式）
+ * Panel data type (flexible format)
  */
 interface PanelData {
     id?: string
@@ -21,25 +21,25 @@ interface PanelData {
 }
 
 /**
- * 从已生成的视频面板创建编辑器项目
+ * Create editor project from generated video panels
  */
 export function createProjectFromPanels(
     episodeId: string,
     panels: PanelData[],
     voiceLines?: Array<{ id: string; speaker: string; content: string; audioUrl?: string | null }>
 ): VideoEditorProject {
-    // 过滤出有视频的面板
+    // Panels that have video
     const videoPanels = panels.filter(p => p.videoUrl)
 
-    // 创建视频片段
+    // Build video clips
     const timeline: VideoClip[] = videoPanels.map((panel, index) => {
-        // 查找匹配的配音（简单匹配：按索引）
+        // Match voice by index
         const matchedVoice = voiceLines?.[index]
 
         return {
             id: `clip_${panel.id || panel.storyboardId}_${panel.panelIndex ?? index}`,
             src: panel.videoUrl!,
-            durationInFrames: Math.round((panel.duration || 3) * 30), // 默认 3 秒，30fps
+            durationInFrames: Math.round((panel.duration || 3) * 30), // default 3s @ 30fps
             attachment: {
                 audio: matchedVoice?.audioUrl ? {
                     src: matchedVoice.audioUrl,
@@ -79,7 +79,7 @@ export function createProjectFromPanels(
 
 export function useEditorActions({ projectId, episodeId }: UseEditorActionsProps) {
     /**
-     * 保存项目到服务器
+     * Save project to server
      */
     const saveProject = useCallback(async (project: VideoEditorProject) => {
         const response = await fetch(`/api/novel-promotion/${projectId}/editor`, {
@@ -96,7 +96,7 @@ export function useEditorActions({ projectId, episodeId }: UseEditorActionsProps
     }, [projectId])
 
     /**
-     * 加载项目
+     * Load project
      */
     const loadProject = useCallback(async (): Promise<VideoEditorProject | null> => {
         const response = await fetch(`/api/novel-promotion/${projectId}/editor?episodeId=${episodeId}`)
@@ -111,7 +111,7 @@ export function useEditorActions({ projectId, episodeId }: UseEditorActionsProps
     }, [projectId, episodeId])
 
     /**
-     * 发起渲染导出
+     * Start render export
      */
     const startRender = useCallback(async (editorProjectId: string) => {
         const response = await fetch(`/api/novel-promotion/${projectId}/editor/render`, {
@@ -132,7 +132,7 @@ export function useEditorActions({ projectId, episodeId }: UseEditorActionsProps
     }, [projectId])
 
     /**
-     * 获取渲染状态
+     * Get render status
      */
     const getRenderStatus = useCallback(async (editorProjectId: string) => {
         const response = await fetch(

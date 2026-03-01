@@ -20,22 +20,22 @@ const defaultJobOptions: JobsOptions = {
 }
 
 export const imageQueue = new Queue<TaskJobData>(QUEUE_NAME.IMAGE, {
-  connection: queueRedis,
+  connection: queueRedis as any,
   defaultJobOptions,
 })
 
 export const videoQueue = new Queue<TaskJobData>(QUEUE_NAME.VIDEO, {
-  connection: queueRedis,
+  connection: queueRedis as any,
   defaultJobOptions,
 })
 
 export const voiceQueue = new Queue<TaskJobData>(QUEUE_NAME.VOICE, {
-  connection: queueRedis,
+  connection: queueRedis as any,
   defaultJobOptions,
 })
 
 export const textQueue = new Queue<TaskJobData>(QUEUE_NAME.TEXT, {
-  connection: queueRedis,
+  connection: queueRedis as any,
   defaultJobOptions,
 })
 

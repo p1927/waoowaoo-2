@@ -4,7 +4,7 @@
 // ========================================
 
 /**
- * 剪辑项目 - 顶层结构
+ * Editor project - top-level structure
  */
 export interface VideoEditorProject {
     id: string
@@ -13,15 +13,15 @@ export interface VideoEditorProject {
 
     config: EditorConfig
 
-    // 主时间轴 (磁性轨道) - 顺序即时间
+    // Main timeline (order = time)
     timeline: VideoClip[]
 
-    // BGM 轨道 (绝对定位)
+    // BGM track (absolute positioning)
     bgmTrack: BgmClip[]
 }
 
 /**
- * 编辑器配置
+ * Editor config
  */
 export interface EditorConfig {
     fps: number
@@ -30,31 +30,31 @@ export interface EditorConfig {
 }
 
 /**
- * 视频片段 - 时间轴核心单元
+ * Video clip - timeline unit
  */
 export interface VideoClip {
     id: string
     src: string                    // COS URL
-    durationInFrames: number       // 播放时长
+    durationInFrames: number       // Play duration
 
-    // 素材内裁剪 (可选)
+    // In-clip trim (optional)
     trim?: {
-        from: number                 // 素材起始帧
-        to: number                   // 素材结束帧
+        from: number               // Source start frame
+        to: number                 // Source end frame
     }
 
-    // 附属内容 - 跟随视频移动
+    // Attachment (moves with clip)
     attachment?: ClipAttachment
 
-    // 转场 (与下一个片段的过渡)
+    // Transition to next clip
     transition?: ClipTransition
 
-    // AI 元数据 (用于回溯)
+    // AI metadata (traceability)
     metadata: ClipMetadata
 }
 
 /**
- * 片段附属内容 (配音 + 字幕)
+ * Clip attachment (dub + subtitle)
  */
 export interface ClipAttachment {
     audio?: {
@@ -69,7 +69,7 @@ export interface ClipAttachment {
 }
 
 /**
- * 转场效果
+ * Transition effect
  */
 export interface ClipTransition {
     type: 'none' | 'dissolve' | 'fade' | 'slide'
@@ -77,7 +77,7 @@ export interface ClipTransition {
 }
 
 /**
- * 片段元数据
+ * Clip metadata
  */
 export interface ClipMetadata {
     panelId: string
@@ -86,12 +86,12 @@ export interface ClipMetadata {
 }
 
 /**
- * BGM 片段 - 独立轨道
+ * BGM clip - separate track
  */
 export interface BgmClip {
     id: string
     src: string
-    startFrame: number             // 绝对定位
+    startFrame: number             // Absolute position
     durationInFrames: number
     volume: number
     fadeIn?: number
@@ -99,27 +99,27 @@ export interface BgmClip {
 }
 
 // ========================================
-// 时间轴 UI 状态
+// Timeline UI state
 // ========================================
 
 export interface TimelineState {
     currentFrame: number
     playing: boolean
     selectedClipId: string | null
-    zoom: number                   // 缩放级别 (1 = 100%)
+    zoom: number                   // Zoom (1 = 100%)
 }
 
 // ========================================
-// 计算工具类型
+// Computed types
 // ========================================
 
 export interface ComputedClip extends VideoClip {
-    startFrame: number             // 计算得出的起始帧
-    endFrame: number               // 计算得出的结束帧
+    startFrame: number             // Computed start frame
+    endFrame: number               // Computed end frame
 }
 
 // ========================================
-// API 相关类型
+// API types
 // ========================================
 
 export interface SaveEditorProjectRequest {
