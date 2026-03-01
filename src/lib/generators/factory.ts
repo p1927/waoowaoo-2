@@ -1,8 +1,8 @@
 /**
- * 生成器工厂（增强版）
- * 
- * 支持：
- * - 根据 provider 创建生成器
+* Generator factory (enhanced)
+ *
+ * Supports:
+ * - Create generator by provider
  */
 
 import { ImageGenerator, VideoGenerator, AudioGenerator } from './base'
@@ -24,7 +24,7 @@ import { ViduVideoGenerator } from './vidu'
 import { getProviderKey } from '@/lib/api-config'
 
 /**
- * 根据 provider 创建图片生成器
+ * Create image generator by provider
  */
 export function createImageGenerator(provider: string, modelId?: string): ImageGenerator {
     const normalizeModelId = (rawModelId?: string): string | undefined => {
@@ -46,7 +46,7 @@ export function createImageGenerator(provider: string, modelId?: string): ImageG
                 return new GoogleImagenGenerator(actualModelId)
             }
             return new GoogleGeminiImageGenerator(actualModelId)
-        case 'google-batch':  // 🔥 Gemini Batch 异步模式
+        case 'google-batch':  // Gemini Batch async mode
             return new GoogleGeminiBatchImageGenerator()
         case 'imagen':
             return new GoogleImagenGenerator(actualModelId)
@@ -62,7 +62,7 @@ export function createImageGenerator(provider: string, modelId?: string): ImageG
 }
 
 /**
- * 根据 provider 创建视频生成器
+ * Create video generator by provider
  */
 export function createVideoGenerator(provider: string): VideoGenerator {
     const providerKey = getProviderKey(provider).toLowerCase()
@@ -87,7 +87,7 @@ export function createVideoGenerator(provider: string): VideoGenerator {
 }
 
 /**
- * 创建语音生成器
+ * Create audio generator
  */
 export function createAudioGenerator(provider: string): AudioGenerator {
     const providerKey = getProviderKey(provider).toLowerCase()

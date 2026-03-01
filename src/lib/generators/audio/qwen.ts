@@ -1,7 +1,7 @@
 /**
- * 阿里百炼语音生成器
- * 
- * 支持：
+* Alibaba Qwen TTS generator
+ *
+ * Supports:
  * - Qwen TTS
  */
 
@@ -20,7 +20,7 @@ export class QwenTTSGenerator extends BaseAudioGenerator {
             rate
         }
 
-        // 调用阿里百炼 TTS API
+        // Call Alibaba Qwen TTS API
         const response = await fetch('https://dashscope.aliyuncs.com/api/v1/audio/tts', {
             method: 'POST',
             headers: {
@@ -32,14 +32,14 @@ export class QwenTTSGenerator extends BaseAudioGenerator {
 
         if (!response.ok) {
             const errorText = await response.text()
-            throw new Error(`Qwen TTS 失败 (${response.status}): ${errorText}`)
+            throw new Error(`Qwen TTS failed (${response.status}): ${errorText}`)
         }
 
         const data = await response.json()
         const audioUrl = data.audio_url || data.output?.audio_url
 
         if (!audioUrl) {
-            throw new Error('Qwen 未返回音频 URL')
+            throw new Error('Qwen did not return audio URL')
         }
 
         return {

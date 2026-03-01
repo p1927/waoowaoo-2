@@ -1,17 +1,17 @@
 /**
- * 图片生成器统一导出
- * 
- * 🔥 FAL 和 Ark 已迁移到根目录的合并文件
+* Image generator unified export
+ *
+ * FAL and Ark moved to root-level merged file
  * - FAL: ../fal.ts
  * - Ark: ../ark.ts
  */
 
-// Google 生成器保持原位置
+// Google generator stays here
 export { GoogleGeminiImageGenerator, GoogleImagenGenerator, GoogleGeminiBatchImageGenerator } from './google'
 export { GeminiCompatibleImageGenerator } from './gemini-compatible'
 export { OpenAICompatibleImageGenerator } from './openai-compatible'
 
 
-// 向后兼容：从合并文件重新导出
+// Backward compat: re-export from merged file
 export { FalBananaGenerator, FalImageGenerator } from '../fal'
 export { ArkSeedreamGenerator, ArkImageGenerator } from '../ark'

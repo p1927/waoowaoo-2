@@ -1,7 +1,7 @@
 /**
- * 视频生成器统一导出
- * 
- * 🔥 FAL 和 Ark 已迁移到根目录的合并文件
+ * Video generator unified export
+ *
+ * FAL and Ark moved to root-level merged file
  * - FAL: ../fal.ts
  * - Ark: ../ark.ts
  */

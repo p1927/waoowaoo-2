@@ -290,10 +290,10 @@ export class MinimaxVideoGenerator extends BaseVideoGenerator {
 
             const data = await response.json()
 
-            // 检查响应
+            // Check response
             if (data.base_resp?.status_code !== 0) {
-                const errMsg = data.base_resp?.status_msg || '未知错误'
-                _ulogError(`${logPrefix} 任务提交失败:`, errMsg)
+                const errMsg = data.base_resp?.status_msg || 'Unknown error'
+                _ulogError(`${logPrefix} Task submit failed:`, errMsg)
                 throw new Error(`MiniMax: ${errMsg}`)
             }
 

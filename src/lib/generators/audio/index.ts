@@ -1,5 +1,5 @@
 /**
- * 语音生成器统一导出
+ * Audio generator unified export
  */
 
 export { QwenTTSGenerator } from './qwen'
