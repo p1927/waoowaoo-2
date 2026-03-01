@@ -2,20 +2,14 @@
 
 import { useTranslations } from 'next-intl'
 /**
- * 资产确认阶段 - 小说推文模式专用
- * 包含TTS生成和资产分析
- * 
- * 重构说明 v2:
- * - 角色和场景操作函数已提取到 hooks/useCharacterActions 和 hooks/useLocationActions
- * - 批量生成逻辑已提取到 hooks/useBatchGeneration
- * - TTS/音色逻辑已提取到 hooks/useTTSGeneration
- * - 弹窗状态已提取到 hooks/useAssetModals
- * - 档案管理已提取到 hooks/useProfileManagement
- * - UI已拆分为 CharacterSection, LocationSection, AssetToolbar, AssetModals 组件
+ * Assets confirmation stage - novel promotion
+ * TTS generation and asset analysis
+ * Refactor v2: character/location in useCharacterActions, useLocationActions;
+ * batch in useBatchGeneration; TTS in useTTSGeneration; modals in useAssetModals;
+ * profile in useProfileManagement; UI split into CharacterSection, LocationSection, AssetToolbar, AssetModals
  */
 
 import { useState, useCallback, useMemo } from 'react'
-// 移除了 useRouter 导入，因为不再需要在组件中操作 URL
 import { Character, CharacterAppearance } from '@/types/project'
 import { resolveTaskPresentationState } from '@/lib/task/presentation'
 import {
@@ -49,7 +43,7 @@ interface AssetsStageProps {
   isAnalyzingAssets: boolean
   focusCharacterId?: string | null
   focusCharacterRequestId?: number
-  // 🔥 通过 props 触发全局分析（避免 URL 参数竞态条件）
+  // Trigger global analyze via props (avoid URL param race)
   triggerGlobalAnalyze?: boolean
   onGlobalAnalyzeComplete?: () => void
 }
@@ -62,55 +56,55 @@ export default function AssetsStage({
   triggerGlobalAnalyze = false,
   onGlobalAnalyzeComplete
 }: AssetsStageProps) {
-  // 🔥 V6.5 重构：直接订阅缓存，消除 props drilling
+  // V6.5: subscribe cache directly
   const { data: assets } = useProjectAssets(projectId)
-  // 🔧 使用 useMemo 稳定引用，防止 useCallback/useEffect 依赖问题
+  // useMemo for stable refs
   const characters = useMemo(() => assets?.characters ?? [], [assets?.characters])
   const locations = useMemo(() => assets?.locations ?? [], [assets?.locations])
-  // 🔥 使用 React Query 刷新，替代 onRefresh prop
+  // React Query refetch
   const refreshAssets = useRefreshProjectAssets(projectId)
   const onRefresh = useCallback(() => { refreshAssets() }, [refreshAssets])
 
-  // 🔥 V6.6 重构：使用 mutation hooks 替代 onGenerateImage prop
+  // V6.6: mutation hooks instead of onGenerateImage
   const generateCharacterImage = useGenerateProjectCharacterImage(projectId)
   const generateLocationImage = useGenerateProjectLocationImage(projectId)
 
-  // 🔥 内部图片生成函数 - 使用 mutation hooks 实现乐观更新
+  // Internal image generation - mutation hooks, optimistic update
   const handleGenerateImage = useCallback(async (type: 'character' | 'location', id: string, appearanceId?: string) => {
     if (type === 'character' && appearanceId) {
       await generateCharacterImage.mutateAsync({ characterId: id, appearanceId })
     } else if (type === 'location') {
-      // 场景生成默认使用 imageIndex: 0
+      // Location default imageIndex: 0
       await generateLocationImage.mutateAsync({ locationId: id, imageIndex: 0 })
     }
   }, [generateCharacterImage, generateLocationImage])
 
   const t = useTranslations('assets')
-  // 计算资产总数
+  // Total asset count
   const totalAppearances = characters.reduce((sum, char) => sum + (char.appearances?.length || 0), 0)
   const totalLocations = locations.length
   const totalAssets = totalAppearances + totalLocations
 
-  // 本地 UI 状态
+  // Local UI state
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'warning' | 'error' } | null>(null)
 
-  // 辅助：获取角色形象
+  // Get character appearances
   const getAppearances = (character: Character): CharacterAppearance[] => {
     return character.appearances || []
   }
 
-  // 显示提示
+  // Show toast
   const showToast = useCallback((message: string, type: 'success' | 'warning' | 'error' = 'success', duration = 3000) => {
     setToast({ message, type })
     setTimeout(() => setToast(null), duration)
   }, [])
 
-  // === 使用提取的 Hooks ===
+  // === Extracted hooks ===
 
-  // 🔥 V6.5 重构：hooks 现在内部订阅 useProjectAssets，不再需要传 characters/locations
+  // V6.5: hooks subscribe useProjectAssets internally
 
-  // 批量生成
+  // Batch generation
   const {
     isBatchSubmitting,
     batchProgress,
@@ -150,7 +144,7 @@ export default function AssetsStage({
     showToast,
   })
 
-  // 角色操作
+  // Character actions
   const {
     handleDeleteCharacter,
     handleDeleteAppearance,
@@ -163,7 +157,7 @@ export default function AssetsStage({
     showToast
   })
 
-  // 场景操作
+  // Location actions
   const {
     handleDeleteLocation,
     handleSelectLocationImage,
@@ -175,7 +169,7 @@ export default function AssetsStage({
     showToast
   })
 
-  // TTS/音色
+  // TTS / voice
   const {
     voiceDesignCharacter,
     handleVoiceChange,
@@ -186,7 +180,7 @@ export default function AssetsStage({
     projectId
   })
 
-  // 弹窗状态
+  // Modal state
   const {
     editingAppearance,
     editingLocation,
@@ -209,7 +203,7 @@ export default function AssetsStage({
   } = useAssetModals({
     projectId
   })
-  // 档案管理
+  // Profile management
   const {
     unconfirmedCharacters,
     isConfirmingCharacter,
@@ -268,7 +262,7 @@ export default function AssetsStage({
         globalAnalyzingTip={t('toolbar.globalAnalyzingTip')}
       />
 
-      {/* 资产工具栏 */}
+      {/* Asset toolbar */}
       <AssetToolbar
         projectId={projectId}
         totalAssets={totalAssets}
@@ -299,7 +293,7 @@ export default function AssetsStage({
         onDeleteProfile={handleDeleteProfile}
       />
 
-      {/* 角色资产区块 */}
+      {/* Character assets section */}
       <CharacterSection
         projectId={projectId}
         focusCharacterId={focusCharacterId}
@@ -326,7 +320,7 @@ export default function AssetsStage({
         getAppearances={getAppearances}
       />
 
-      {/* 场景资产区块 */}
+      {/* Location assets section */}
       <LocationSection
         projectId={projectId}
         activeTaskKeys={activeTaskKeys}

@@ -433,7 +433,7 @@ export default function ScriptViewAssetsPanel({
               <div className="mt-3 flex-1 min-h-0 space-y-4 overflow-y-auto pr-1 custom-scrollbar">
                 {isAllClipsMode && (
                   <div className="rounded-lg border border-[var(--glass-stroke-base)] bg-[var(--glass-bg-muted)]/40 p-2 text-[11px] text-[var(--glass-text-tertiary)]">
-                    当前为“全部片段”视图，文案要求仅在单片段视图可编辑
+                    Copy is editable only in single-clip view
                   </div>
                 )}
                 {characters.map((c) => {
@@ -586,7 +586,7 @@ export default function ScriptViewAssetsPanel({
               <div className="mt-3 flex-1 min-h-0 overflow-y-auto pr-1 custom-scrollbar">
                 {isAllClipsMode && (
                   <div className="mb-3 rounded-lg border border-[var(--glass-stroke-base)] bg-[var(--glass-bg-muted)]/40 p-2 text-[11px] text-[var(--glass-text-tertiary)]">
-                    当前为“全部片段”视图，场景文案要求仅在单片段视图可编辑
+                    Location copy is editable only in single-clip view
                   </div>
                 )}
                 <div className="grid grid-cols-2 gap-2">

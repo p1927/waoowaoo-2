@@ -76,7 +76,7 @@ export function ProviderSection({
                 )}
             </div>
 
-            {/* 添加表单 */}
+            {/* Add form */}
             {showAddForm && (
                 <div className="glass-surface-soft mb-4 flex items-center gap-2 rounded-xl p-3">
                     <input
@@ -111,7 +111,7 @@ export function ProviderSection({
                 </div>
             )}
 
-            {/* 提供商列表 */}
+            {/* Provider list */}
             <div className="space-y-2">
                 {providers.map(provider => {
                     const isEditing = editingId === provider.id

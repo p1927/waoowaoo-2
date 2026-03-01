@@ -25,14 +25,14 @@ export function DefaultModelSection({
 }: DefaultModelSectionProps) {
     const t = useTranslations('apiConfig')
 
-    // 只显示已启用的模型
+    // Only enabled models
     const enabledModels = models.filter(m => m.enabled)
 
     if (enabledModels.length === 0) {
         return null
     }
 
-    // 根据类型确定要显示的选择器
+    // Selector by type
     const selectors = type === 'llm'
         ? [{ field: 'analysisModel', label: t('defaultModel.analysis') }]
         : type === 'image'

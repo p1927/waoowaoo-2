@@ -33,7 +33,7 @@ const openSans = Open_Sans({
 
 type SupportedLocale = (typeof locales)[number]
 
-// 动态元数据生成
+// Dynamic metadata
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: 'layout' })
@@ -62,12 +62,12 @@ export default async function LocaleLayout({
 }) {
     const { locale } = await params;
 
-    // 验证 locale 是否有效
+    // Validate locale
     if (!locales.includes(locale as SupportedLocale)) {
         notFound();
     }
 
-    // 获取翻译消息
+    // Load messages
     const messages = await getMessages();
 
     return (

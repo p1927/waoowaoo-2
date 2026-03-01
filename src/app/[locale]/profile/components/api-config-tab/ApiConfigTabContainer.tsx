@@ -278,7 +278,7 @@ export function ApiConfigTabContainer() {
                         }))}
                         value={normalizedKey || undefined}
                         onModelChange={(newModelKey) => {
-                          // 用新模型的 capabilities 计算 fields，而不是旧模型的
+                          // Compute fields from new model capabilities
                           const newModel = options.find((opt) => opt.modelKey === newModelKey)
                           const newCapFields = extractCapabilityFieldsFromModel(
                             newModel?.capabilities as Record<string, unknown> | undefined,
