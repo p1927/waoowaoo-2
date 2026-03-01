@@ -9,7 +9,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -20,7 +20,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 使用 UUID 直接查询
+  // Query by UUID directly
   const appearance = await prisma.characterAppearance.findUnique({
     where: { id: appearanceId }
   })
@@ -31,7 +31,7 @@ export const POST = apiHandler(async (
 
   const trimmedDescription = newDescription.trim()
 
-  // 解析 descriptions JSON
+  // Parse descriptions JSON
   let descriptions: string[] = []
   if (appearance.descriptions) {
     try { descriptions = JSON.parse(appearance.descriptions) } catch { }
@@ -40,14 +40,14 @@ export const POST = apiHandler(async (
     descriptions = [appearance.description || '']
   }
 
-  // 更新指定索引的描述
+  // Update description at specified index
   if (descriptionIndex !== undefined && descriptionIndex !== null) {
     descriptions[descriptionIndex] = trimmedDescription
   } else {
     descriptions[0] = trimmedDescription
   }
 
-  // 直接更新独立表记录
+  // Update standalone table record directly
   await prisma.characterAppearance.update({
     where: { id: appearance.id },
     data: {

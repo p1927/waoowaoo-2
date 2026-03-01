@@ -159,12 +159,12 @@ async function updateImageLabel(imageUrl: string, newLabelText: string): Promise
   const w = meta.width || 2160
   const h = meta.height || 2160
 
-  // 计算标签条高度（与生成时一致：高度的 4%）
+  // Calculate label bar height (same as generation: 4% of height)
   const fontSize = Math.floor(h * 0.04)
   const pad = Math.floor(fontSize * 0.5)
   const barH = fontSize + pad * 2
 
-  // 裁剪掉顶部的旧标签条
+  // Crop out the old label bar from the top
   const croppedBuffer = await sharp(buffer)
     .extract({ left: 0, top: barH, width: w, height: h - barH })
     .toBuffer()
@@ -172,14 +172,14 @@ async function updateImageLabel(imageUrl: string, newLabelText: string): Promise
   // Create new SVG label bar
   const svg = await createLabelSVG(w, barH, fontSize, pad, newLabelText)
 
-  // 添加新标签条到图片顶部
+  // Add new label bar to the top of the image
   const processed = await sharp(croppedBuffer)
     .extend({ top: barH, bottom: 0, left: 0, right: 0, background: { r: 0, g: 0, b: 0, alpha: 1 } })
     .composite([{ input: svg, top: 0, left: 0 }])
     .jpeg({ quality: 90, mozjpeg: true })
     .toBuffer()
 
-  // 🔥 生成新 key 上传，使图片 URL 发生变化，强制浏览器绕过缓存，确保前端能看到新标签
+  // Generate new key on upload so image URL changes, browser cache invalidates, frontend sees new label
   const newKey = generateUniqueKey('labeled-rename', 'jpg')
   await uploadToCOS(processed, newKey)
   return newKey
