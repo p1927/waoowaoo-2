@@ -3,8 +3,8 @@
 import { useTranslations } from 'next-intl'
 import { AppIcon } from '@/components/ui/icons'
 /**
- * InsertPanelButton - 面板间插入按钮
- * 在两个 PanelCard 之间显示一个 + 号按钮
+ * InsertPanelButton - insert button between panels
+ * Renders a + button between two PanelCards
  */
 
 interface InsertPanelButtonProps {
@@ -33,7 +33,7 @@ export default function InsertPanelButton({ onClick, disabled }: InsertPanelButt
         >
             <AppIcon name="plus" className="w-4 h-4" />
 
-            {/* Hover 时显示提示 */}
+            {/* Tooltip on hover */}
             <span className={`
                 absolute -top-8 left-1/2 -translate-x-1/2
                 px-2 py-1 text-xs text-white bg-[var(--glass-overlay)] rounded

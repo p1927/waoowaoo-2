@@ -37,7 +37,7 @@ export default function ScreenplayDisplay({ screenplay, originalContent }: Scree
     const t = useTranslations('storyboard')
     const [activeTab, setActiveTab] = useState<'screenplay' | 'original'>('screenplay')
 
-    // 解析剧本JSON
+    // Parse script JSON
     let parsedScreenplay: Screenplay | null = null
     try {
         if (screenplay) {

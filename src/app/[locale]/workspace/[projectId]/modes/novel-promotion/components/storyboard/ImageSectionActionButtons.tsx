@@ -39,7 +39,7 @@ export default function ImageSectionActionButtons({
           <div className="flex items-center gap-0.5">
             <button
               onClick={() => {
-                _ulogInfo('[ImageSection] 🔄 左下角重新生成按钮被点击')
+                _ulogInfo('[ImageSection] Regenerate button clicked')
                 _ulogInfo('[ImageSection] isSubmittingPanelImageTask:', isSubmittingPanelImageTask)
                 _ulogInfo('[ImageSection] 将传递 force:', isSubmittingPanelImageTask)
                 triggerPulse()
