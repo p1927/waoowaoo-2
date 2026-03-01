@@ -85,7 +85,7 @@ export function calculateSRTDuration(srtText: string): number {
  * @returns Seconds
  */
 function timeToSeconds(timeStr: string): number {
-  // 格式：HH:MM:SS,mmm
+  // Format: HH:MM:SS,mmm
   const match = timeStr.match(/(\d+):(\d+):(\d+)[,.](\d+)/)
   if (!match) return 0
   
@@ -98,9 +98,9 @@ function timeToSeconds(timeStr: string): number {
 }
 
 /**
- * 验证是否为有效的SRT格式
- * @param text 文本内容
- * @returns 是否有效
+ * Validate whether text is valid SRT format
+ * @param text Text content
+ * @returns Whether valid
  */
 export function isValidSRT(text: string): boolean {
   try {
@@ -112,9 +112,9 @@ export function isValidSRT(text: string): boolean {
 }
 
 /**
- * 从SRT格式中提取纯文本（移除序号和时间轴）
- * @param srtText SRT格式文本
- * @returns 纯文本内容
+ * Extract plain text from SRT format (remove index and timeline)
+ * @param srtText SRT format text
+ * @returns Plain text content
  */
 export function extractTextFromSRT(srtText: string): string {
   const entries = parseSRT(srtText)

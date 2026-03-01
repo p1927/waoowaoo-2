@@ -1,18 +1,18 @@
 import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core'
 /**
- * 火山引擎 ARK 生成器（统一图像 + 视频）
- * 
- * 图像模型：
+ * Volcano Engine ARK generator (unified image + video)
+ *
+ * Image models:
  * - Seedream 4.5 (doubao-seedream-4-5-251128)
  * - Seedream 4.0
- * 
- * 视频模型：
+ *
+ * Video models:
  * - Seedance 1.0 Pro (doubao-seedance-1-0-pro-250528)
  * - Seedance 1.0 Lite (doubao-seedance-1-0-lite-i2v-250428)
  * - Seedance 1.5 Pro (doubao-seedance-1-5-pro-251215)
- * - 支持批量模式 (-batch 后缀)
- * - 支持首尾帧模式
- * - 支持音频生成 (Seedance 1.5 Pro)
+ * - Supports batch mode (-batch suffix)
+ * - Supports first/last frame mode
+ * - Supports audio generation (Seedance 1.5 Pro)
  */
 
 import {
@@ -114,10 +114,10 @@ function isInteger(value: unknown): value is number {
 }
 
 // ============================================================
-// 图像尺寸映射表
+// Image size mapping table
 // ============================================================
 
-// 4K 分辨率映射表（火山引擎 Seedream 只支持 4K）
+// 4K resolution mapping (Volcano Engine Seedream only supports 4K)
 const SIZE_MAP_4K: Record<string, string> = {
     '1:1': '4096x4096',
     '16:9': '5456x3072',
@@ -131,7 +131,7 @@ const SIZE_MAP_4K: Record<string, string> = {
 }
 
 // ============================================================
-// ARK 图像生成器 (Seedream)
+// ARK image generator (Seedream)
 // ============================================================
 
 export class ArkImageGenerator extends BaseImageGenerator {
@@ -142,7 +142,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
         const {
             aspectRatio,
             modelId = 'doubao-seedream-4-5-251128',
-            size: directSize  // 直接传入的像素尺寸（编辑模式）
+            size: directSize  // Direct pixel size (edit mode)
         } = options as ArkImageOptions
 
         const allowedOptionKeys = new Set([
@@ -165,7 +165,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
             throw new Error(`ARK_IMAGE_OPTION_VALUE_UNSUPPORTED: resolution=${resolution}`)
         }
 
-        // 决定最终 size
+        // Determine final size
         let size: string | undefined
         if (directSize) {
             size = directSize
@@ -179,16 +179,16 @@ export class ArkImageGenerator extends BaseImageGenerator {
             }
         }
 
-        _ulogInfo(`[ARK Image] 模型=${modelId}, aspectRatio=${aspectRatio || '(none)'}, size=${size || '(未传)'}`)
+        _ulogInfo(`[ARK Image] model=${modelId}, aspectRatio=${aspectRatio || '(none)'}, size=${size || '(not provided)'}`)
 
-        // 转换参考图片为 Base64
+        // Convert reference images to Base64
         const base64Images: string[] = []
         for (const imageUrl of referenceImages) {
             try {
                 const base64 = await imageUrlToBase64(imageUrl)
                 base64Images.push(base64)
             } catch {
-                _ulogInfo(`[ARK Image] 参考图片转换失败: ${imageUrl}`)
+                _ulogInfo(`[ARK Image] Reference image conversion failed: ${imageUrl}`)
             }
         }
 
@@ -219,7 +219,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
             requestBody.image = base64Images
         }
 
-        // 调用 ARK API
+        // Call ARK API
         const arkData = await arkImageGeneration(requestBody, {
             apiKey,
             logPrefix: '[ARK Image]'

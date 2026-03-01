@@ -4,18 +4,18 @@ import path from 'path'
 import { ImageResponse } from '@vercel/og'
 import type { ReactElement } from 'react'
 
-// 字体文件可能的路径（按优先级尝试）
+// Possible font file paths (try in order of priority)
 const POSSIBLE_FONT_PATHS = [
     path.join(process.cwd(), 'src/assets/fonts/NotoSansSC-Regular.ttf'),
     path.join(process.cwd(), '.next/server/src/assets/fonts/NotoSansSC-Regular.ttf'),
 ]
 
-// 缓存字体数据（只加载一次）
+// Cache font data (load once)
 let fontDataCache: Buffer | null = null
 let fontInitialized = false
 
 /**
- * 加载字体文件
+ * Load font file
  */
 function loadFontData(): Buffer | null {
     if (fontDataCache) {
@@ -38,7 +38,7 @@ function loadFontData(): Buffer | null {
 }
 
 /**
- * 初始化字体配置（预加载字体到内存）
+ * Initialize font config (preload font into memory)
  */
 export async function initializeFonts(): Promise<void> {
     if (fontInitialized) {
@@ -50,16 +50,16 @@ export async function initializeFonts(): Promise<void> {
 }
 
 /**
- * 获取字体名称
+ * Get font family name
  */
 export function getFontFamily(): string {
     return 'NotoSansSC'
 }
 
 /**
- * 使用 @vercel/og 生成文字标签图片（PNG Buffer）
- * 这个方案使用纯 WebAssembly，不依赖任何原生模块或系统库
- * 在本地和 Vercel 环境都能正常工作
+ * Generate label image (PNG Buffer) using @vercel/og
+ * Uses pure WebAssembly, no native modules or system libs
+ * Works in both local and Vercel environments
  */
 export async function createLabelSVG(
     width: number,
@@ -72,12 +72,12 @@ export async function createLabelSVG(
 
     if (!fontData) {
         _ulogError('[Fonts] Cannot create label image without font')
-        // 返回一个空的黑色图片
+        // Return empty black image
         return createFallbackImage(width, barHeight)
     }
 
     try {
-        // 使用 @vercel/og 的 ImageResponse 生成图片
+        // Use @vercel/og ImageResponse to generate image
         const response = new ImageResponse(
             {
                 type: 'div',
@@ -119,7 +119,7 @@ export async function createLabelSVG(
             }
         )
 
-        // 从 Response 获取 Buffer
+        // Get Buffer from Response
         const arrayBuffer = await response.arrayBuffer()
         return Buffer.from(arrayBuffer)
     } catch (error) {
@@ -129,10 +129,10 @@ export async function createLabelSVG(
 }
 
 /**
- * 创建备用的黑色图片（当字体加载失败时）
+ * Create fallback black image (when font load fails)
  */
 async function createFallbackImage(width: number, height: number): Promise<Buffer> {
-    // 使用 sharp 创建一个黑色矩形
+    // Use sharp to create a black rectangle
     const sharp = (await import('sharp')).default
     return sharp({
         create: {

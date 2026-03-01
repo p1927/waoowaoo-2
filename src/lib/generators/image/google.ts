@@ -252,7 +252,7 @@ export class GoogleGeminiBatchImageGenerator extends BaseImageGenerator {
             modelKey?: string
         }
 
-        // 使用 Batch API 提交异步任务
+        // Submit async task via Batch API
         const { submitGeminiBatch } = await import('@/lib/gemini-batch-utils')
 
         const result = await submitGeminiBatch(apiKey, prompt, {
@@ -264,17 +264,17 @@ export class GoogleGeminiBatchImageGenerator extends BaseImageGenerator {
         if (!result.success || !result.batchName) {
             return {
                 success: false,
-                error: result.error || 'Gemini Batch 提交失败'
+                error: result.error || 'Gemini Batch submission failed'
             }
         }
 
         // 返回异步标识
-        _ulogInfo(`[Gemini Batch Generator] ✅ 异步任务已提交: ${result.batchName}`)
+        _ulogInfo(`[Gemini Batch Generator] Async task submitted: ${result.batchName}`)
         return {
             success: true,
             async: true,
-            requestId: result.batchName,  // 向后兼容，格式: batches/xxx
-            externalId: `GEMINI:BATCH:${result.batchName}`  // 🔥 标准格式
+            requestId: result.batchName,  // Backward compatible, format: batches/xxx
+            externalId: `GEMINI:BATCH:${result.batchName}`  // Standard format
         }
     }
 }

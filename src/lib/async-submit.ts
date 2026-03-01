@@ -50,12 +50,12 @@ export async function submitFalTask(endpoint: string, input: Record<string, unkn
 }
 
 /**
- * 解析 FAL 端点 ID
- * 根据官方客户端逻辑，端点格式为: owner/alias/path
- * 例如: fal-ai/veo3.1/fast/image-to-video
+ * Parse FAL endpoint ID
+ * Per official client logic, endpoint format: owner/alias/path
+ * e.g. fal-ai/veo3.1/fast/image-to-video
  *   -> owner = fal-ai
  *   -> alias = veo3.1
- *   -> path = fast/image-to-video (状态查询时忽略)
+ *   -> path = fast/image-to-video (ignored during status query)
  */
 function parseFalEndpointId(endpoint: string): { owner: string; alias: string; path?: string } {
     const parts = endpoint.split('/')
@@ -67,9 +67,9 @@ function parseFalEndpointId(endpoint: string): { owner: string; alias: string; p
 }
 
 /**
- * 查询FAL任务状态
- * @param endpoint FAL端点
- * @param requestId 任务ID
+ * Query FAL task status
+ * @param endpoint FAL endpoint
+ * @param requestId Task ID
  * @param apiKey FAL API Key
  */
 export async function queryFalStatus(endpoint: string, requestId: string, apiKey: string): Promise<{
@@ -83,19 +83,19 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
         throw new Error('Please configure FAL API Key')
     }
 
-    // 🔥 根据 FAL 官方客户端逻辑解析端点 ID
-    // 端点格式: owner/alias/path (path 部分在状态查询时忽略)
-    // 例如: fal-ai/veo3.1/fast/image-to-video -> fal-ai/veo3.1
+    // Per FAL official client logic: parse endpoint ID
+    // Endpoint format: owner/alias/path (path ignored during status query)
+    // e.g. fal-ai/veo3.1/fast/image-to-video -> fal-ai/veo3.1
     const parsed = parseFalEndpointId(endpoint)
     const baseEndpoint = `${parsed.owner}/${parsed.alias}`
 
     if (parsed.path) {
-        _ulogInfo(`[FAL Status] 解析端点 ${endpoint} -> ${baseEndpoint} (忽略路径: ${parsed.path})`)
+        _ulogInfo(`[FAL Status] Parsed endpoint ${endpoint} -> ${baseEndpoint} (ignored path: ${parsed.path})`)
     }
 
     const statusUrl = `https://queue.fal.run/${baseEndpoint}/requests/${requestId}/status?logs=0`
 
-    // FAL 状态查询使用 GET 方法
+    // FAL status query uses GET method
     const response = await fetch(statusUrl, {
         method: 'GET',
         headers: {
@@ -114,16 +114,16 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
     const data = await response.json()
     const status = data.status as 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED'
 
-    // 🔥 诊断日志：查看 FAL 返回的真实状态
-    _ulogInfo(`[FAL Status] requestId=${requestId.slice(0, 16)}... 状态=${status}`)
+    // Diagnostic log: see actual status returned by FAL
+    _ulogInfo(`[FAL Status] requestId=${requestId.slice(0, 16)}... status=${status}`)
 
     if (status === 'COMPLETED') {
-        // 🔥 尝试获取完整结果
-        // 优先使用返回的 response_url，如果没有则构建 URL
-        // 注意：获取结果必须使用完整的原始端点（包括 /edit 等路径），而不是 baseEndpoint
-        // 否则 FAL 会把请求当作新任务处理，导致 422 错误（缺少 image_urls 等必需参数）
+        // Try to get full result
+        // Prefer response_url from response, otherwise build URL
+        // Note: Must use full original endpoint (including /edit etc.) for result fetch, not baseEndpoint
+        // Otherwise FAL treats request as new task, causing 422 error (missing required params like image_urls)
         const resultUrl = data.response_url || `https://queue.fal.run/${endpoint}/requests/${requestId}`
-        _ulogInfo(`[FAL Status] 任务已完成，获取结果: ${resultUrl}`)
+        _ulogInfo(`[FAL Status] Task completed, fetching result: ${resultUrl}`)
 
         const resultResponse = await fetch(resultUrl, {
             method: 'GET',
@@ -136,12 +136,12 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
         if (resultResponse.ok) {
             const resultData = await resultResponse.json()
 
-            // 根据类型提取URL
+            // Extract URL by type
             const videoUrl = resultData.video?.url
             const audioUrl = resultData.audio?.url
             const imageUrl = resultData.images?.[0]?.url
 
-            _ulogInfo(`[FAL Status] 获取结果成功: video=${!!videoUrl}, audio=${!!audioUrl}, image=${!!imageUrl}`)
+            _ulogInfo(`[FAL Status] Result fetched successfully: video=${!!videoUrl}, audio=${!!audioUrl}, image=${!!imageUrl}`)
 
             return {
                 status: 'COMPLETED',
@@ -150,25 +150,25 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
                 resultUrl: videoUrl || audioUrl || imageUrl
             }
         } else {
-            // 🔥 获取结果失败，记录详细错误
+            // Result fetch failed, log detailed error
             const errorText = await resultResponse.text()
-            _ulogError(`[FAL Status] 获取结果失败 (${resultResponse.status}): ${errorText.slice(0, 300)}`)
+            _ulogError(`[FAL Status] Result fetch failed (${resultResponse.status}): ${errorText.slice(0, 300)}`)
 
-            // 如果是 422 错误，可能是内容审核未通过或结果已过期
+            // 422 may indicate content policy rejection or expired result
             if (resultResponse.status === 422) {
-                // 尝试解析具体错误类型
-                let errorMessage = '无法获取结果'
+                // Try to parse specific error type
+                let errorMessage = 'Unable to fetch result'
                 try {
                     const errorJson = JSON.parse(errorText)
                     const errorType = errorJson.detail?.[0]?.type
                     if (errorType === 'content_policy_violation') {
-                        errorMessage = '⚠️ 内容审核未通过：生成结果被拦截'
+                        errorMessage = 'Content policy violation: generated result was blocked'
                     } else if (errorType) {
-                        errorMessage = `FAL 错误: ${errorType}`
+                        errorMessage = `FAL error: ${errorType}`
                     }
                 } catch { }
 
-                _ulogError(`[FAL Status] 422 错误: ${errorMessage}`)
+                _ulogError(`[FAL Status] 422 error: ${errorMessage}`)
                 return {
                     status: 'COMPLETED',
                     completed: true,
@@ -177,18 +177,18 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
                 }
             }
 
-            // 🔥 500 下游服务错误，标记为失败，避免无限重试
+            // 500 downstream service error, mark as failed to avoid infinite retry
             if (resultResponse.status === 500) {
-                // 尝试解析错误详情
-                let errorDetail = '下游服务错误'
+                // Try to parse error details
+                let errorDetail = 'Downstream service error'
                 try {
                     const errorJson = JSON.parse(errorText)
                     if (errorJson.detail?.[0]?.type === 'downstream_service_error') {
-                        errorDetail = 'FAL 下游服务错误：上游模型处理失败'
+                        errorDetail = 'FAL downstream service error: upstream model processing failed'
                     }
                 } catch { }
 
-                _ulogError(`[FAL Status] 500 错误，标记任务为失败: ${errorDetail}`)
+                _ulogError(`[FAL Status] 500 error, marking task as failed: ${errorDetail}`)
                 return {
                     status: 'COMPLETED',
                     completed: true,
@@ -197,7 +197,7 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
                 }
             }
 
-            // 其他错误，暂时返回进行中状态，下次轮询重试
+            // Other errors, return in-progress for next poll retry
             return {
                 status: 'IN_PROGRESS',
                 completed: false,

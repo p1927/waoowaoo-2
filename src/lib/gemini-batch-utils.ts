@@ -127,13 +127,13 @@ export async function submitGeminiBatch(
       {
         contents: [{ parts: contentParts }],
         config: {
-          responseModalities: ['TEXT', 'IMAGE'],  // 🔥 必须指定包含 IMAGE
-          ...(Object.keys(imageConfig).length > 0 && { imageConfig })  // 🔥 添加图片配置
+          responseModalities: ['TEXT', 'IMAGE'],  // Must include IMAGE
+          ...(Object.keys(imageConfig).length > 0 && { imageConfig })  // Add image config
         }
       }
     ]
 
-    // 🔥 使用 ai.batches.create 创建批量任务
+    // Use ai.batches.create to create batch task
     const batchClient = ai as unknown as GeminiBatchClient
     const batchJob = await batchClient.batches.create({
       model: 'gemini-3-pro-image-preview',
@@ -143,28 +143,28 @@ export async function submitGeminiBatch(
       }
     })
 
-    const batchName = asRecord(batchJob)?.name  // 格式: batches/xxx
+    const batchName = asRecord(batchJob)?.name  // Format: batches/xxx
 
     if (typeof batchName !== 'string' || !batchName) {
-      return { success: false, error: '未返回 batch name' }
+      return { success: false, error: 'No batch name returned' }
     }
 
-    logInternal('GeminiBatch', 'INFO', `✅ 任务已提交: ${batchName}`)
+    logInternal('GeminiBatch', 'INFO', `Task submitted: ${batchName}`)
     return { success: true, batchName }
 
   } catch (error: unknown) {
     const message = getErrorMessage(error)
-    logInternal('GeminiBatch', 'ERROR', '提交异常', { error: message })
-    return { success: false, error: `提交异常: ${message}` }
+    logInternal('GeminiBatch', 'ERROR', 'Submit error', { error: message })
+    return { success: false, error: `Submit error: ${message}` }
   }
 }
 
 /**
- * 查询 Gemini Batch 任务状态
- * 
- * 使用 ai.batches.get() 方法查询任务状态
- * 
- * @param batchName 批量任务名称（如 batches/xxx）
+ * Query Gemini Batch task status
+ *
+ * Uses ai.batches.get() to query task status
+ *
+ * @param batchName Batch task name (e.g. batches/xxx)
  * @param apiKey Google AI API Key
  */
 export async function queryGeminiBatchStatus(batchName: string, apiKey: string): Promise<{
@@ -176,21 +176,21 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
   error?: string
 }> {
   if (!apiKey) {
-    return { status: 'error', completed: false, failed: true, error: '请配置 Google AI API Key' }
+    return { status: 'error', completed: false, failed: true, error: 'Please configure Google AI API Key' }
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey })
 
-    // 🔥 使用 ai.batches.get 查询任务状态
+    // Use ai.batches.get to query task status
     const batchClient = ai as unknown as GeminiBatchClient
     const batchJob = await batchClient.batches.get({ name: batchName })
     const batchRecord = asRecord(batchJob) || {}
 
     const state = typeof batchRecord.state === 'string' ? batchRecord.state : 'UNKNOWN'
-    logInternal('GeminiBatch', 'INFO', `查询状态: ${batchName} -> ${state}`)
+    logInternal('GeminiBatch', 'INFO', `Query status: ${batchName} -> ${state}`)
 
-    // 检查完成状态
+    // Check completion status
     const completedStates = new Set([
       'JOB_STATE_SUCCEEDED'
     ])
@@ -201,7 +201,7 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
     ])
 
     if (completedStates.has(state)) {
-      // 从 inlinedResponses 中提取图片
+      // Extract image from inlinedResponses
       const dest = asRecord(batchRecord.dest)
       const responses = Array.isArray(dest?.inlinedResponses) ? dest.inlinedResponses : []
 
@@ -220,7 +220,7 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
             const imageBase64 = inlineData.data
             const mimeType = typeof inlineData.mimeType === 'string' ? inlineData.mimeType : 'image/png'
 
-            logInternal('GeminiBatch', 'INFO', `✅ 获取到图片，MIME 类型: ${mimeType}`, { batchName })
+            logInternal('GeminiBatch', 'INFO', `Image retrieved, MIME type: ${mimeType}`, { batchName })
             return {
               status: 'completed',
               completed: true,
@@ -232,12 +232,12 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
         }
       }
 
-      // 任务完成但没有图片
+      // Task completed but no image found
       return {
         status: 'completed_no_image',
         completed: false,
         failed: true,
-        error: '任务完成但未找到图片（可能被内容安全策略过滤）'
+        error: 'Task completed but no image found (may have been filtered by content safety policy)'
       }
     }
 
@@ -246,16 +246,16 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
         status: state,
         completed: false,
         failed: true,
-        error: `任务失败: ${state}`
+        error: `Task failed: ${state}`
       }
     }
 
-    // 仍在处理中 (PENDING, RUNNING 等)
+    // Still processing (PENDING, RUNNING, etc.)
     return { status: state, completed: false, failed: false }
 
   } catch (error: unknown) {
     const message = getErrorMessage(error)
-    logInternal('GeminiBatch', 'ERROR', '查询异常', { batchName, error: message })
-    return { status: 'error', completed: false, failed: false, error: `查询异常: ${message}` }
+    logInternal('GeminiBatch', 'ERROR', 'Query error', { batchName, error: message })
+    return { status: 'error', completed: false, failed: false, error: `Query error: ${message}` }
   }
 }
