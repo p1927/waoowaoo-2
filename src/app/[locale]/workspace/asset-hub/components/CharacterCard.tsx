@@ -238,7 +238,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                         )}
                     </div>
                     <div className="flex items-center gap-1">
-                        <button onClick={() => { _ulogInfo('[CharacterCard] 多图模式 - 重新生成按钮点击, characterId:', character.id, 'appearanceCount:', appearanceCount); handleGenerate() }} disabled={isAppearanceTaskRunning} className="glass-btn-base glass-btn-soft h-6 w-6 rounded-md" title={t('regenerate')}>
+                        <button onClick={() => { _ulogInfo('[CharacterCard] Multi-image mode - regenerate clicked, characterId:', character.id, 'appearanceCount:', appearanceCount); handleGenerate() }} disabled={isAppearanceTaskRunning} className="glass-btn-base glass-btn-soft h-6 w-6 rounded-md" title={t('regenerate')}>
                             {isAppearanceTaskRunning ? (
                                 <TaskStatusInline state={displayTaskPresentation} className="[&_span]:sr-only [&_svg]:text-[var(--glass-tone-info-fg)]" />
                             ) : (
@@ -438,7 +438,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                     <div className="flex gap-1 mt-2 overflow-x-auto">
                         {character.appearances.map((app, index) => (
                             <button key={app.id} onClick={() => setActiveAppearance(index)} className={`glass-btn-base px-2 py-0.5 text-xs rounded-full whitespace-nowrap ${index === activeAppearance ? 'glass-btn-primary' : 'glass-btn-soft text-[var(--glass-text-secondary)]'}`}>
-                                {app.changeReason || `形象 ${app.appearanceIndex}`}
+                                {app.changeReason || t('appearanceLabel', { index: app.appearanceIndex })}
                             </button>
                         ))}
                     </div>

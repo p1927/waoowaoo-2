@@ -3,7 +3,7 @@ import { queryKeys } from '../keys'
 import { invalidateQueryTemplates, requestJsonWithError } from './mutation-shared'
 
 /**
- * 获取剧集可下载视频列表（项目）
+ * Get project episode downloadable video list
  */
 export function useListProjectEpisodeVideoUrls(projectId: string) {
   return useMutation({
@@ -18,13 +18,13 @@ export function useListProjectEpisodeVideoUrls(projectId: string) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         },
-        '获取视频列表失败',
+        'Failed to fetch video list',
       ),
   })
 }
 
 /**
- * 更新 panel 首尾帧链接状态（项目）
+ * Update panel first-last frame link status (project)
  */
 export function useUpdateProjectPanelLink(projectId: string) {
   return useMutation({
@@ -40,13 +40,13 @@ export function useUpdateProjectPanelLink(projectId: string) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         },
-        '保存链接状态失败',
+        'Failed to save link status',
       ),
   })
 }
 
 /**
- * 更新 Panel 视频提示词
+ * Update panel video prompt
  */
 export function useUpdateProjectPanelVideoPrompt(projectId: string) {
   const queryClient = useQueryClient()

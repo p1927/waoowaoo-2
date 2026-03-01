@@ -25,7 +25,7 @@ function toStructuredJsonField(value: unknown, fieldName: string): string | null
 
 /**
  * POST /api/novel-promotion/[projectId]/panel
- * 新增一个 Panel
+ * Create a new Panel
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -33,7 +33,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -56,7 +56,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 验证 storyboard 存在，并获取现有 panels 以计算正确的 panelIndex
+  // Verify storyboard exists and fetch existing panels to compute correct panelIndex
   const storyboard = await prisma.novelPromotionStoryboard.findUnique({
     where: { id: storyboardId },
     include: {
@@ -71,12 +71,12 @@ export const POST = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 自动计算正确的 panelIndex（取最大值 + 1，避免唯一约束冲突）
+  // Auto-compute correct panelIndex (max + 1, avoid unique constraint conflict)
   const maxPanelIndex = storyboard.panels.length > 0 ? storyboard.panels[0].panelIndex : -1
   const newPanelIndex = maxPanelIndex + 1
   const newPanelNumber = newPanelIndex + 1
 
-  // 创建新的 Panel 记录
+  // Create new Panel record
   const newPanel = await prisma.novelPromotionPanel.create({
     data: {
       storyboardId,
@@ -95,7 +95,7 @@ export const POST = apiHandler(async (
     }
   })
 
-  // 更新 panelCount
+  // Update panelCount
   const panelCount = await prisma.novelPromotionPanel.count({
     where: { storyboardId }
   })
@@ -110,7 +110,7 @@ export const POST = apiHandler(async (
 
 /**
  * DELETE /api/novel-promotion/[projectId]/panel
- * 删除一个 Panel
+ * Delete a Panel
  */
 export const DELETE = apiHandler(async (
   request: NextRequest,
@@ -118,7 +118,7 @@ export const DELETE = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -129,7 +129,7 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取要删除的 Panel 信息
+  // Fetch Panel to delete
   const panel = await prisma.novelPromotionPanel.findUnique({
     where: { id: panelId }
   })
@@ -140,19 +140,19 @@ export const DELETE = apiHandler(async (
 
   const storyboardId = panel.storyboardId
 
-  // 使用事务确保删除和重新排序的原子性
-  // 采用原始 SQL 批量更新以避免循环导致的性能问题
+  // Use transaction to ensure atomic delete and reorder
+  // Use batch updates to avoid performance issues from loops
   await prisma.$transaction(async (tx) => {
-    // 1. 删除 Panel
+    // 1. Delete Panel
     await tx.novelPromotionPanel.delete({
       where: { id: panelId }
     })
 
-    // 2. 使用原始 SQL 批量重新排序所有 panels
-    // 先获取已删除 panel 的原始索引，用于确定需要更新的范围
+    // 2. Batch reorder all panels
+    // Get deleted panel's original index to determine update range
     const deletedPanelIndex = panel.panelIndex
 
-    // 使用 Prisma 批量更新，采用两阶段偏移避免唯一约束冲突
+    // Use Prisma batch update with two-phase offset to avoid unique constraint conflict
     const maxPanel = await tx.novelPromotionPanel.findFirst({
       where: { storyboardId },
       orderBy: { panelIndex: 'desc' },
@@ -161,7 +161,7 @@ export const DELETE = apiHandler(async (
     const maxPanelIndex = maxPanel?.panelIndex ?? -1
     const offset = maxPanelIndex + 1000
 
-    // 阶段1：整体上移，避免与原索引冲突
+    // Phase 1: Shift up to avoid conflict with original indices
     await tx.novelPromotionPanel.updateMany({
       where: {
         storyboardId,
@@ -173,7 +173,7 @@ export const DELETE = apiHandler(async (
       }
     })
 
-    // 阶段2：回落到正确位置（整体 -offset -1）
+    // Phase 2: Fall back to correct position (overall -offset -1)
     await tx.novelPromotionPanel.updateMany({
       where: {
         storyboardId,
@@ -185,19 +185,19 @@ export const DELETE = apiHandler(async (
       }
     })
 
-    // 3. 获取更新后的 panel 总数
+    // 3. Get updated panel count
     const panelCount = await tx.novelPromotionPanel.count({
       where: { storyboardId }
     })
 
-    // 4. 更新 storyboard 的 panelCount
+    // 4. Update storyboard panelCount
     await tx.novelPromotionStoryboard.update({
       where: { id: storyboardId },
       data: { panelCount }
     })
   }, {
-    maxWait: 15000, // 等待事务开始的最长时间：15 秒
-    timeout: 30000  // 事务执行超时：30 秒 (针对大量 panels 的批量更新)
+    maxWait: 15000, // Max wait for transaction start: 15 seconds
+    timeout: 30000  // Transaction timeout: 30 seconds (for batch updates with many panels)
   })
 
   return NextResponse.json({ success: true })
@@ -205,10 +205,10 @@ export const DELETE = apiHandler(async (
 
 /**
  * PATCH /api/novel-promotion/[projectId]/panel
- * 更新单个 Panel 的属性（视频提示词等）
- * 支持两种更新方式：
- * 1. 通过 panelId 直接更新（推荐，用于清除错误等操作）
- * 2. 通过 storyboardId + panelIndex 更新（兼容旧接口）
+ * Update a single Panel's properties (video prompt, etc.)
+ * Supports two update modes:
+ * 1. Direct update by panelId (recommended, e.g. for clearing errors)
+ * 2. Update by storyboardId + panelIndex (legacy API compatibility)
  */
 export const PATCH = apiHandler(async (
   request: NextRequest,
@@ -216,14 +216,14 @@ export const PATCH = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
   const body = await request.json()
   const { panelId, storyboardId, panelIndex, videoPrompt, firstLastFramePrompt } = body
 
-  // 🔥 方式1：通过 panelId 直接更新（优先）
+  // Mode 1: Direct update by panelId (preferred)
   if (panelId) {
     const panel = await prisma.novelPromotionPanel.findUnique({
       where: { id: panelId }
@@ -233,7 +233,7 @@ export const PATCH = apiHandler(async (
       throw new ApiError('NOT_FOUND')
     }
 
-    // 构建更新数据
+    // Build update data
     const updateData: {
       videoPrompt?: string | null
       firstLastFramePrompt?: string | null
@@ -249,12 +249,12 @@ export const PATCH = apiHandler(async (
     return NextResponse.json({ success: true })
   }
 
-  // 🔥 方式2：通过 storyboardId + panelIndex 更新（兼容旧接口）
+  // Mode 2: Update by storyboardId + panelIndex (legacy API)
   if (!storyboardId || panelIndex === undefined) {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 验证 storyboard 存在
+  // Verify storyboard exists
   const storyboard = await prisma.novelPromotionStoryboard.findUnique({
     where: { id: storyboardId }
   })
@@ -275,7 +275,7 @@ export const PATCH = apiHandler(async (
     updateData.firstLastFramePrompt = firstLastFramePrompt
   }
 
-  // 尝试更新 Panel
+  // Attempt to update Panel
   const updatedPanel = await prisma.novelPromotionPanel.updateMany({
     where: {
       storyboardId,
@@ -284,9 +284,9 @@ export const PATCH = apiHandler(async (
     data: updateData
   })
 
-  // 如果 Panel 不存在，创建它（Panel 表是唯一数据源）
+  // If Panel does not exist, create it (Panel table is single source of truth)
   if (updatedPanel.count === 0) {
-    // 创建新的 Panel 记录
+    // Create new Panel record
     await prisma.novelPromotionPanel.create({
       data: {
         storyboardId,
@@ -304,7 +304,7 @@ export const PATCH = apiHandler(async (
 
 /**
  * PUT /api/novel-promotion/[projectId]/panel
- * 完整更新单个 Panel 的所有属性（用于文字分镜编辑）
+ * Full update of all Panel properties (for storyboard text editing)
  */
 export const PUT = apiHandler(async (
   request: NextRequest,
@@ -312,7 +312,7 @@ export const PUT = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -331,15 +331,15 @@ export const PUT = apiHandler(async (
     duration,
     videoPrompt,
     firstLastFramePrompt,
-    actingNotes,  // 演技指导数据
-    photographyRules,  // 单镜头摄影规则
+    actingNotes,  // Acting direction data
+    photographyRules,  // Single-shot photography rules
   } = body
 
   if (!storyboardId || panelIndex === undefined) {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 验证 storyboard 存在
+  // Verify storyboard exists
   const storyboard = await prisma.novelPromotionStoryboard.findUnique({
     where: { id: storyboardId }
   })
@@ -348,7 +348,7 @@ export const PUT = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 构建更新数据 - 包含所有可编辑字段
+  // Build update data - include all editable fields
   const updateData: {
     panelNumber?: number | null
     shotType?: string | null
@@ -375,7 +375,7 @@ export const PUT = apiHandler(async (
   if (duration !== undefined) updateData.duration = parseNullableNumberField(duration)
   if (videoPrompt !== undefined) updateData.videoPrompt = videoPrompt
   if (firstLastFramePrompt !== undefined) updateData.firstLastFramePrompt = firstLastFramePrompt
-  // JSON 字段存为规范化 JSON 字符串
+  // Store JSON fields as normalized JSON strings
   if (actingNotes !== undefined) {
     updateData.actingNotes = toStructuredJsonField(actingNotes, 'actingNotes')
   }
@@ -383,7 +383,7 @@ export const PUT = apiHandler(async (
     updateData.photographyRules = toStructuredJsonField(photographyRules, 'photographyRules')
   }
 
-  // 查找现有 Panel
+  // Find existing Panel
   const existingPanel = await prisma.novelPromotionPanel.findUnique({
     where: {
       storyboardId_panelIndex: {
@@ -394,13 +394,13 @@ export const PUT = apiHandler(async (
   })
 
   if (existingPanel) {
-    // 更新现有 Panel
+    // Update existing Panel
     await prisma.novelPromotionPanel.update({
       where: { id: existingPanel.id },
       data: updateData
     })
   } else {
-    // 创建新的 Panel 记录
+    // Create new Panel record
     await prisma.novelPromotionPanel.create({
       data: {
         storyboardId,
@@ -422,8 +422,8 @@ export const PUT = apiHandler(async (
     })
   }
 
-  // Panel 表是唯一数据源，不再同步到 storyboardTextJson
-  // 只更新 panelCount 用于快速查询
+  // Panel table is single source of truth, no longer sync to storyboardTextJson
+  // Only update panelCount for fast queries
   const panelCount = await prisma.novelPromotionPanel.count({
     where: { storyboardId }
   })

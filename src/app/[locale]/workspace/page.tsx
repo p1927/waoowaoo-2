@@ -26,7 +26,7 @@ interface Project {
   description: string | null
   createdAt: string
   updatedAt: string
-  totalCost?: number  // 项目总费用（CNY）
+  totalCost?: number  // Project total cost (CNY)
   stats?: ProjectStats
 }
 
@@ -37,7 +37,7 @@ interface Pagination {
   totalPages: number
 }
 
-const PAGE_SIZE = 7 // 加上新建项目按钮正好8个，4列布局下2行
+const PAGE_SIZE = 7 // Plus new project button = 8 total, 2 rows in 4-column layout
 const DEFAULT_BILLING_CURRENCY = 'CNY'
 
 function formatProjectCost(amount: number, currency = DEFAULT_BILLING_CURRENCY): string {
@@ -66,7 +66,7 @@ export default function WorkspacePage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null)
 
-  // 分页和搜索状态
+  // Pagination and search state
   const [pagination, setPagination] = useState<Pagination>({ page: 1, pageSize: PAGE_SIZE, total: 0, totalPages: 0 })
   const [searchQuery, setSearchQuery] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -74,7 +74,7 @@ export default function WorkspacePage() {
   const t = useTranslations('workspace')
   const tc = useTranslations('common')
 
-  // 检查用户是否已登录
+  // Check if user is logged in
   useEffect(() => {
     if (status === 'loading') return
     if (!session) {

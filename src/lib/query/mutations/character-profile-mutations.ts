@@ -31,7 +31,7 @@ export function useUpdateProjectCharacterIntroduction(projectId: string) {
 }
 
 /**
- * AI 修改项目角色形象描述
+ * AI modify project character appearance description
  */
 
 export function useAiModifyProjectAppearanceDescription(projectId: string) {
@@ -67,7 +67,7 @@ export function useAiModifyProjectAppearanceDescription(projectId: string) {
 }
 
 /**
- * AI 修改项目场景描述
+ * AI create project character
  */
 
 export function useAiCreateProjectCharacter(projectId: string) {
@@ -88,7 +88,7 @@ export function useAiCreateProjectCharacter(projectId: string) {
 }
 
 /**
- * 上传临时媒体（项目）
+ * Upload temporary media (project)
  */
 
 export function useUploadProjectTempMedia() {
@@ -101,14 +101,14 @@ export function useUploadProjectTempMedia() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 },
-                '上传失败',
+                'Upload failed',
             )
         },
     })
 }
 
 /**
- * 参考图提取角色描述（项目）
+ * Extract character description from reference image (project)
  */
 
 export function useExtractProjectReferenceCharacterDescription(projectId: string) {
@@ -132,7 +132,7 @@ export function useExtractProjectReferenceCharacterDescription(projectId: string
 }
 
 /**
- * 创建项目角色
+ * Create project character
  */
 
 export function useCreateProjectCharacter(projectId: string) {
@@ -163,7 +163,7 @@ export function useCreateProjectCharacter(projectId: string) {
 }
 
 /**
- * 为项目角色添加子形象
+ * Add sub-appearance to project character
  */
 
 export function useCreateProjectCharacterAppearance(projectId: string) {
@@ -191,7 +191,7 @@ export function useCreateProjectCharacterAppearance(projectId: string) {
 }
 
 /**
- * 全局资产分析（项目）
+ * Global asset analysis (project)
  */
 
 export function useConfirmProjectCharacterSelection(projectId: string) {
@@ -207,14 +207,14 @@ export function useConfirmProjectCharacterSelection(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ characterId, appearanceId }),
                 },
-                '确认选择失败',
+                'Confirm selection failed',
             ),
         onSettled: invalidateProjectAssets,
     })
 }
 
 /**
- * 确认场景候选图片选择
+ * Confirm scene candidate image selection
  */
 
 export function useConfirmProjectCharacterProfile(projectId: string) {
@@ -234,7 +234,7 @@ export function useConfirmProjectCharacterProfile(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 },
-                '确认失败',
+                'Confirm failed',
             )
             return await resolveTaskResponse<{
                 success?: boolean
@@ -253,7 +253,7 @@ export function useConfirmProjectCharacterProfile(projectId: string) {
 }
 
 /**
- * 批量确认角色档案
+ * Batch confirm character profiles
  */
 
 export function useBatchConfirmProjectCharacterProfiles(projectId: string) {
@@ -266,7 +266,7 @@ export function useBatchConfirmProjectCharacterProfiles(projectId: string) {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                 },
-                '批量确认失败',
+                'Batch confirm failed',
             )
             return await resolveTaskResponse<{
                 success?: boolean

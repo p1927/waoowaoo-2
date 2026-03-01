@@ -24,15 +24,15 @@ export function useRegenerateProjectPanelImage(projectId: string) {
             })
             if (!res.ok) {
                 const error = await res.json().catch(() => ({}))
-                if (res.status === 402) throw new Error('余额不足，请充值后继续使用')
+                if (res.status === 402) throw new Error('Insufficient balance. Please recharge first.')
                 if (res.status === 400 && String(error?.error || '').includes('敏感')) {
-                    throw new Error(resolveTaskErrorMessage(error, '提示词包含敏感内容'))
+                    throw new Error(resolveTaskErrorMessage(error, 'Content may contain sensitive information. Please modify and try again.'))
                 }
                 if (res.status === 429 || error?.code === 'RATE_LIMIT') {
                     const retryAfter = error?.retryAfter || 60
-                    throw new Error(`API 配额超限，请等待 ${retryAfter} 秒后重试`)
+                    throw new Error(`API quota exceeded. Please retry after ${retryAfter} seconds.`)
                 }
-                throw new Error(resolveTaskErrorMessage(error, '重新生成失败'))
+                throw new Error(resolveTaskErrorMessage(error, 'Generation failed'))
             }
             return res.json()
         },
@@ -58,7 +58,7 @@ export function useRegenerateProjectPanelImage(projectId: string) {
 }
 
 /**
- * 修改镜头图片（storyboard）
+ * Modify storyboard panel image
  */
 
 export function useModifyProjectStoryboardImage(projectId: string) {
@@ -82,7 +82,7 @@ export function useModifyProjectStoryboardImage(projectId: string) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
-            }, '修改失败')
+            }, 'Modification failed')
         },
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])
@@ -91,7 +91,7 @@ export function useModifyProjectStoryboardImage(projectId: string) {
 }
 
 /**
- * 下载剧集全部图片（zip）
+ * Download all episode images (zip)
  */
 
 export function useDownloadProjectImages(projectId: string) {
@@ -102,7 +102,7 @@ export function useDownloadProjectImages(projectId: string) {
             })
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}))
-                throw new Error(resolveTaskErrorMessage(error, '下载失败'))
+                throw new Error(resolveTaskErrorMessage(error, 'Download failed'))
             }
             return response.blob()
         },
@@ -110,7 +110,7 @@ export function useDownloadProjectImages(projectId: string) {
 }
 
 /**
- * 更新分镜 panel
+ * Update storyboard panel
  */
 
 export function useUpdateProjectPanel(projectId: string) {
@@ -125,7 +125,7 @@ export function useUpdateProjectPanel(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 },
-                '保存失败',
+                'Save failed',
             ),
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])
@@ -134,7 +134,7 @@ export function useUpdateProjectPanel(projectId: string) {
 }
 
 /**
- * 选择/取消镜头候选图（项目）
+ * Select or deselect panel candidate image (project)
  */
 
 export function useCreateProjectPanel(projectId: string) {
@@ -145,7 +145,7 @@ export function useCreateProjectPanel(projectId: string) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
-            }, '添加失败')
+            }, 'Add failed')
         },
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])
@@ -154,7 +154,7 @@ export function useCreateProjectPanel(projectId: string) {
 }
 
 /**
- * 删除 panel
+ * Delete panel
  */
 
 export function useDeleteProjectPanel(projectId: string) {
@@ -163,7 +163,7 @@ export function useDeleteProjectPanel(projectId: string) {
         mutationFn: async ({ panelId }: { panelId: string }) => {
             return await requestJsonWithError(`/api/novel-promotion/${projectId}/panel?panelId=${panelId}`, {
                 method: 'DELETE',
-            }, '删除失败')
+            }, 'Delete failed')
         },
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])
@@ -172,7 +172,7 @@ export function useDeleteProjectPanel(projectId: string) {
 }
 
 /**
- * 删除 storyboard group
+ * Delete storyboard group
  */
 
 export function useDeleteProjectStoryboardGroup(projectId: string) {
@@ -182,7 +182,7 @@ export function useDeleteProjectStoryboardGroup(projectId: string) {
             return await requestJsonWithError(
                 `/api/novel-promotion/${projectId}/storyboard-group?storyboardId=${storyboardId}`,
                 { method: 'DELETE' },
-                '删除失败',
+                'Delete failed',
             )
         },
         onSettled: () => {
@@ -192,7 +192,7 @@ export function useDeleteProjectStoryboardGroup(projectId: string) {
 }
 
 /**
- * 异步重生成文字分镜
+ * Regenerate storyboard text asynchronously
  */
 
 export function useRegenerateProjectStoryboardText(projectId: string) {
@@ -213,7 +213,7 @@ export function useRegenerateProjectStoryboardText(projectId: string) {
 }
 
 /**
- * 新增 storyboard group
+ * Create storyboard group
  */
 
 export function useCreateProjectStoryboardGroup(projectId: string) {
@@ -224,7 +224,7 @@ export function useCreateProjectStoryboardGroup(projectId: string) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
-            }, '添加失败')
+            }, 'Add failed')
         },
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])
@@ -233,7 +233,7 @@ export function useCreateProjectStoryboardGroup(projectId: string) {
 }
 
 /**
- * 移动 storyboard group
+ * Move storyboard group
  */
 
 export function useMoveProjectStoryboardGroup(projectId: string) {
@@ -244,7 +244,7 @@ export function useMoveProjectStoryboardGroup(projectId: string) {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
-            }, '移动失败')
+            }, 'Move failed')
         },
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])
@@ -253,7 +253,7 @@ export function useMoveProjectStoryboardGroup(projectId: string) {
 }
 
 /**
- * 插入 panel（异步）
+ * Insert panel (async)
  */
 
 export function useInsertProjectPanel(projectId: string) {
@@ -264,7 +264,7 @@ export function useInsertProjectPanel(projectId: string) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
-            }, '插入分镜失败')
+            }, 'Insert panel failed')
         },
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])
@@ -273,7 +273,7 @@ export function useInsertProjectPanel(projectId: string) {
 }
 
 /**
- * 生成镜头变体（异步）
+ * Generate panel variant (async)
  */
 
 export function useCreateProjectPanelVariant(projectId: string) {
@@ -297,7 +297,7 @@ export function useCreateProjectPanelVariant(projectId: string) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
-            }, '生成变体失败')
+            }, 'Generate variant failed')
         },
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])
@@ -306,7 +306,7 @@ export function useCreateProjectPanelVariant(projectId: string) {
 }
 
 /**
- * 清除 storyboard 错误
+ * Clear storyboard error
  */
 export function useClearProjectStoryboardError(projectId: string) {
     const queryClient = useQueryClient()
@@ -319,7 +319,7 @@ export function useClearProjectStoryboardError(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ storyboardId }),
                 },
-                '清除分镜错误失败',
+                'Clear storyboard error failed',
             ),
         onSettled: () => {
             invalidateQueryTemplates(queryClient, [queryKeys.projectAssets.all(projectId)])

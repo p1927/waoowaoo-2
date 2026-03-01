@@ -7,18 +7,18 @@ import { logProjectAction } from '@/lib/logging/semantic'
 import { requireUserAuth, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
-// GET - 获取项目详情
+// GET - Get project details
 export const GET = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
   const { projectId } = await context.params
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const { session } = authResult
 
-  // 只获取基础项目信息，不包含模式特定数据
+  // Fetch only basic project info, no mode-specific data
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     include: {
@@ -34,26 +34,26 @@ export const GET = apiHandler(async (
     throw new ApiError('FORBIDDEN')
   }
 
-  // 更新最近访问时间（异步，不阻塞响应）
+  // Update last accessed time (async, non-blocking)
   prisma.project.update({
     where: { id: projectId },
     data: { lastAccessedAt: new Date() }
-  }).catch(err => _ulogError('更新访问时间失败:', err))
+  }).catch(err => _ulogError('Failed to update access time:', err))
 
-  // 这个API只返回基础项目信息
-  // 模式特定的数据应该通过各自的API获取（如 /api/novel-promotion/[projectId]）
+  // This API returns only basic project info
+  // Mode-specific data should be fetched via respective APIs (e.g. /api/novel-promotion/[projectId])
   const projectWithSignedUrls = addSignedUrlsToProject(project)
 
   return NextResponse.json({ project: projectWithSignedUrls })
 })
 
-// PATCH - 更新项目配置
+// PATCH - Update project config
 export const PATCH = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
   const { projectId } = await context.params
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const session = authResult.session
@@ -72,7 +72,7 @@ export const PATCH = apiHandler(async (
     throw new ApiError('FORBIDDEN')
   }
 
-  // 更新项目
+  // Update project
   const updatedProject = await prisma.project.update({
     where: { id: projectId },
     data: body
@@ -91,28 +91,28 @@ export const PATCH = apiHandler(async (
 })
 
 /**
- * 收集项目的所有COS文件Key
+ * Collect all COS file keys for a project
  */
 async function collectProjectCOSKeys(projectId: string): Promise<string[]> {
   const keys: string[] = []
 
-  // 获取 NovelPromotionProject
+  // Fetch NovelPromotionProject
   const novelPromotion = await prisma.novelPromotionProject.findUnique({
     where: { projectId },
     include: {
-      // 角色及其形象图片
+      // Characters and appearance images
       characters: {
         include: {
           appearances: true
         }
       },
-      // 场景及其图片
+      // Locations and images
       locations: {
         include: {
           images: true
         }
       },
-      // 剧集（包含音频、分镜等）
+      // Episodes (with audio, storyboards, etc.)
       episodes: {
         include: {
           storyboards: {
@@ -127,7 +127,7 @@ async function collectProjectCOSKeys(projectId: string): Promise<string[]> {
 
   if (!novelPromotion) return keys
 
-  // 1. 收集角色形象图片
+  // 1. Collect character appearance images
   for (const character of novelPromotion.characters) {
     for (const appearance of character.appearances) {
       const key = await resolveStorageKeyFromMediaValue(appearance.imageUrl)
@@ -135,7 +135,7 @@ async function collectProjectCOSKeys(projectId: string): Promise<string[]> {
     }
   }
 
-  // 2. 收集场景图片
+  // 2. Collect location images
   for (const location of novelPromotion.locations) {
     for (const image of location.images) {
       const key = await resolveStorageKeyFromMediaValue(image.imageUrl)
@@ -143,19 +143,19 @@ async function collectProjectCOSKeys(projectId: string): Promise<string[]> {
     }
   }
 
-  // 3. 收集剧集相关文件
+  // 3. Collect episode-related files
   for (const episode of novelPromotion.episodes) {
-    // 音频文件
+    // Audio files
     const audioKey = await resolveStorageKeyFromMediaValue(episode.audioUrl)
     if (audioKey) keys.push(audioKey)
 
-    // 分镜图片
+    // Storyboard images
     for (const storyboard of episode.storyboards) {
-      // 分镜整体图
+      // Storyboard composite image
       const sbKey = await resolveStorageKeyFromMediaValue(storyboard.storyboardImageUrl)
       if (sbKey) keys.push(sbKey)
 
-      // 候选图片（JSON数组）
+      // Candidate images (JSON array)
       if (storyboard.candidateImages) {
         try {
           const candidates = JSON.parse(storyboard.candidateImages)
@@ -166,7 +166,7 @@ async function collectProjectCOSKeys(projectId: string): Promise<string[]> {
         } catch { }
       }
 
-      // Panel 表中的图片和视频
+      // Panel table images and videos
       for (const panel of storyboard.panels) {
         const imgKey = await resolveStorageKeyFromMediaValue(panel.imageUrl)
         if (imgKey) keys.push(imgKey)
@@ -177,17 +177,17 @@ async function collectProjectCOSKeys(projectId: string): Promise<string[]> {
     }
   }
 
-  _ulogInfo(`[Project ${projectId}] 收集到 ${keys.length} 个 COS 文件待删除`)
+  _ulogInfo(`[Project ${projectId}] Collected ${keys.length} COS files to delete`)
   return keys
 }
 
-// DELETE - 删除项目（同时清理COS文件）
+// DELETE - Delete project (and clean up COS files)
 export const DELETE = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
   const { projectId } = await context.params
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const session = authResult.session
@@ -205,18 +205,18 @@ export const DELETE = apiHandler(async (
     throw new ApiError('FORBIDDEN')
   }
 
-  // 1. 先收集所有 COS 文件 Key
-  _ulogInfo(`[DELETE] 开始删除项目: ${project.name} (${projectId})`)
+  // 1. First collect all COS file keys
+  _ulogInfo(`[DELETE] Starting project deletion: ${project.name} (${projectId})`)
   const cosKeys = await collectProjectCOSKeys(projectId)
 
   // 2. 批量删除 COS 文件
   let cosResult = { success: 0, failed: 0 }
   if (cosKeys.length > 0) {
-    _ulogInfo(`[DELETE] 正在删除 ${cosKeys.length} 个 COS 文件...`)
+    _ulogInfo(`[DELETE] Deleting ${cosKeys.length} COS files...`)
     cosResult = await deleteCOSObjects(cosKeys)
   }
 
-  // 3. 删除数据库记录 (级联删除所有关联数据)
+  // 3. Delete database records (cascade deletes all related data)
   await prisma.project.delete({
     where: { id: projectId }
   })
@@ -234,8 +234,8 @@ export const DELETE = apiHandler(async (
     }
   )
 
-  _ulogInfo(`[DELETE] 项目删除完成: ${project.name}`)
-  _ulogInfo(`[DELETE] COS 文件: 成功 ${cosResult.success}, 失败 ${cosResult.failed}`)
+  _ulogInfo(`[DELETE] Project deletion complete: ${project.name}`)
+  _ulogInfo(`[DELETE] COS files: success ${cosResult.success}, failed ${cosResult.failed}`)
 
   return NextResponse.json({
     success: true,

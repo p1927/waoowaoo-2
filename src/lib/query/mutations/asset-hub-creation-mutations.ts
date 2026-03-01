@@ -41,7 +41,7 @@ export function useCreateAssetHubLocation() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      }, '创建失败')
+      }, 'Create failed')
     },
     onSuccess: invalidateLocations,
   })

@@ -1,14 +1,14 @@
 import type { QueryClient, QueryKey } from '@tanstack/react-query'
 import { resolveTaskErrorMessage } from '@/lib/task/error-message'
 
-/** 从当前页面 URL 提取 locale 前缀（/zh/... → zh，/en/... → en），默认 zh */
+/** Extract locale prefix from current page URL (/zh/... → zh, /en/... → en), default zh */
 export function getPageLocale(): string {
   if (typeof window === 'undefined') return 'zh'
   const match = window.location.pathname.match(/^\/(zh|en)(\/|$)/)
   return match?.[1] ?? 'zh'
 }
 
-/** 将 Accept-Language 注入到 RequestInit，已有则不覆盖 */
+/** Inject Accept-Language into RequestInit, do not override if already present */
 function mergeLocaleHeader(init?: RequestInit): RequestInit {
   const locale = getPageLocale()
   const headers = new Headers(init?.headers)

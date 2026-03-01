@@ -31,7 +31,7 @@ export function useAnalyzeProjectGlobalAssets(projectId: string) {
 }
 
 /**
- * 从资产中心复制到项目资产
+ * Copy from asset hub to project assets
  */
 
 export function useCopyProjectAssetFromGlobal(projectId: string) {
@@ -60,7 +60,7 @@ export function useCopyProjectAssetFromGlobal(projectId: string) {
 }
 
 /**
- * AI 修改镜头提示词（项目）
+ * AI modify shot prompt (project)
  */
 
 export function useUpdateProjectConfig(projectId: string) {
@@ -107,7 +107,7 @@ export function useUpdateProjectConfig(projectId: string) {
 }
 
 /**
- * 分析项目资产（异步任务）
+ * Analyze project assets (async task)
  */
 
 export function useAnalyzeProjectAssets(projectId: string) {
@@ -136,7 +136,7 @@ export function useAnalyzeProjectAssets(projectId: string) {
 }
 
 /**
- * 获取下游分镜统计（用于重建确认）
+ * Get downstream storyboard stats (for rebuild confirmation)
  */
 
 export function useGetProjectStoryboardStats(projectId: string) {
@@ -162,5 +162,5 @@ export function useGetProjectStoryboardStats(projectId: string) {
 }
 
 /**
- * 获取 VoiceStage 所需数据
+ * Get data required for VoiceStage
  */

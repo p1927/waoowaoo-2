@@ -4,23 +4,23 @@ import { requireUserAuth, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 import { toMoneyNumber } from '@/lib/billing/money'
 
-// GET - 获取用户的项目（支持分页和搜索）
+// GET - Get user's projects (with pagination and search)
 export const GET = apiHandler(async (request: NextRequest) => {
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const { session } = authResult
 
-  // 获取查询参数
+  // Get query params
   const { searchParams } = new URL(request.url)
   const page = parseInt(searchParams.get('page') || '1', 10)
   const pageSize = parseInt(searchParams.get('pageSize') || '12', 10)
   const search = searchParams.get('search') || ''
 
-  // 构建查询条件
+  // Build query conditions
   const where: Record<string, unknown> = { userId: session.user.id }
 
-  // 如果有搜索关键词，搜索名称和描述
+  // If search keyword exists, search name and description
   if (search.trim()) {
     where.OR = [
       { name: { contains: search.trim(), mode: 'insensitive' } },
@@ -28,46 +28,46 @@ export const GET = apiHandler(async (request: NextRequest) => {
     ]
   }
 
-  // ⚡ 并行执行：获取总数 + 分页数据
-  // 排序优先级：最近访问时间（有值的优先） > 更新时间
+  // Parallel: fetch total count + paginated data
+  // Sort priority: last accessed time (non-null first) > updated time
   const [total, allProjects] = await Promise.all([
     prisma.project.count({ where }),
     prisma.project.findMany({
       where,
-      orderBy: { updatedAt: 'desc' },  // 先按更新时间排序获取所有匹配项目
+      orderBy: { updatedAt: 'desc' },  // Order by updatedAt to get all matching projects
       skip: (page - 1) * pageSize,
       take: pageSize
     })
   ])
 
-  // 在应用层重新排序：
-  // 1. 新创建但未访问过的项目（无 lastAccessedAt）按创建时间降序排在最前
-  // 2. 访问过的项目按访问时间降序
+  // Re-sort at app layer:
+  // 1. Newly created but unvisited projects (no lastAccessedAt) sorted by createdAt desc first
+  // 2. Visited projects sorted by access time desc
   const projects = [...allProjects].sort((a, b) => {
-    // 两个都没有访问时间，按创建时间降序（新创建的排前面）
+    // Neither has access time, sort by createdAt desc (newer first)
     if (!a.lastAccessedAt && !b.lastAccessedAt) {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     }
-    // 只有 a 没有访问时间（新创建），a 排前面
+    // Only a has no access time (newly created), a first
     if (!a.lastAccessedAt && b.lastAccessedAt) return -1
-    // 只有 b 没有访问时间（新创建），b 排前面
+    // Only b has no access time (newly created), b first
     if (a.lastAccessedAt && !b.lastAccessedAt) return 1
-    // 两个都有访问时间，按访问时间降序
+    // Both have access time, sort by access time desc
     return new Date(b.lastAccessedAt!).getTime() - new Date(a.lastAccessedAt!).getTime()
   })
 
-  // 获取项目 ID 列表
+  // Get project IDs
   const projectIds = projects.map(p => p.id)
 
-  // ⚡ 并行获取：费用 + 项目统计（章节数、图片数、视频数）
+  // Parallel fetch: costs + project stats (episodes, images, videos)
   const [costsByProject, novelProjects] = await Promise.all([
-    // 一次性获取所有项目的费用（代替 N+1 查询）
+    // Fetch all project costs in one query (avoid N+1)
     prisma.usageCost.groupBy({
       by: ['projectId'],
       where: { projectId: { in: projectIds } },
       _sum: { cost: true }
     }),
-    // 一次性获取所有项目的统计数据
+    // Fetch all project stats in one query
     prisma.novelPromotionProject.findMany({
       where: { projectId: { in: projectIds } },
       select: {
@@ -107,12 +107,12 @@ export const GET = apiHandler(async (request: NextRequest) => {
     })
   ])
 
-  // 构建费用映射表
+  // Build cost map
   const costMap = new Map(
     costsByProject.map(item => [item.projectId, toMoneyNumber(item._sum.cost)])
   )
 
-  // 构建统计映射表 + 第一集预览
+  // Build stats map + first episode preview
   const statsMap = new Map<string, { episodes: number; images: number; videos: number; panels: number; firstEpisodePreview: string | null }>(
     novelProjects.map(np => {
       let imageCount = 0
@@ -127,7 +127,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
           }
         }
       }
-      // 取第一集的 novelText 前 100 字作为预览
+      // Use first episode novelText first 100 chars as preview
       const firstEp = np.episodes[0]
       const preview = firstEp?.novelText ? firstEp.novelText.slice(0, 100) : null
       return [np.projectId, {
@@ -139,7 +139,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
     })
   )
 
-  // 合并项目、费用与统计
+  // Merge projects, costs and stats
   const projectsWithStats = projects.map(project => ({
     ...project,
     totalCost: costMap.get(project.id) ?? 0,
@@ -156,9 +156,9 @@ export const GET = apiHandler(async (request: NextRequest) => {
   })
 })
 
-// POST - 创建新项目
+// POST - Create new project
 export const POST = apiHandler(async (request: NextRequest) => {
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireUserAuth()
   if (isErrorResponse(authResult)) return authResult
   const { session } = authResult
@@ -177,12 +177,12 @@ export const POST = apiHandler(async (request: NextRequest) => {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取用户偏好配置
+  // Fetch user preference config
   const userPreference = await prisma.userPreference.findUnique({
     where: { userId: session.user.id }
   })
 
-  // 创建基础项目（mode 固定为 novel-promotion）
+  // Create base project (mode fixed as novel-promotion)
   const project = await prisma.project.create({
     data: {
       name: name.trim(),
@@ -192,11 +192,11 @@ export const POST = apiHandler(async (request: NextRequest) => {
     }
   })
 
-  // 创建 novel-promotion 数据表，使用用户偏好作为默认值
-  // 注意：不再自动创建默认剧集，由用户在选择界面决定：
-  // - 手动创作 → 创建第一个空白剧集
-  // - 智能导入 → AI 分析后批量创建剧集
-  // 🔥 artStylePrompt 通过实时查询获取，不再存储到数据库
+  // Create novel-promotion data, use user preference as defaults
+  // Note: no longer auto-create default episode; user decides at selection screen:
+  // - Manual creation -> create first blank episode
+  // - Smart import -> AI analyzes then batch creates episodes
+  // artStylePrompt fetched via real-time query, not stored in DB
   await prisma.novelPromotionProject.create({
     data: {
       projectId: project.id,

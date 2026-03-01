@@ -22,7 +22,7 @@ export function useUpdateCharacterName() {
         body: JSON.stringify({ name }),
       }, 'Failed to update character name')
 
-      // 等待图片标签更新完成，确保 onSuccess invalidate 后前端能立即看到新标签
+      // Wait for image label update to complete so frontend sees new label immediately after onSuccess invalidate
       try {
         await fetch('/api/asset-hub/update-asset-label', {
           method: 'POST',
@@ -51,7 +51,7 @@ export function useUpdateLocationName() {
         body: JSON.stringify({ name }),
       }, 'Failed to update location name')
 
-      // 等待图片标签更新完成，确保 onSuccess invalidate 后前端能立即看到新标签
+      // Wait for image label update to complete so frontend sees new label immediately after onSuccess invalidate
       try {
         await fetch('/api/asset-hub/update-asset-label', {
           method: 'POST',

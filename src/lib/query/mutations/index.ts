@@ -1,10 +1,10 @@
 /**
- * Mutations 模块导出
+ * Mutations module exports
  */
 
-// ==================== Asset Hub (全局资产) ====================
+// ==================== Asset Hub (global assets) ====================
 export {
-    // 角色相关
+    // Character related
     useGenerateCharacterImage,
     useModifyCharacterImage,
     useSelectCharacterImage,
@@ -13,16 +13,16 @@ export {
     useDeleteCharacter,
     useDeleteCharacterAppearance,
     useUploadCharacterVoice,
-    // 场景相关
+    // Location related
     useGenerateLocationImage,
     useModifyLocationImage,
     useSelectLocationImage,
     useUndoLocationImage,
     useUploadLocationImage,
     useDeleteLocation,
-    // 音色相关
+    // Voice related
     useDeleteVoice,
-    // 编辑相关
+    // Edit related
     useUpdateCharacterName,
     useUpdateLocationName,
     useUpdateCharacterAppearanceDescription,
@@ -35,7 +35,7 @@ export {
     useCreateAssetHubCharacter,
 } from './useAssetHubMutations'
 
-// ==================== Project (项目资产) ====================
+// ==================== Project (project assets) ====================
 export * from './useCharacterMutations'
 export * from './useLocationMutations'
 export * from './useStoryboardMutations'

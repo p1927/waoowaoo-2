@@ -14,7 +14,7 @@ import SmartImportWizard, { SplitEpisode } from './modes/novel-promotion/compone
 import { resolveTaskPresentationState } from '@/lib/task/presentation'
 import { resolveSelectedEpisodeId } from './episode-selection'
 
-// 有效的stage值
+// Valid stage values
 const VALID_STAGES = ['config', 'script', 'assets', 'text-storyboard', 'storyboard', 'videos', 'voice', 'editor'] as const
 type Stage = typeof VALID_STAGES[number]
 
@@ -35,7 +35,7 @@ type NovelPromotionData = {
 }
 
 /**
- * 项目详情页 - 带侧边栏的剧集管理
+ * Project detail page - Episode management with sidebar
  */
 export default function ProjectDetailPage() {
   const params = useParams<{ projectId?: string }>()
@@ -51,20 +51,20 @@ export default function ProjectDetailPage() {
   const t = useTranslations('workspaceDetail')
   const tc = useTranslations('common')
 
-  // 从URL读取参数
+  // Read params from URL
   const urlStage = searchParams.get('stage') as Stage | null
   const urlEpisodeId = searchParams.get('episode') ?? null
   const currentUrlStage = urlStage && VALID_STAGES.includes(urlStage) ? urlStage : null
 
-  // 🔥 React Query 数据获取
+  // React Query data fetching
   const queryClient = useQueryClient()
   const { data: project, isLoading: loading, error: projectError } = useProjectData(projectId)
   const error = projectError?.message || null
 
-  // 视图状态（仅 UI）
+  // View state (UI only)
   const [isGlobalAssetsView, setIsGlobalAssetsView] = useState(false)
 
-  // 更新URL参数（stage 和/或 episode）
+  // Update URL params (stage and/or episode)
   const updateUrlParams = useCallback((updates: { stage?: string; episode?: string | null }) => {
     const params = new URLSearchParams(searchParams.toString())
     if (updates.stage !== undefined) {
@@ -80,17 +80,17 @@ export default function ProjectDetailPage() {
     router.replace(`/workspace/${projectId}?${params.toString()}`, { scroll: false })
   }, [router, projectId, searchParams])
 
-  // 更新URL中的stage参数（保持向后兼容）
+  // Update stage param in URL (backward compatible)
   const updateUrlStage = useCallback((stage: string) => {
     updateUrlParams({ stage })
   }, [updateUrlParams])
 
-  // Stage 状态完全由 URL 控制，不再从数据库同步
-  // 如果 URL 没有 stage 参数，默认使用 'config'
-  // 🚧 剪辑阶段 (editor) 暂时禁用，自动重定向到成片阶段 (videos)
+  // Stage state is fully controlled by URL, no longer synced from DB
+  // If URL has no stage param, default to 'config'
+  // Editor stage temporarily disabled, auto-redirect to videos stage
   const effectiveStage = currentUrlStage === 'editor' ? 'videos' : (currentUrlStage || 'config')
 
-  // 获取剧集列表
+  // Get episode list
   const novelPromotionData = project?.novelPromotionData as NovelPromotionData | undefined
   const episodes = useMemo<Episode[]>(() => {
     const getNum = (name: string) => { const m = name.match(/\d+/); return m ? parseInt(m[0], 10) : Infinity }
@@ -100,26 +100,26 @@ export default function ProjectDetailPage() {
     })
   }, [novelPromotionData?.episodes])
 
-  // 剧集导航状态单源：URL（无本地副本）
+  // Episode navigation state: single source URL (no local copy)
   const selectedEpisodeId = useMemo(
     () => resolveSelectedEpisodeId(episodes, urlEpisodeId),
     [episodes, urlEpisodeId],
   )
 
-  // 🔥 使用 React Query 获取剧集数据
+  // Use React Query to fetch episode data
   const { data: currentEpisode } = useEpisodeData(
     projectId,
     !isGlobalAssetsView ? selectedEpisodeId : null
   )
 
-  // 获取导入状态
+  // Get import status
   const importStatus = novelPromotionData?.importStatus
 
-  // 检测是否需要显示导入向导：无剧集或导入中
+  // Detect if import wizard should show: no episodes or import in progress
   const isZeroState = episodes.length === 0
   const shouldShowImportWizard = isZeroState || importStatus === 'pending'
 
-  // 初始化 URL：无效/缺失 episode 时，统一回写默认 episode
+  // Initialize URL: when episode invalid/missing, write back default episode
   useEffect(() => {
     if (!project || isGlobalAssetsView || episodes.length === 0) return
     if (urlEpisodeId && episodes.some((episode) => episode.id === urlEpisodeId)) return
@@ -128,7 +128,7 @@ export default function ProjectDetailPage() {
     }
   }, [episodes, isGlobalAssetsView, project, selectedEpisodeId, updateUrlParams, urlEpisodeId])
 
-  // 创建剧集
+  // Create episode
   const handleCreateEpisode = async (name: string, description?: string) => {
     const res = await fetch(`/api/novel-promotion/${projectId}/episodes`, {
       method: 'POST',
@@ -142,53 +142,53 @@ export default function ProjectDetailPage() {
     }
 
     const data = await res.json()
-    // 🔥 刷新项目数据获取新的剧集列表
+    // Refresh project data to get new episode list
     queryClient.invalidateQueries({ queryKey: queryKeys.projectData(projectId) })
-    // 自动切换到新创建的剧集
+    // Auto-switch to newly created episode
     setIsGlobalAssetsView(false)
-    // 同步到URL
+    // Sync to URL
     updateUrlParams({ episode: data.episode.id })
   }
 
-  // 智能导入 - 完成后刷新数据（数据已由 SmartImportWizard 保存）
+  // Smart import - refresh data on completion (data already saved by SmartImportWizard)
   const handleSmartImportComplete = async (splitEpisodes: SplitEpisode[], triggerGlobalAnalysis?: boolean) => {
-    _ulogInfo('[Page] handleSmartImportComplete 被调用，triggerGlobalAnalysis:', triggerGlobalAnalysis)
+    _ulogInfo('[Page] handleSmartImportComplete called, triggerGlobalAnalysis:', triggerGlobalAnalysis)
 
     try {
-      // 🔥 刷新项目数据
+      // Refresh project data
       queryClient.invalidateQueries({ queryKey: queryKeys.projectData(projectId) })
 
-      // 刷新后重新获取最新的剧集列表
+      // Re-fetch latest episode list after refresh
       const res = await fetch(`/api/projects/${projectId}/data`)
       const data = await res.json()
-      // API 返回结构是 { project: { novelPromotionData: { episodes: [...] } } }
+      // API returns { project: { novelPromotionData: { episodes: [...] } } }
       const newEpisodes = data?.project?.novelPromotionData?.episodes || []
-      _ulogInfo('[Page] 获取到新剧集:', newEpisodes.length, '个')
+      _ulogInfo('[Page] Fetched new episodes:', newEpisodes.length)
 
-      // 如果有剧集，进入第一个
+      // If episodes exist, enter first one
       if (newEpisodes.length > 0) {
-        // 如果需要触发全局分析，切换到 assets 阶段并带上参数
+        // If global analysis needed, switch to assets stage with param
         if (triggerGlobalAnalysis) {
-          _ulogInfo('[Page] 触发全局分析，跳转到 assets 阶段，带 globalAnalyze=1 参数')
-          // 使用相对路径更新，保留 locale
+          _ulogInfo('[Page] Triggering global analysis, navigating to assets stage with globalAnalyze=1')
+          // Use relative path update, preserve locale
           const params = new URLSearchParams()
           params.set('stage', 'assets')
           params.set('episode', newEpisodes[0].id)
           params.set('globalAnalyze', '1')
           const newUrl = `?${params.toString()}`
-          _ulogInfo('[Page] 跳转到:', newUrl)
+          _ulogInfo('[Page] Navigating to:', newUrl)
           router.replace(newUrl, { scroll: false })
         } else {
-          _ulogInfo('[Page] 不触发全局分析，只更新 episode 参数')
+          _ulogInfo('[Page] No global analysis, only updating episode param')
           updateUrlParams({ episode: newEpisodes[0].id })
         }
       }
     } catch (err: unknown) {
-      _ulogError('刷新失败:', err)
+      _ulogError('Refresh failed:', err)
     }
   }
 
-  // 重命名剧集
+  // Rename episode
   const handleRenameEpisode = async (episodeId: string, newName: string) => {
     const res = await fetch(`/api/novel-promotion/${projectId}/episodes/${episodeId}`, {
       method: 'PATCH',
@@ -200,15 +200,15 @@ export default function ProjectDetailPage() {
       throw new Error(t('renameFailed'))
     }
 
-    // 🔥 刷新项目数据
+    // Refresh project data
     queryClient.invalidateQueries({ queryKey: queryKeys.projectData(projectId) })
-    // 剧集详情也刷新
+    // Refresh episode detail too
     if (selectedEpisodeId) {
       queryClient.invalidateQueries({ queryKey: queryKeys.episodeData(projectId, selectedEpisodeId) })
     }
   }
 
-  // 删除剧集
+  // Delete episode
   const handleDeleteEpisode = async (episodeId: string) => {
     const res = await fetch(`/api/novel-promotion/${projectId}/episodes/${episodeId}`, {
       method: 'DELETE',
@@ -216,9 +216,9 @@ export default function ProjectDetailPage() {
     if (!res.ok) {
       throw new Error(t('deleteFailed'))
     }
-    // 刷新项目数据
+    // Refresh project data
     queryClient.invalidateQueries({ queryKey: queryKeys.projectData(projectId) })
-    // 如果删除的是当前正在查看的剧集，切换到其他剧集
+    // If deleted episode is current, switch to another
     if (episodeId === selectedEpisodeId) {
       const remaining = episodes.filter(ep => ep.id !== episodeId)
       if (remaining.length > 0) {
@@ -229,16 +229,16 @@ export default function ProjectDetailPage() {
     }
   }
 
-  // 选择剧集
+  // Select episode
   const handleEpisodeSelect = (episodeId: string) => {
     setIsGlobalAssetsView(false)
-    // 同步到URL
+    // Sync to URL
     updateUrlParams({ episode: episodeId })
   }
 
-  // Loading状态：等待项目数据和剧集数据都准备好
-  // 条件：正在加载 或 (有剧集但episode数据未准备好)
-  // 排除：如果要显示导入向导，则不需要等待剧集数据
+  // Loading state: wait for project and episode data to be ready
+  // Condition: loading OR (has episodes but episode data not ready)
+  // Exclude: if showing import wizard, no need to wait for episode data
   const isInitializing = loading ||
     (!shouldShowImportWizard && !isGlobalAssetsView && episodes.length > 0 && (!selectedEpisodeId || !currentEpisode)) ||
     (project && !project.novelPromotionData)
@@ -260,7 +260,7 @@ export default function ProjectDetailPage() {
     )
   }
 
-  // Error状态
+  // Error state
   if (error || !project) {
     return (
       <div className="glass-page min-h-screen">
@@ -284,13 +284,13 @@ export default function ProjectDetailPage() {
     <div className="glass-page min-h-screen flex flex-col">
       <Navbar />
 
-      {/* V3 UI: 浮动导航替代了旧的 Sidebar */}
+      {/* V3 UI: Floating nav replaces old Sidebar */}
 
-      {/* 主内容区 - 占满全部宽度 */}
+      {/* Main content area - full width */}
       <main className="flex-1 overflow-y-auto">
         <div className="container mx-auto px-4 py-8">
           {isGlobalAssetsView && project.novelPromotionData ? (
-            // 全局资产视图（确保数据准备好）
+            // Global assets view (ensure data ready)
             <div>
               <h1 className="text-2xl font-bold text-[var(--glass-text-primary)] mb-6">{t('globalAssets')}</h1>
               <NovelPromotionWorkspace
@@ -302,7 +302,7 @@ export default function ProjectDetailPage() {
               />
             </div>
           ) : shouldShowImportWizard && !isGlobalAssetsView ? (
-            // 零状态或导入中：显示智能导入向导
+            // Zero state or importing: show smart import wizard
             <SmartImportWizard
               projectId={projectId}
               onManualCreate={() => handleCreateEpisode(`${t('episode')} 1`)}
@@ -310,7 +310,7 @@ export default function ProjectDetailPage() {
               importStatus={importStatus}
             />
           ) : selectedEpisodeId && currentEpisode ? (
-            // 剧集工作区（确保所有数据都准备好）
+            // Episode workspace (ensure all data ready)
             <NovelPromotionWorkspace
               project={project}
               projectId={projectId}
@@ -326,7 +326,7 @@ export default function ProjectDetailPage() {
               onEpisodeDelete={handleDeleteEpisode}
             />
           ) : (
-            // 加载中
+            // Loading
             <div className="glass-surface p-8 text-center">
               <div className="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center bg-[var(--glass-bg-muted)] text-[var(--glass-text-tertiary)]">
                 <TaskStatusInline state={initLoadingState} className="[&>span]:sr-only" />

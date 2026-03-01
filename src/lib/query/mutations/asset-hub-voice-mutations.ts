@@ -71,7 +71,7 @@ export function useSaveDesignedAssetHubVoice() {
           type: 'audio/wav',
           extension: 'wav',
         }),
-      }, '上传音频失败')
+      }, 'Failed to upload audio')
       const res = await requestJsonWithError('/api/asset-hub/voices', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

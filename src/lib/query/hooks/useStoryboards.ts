@@ -7,7 +7,7 @@ import { resolveTaskErrorMessage } from '@/lib/task/error-message'
 import { clearTaskTargetOverlay, upsertTaskTargetOverlay } from '../task-target-overlay'
 import type { MediaRef } from '@/types/project'
 
-// ============ 类型定义 ============
+// ============ Type definitions ============
 export interface PanelCandidate {
     id: string
     imageUrl: string | null
@@ -56,10 +56,10 @@ interface BatchVideoGenerationParams {
     generationOptions?: VideoGenerationOptions
 }
 
-// ============ 查询 Hooks ============
+// ============ Query Hooks ============
 
 /**
- * 获取分镜数据
+ * Fetch storyboard data
  */
 export function useStoryboards(episodeId: string | null) {
     return useQuery({
@@ -78,7 +78,7 @@ export function useStoryboards(episodeId: string | null) {
 // ============ Mutation Hooks ============
 
 /**
- * 重新生成分镜图片
+ * Regenerate storyboard panel image
  */
 export function useRegeneratePanelImage(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -110,7 +110,7 @@ export function useRegeneratePanelImage(projectId: string | null, episodeId: str
 }
 
 /**
- * 修改分镜图片
+ * Modify storyboard panel image
  */
 export function useModifyPanelImage(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -167,7 +167,7 @@ export function useGenerateVideo(projectId: string | null, episodeId: string | n
         }) => {
             if (!projectId) throw new Error('Project ID is required')
 
-            // 构建请求体
+            // Build request body
             const requestBody: {
                 storyboardId: string
                 panelIndex: number
@@ -185,7 +185,7 @@ export function useGenerateVideo(projectId: string | null, episodeId: string | n
                 videoModel: params.videoModel,
             }
 
-            // 如果是首尾帧模式
+            // If first-last frame mode
             if (params.firstLastFrame) {
                 requestBody.firstLastFrame = params.firstLastFrame
             }
@@ -199,7 +199,7 @@ export function useGenerateVideo(projectId: string | null, episodeId: string | n
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
             })
-            // 🔥 使用统一错误处理
+            // Use unified error handling
             await checkApiResponse(res)
             return res.json()
         },
@@ -223,7 +223,7 @@ export function useGenerateVideo(projectId: string | null, episodeId: string | n
             })
         },
         onSettled: () => {
-            // 🔥 刷新缓存获取最新状态
+            // Refresh cache to get latest state
             if (episodeId && projectId) {
                 queryClient.invalidateQueries({ queryKey: queryKeys.episodeData(projectId, episodeId) })
             }
@@ -232,10 +232,10 @@ export function useGenerateVideo(projectId: string | null, episodeId: string | n
 }
 
 /**
- * 批量生成视频
+ * Batch generate videos
  *
- * 后端为每个需要生成的 panel 创建独立的 Panel 级任务，
- * 与单个生成走完全相同的 SSE → overlay → UI 流程。
+ * Backend creates independent panel-level tasks for each panel to generate,
+ * following the same SSE → overlay → UI flow as single generation.
  */
 export function useBatchGenerateVideos(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -264,7 +264,7 @@ export function useBatchGenerateVideos(projectId: string | null, episodeId: stri
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
             })
-            // 🔥 使用统一错误处理
+            // Use unified error handling
             await checkApiResponse(res)
             return res.json()
         },
@@ -273,7 +273,7 @@ export function useBatchGenerateVideos(projectId: string | null, episodeId: stri
             await queryClient.invalidateQueries({ queryKey: queryKeys.tasks.all(projectId), exact: false })
         },
         onSettled: () => {
-            // 🔥 刷新缓存获取最新状态
+            // Refresh cache to get latest state
             if (episodeId && projectId) {
                 queryClient.invalidateQueries({ queryKey: queryKeys.episodeData(projectId, episodeId) })
             }
@@ -282,7 +282,7 @@ export function useBatchGenerateVideos(projectId: string | null, episodeId: stri
 }
 
 /**
- * 选择分镜候选图
+ * Select storyboard panel candidate image
  */
 export function useSelectPanelCandidate(episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -309,7 +309,7 @@ export function useSelectPanelCandidate(episodeId: string | null) {
 }
 
 /**
- * 刷新分镜数据
+ * Refresh storyboard data
  */
 export function useRefreshStoryboards(episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -322,7 +322,7 @@ export function useRefreshStoryboards(episodeId: string | null) {
 }
 
 /**
- * 🔥 口型同步生成（乐观更新）
+ * Lip sync generation (optimistic update)
  */
 export function useLipSync(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()
@@ -371,7 +371,7 @@ export function useLipSync(projectId: string | null, episodeId: string | null) {
             })
         },
         onSettled: () => {
-            // 请求完成后刷新数据
+            // Refresh data after request completes
             if (projectId && episodeId) {
                 queryClient.invalidateQueries({ queryKey: queryKeys.episodeData(projectId, episodeId) })
             }

@@ -102,22 +102,22 @@ export default function ImageSectionCandidateMode({
               disabled={isConfirming}
               className="glass-btn-base glass-btn-secondary px-2 py-1 text-xs rounded disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              取消候选
+              {t('image.cancelSelection')}
             </button>
             <button
               onClick={async () => {
-                _ulogInfo('[ImageSection] 🎯 确认按钮被点击')
+                _ulogInfo('[ImageSection] Confirm button clicked')
                 _ulogInfo('[ImageSection] panelId:', panelId)
-                _ulogInfo('[ImageSection] 选中的图片索引:', safeSelectedIndex)
-                _ulogInfo('[ImageSection] 选中的图片 URL:', validCandidates[safeSelectedIndex])
+                _ulogInfo('[ImageSection] Selected image index:', safeSelectedIndex)
+                _ulogInfo('[ImageSection] Selected image URL:', validCandidates[safeSelectedIndex])
                 setIsConfirming(true)
                 try {
                   await onConfirmCandidate(panelId, validCandidates[safeSelectedIndex])
-                  _ulogInfo('[ImageSection] ✅ 确认操作完成')
+                  _ulogInfo('[ImageSection] Confirm operation completed')
                 } catch (error) {
-                  _ulogError('[ImageSection] ❌ 确认操作失败:', error)
+                  _ulogError('[ImageSection] Confirm operation failed:', error)
                   setIsConfirming(false)
-                  _ulogInfo('[ImageSection] isConfirming 状态已重置为 false (失败重试)')
+                  _ulogInfo('[ImageSection] isConfirming reset to false (retry on failure)')
                 }
               }}
               disabled={isConfirming}

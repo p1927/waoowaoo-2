@@ -1,10 +1,10 @@
 import { logInfo as _ulogInfo, logWarn as _ulogWarn, logErrorCtx } from '@/lib/logging/core'
 import { getLogContext } from '@/lib/logging/context'
 /**
- * Gemini 兼容层图片生成器
- * 
- * 支持使用 Google Gemini API 格式的第三方服务（如 GRSAI/Nano Banana）
- * 通过自定义 baseUrl 和 API Key 连接兼容服务
+ * Gemini-compatible image generator
+ *
+ * Supports third-party services using Google Gemini API format (e.g. GRSAI/Nano Banana)
+ * Connect via custom baseUrl and API Key
  */
 
 import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from '@google/genai'
@@ -25,7 +25,7 @@ function getErrorMessage(error: unknown): string {
         const candidate = (error as { message?: unknown }).message
         if (typeof candidate === 'string') return candidate
     }
-    return '未知错误'
+    return 'Unknown error'
 }
 
 export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
@@ -34,7 +34,7 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
 
     constructor(modelId?: string, providerId?: string) {
         super()
-        // 默认使用 nano-banana-fast 模型
+        // Default to nano-banana-fast model
         this.modelId = modelId || 'nano-banana-fast'
         this.providerId = providerId
     }
@@ -66,8 +66,8 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
             }
         }
 
-        // 🔥 使用自定义 baseUrl 初始化 SDK
-        // @google/genai SDK 通过 httpOptions.baseUrl 支持自定义端点
+        // Initialize SDK with custom baseUrl
+        // @google/genai SDK supports custom endpoint via httpOptions.baseUrl
         const ai = new GoogleGenAI({
             apiKey: config.apiKey,
             httpOptions: {
@@ -75,15 +75,15 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
             }
         })
 
-        // 构建内容数组
+        // Build content parts array
         const contentParts: ContentPart[] = []
 
-        // 添加参考图片（最多 14 张）
+        // Add reference images (max 14)
         for (let i = 0; i < Math.min(referenceImages.length, 14); i++) {
             const imageData = referenceImages[i]
 
             if (imageData.startsWith('data:')) {
-                // Base64 格式
+                // Base64 format
                 const base64Start = imageData.indexOf(';base64,')
                 if (base64Start !== -1) {
                     const mimeType = imageData.substring(5, base64Start)
@@ -91,9 +91,9 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
                     contentParts.push({ inlineData: { mimeType, data } })
                 }
             } else if (imageData.startsWith('http') || imageData.startsWith('/')) {
-                // URL 格式（包括本地相对路径 /api/files/...）：下载转 base64
+                // URL format (including local path /api/files/...): download and convert to base64
                 try {
-                    // 🔧 本地模式修复：相对路径需要补全完整 URL
+                    // Local mode: relative path needs full URL
                     let fullUrl = imageData
                     if (imageData.startsWith('/')) {
                         const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
@@ -107,20 +107,20 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
                         contentParts.push({ inlineData: { mimeType, data } })
                     }
                 } catch (e) {
-                    _ulogWarn(`下载参考图片 ${i + 1} 失败:`, e)
+                    _ulogWarn(`Failed to download reference image ${i + 1}:`, e)
                 }
             } else {
-                // 纯 base64
+                // Raw base64
                 contentParts.push({
                     inlineData: { mimeType: 'image/png', data: imageData }
                 })
             }
         }
 
-        // 添加文本提示
+        // Add text prompt
         contentParts.push({ text: prompt })
 
-        // 安全配置（关闭过滤）
+        // Safety config (filtering disabled)
         const safetySettings = [
             { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
             { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
@@ -130,16 +130,16 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
 
         const ctx = getLogContext()
 
-        logErrorCtx(ctx, `[GeminiCompatible] 🔍 使用模型: ${this.modelId}, baseUrl: ${config.baseUrl}`)
+        logErrorCtx(ctx, `[GeminiCompatible] Using model: ${this.modelId}, baseUrl: ${config.baseUrl}`)
 
-        // 🔥 请求参数调试日志
+        // Request params debug log
         const imagePartsSummary = contentParts
             .filter((p): p is { inlineData: { mimeType: string; data: string } } => 'inlineData' in p)
-            .map((p, i) => `图${i + 1}: ${p.inlineData.mimeType}, ${Math.round(p.inlineData.data.length / 1024)}KB`)
+            .map((p, i) => `img${i + 1}: ${p.inlineData.mimeType}, ${Math.round(p.inlineData.data.length / 1024)}KB`)
         const textPartsSummary = contentParts
             .filter((p): p is { text: string } => 'text' in p)
             .map(p => p.text.substring(0, 200))
-        logErrorCtx(ctx, `[GeminiCompatible] 🔍 请求参数:`, JSON.stringify({
+        logErrorCtx(ctx, `[GeminiCompatible] Request params:`, JSON.stringify({
             model: this.modelId,
             aspectRatio,
             resolution,
@@ -150,7 +150,7 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
         }))
 
         try {
-            // 调用 API（使用用户配置的模型名称）
+            // Call API (using user-configured model name)
             const response = await ai.models.generateContent({
                 model: this.modelId,
                 contents: [{ parts: contentParts }],
@@ -169,7 +169,7 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
                 }
             })
 
-            // 提取图片
+            // Extract image
             const candidate = response.candidates?.[0]
             const parts = candidate?.content?.parts || []
 
@@ -178,7 +178,7 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
                     const imageBase64 = part.inlineData.data
                     if (imageBase64) {
                         const mimeType = part.inlineData.mimeType || 'image/png'
-                        _ulogInfo(`[GeminiCompatible] 成功生成图片`)
+                        _ulogInfo(`[GeminiCompatible] Image generated successfully`)
                         return {
                             success: true,
                             imageBase64,
@@ -191,25 +191,25 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
             // 检查失败原因
             const finishReason = candidate?.finishReason
             if (finishReason === 'IMAGE_SAFETY' || finishReason === 'SAFETY') {
-                throw new Error('内容因安全策略被过滤')
+                throw new Error('Content filtered by safety policy')
             }
 
-            // 🔥 检查是否返回了文本而非图片（常见的代理路由问题）
+            // Check if proxy returned text instead of image (common proxy routing issue)
             const textParts = parts.filter((part) => typeof part?.text === 'string')
             if (textParts.length > 0) {
-                _ulogWarn(`[GeminiCompatible] 代理返回了文本而非图片: ${textParts[0].text?.substring(0, 100)}...`)
-                throw new Error('代理服务返回了文本而非图片，请检查模型配置')
+                _ulogWarn(`[GeminiCompatible] Proxy returned text instead of image: ${textParts[0].text?.substring(0, 100)}...`)
+                throw new Error('Proxy service returned text instead of image, check model configuration')
             }
 
-            // 🔥 详细日志：打印完整响应结构
-            logErrorCtx(ctx, `[GeminiCompatible] ❌ 响应未包含图片，调试信息:`)
-            logErrorCtx(ctx, `  - candidates 数量: ${response.candidates?.length || 0}`)
-            logErrorCtx(ctx, `  - parts 数量: ${parts.length}`)
+            // Detailed log: full response structure
+            logErrorCtx(ctx, `[GeminiCompatible] Response did not contain image, debug info:`)
+            logErrorCtx(ctx, `  - candidates count: ${response.candidates?.length || 0}`)
+            logErrorCtx(ctx, `  - parts count: ${parts.length}`)
             logErrorCtx(ctx, `  - finishReason: ${candidate?.finishReason}`)
-            logErrorCtx(ctx, `  - parts 类型: ${parts.map((part) => getPartKeys(part)).join(' | ')}`)
-            logErrorCtx(ctx, `  - 完整响应: ${JSON.stringify(response, null, 2)}`)
+            logErrorCtx(ctx, `  - parts types: ${parts.map((part) => getPartKeys(part)).join(' | ')}`)
+            logErrorCtx(ctx, `  - full response: ${JSON.stringify(response, null, 2)}`)
 
-            throw new Error('Gemini 兼容服务未返回图片')
+            throw new Error('Gemini compatible service did not return image')
         } catch (error: unknown) {
             const message = getErrorMessage(error)
 
@@ -222,7 +222,7 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
             const statusCode = (errorObj as { status?: number })?.status
             const responseBody = (errorObj as { responseBody?: unknown })?.responseBody
 
-            logErrorCtx(ctx, `[GeminiCompatible] 生成失败:`, JSON.stringify({
+            logErrorCtx(ctx, `[GeminiCompatible] Generation failed:`, JSON.stringify({
                 message,
                 errorType: errorType || null,
                 errorCode: errorCode || null,
@@ -236,53 +236,53 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
                 stack: error instanceof Error ? error.stack?.split('\n').slice(0, 3).join(' | ') : undefined,
             }))
 
-            // 处理常见错误（注意顺序：内容安全 > 余额 > 网络 > 429限流 > 其他）
+            // Handle common errors (order: content safety > balance > network > 429 rate limit > other)
             const lowerMessage = message.toLowerCase()
 
-            // 1. 内容安全（优先于 429，因为代理可能将 IMAGE_SAFETY 包装为 429）
+            // 1. Content safety (before 429, proxy may wrap IMAGE_SAFETY as 429)
             if (lowerMessage.includes('image_safety') || lowerMessage.includes('safety') ||
                 lowerMessage.includes('sensitive') || lowerMessage.includes('blocked') ||
                 lowerMessage.includes('policy_violation') || lowerMessage.includes('prohibited') ||
                 lowerMessage.includes('moderation') || lowerMessage.includes('harm')) {
-                throw new Error('图片内容可能涉及敏感信息，请修改描述后重试')
+                throw new Error('Image content may involve sensitive information, please modify description and retry')
             }
 
-            // 2. 余额/配额不足
+            // 2. Balance/quota insufficient
             if (lowerMessage.includes('insufficient') || lowerMessage.includes('402') ||
                 lowerMessage.includes('credits')) {
-                throw new Error('API 余额不足，请充值后重试')
+                throw new Error('API balance insufficient, please recharge and retry')
             }
 
-            // 3. 认证错误
+            // 3. Auth error
             if (lowerMessage.includes('401') || lowerMessage.includes('unauthorized')) {
-                throw new Error('API Key 无效，请检查配置')
+                throw new Error('API Key invalid, please check configuration')
             }
 
-            // 4. 模型不存在
+            // 4. Model not found
             if (lowerMessage.includes('404') || lowerMessage.includes('not found')) {
-                throw new Error(`模型 ${this.modelId} 不存在于服务端`)
+                throw new Error(`Model ${this.modelId} does not exist on server`)
             }
 
-            // 5. 网络错误
+            // 5. Network error
             if (lowerMessage.includes('fetch failed') || lowerMessage.includes('econnreset') ||
                 lowerMessage.includes('enotfound') || lowerMessage.includes('network')) {
-                throw new Error('网络请求失败，请检查网络连接或稍后重试')
+                throw new Error('Network request failed, check connection or retry later')
             }
 
-            // 6. Gemini 空响应（代理将其包装为 429，但实际是内容生成失败/被过滤）
+            // 6. Gemini empty response (proxy may wrap as 429, but actual cause is content generation failed/filtered)
             if (lowerMessage.includes('empty_response') || lowerMessage.includes('empty response') ||
                 lowerMessage.includes('no meaningful content')) {
-                throw new Error('Gemini 未返回有效图片，内容可能被过滤或生成失败，请修改描述后重试')
+                throw new Error('Gemini did not return valid image, content may be filtered or generation failed, modify description and retry')
             }
 
-            // 7. 429 限流（排除了已被上面捕获的 empty_response 和 safety 场景）
+            // 7. 429 rate limit (excluding empty_response and safety already caught above)
             if (statusCode === 429 || lowerMessage.includes('rate') || lowerMessage.includes('too many request')) {
-                throw new Error('API 请求频率超限，请稍后重试')
+                throw new Error('API rate limit exceeded, please retry later')
             }
 
-            // 8. 配额限制（通用）
+            // 8. Quota limit (generic)
             if (lowerMessage.includes('quota') || lowerMessage.includes('limit')) {
-                throw new Error('API 配额不足')
+                throw new Error('API quota insufficient')
             }
 
             throw error

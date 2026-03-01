@@ -1,98 +1,98 @@
 import { logWarn as _ulogWarn } from '@/lib/logging/core'
 /**
- * 生成器基础接口和类型定义
- * 
- * 策略模式核心：所有生成器实现统一接口
+ * Generator base interfaces and type definitions
+ *
+ * Strategy pattern: all generators implement a unified interface
  */
 
 // ============================================================
-// 通用类型
+// Common types
 // ============================================================
 
 export interface GenerateOptions {
-    aspectRatio?: string      // 宽高比，如 '16:9', '3:4'
-    resolution?: string        // 分辨率，如 '2K', '4K'
-    outputFormat?: string      // 输出格式，如 'png', 'jpg'
-    duration?: number          // 视频时长（秒）
-    fps?: number              // 帧率
-    [key: string]: unknown        // 其他厂商特定参数
+    aspectRatio?: string      // Aspect ratio, e.g. '16:9', '3:4'
+    resolution?: string        // Resolution, e.g. '2K', '4K'
+    outputFormat?: string      // Output format, e.g. 'png', 'jpg'
+    duration?: number          // Video duration (seconds)
+    fps?: number              // Frame rate
+    [key: string]: unknown        // Other provider-specific params
 }
 
 export interface GenerateResult {
     success: boolean
-    imageUrl?: string         // 图片 URL
-    imageBase64?: string      // 图片 base64
-    videoUrl?: string         // 视频 URL
-    audioUrl?: string         // 音频 URL
-    error?: string           // 错误信息
-    requestId?: string       // 异步任务 ID（原始格式，向后兼容）
-    async?: boolean          // 是否为异步任务
-    endpoint?: string        // 异步任务端点（向后兼容）
-    externalId?: string      // 🔥 标准格式的异步任务标识符（如 FAL:IMAGE:fal-ai/nano-banana-pro:requestId）
+    imageUrl?: string         // Image URL
+    imageBase64?: string      // Image base64
+    videoUrl?: string         // Video URL
+    audioUrl?: string         // Audio URL
+    error?: string           // Error message
+    requestId?: string       // Async task ID (legacy format)
+    async?: boolean          // Whether async task
+    endpoint?: string        // Async task endpoint (legacy)
+    externalId?: string      // Standard async task ID format (e.g. FAL:IMAGE:fal-ai/nano-banana-pro:requestId)
 }
 
 // ============================================================
-// 图片生成器接口
+// Image generator interface
 // ============================================================
 
 export interface ImageGenerateParams {
     userId: string
     prompt: string
-    referenceImages?: string[]  // 参考图片 URLs 或 base64
+    referenceImages?: string[]  // Reference image URLs or base64
     options?: GenerateOptions
 }
 
 export interface ImageGenerator {
     /**
-     * 生成图片
+     * Generate image
      */
     generate(params: ImageGenerateParams): Promise<GenerateResult>
 }
 
 // ============================================================
-// 视频生成器接口
+// Video generator interface
 // ============================================================
 
 export interface VideoGenerateParams {
     userId: string
-    imageUrl: string           // 起始图片
-    prompt?: string            // 提示词（可选）
+    imageUrl: string           // Starting image
+    prompt?: string            // Prompt (optional)
     options?: GenerateOptions
 }
 
 export interface VideoGenerator {
     /**
-     * 生成视频
+     * Generate video
      */
     generate(params: VideoGenerateParams): Promise<GenerateResult>
 }
 
 // ============================================================
-// 语音生成器接口
+// Audio generator interface
 // ============================================================
 
 export interface AudioGenerateParams {
     userId: string
-    text: string              // 文本内容
-    voice?: string            // 音色
-    rate?: number             // 语速
+    text: string              // Text content
+    voice?: string            // Voice
+    rate?: number             // Speech rate
     options?: GenerateOptions
 }
 
 export interface AudioGenerator {
     /**
-     * 生成语音
+     * Generate speech
      */
     generate(params: AudioGenerateParams): Promise<GenerateResult>
 }
 
 // ============================================================
-// 基类（可选，提供通用功能）
+// Base classes (provide common functionality)
 // ============================================================
 
 export abstract class BaseImageGenerator implements ImageGenerator {
     /**
-     * 生成图片（带重试）
+     * Generate image (with retry)
      */
     async generate(params: ImageGenerateParams): Promise<GenerateResult> {
         const maxRetries = 2
@@ -104,26 +104,26 @@ export abstract class BaseImageGenerator implements ImageGenerator {
             } catch (error: unknown) {
                 lastError = error
                 const message = error instanceof Error ? error.message : String(error)
-                _ulogWarn(`[Generator] 尝试 ${attempt}/${maxRetries} 失败: ${message}`)
+                _ulogWarn(`[Generator] Attempt ${attempt}/${maxRetries} failed: ${message}`)
 
-                // 最后一次尝试，直接抛出
+                // Last attempt, throw directly
                 if (attempt === maxRetries) {
                     break
                 }
 
-                // 等待后重试
+                // Wait before retry
                 await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
             }
         }
 
         return {
             success: false,
-            error: lastError instanceof Error ? lastError.message : '生成失败'
+            error: lastError instanceof Error ? lastError.message : 'Generation failed'
         }
     }
 
     /**
-     * 子类实现具体生成逻辑
+     * Subclasses implement concrete generation logic
      */
     protected abstract doGenerate(params: ImageGenerateParams): Promise<GenerateResult>
 }
@@ -139,7 +139,7 @@ export abstract class BaseVideoGenerator implements VideoGenerator {
             } catch (error: unknown) {
                 lastError = error
                 const message = error instanceof Error ? error.message : String(error)
-                _ulogWarn(`[Video Generator] 尝试 ${attempt}/${maxRetries} 失败: ${message}`)
+                _ulogWarn(`[Video Generator] Attempt ${attempt}/${maxRetries} failed: ${message}`)
                 if (attempt === maxRetries) break
                 await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
             }
@@ -147,7 +147,7 @@ export abstract class BaseVideoGenerator implements VideoGenerator {
 
         return {
             success: false,
-            error: lastError instanceof Error ? lastError.message : '视频生成失败'
+            error: lastError instanceof Error ? lastError.message : 'Video generation failed'
         }
     }
 
@@ -161,7 +161,7 @@ export abstract class BaseAudioGenerator implements AudioGenerator {
         } catch (error: unknown) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : '语音生成失败'
+                error: error instanceof Error ? error.message : 'Speech generation failed'
             }
         }
     }

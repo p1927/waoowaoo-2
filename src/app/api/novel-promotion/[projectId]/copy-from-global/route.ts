@@ -58,9 +58,9 @@ interface CopyFromGlobalDb {
 
 /**
  * POST /api/novel-promotion/[projectId]/copy-from-global
- * 从资产中心复制角色/场景的形象数据到项目资产
- * 
- * 复制而非引用：即使全局资产被删除，项目资产也不受影响
+ * Copy character/location appearance data from asset center to project assets
+ *
+ * Copy (not reference): project assets are unaffected even if global assets are deleted
  */
 export const POST = apiHandler(async (
     request: NextRequest,
@@ -69,7 +69,7 @@ export const POST = apiHandler(async (
     const { projectId } = await context.params
     const db = prisma as unknown as CopyFromGlobalDb
 
-    // 🔐 统一权限验证
+    // Auth verification
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
     const session = authResult.session
@@ -93,12 +93,12 @@ export const POST = apiHandler(async (
 })
 
 /**
- * 复制全局角色的形象到项目角色
+ * Copy global character appearance to project character
  */
 async function copyCharacterFromGlobal(db: CopyFromGlobalDb, userId: string, targetId: string, globalCharacterId: string) {
-    _ulogInfo(`[Copy from Global] 复制角色: global=${globalCharacterId} -> project=${targetId}`)
+    _ulogInfo(`[Copy from Global] Copy character: global=${globalCharacterId} -> project=${targetId}`)
 
-    // 1. 获取全局角色及其形象
+    // 1. Fetch global character and appearances
     const globalCharacter = await db.globalCharacter.findFirst({
         where: { id: globalCharacterId, userId },
         include: { appearances: true }
@@ -108,7 +108,7 @@ async function copyCharacterFromGlobal(db: CopyFromGlobalDb, userId: string, tar
         throw new ApiError('NOT_FOUND')
     }
 
-    // 2. 获取项目角色
+    // 2. Fetch project character
     const projectCharacter = await prisma.novelPromotionCharacter.findUnique({
         where: { id: targetId },
         include: { appearances: true }
@@ -118,16 +118,16 @@ async function copyCharacterFromGlobal(db: CopyFromGlobalDb, userId: string, tar
         throw new ApiError('NOT_FOUND')
     }
 
-    // 3. 删除项目角色的旧形象
+    // 3. Delete project character's old appearances
     if (projectCharacter.appearances.length > 0) {
         await prisma.characterAppearance.deleteMany({
             where: { characterId: targetId }
         })
-        _ulogInfo(`[Copy from Global] 删除了 ${projectCharacter.appearances.length} 个旧形象`)
+        _ulogInfo(`[Copy from Global] Deleted ${projectCharacter.appearances.length} old appearances`)
     }
 
-    // 4. 🔥 更新黑边标签：使用项目角色名替换资产中心的角色名
-    _ulogInfo(`[Copy from Global] 更新黑边标签: ${globalCharacter.name} -> ${projectCharacter.name}`)
+    // 4. Update black-bar labels: replace asset center character name with project character name
+    _ulogInfo(`[Copy from Global] Update black-bar labels: ${globalCharacter.name} -> ${projectCharacter.name}`)
     const updatedLabels = await updateCharacterAppearanceLabels(
         globalCharacter.appearances.map((app) => ({
             imageUrl: app.imageUrl,
@@ -137,7 +137,7 @@ async function copyCharacterFromGlobal(db: CopyFromGlobalDb, userId: string, tar
         projectCharacter.name
     )
 
-    // 5. 复制全局形象到项目（使用更新后的图片URL）
+    // 5. Copy global appearances to project (using updated image URLs)
     const copiedAppearances = []
     for (let i = 0; i < globalCharacter.appearances.length; i++) {
         const app = globalCharacter.appearances[i]
@@ -151,7 +151,7 @@ async function copyCharacterFromGlobal(db: CopyFromGlobalDb, userId: string, tar
                 changeReason: app.changeReason,
                 description: app.description,
                 descriptions: app.descriptions,
-                // 🔥 使用更新了标签的新图片URL
+                // Use new image URL with updated label
                 imageUrl: labelUpdate?.imageUrl || app.imageUrl,
                 imageUrls: labelUpdate?.imageUrls || encodeImageUrls(originalImageUrls),
                 previousImageUrls: encodeImageUrls([]),
@@ -160,16 +160,16 @@ async function copyCharacterFromGlobal(db: CopyFromGlobalDb, userId: string, tar
         })
         copiedAppearances.push(newAppearance)
     }
-    _ulogInfo(`[Copy from Global] 复制了 ${copiedAppearances.length} 个形象（已更新标签）`)
+    _ulogInfo(`[Copy from Global] Copied ${copiedAppearances.length} appearances (labels updated)`)
 
-    // 6. 更新项目角色：记录来源ID，并标记档案已确认
+    // 6. Update project character: record source ID and mark profile confirmed
     const updatedCharacter = await prisma.novelPromotionCharacter.update({
         where: { id: targetId },
         data: {
             sourceGlobalCharacterId: globalCharacterId,
-            // 使用已有形象相当于确认了角色档案
+            // Using existing appearance counts as profile confirmation
             profileConfirmed: true,
-            // 可选：复制语音设置
+            // Optional: copy voice settings
             voiceId: globalCharacter.voiceId,
             voiceType: globalCharacter.voiceType,
             customVoiceUrl: globalCharacter.customVoiceUrl
@@ -177,7 +177,7 @@ async function copyCharacterFromGlobal(db: CopyFromGlobalDb, userId: string, tar
         include: { appearances: true }
     })
 
-    _ulogInfo(`[Copy from Global] 角色复制完成: ${projectCharacter.name}`)
+    _ulogInfo(`[Copy from Global] Character copy complete: ${projectCharacter.name}`)
 
     return NextResponse.json({
         success: true,
@@ -187,12 +187,12 @@ async function copyCharacterFromGlobal(db: CopyFromGlobalDb, userId: string, tar
 }
 
 /**
- * 复制全局场景的图片到项目场景
+ * Copy global location images to project location
  */
 async function copyLocationFromGlobal(db: CopyFromGlobalDb, userId: string, targetId: string, globalLocationId: string) {
-    _ulogInfo(`[Copy from Global] 复制场景: global=${globalLocationId} -> project=${targetId}`)
+    _ulogInfo(`[Copy from Global] Copy location: global=${globalLocationId} -> project=${targetId}`)
 
-    // 1. 获取全局场景及其图片
+    // 1. Fetch global location and images
     const globalLocation = await db.globalLocation.findFirst({
         where: { id: globalLocationId, userId },
         include: { images: true }
@@ -202,7 +202,7 @@ async function copyLocationFromGlobal(db: CopyFromGlobalDb, userId: string, targ
         throw new ApiError('NOT_FOUND')
     }
 
-    // 2. 获取项目场景
+    // 2. Fetch project location
     const projectLocation = await prisma.novelPromotionLocation.findUnique({
         where: { id: targetId },
         include: { images: true }
@@ -212,16 +212,16 @@ async function copyLocationFromGlobal(db: CopyFromGlobalDb, userId: string, targ
         throw new ApiError('NOT_FOUND')
     }
 
-    // 3. 删除项目场景的旧图片
+    // 3. Delete project location's old images
     if (projectLocation.images.length > 0) {
         await prisma.locationImage.deleteMany({
             where: { locationId: targetId }
         })
-        _ulogInfo(`[Copy from Global] 删除了 ${projectLocation.images.length} 个旧图片`)
+        _ulogInfo(`[Copy from Global] Deleted ${projectLocation.images.length} old images`)
     }
 
-    // 4. 🔥 更新黑边标签：使用项目场景名替换资产中心的场景名
-    _ulogInfo(`[Copy from Global] 更新黑边标签: ${globalLocation.name} -> ${projectLocation.name}`)
+    // 4. Update black-bar labels: replace asset center location name with project location name
+    _ulogInfo(`[Copy from Global] Update black-bar labels: ${globalLocation.name} -> ${projectLocation.name}`)
     const updatedLabels = await updateLocationImageLabels(
         globalLocation.images.map((img) => ({
             imageUrl: img.imageUrl
@@ -229,7 +229,7 @@ async function copyLocationFromGlobal(db: CopyFromGlobalDb, userId: string, targ
         projectLocation.name
     )
 
-    // 5. 复制全局图片到项目（使用更新后的图片URL）
+    // 5. Copy global images to project (using updated image URLs)
     const copiedImages: Array<{ id: string; imageIndex: number; imageUrl: string | null }> = []
     for (let i = 0; i < globalLocation.images.length; i++) {
         const img = globalLocation.images[i]
@@ -240,14 +240,14 @@ async function copyLocationFromGlobal(db: CopyFromGlobalDb, userId: string, targ
                 locationId: targetId,
                 imageIndex: img.imageIndex,
                 description: img.description,
-                // 🔥 使用更新了标签的新图片URL
+                // Use new image URL with updated label
                 imageUrl: labelUpdate?.imageUrl || img.imageUrl,
                 isSelected: img.isSelected
             }
         })
         copiedImages.push(newImage)
     }
-    _ulogInfo(`[Copy from Global] 复制了 ${copiedImages.length} 个图片（已更新标签）`)
+    _ulogInfo(`[Copy from Global] Copied ${copiedImages.length} images (labels updated)`)
 
     const selectedFromGlobal = globalLocation.images.find((img) => img.isSelected)
     const selectedImageId = selectedFromGlobal
@@ -258,7 +258,7 @@ async function copyLocationFromGlobal(db: CopyFromGlobalDb, userId: string, targ
         data: { selectedImageId }
     })
 
-    // 6. 更新项目场景：记录来源ID 和 summary
+    // 6. Update project location: record source ID and summary
     const updatedLocation = await prisma.novelPromotionLocation.update({
         where: { id: targetId },
         data: {
@@ -268,7 +268,7 @@ async function copyLocationFromGlobal(db: CopyFromGlobalDb, userId: string, targ
         include: { images: true }
     })
 
-    _ulogInfo(`[Copy from Global] 场景复制完成: ${projectLocation.name}`)
+    _ulogInfo(`[Copy from Global] Location copy complete: ${projectLocation.name}`)
 
     return NextResponse.json({
         success: true,
@@ -278,12 +278,12 @@ async function copyLocationFromGlobal(db: CopyFromGlobalDb, userId: string, targ
 }
 
 /**
- * 复制全局音色到项目角色
+ * Copy global voice to project character
  */
 async function copyVoiceFromGlobal(db: CopyFromGlobalDb, userId: string, targetCharacterId: string, globalVoiceId: string) {
-    _ulogInfo(`[Copy from Global] 复制音色: global=${globalVoiceId} -> project character=${targetCharacterId}`)
+    _ulogInfo(`[Copy from Global] Copy voice: global=${globalVoiceId} -> project character=${targetCharacterId}`)
 
-    // 1. 获取全局音色
+    // 1. Fetch global voice
     const globalVoice = await db.globalVoice.findFirst({
         where: { id: globalVoiceId, userId }
     })
@@ -292,7 +292,7 @@ async function copyVoiceFromGlobal(db: CopyFromGlobalDb, userId: string, targetC
         throw new ApiError('NOT_FOUND')
     }
 
-    // 2. 获取项目角色
+    // 2. Fetch project character
     const projectCharacter = await prisma.novelPromotionCharacter.findUnique({
         where: { id: targetCharacterId }
     })
@@ -301,7 +301,7 @@ async function copyVoiceFromGlobal(db: CopyFromGlobalDb, userId: string, targetC
         throw new ApiError('NOT_FOUND')
     }
 
-    // 3. 更新项目角色的音色设置
+    // 3. Update project character's voice settings
     const updatedCharacter = await prisma.novelPromotionCharacter.update({
         where: { id: targetCharacterId },
         data: {
@@ -311,7 +311,7 @@ async function copyVoiceFromGlobal(db: CopyFromGlobalDb, userId: string, targetC
         }
     })
 
-    _ulogInfo(`[Copy from Global] 音色复制完成: ${projectCharacter.name} <- ${globalVoice.name}`)
+    _ulogInfo(`[Copy from Global] Voice copy complete: ${projectCharacter.name} <- ${globalVoice.name}`)
 
     return NextResponse.json({
         success: true,

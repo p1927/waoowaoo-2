@@ -92,7 +92,7 @@ export function useDeleteProjectLocation(projectId: string) {
 }
 
 /**
- * 更新项目场景名字
+ * Update project location name
  */
 
 export function useUpdateProjectLocationName(projectId: string) {
@@ -108,7 +108,7 @@ export function useUpdateProjectLocationName(projectId: string) {
                 body: JSON.stringify({ locationId, name })
             }, 'Failed to update location name')
 
-            // 等待图片标签更新完成，确保 onSuccess invalidate 后前端能立即看到新标签
+            // Wait for image label update to complete so frontend sees new label immediately after onSuccess invalidate
             try {
                 await fetch(`/api/novel-promotion/${projectId}/update-asset-label`, {
                     method: 'POST',
@@ -120,7 +120,7 @@ export function useUpdateProjectLocationName(projectId: string) {
                     })
                 })
             } catch (e) {
-                _ulogError('更新图片标签失败:', e)
+                _ulogError('Failed to update image label:', e)
             }
 
             return res
@@ -130,7 +130,7 @@ export function useUpdateProjectLocationName(projectId: string) {
 }
 
 /**
- * 更新项目角色形象描述
+ * Update project location description
  */
 
 export function useUpdateProjectLocationDescription(projectId: string) {
@@ -163,7 +163,7 @@ export function useUpdateProjectLocationDescription(projectId: string) {
 }
 
 /**
- * 更新项目角色介绍
+ * Update project location introduction
  */
 
 export function useAiModifyProjectLocationDescription(projectId: string) {
@@ -199,7 +199,7 @@ export function useAiModifyProjectLocationDescription(projectId: string) {
 }
 
 /**
- * AI 设计项目场景描述
+ * AI design project location description
  */
 
 export function useAiCreateProjectLocation(projectId: string) {
@@ -220,7 +220,7 @@ export function useAiCreateProjectLocation(projectId: string) {
 }
 
 /**
- * 创建项目场景
+ * Create project location
  */
 
 export function useCreateProjectLocation(projectId: string) {
@@ -248,7 +248,7 @@ export function useCreateProjectLocation(projectId: string) {
 }
 
 /**
- * AI 设计项目角色文案
+ * AI design project character copy
  */
 
 export function useConfirmProjectLocationSelection(projectId: string) {
@@ -264,14 +264,14 @@ export function useConfirmProjectLocationSelection(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ locationId }),
                 },
-                '确认选择失败',
+                'Confirm selection failed',
             ),
         onSettled: invalidateProjectAssets,
     })
 }
 
 /**
- * 确认角色档案并触发描述生成
+ * Confirm character profile and trigger description generation
  */
 
 export function useBatchGenerateLocationImages(projectId: string) {

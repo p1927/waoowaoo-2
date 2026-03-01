@@ -10,7 +10,7 @@ import {
 } from './mutation-shared'
 
 /**
- * 获取项目剧集列表
+ * Get project episode list
  */
 export function useListProjectEpisodes(projectId: string) {
   return useMutation({
@@ -22,12 +22,12 @@ export function useListProjectEpisodes(projectId: string) {
           description?: string
           novelText?: string
         }>
-      }>(`/api/novel-promotion/${projectId}/episodes`, { method: 'GET' }, '获取剧集失败'),
+      }>(`/api/novel-promotion/${projectId}/episodes`, { method: 'GET' }, 'Failed to fetch episodes'),
   })
 }
 
 /**
- * AI 智能分割剧集
+ * AI smart split episodes
  */
 export function useSplitProjectEpisodes(projectId: string) {
   return useMutation({
@@ -39,7 +39,7 @@ export function useSplitProjectEpisodes(projectId: string) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         },
-        '分割失败',
+        'Split failed',
       )
       return resolveTaskResponse<{
         episodes: Array<{
@@ -55,7 +55,7 @@ export function useSplitProjectEpisodes(projectId: string) {
 }
 
 /**
- * 使用章节标记分割剧集
+ * Split episodes by chapter markers
  */
 export function useSplitProjectEpisodesByMarkers(projectId: string) {
   return useMutation({
@@ -75,13 +75,13 @@ export function useSplitProjectEpisodesByMarkers(projectId: string) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         },
-        '分割失败',
+        'Split failed',
       ),
   })
 }
 
 /**
- * 批量保存项目剧集
+ * Batch save project episodes
  */
 export function useSaveProjectEpisodesBatch(projectId: string) {
   return useMutation({
@@ -102,13 +102,13 @@ export function useSaveProjectEpisodesBatch(projectId: string) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         },
-        '保存剧集失败',
+        'Failed to save episodes',
       ),
   })
 }
 
 /**
- * 更新剧集字段
+ * Update episode field
  */
 export function useUpdateProjectEpisodeField(projectId: string) {
   const queryClient = useQueryClient()
@@ -186,7 +186,7 @@ export function useUpdateProjectEpisodeField(projectId: string) {
 }
 
 /**
- * 更新 clip 数据
+ * Update clip data
  */
 export function useUpdateProjectClip(projectId: string) {
   const queryClient = useQueryClient()
@@ -243,7 +243,7 @@ export function useUpdateProjectClip(projectId: string) {
 }
 
 /**
- * 下载远程文件 blob（避免组件层直接 fetch）
+ * Download remote file blob (avoids direct fetch in component layer)
  */
 export function useDownloadRemoteBlob() {
   return useMutation({
@@ -251,7 +251,7 @@ export function useDownloadRemoteBlob() {
       await requestBlobWithError(
         url,
         { method: 'GET' },
-        '下载失败',
+        'Download failed',
       ),
   })
 }

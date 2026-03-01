@@ -16,7 +16,7 @@ export function useDismissFailedTasks(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ taskIds }),
                 },
-                '关闭错误失败',
+                'Failed to dismiss errors',
             )
         },
         onSuccess: () => {

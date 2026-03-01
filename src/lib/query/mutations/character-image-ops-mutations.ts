@@ -55,7 +55,7 @@ export function useModifyProjectCharacterImage(projectId: string) {
 }
 
 /**
- * 修改项目场景图片
+ * Modify project location image
  */
 
 export function useRegenerateCharacterGroup(projectId: string) {
@@ -95,7 +95,7 @@ export function useRegenerateCharacterGroup(projectId: string) {
 }
 
 /**
- * 重新生成单张角色图片
+ * Regenerate single character image
  */
 
 export function useRegenerateSingleCharacterImage(projectId: string) {
@@ -144,7 +144,7 @@ export function useRegenerateSingleCharacterImage(projectId: string) {
 }
 
 /**
- * 重新生成场景组图片
+ * Regenerate location group images
  */
 
 export function useUpdateProjectAppearanceDescription(projectId: string) {

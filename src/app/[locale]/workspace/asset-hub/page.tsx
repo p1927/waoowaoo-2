@@ -32,10 +32,10 @@ export default function AssetHubPage() {
     const t = useTranslations('assetHub')
     const queryClient = useQueryClient()
 
-    // 文件夹选择状态
+    // Folder selection state
     const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
 
-    // 使用 React Query 获取数据
+    // Use React Query to fetch data
     const { data: folders = [], isLoading: foldersLoading } = useGlobalFolders()
     const { data: characters = [], isLoading: charactersLoading } = useGlobalCharacters(selectedFolderId)
     const { data: locations = [], isLoading: locationsLoading } = useGlobalLocations(selectedFolderId)
@@ -48,7 +48,7 @@ export default function AssetHubPage() {
     const modifyCharacterImage = useModifyCharacterImage()
     const modifyLocationImage = useModifyLocationImage()
 
-    // 弹窗状态
+    // Modal state
     const [showAddCharacter, setShowAddCharacter] = useState(false)
     const [showAddLocation, setShowAddLocation] = useState(false)
     const [showFolderModal, setShowFolderModal] = useState(false)
@@ -68,11 +68,11 @@ export default function AssetHubPage() {
         hasExistingVoice: boolean
     } | null>(null)
 
-    // 音色库弹窗状态
+    // Voice library modal state
     const [showAddVoice, setShowAddVoice] = useState(false)
     const [voicePickerCharacterId, setVoicePickerCharacterId] = useState<string | null>(null)
 
-    // 编辑角色弹窗状态
+    // Character edit modal state
     const [characterEditModal, setCharacterEditModal] = useState<{
         characterId: string
         characterName: string
@@ -82,7 +82,7 @@ export default function AssetHubPage() {
         description: string
     } | null>(null)
 
-    // 编辑场景弹窗状态
+    // Location edit modal state
     const [locationEditModal, setLocationEditModal] = useState<{
         locationId: string
         locationName: string
@@ -91,7 +91,7 @@ export default function AssetHubPage() {
         description: string
     } | null>(null)
 
-    // 创建文件夹
+    // Create folder
     const handleCreateFolder = async (name: string) => {
         try {
             const res = await fetch('/api/asset-hub/folders', {
@@ -104,11 +104,11 @@ export default function AssetHubPage() {
                 setShowFolderModal(false)
             }
         } catch (error) {
-            _ulogError('创建文件夹失败:', error)
+            _ulogError('Create folder failed:', error)
         }
     }
 
-    // 更新文件夹
+    // Update folder
     const handleUpdateFolder = async (folderId: string, name: string) => {
         try {
             const res = await fetch(`/api/asset-hub/folders/${folderId}`, {
@@ -122,11 +122,11 @@ export default function AssetHubPage() {
                 setShowFolderModal(false)
             }
         } catch (error) {
-            _ulogError('更新文件夹失败:', error)
+            _ulogError('Update folder failed:', error)
         }
     }
 
-    // 删除文件夹
+    // Delete folder
     const handleDeleteFolder = async (folderId: string) => {
         if (!confirm(t('confirmDeleteFolder'))) return
 
@@ -141,16 +141,16 @@ export default function AssetHubPage() {
                 queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.all() })
             }
         } catch (error) {
-            _ulogError('删除文件夹失败:', error)
+            _ulogError('Delete folder failed:', error)
         }
     }
 
-    // 打开图片编辑弹窗
+    // Open image edit modal
     const handleOpenImageEdit = (type: 'character' | 'location', id: string, name: string, imageIndex: number, appearanceIndex?: number) => {
         setImageEditModal({ type, id, name, imageIndex, appearanceIndex })
     }
 
-    // 处理图片编辑确认 - 使用 mutation
+    // Handle image edit confirm - use mutation
     const handleImageEdit = async (modifyPrompt: string, extraImageUrls?: string[]) => {
         if (!imageEditModal) return
 
@@ -183,7 +183,7 @@ export default function AssetHubPage() {
         }
     }
 
-    // 打开 AI 声音设计对话框
+    // Open AI voice design dialog
     const handleOpenVoiceDesign = (characterId: string, characterName: string) => {
         const character = characters.find(c => c.id === characterId)
         setVoiceDesignCharacter({
@@ -193,7 +193,7 @@ export default function AssetHubPage() {
         })
     }
 
-    // 保存 AI 设计的声音
+    // Save AI-designed voice
     const handleVoiceDesignSave = async (voiceId: string, audioBase64: string) => {
         if (!voiceDesignCharacter) return
 
@@ -220,12 +220,12 @@ export default function AssetHubPage() {
                 )
             }
         } catch (error) {
-            _ulogError('保存声音失败:', error)
+            _ulogError('Save voice failed:', error)
             alert(t('saveVoiceFailed'))
         }
     }
 
-    // 打开角色编辑弹窗
+    // Open character edit modal
     const handleOpenCharacterEdit = (character: unknown, appearance: unknown) => {
         const typedCharacter = character as GlobalCharacter
         const typedAppearance = appearance as GlobalCharacter['appearances'][0]
@@ -239,7 +239,7 @@ export default function AssetHubPage() {
         })
     }
 
-    // 打开场景编辑弹窗
+    // Open location edit modal
     const handleOpenLocationEdit = (location: unknown, imageIndex: number) => {
         const typedLocation = location as {
             id: string
@@ -257,7 +257,7 @@ export default function AssetHubPage() {
         })
     }
 
-    // 角色编辑后触发生成
+    // Trigger generation after character edit
     const handleCharacterEditGenerate = async () => {
         if (!characterEditModal) return
 
@@ -273,11 +273,11 @@ export default function AssetHubPage() {
             })
             queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.characters() })
         } catch (error) {
-            _ulogError('触发生成失败:', error)
+            _ulogError('Trigger generation failed:', error)
         }
     }
 
-    // 场景编辑后触发生成
+    // Trigger generation after location edit
     const handleLocationEditGenerate = async () => {
         if (!locationEditModal) return
 
@@ -292,11 +292,11 @@ export default function AssetHubPage() {
             })
             queryClient.invalidateQueries({ queryKey: queryKeys.globalAssets.locations() })
         } catch (error) {
-            _ulogError('触发生成失败:', error)
+            _ulogError('Trigger generation failed:', error)
         }
     }
 
-    // 从音色库选择后绑定到角色
+    // Bind voice to character after selecting from voice library
     const handleVoiceSelect = async (voice: { id: string; customVoiceUrl: string | null }) => {
         if (!voicePickerCharacterId) return
 
@@ -322,7 +322,7 @@ export default function AssetHubPage() {
                 )
             }
         } catch (error) {
-            _ulogError('绑定音色失败:', error)
+            _ulogError('Bind voice failed:', error)
             alert(t('bindVoiceFailed'))
         }
     }
@@ -331,7 +331,7 @@ export default function AssetHubPage() {
         <div className="glass-page min-h-screen">
             <Navbar />
             <div className="max-w-7xl mx-auto px-4 py-6">
-                {/* 页面标题 */}
+                {/* Page title */}
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold text-[var(--glass-text-primary)]">{t('title')}</h1>
                     <p className="text-sm text-[var(--glass-text-secondary)] mt-1">{t('description')}</p>
@@ -344,7 +344,7 @@ export default function AssetHubPage() {
                 </div>
 
                 <div className="flex gap-6">
-                    {/* 左侧文件夹树 */}
+                    {/* Left folder tree */}
                     <FolderSidebar
                         folders={folders}
                         selectedFolderId={selectedFolderId}
@@ -360,7 +360,7 @@ export default function AssetHubPage() {
                         onDeleteFolder={handleDeleteFolder}
                     />
 
-                    {/* 右侧资产网格 */}
+                    {/* Right asset grid */}
                     <AssetGrid
                         characters={characters}
                         locations={locations}
@@ -380,7 +380,7 @@ export default function AssetHubPage() {
                 </div>
             </div>
 
-            {/* 新建角色弹窗 */}
+            {/* New character modal */}
             {showAddCharacter && (
                 <CharacterCreationModal
                     mode="asset-hub"
@@ -393,7 +393,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* 新建场景弹窗 */}
+            {/* New location modal */}
             {showAddLocation && (
                 <LocationCreationModal
                     mode="asset-hub"
@@ -406,7 +406,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* 文件夹编辑弹窗 */}
+            {/* Folder edit modal */}
             {showFolderModal && (
                 <FolderModal
                     folder={editingFolder}
@@ -424,7 +424,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* 图片预览弹窗 */}
+            {/* Image preview modal */}
             {previewImage && (
                 <ImagePreviewModal
                     imageUrl={previewImage}
@@ -432,7 +432,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* 图片编辑弹窗 */}
+            {/* Image edit modal */}
             {imageEditModal && (
                 <ImageEditModal
                     type={imageEditModal.type}
@@ -442,7 +442,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* AI 声音设计对话框 */}
+            {/* AI voice design dialog */}
             {voiceDesignCharacter && (
                 <VoiceDesignDialog
                     isOpen={!!voiceDesignCharacter}
@@ -453,7 +453,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* 角色编辑弹窗 */}
+            {/* Character edit modal */}
             {characterEditModal && (
                 <CharacterEditModal
                     mode="asset-hub"
@@ -468,7 +468,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* 场景编辑弹窗 */}
+            {/* Location edit modal */}
             {locationEditModal && (
                 <LocationEditModal
                     mode="asset-hub"
@@ -482,7 +482,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* 新建音色弹窗 */}
+            {/* New voice modal */}
             {showAddVoice && (
                 <VoiceCreationModal
                     isOpen={showAddVoice}
@@ -495,7 +495,7 @@ export default function AssetHubPage() {
                 />
             )}
 
-            {/* 从音色库选择弹窗 */}
+            {/* Voice picker from library modal */}
             {voicePickerCharacterId && (
                 <VoicePickerDialog
                     isOpen={!!voicePickerCharacterId}

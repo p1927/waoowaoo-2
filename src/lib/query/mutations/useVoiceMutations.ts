@@ -66,7 +66,7 @@ export function useDesignProjectVoice(projectId: string) {
 }
 
 /**
- * 分析镜头变体（项目）
+ * Analyze shot variants (project)
  */
 
 export function useFetchProjectVoiceStageData(projectId: string) {
@@ -80,17 +80,17 @@ export function useFetchProjectVoiceStageData(projectId: string) {
                 requestJsonWithError<{ voiceLines?: ProjectVoiceLine[] }>(
                     `/api/novel-promotion/${projectId}/voice-lines?episodeId=${episodeId}`,
                     { method: 'GET' },
-                    '获取台词失败',
+                    'Failed to fetch voice lines',
                 ),
                 requestJsonWithError<{ speakerVoices?: Record<string, SpeakerVoiceConfig> }>(
                     `/api/novel-promotion/${projectId}/speaker-voice?episodeId=${episodeId}`,
                     { method: 'GET' },
-                    '获取角色音色失败',
+                    'Failed to fetch speaker voices',
                 ),
                 requestJsonWithError<{ speakers?: string[] }>(
                     `/api/novel-promotion/${projectId}/voice-lines?speakersOnly=1`,
                     { method: 'GET' },
-                    '获取说话人失败',
+                    'Failed to fetch speakers',
                 ),
             ])
 
@@ -104,7 +104,7 @@ export function useFetchProjectVoiceStageData(projectId: string) {
 }
 
 /**
- * 分析配音台词
+ * Analyze voice lines
  */
 
 export function useAnalyzeProjectVoice(projectId: string) {
@@ -125,7 +125,7 @@ export function useAnalyzeProjectVoice(projectId: string) {
 }
 
 /**
- * 生成单条/批量配音
+ * Generate single or batch voice
  */
 
 export function useGenerateProjectVoice(projectId: string) {
@@ -152,7 +152,7 @@ export function useGenerateProjectVoice(projectId: string) {
 }
 
 /**
- * 创建台词
+ * Create voice line
  */
 
 export function useCreateProjectVoiceLine(projectId: string) {
@@ -176,7 +176,7 @@ export function useCreateProjectVoiceLine(projectId: string) {
 }
 
 /**
- * 更新台词字段
+ * Update voice line field
  */
 
 export function useUpdateProjectVoiceLine(projectId: string) {
@@ -195,7 +195,7 @@ export function useUpdateProjectVoiceLine(projectId: string) {
 }
 
 /**
- * 删除台词
+ * Delete voice line
  */
 
 export function useDeleteProjectVoiceLine(projectId: string) {
@@ -212,7 +212,7 @@ export function useDeleteProjectVoiceLine(projectId: string) {
 }
 
 /**
- * 下载配音 zip
+ * Download voice zip
  */
 
 export function useDownloadProjectVoices(projectId: string) {
@@ -227,8 +227,8 @@ export function useDownloadProjectVoices(projectId: string) {
 }
 
 /**
- * 为发言人直接设置音色（写入 episode.speakerVoices）
- * 用于不在资产库中的角色在配音阶段内联绑定音色
+ * Set voice for speaker directly (writes to episode.speakerVoices)
+ * Used for characters not in asset hub to bind voice inline during voice stage
  */
 export function useUpdateSpeakerVoice(projectId: string) {
     return useMutation({

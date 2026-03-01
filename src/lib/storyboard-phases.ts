@@ -136,7 +136,7 @@ export const PHASE_PROGRESS: Record<string, { start: number, end: number, label:
     '3': { start: 70, end: 100, label: 'Detail refinement', labelKey: 'phases.detail' }
 }
 
-// 中间结果存储接口
+// Intermediate result storage interface
 export interface PhaseResult {
     clipId: string
     planPanels?: StoryboardPanel[]
@@ -387,7 +387,7 @@ export async function executePhase1(
     return { clipId, planPanels }
 }
 
-// ========== Phase 2: 摄影规则生成 ==========
+// ========== Phase 2: Photography rules generation ==========
 export async function executePhase2(
     clip: ClipAsset,
     planPanels: StoryboardPanel[],
@@ -400,9 +400,9 @@ export async function executePhase2(
 ): Promise<PhaseResult> {
     const clipId = formatClipId(clip)
     void taskId
-    _ulogInfo(`[Phase 2] Clip ${clipId}: 开始生成摄影规则...`)
+    _ulogInfo(`[Phase 2] Clip ${clipId}: Starting photography rules generation...`)
 
-    // 读取提示词
+    // Read prompt template
     const cinematographerPromptTemplate = getPromptTemplate(PROMPT_IDS.NP_AGENT_CINEMATOGRAPHER, locale)
 
     // Parse clip data
@@ -422,7 +422,7 @@ export async function executePhase2(
 
     let photographyRules: PhotographyRule[] = []
 
-    // 失败后重试一次
+    // Retry once after failure
     for (let attempt = 1; attempt <= 2; attempt++) {
         try {
             const cinematographerResult = await executeAiTextStep({
@@ -434,7 +434,7 @@ export async function executePhase2(
                 action: 'storyboard_phase2_cinematography',
                 meta: {
                     stepId: 'storyboard_phase2_cinematography',
-                    stepTitle: '摄影规则',
+                    stepTitle: 'Photography rules',
                     stepIndex: 1,
                     stepTotal: 1,
                 },
@@ -442,21 +442,21 @@ export async function executePhase2(
 
             const responseText = cinematographerResult.text
             if (!responseText) {
-                throw new Error(`Phase 2: 无响应 clip ${clipId}`)
+                throw new Error(`Phase 2: No response clip ${clipId}`)
             }
 
             photographyRules = parseJsonResponse<PhotographyRule>(responseText, clipId, 2)
 
-            _ulogInfo(`[Phase 2] Clip ${clipId}: 成功生成 ${photographyRules.length} 个镜头的摄影规则`)
+            _ulogInfo(`[Phase 2] Clip ${clipId}: Successfully generated ${photographyRules.length} photography rules for shots`)
 
-            // 记录摄影方案生成结果
+            // Log cinematography plan generation result
             logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
                 action: 'CINEMATOGRAPHER_PLAN',
                 output: {
-                    片段标识: clipId,
-                    镜头数量: planPanels.length,
-                    摄影规则数量: photographyRules.length,
-                    摄影规则: photographyRules
+                    clipId,
+                    shotCount: planPanels.length,
+                    photographyRulesCount: photographyRules.length,
+                    photographyRules
                 },
                 model: novelPromotionData.analysisModel
             })
@@ -465,7 +465,7 @@ export async function executePhase2(
             break
         } catch (e: unknown) {
             const message = e instanceof Error ? e.message : String(e)
-            _ulogError(`[Phase 2] Clip ${clipId}: 第${attempt}次尝试失败: ${message}`)
+            _ulogError(`[Phase 2] Clip ${clipId}: Attempt ${attempt} failed: ${message}`)
             if (attempt === 2) throw e
         }
     }
@@ -473,7 +473,7 @@ export async function executePhase2(
     return { clipId, planPanels, photographyRules }
 }
 
-// ========== Phase 2-Acting: 演技指导生成 ==========
+// ========== Phase 2-Acting: Acting direction generation ==========
 export async function executePhase2Acting(
     clip: ClipAsset,
     planPanels: StoryboardPanel[],
@@ -487,11 +487,11 @@ export async function executePhase2Acting(
     const clipId = formatClipId(clip)
     void taskId
     _ulogInfo(`[Phase 2-Acting] ==========================================`)
-    _ulogInfo(`[Phase 2-Acting] Clip ${clipId}: 开始生成演技指导...`)
-    _ulogInfo(`[Phase 2-Acting] planPanels 数量: ${planPanels.length}`)
+    _ulogInfo(`[Phase 2-Acting] Clip ${clipId}: Starting acting direction generation...`)
+    _ulogInfo(`[Phase 2-Acting] planPanels count: ${planPanels.length}`)
     _ulogInfo(`[Phase 2-Acting] projectId: ${projectId}, projectName: ${projectName}`)
 
-    // 读取提示词
+    // Read prompt template
     const actingPromptTemplate = getPromptTemplate(PROMPT_IDS.NP_AGENT_ACTING_DIRECTION, locale)
 
     // Parse clip data
@@ -508,7 +508,7 @@ export async function executePhase2Acting(
 
     let actingDirections: ActingDirection[] = []
 
-    // 失败后重试一次
+    // Retry once after failure
     for (let attempt = 1; attempt <= 2; attempt++) {
         try {
             const actingResult = await executeAiTextStep({
@@ -520,7 +520,7 @@ export async function executePhase2Acting(
                 action: 'storyboard_phase2_acting',
                 meta: {
                     stepId: 'storyboard_phase2_acting',
-                    stepTitle: '演技指导',
+                    stepTitle: 'Acting direction',
                     stepIndex: 1,
                     stepTotal: 1,
                 },
@@ -528,21 +528,21 @@ export async function executePhase2Acting(
 
             const responseText = actingResult.text
             if (!responseText) {
-                throw new Error(`Phase 2-Acting: 无响应 clip ${clipId}`)
+                throw new Error(`Phase 2-Acting: No response clip ${clipId}`)
             }
 
             actingDirections = parseJsonResponse<ActingDirection>(responseText, clipId, 2)
 
-            _ulogInfo(`[Phase 2-Acting] Clip ${clipId}: 成功生成 ${actingDirections.length} 个镜头的演技指导`)
+            _ulogInfo(`[Phase 2-Acting] Clip ${clipId}: Successfully generated ${actingDirections.length} acting directions for shots`)
 
-            // 记录演技指导生成结果
+            // Log acting direction generation result
             logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
                 action: 'ACTING_DIRECTION_PLAN',
                 output: {
-                    片段标识: clipId,
-                    镜头数量: planPanels.length,
-                    演技指导数量: actingDirections.length,
-                    演技指导: actingDirections
+                    clipId,
+                    shotCount: planPanels.length,
+                    actingDirectionsCount: actingDirections.length,
+                    actingDirections
                 },
                 model: novelPromotionData.analysisModel
             })
@@ -551,7 +551,7 @@ export async function executePhase2Acting(
             break
         } catch (e: unknown) {
             const message = e instanceof Error ? e.message : String(e)
-            _ulogError(`[Phase 2-Acting] Clip ${clipId}: 第${attempt}次尝试失败: ${message}`)
+            _ulogError(`[Phase 2-Acting] Clip ${clipId}: Attempt ${attempt} failed: ${message}`)
             if (attempt === 2) throw e
         }
     }
@@ -559,7 +559,7 @@ export async function executePhase2Acting(
     return { clipId, planPanels, actingDirections }
 }
 
-// ========== Phase 3: 补充细节和video_prompt ==========
+// ========== Phase 3: Add details and video_prompt ==========
 export async function executePhase3(
     clip: ClipAsset,
     planPanels: StoryboardPanel[],
@@ -630,34 +630,35 @@ export async function executePhase3(
             logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
                 action: 'STORYBOARD_PHASE3_OUTPUT',
                 output: {
-                    片段标识: clipId,
-                    总分镜数: finalPanels.length,
-                    第三阶段完整结果_过滤前: finalPanels
+                    clipId,
+                    totalPanelCount: finalPanels.length,
+                    phase3ResultBeforeFilter: finalPanels
                 },
                 model: novelPromotionData.analysisModel
             })
 
-            // 过滤掉"无"的空分镜
+            // Filter out empty panels (supports both "无" and "None" for locale compatibility)
             const beforeFilterCount = finalPanels.length
             finalPanels = finalPanels.filter((panel) =>
-                panel.description && panel.description !== '无' && panel.location !== '无'
+                panel.description && panel.description !== '无' && panel.description !== 'None' &&
+                panel.location !== '无' && panel.location !== 'None'
             )
-            _ulogInfo(`[Phase 3] Clip ${clipId}: 过滤空分镜 ${beforeFilterCount} -> ${finalPanels.length} 个有效分镜`)
+            _ulogInfo(`[Phase 3] Clip ${clipId}: Filtered empty panels ${beforeFilterCount} -> ${finalPanels.length} valid panels`)
 
             if (finalPanels.length === 0) {
-                throw new Error(`Phase 3: 过滤后无有效分镜 clip ${clipId}`)
+                throw new Error(`Phase 3: No valid panels after filtering clip ${clipId}`)
             }
 
-            // 注意：photographyRules的合并已移至route.ts中，与并行执行的Phase 2结果合并
+            // Note: photographyRules merge is in route.ts, combined with parallel Phase 2 results
 
-            // 记录最终输出
+            // Log final output
             logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
                 action: 'STORYBOARD_FINAL_OUTPUT',
                 output: {
-                    片段标识: clipId,
-                    过滤前总数: beforeFilterCount,
-                    过滤后有效数: finalPanels.length,
-                    最终有效分镜: finalPanels
+                    clipId,
+                    beforeFilterCount,
+                    afterFilterCount: finalPanels.length,
+                    finalPanels
                 },
                 model: novelPromotionData.analysisModel
             })
@@ -666,12 +667,12 @@ export async function executePhase3(
             break
         } catch (e: unknown) {
             const message = e instanceof Error ? e.message : String(e)
-            _ulogError(`[Phase 3] Clip ${clipId}: 第${attempt}次尝试失败: ${message}`)
+            _ulogError(`[Phase 3] Clip ${clipId}: Attempt ${attempt} failed: ${message}`)
             if (attempt === 2) throw e
         }
     }
 
-    _ulogInfo(`[Phase 3] Clip ${clipId}: 完成 ${finalPanels.length} 个镜头细节`)
+    _ulogInfo(`[Phase 3] Clip ${clipId}: Completed ${finalPanels.length} shot details`)
 
     return { clipId, finalPanels }
 }

@@ -44,7 +44,7 @@ export function useAiModifyProjectShotPrompt(projectId: string) {
 }
 
 /**
- * 设计音色（项目）
+ * Analyze shot variants (project)
  */
 
 export function useAnalyzeProjectShotVariants(projectId: string) {
@@ -57,7 +57,7 @@ export function useAnalyzeProjectShotVariants(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 },
-                '分析失败',
+                'Analysis failed',
             )
             return await resolveTaskResponse<{
                 success: boolean
@@ -81,7 +81,7 @@ export function useAnalyzeProjectShotVariants(projectId: string) {
 }
 
 /**
- * 更新摄影规则（项目）
+ * Update photography plan (project)
  */
 
 export function useUpdateProjectPhotographyPlan(projectId: string) {
@@ -97,13 +97,13 @@ export function useUpdateProjectPhotographyPlan(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 },
-                '保存摄影规则失败',
+                'Failed to save photography plan',
             ),
     })
 }
 
 /**
- * 更新镜头演技指导（项目）
+ * Update panel acting notes (project)
  */
 
 export function useUpdateProjectPanelActingNotes(projectId: string) {
@@ -120,13 +120,13 @@ export function useUpdateProjectPanelActingNotes(projectId: string) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 },
-                '保存演技指导失败',
+                'Failed to save acting notes',
             ),
     })
 }
 
 /**
- * 选择/取消镜头候选图（项目）
+ * Select or deselect panel candidate image (project)
  */
 
 export function useSelectProjectPanelCandidate(projectId: string) {
