@@ -1,21 +1,20 @@
 import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core'
 /**
- * 火山引擎 API 统一调用工具
- * 
- * 解决问题：Vercel（海外）→ 火山引擎（北京）跨境网络超时
- * 
- * 功能：
- * - 60秒超时配置（Vercel Pro 函数限制）
- * - 自动重试机制（最多3次，指数退避）
- * - 详细的错误日志
+ * Volcengine Ark API unified client
+ *
+ * Addresses cross-region timeout (e.g. Vercel -> Volcengine Beijing).
+ *
+ * - 60s timeout (Vercel Pro limit)
+ * - Auto retry (max 3, exponential backoff)
+ * - Detailed error logging
  */
 
 const ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
 
-// 超时配置
-const DEFAULT_TIMEOUT_MS = 60 * 1000  // 60秒
+// Timeout
+const DEFAULT_TIMEOUT_MS = 60 * 1000  // 60s
 const MAX_RETRIES = 3
-const RETRY_DELAY_BASE_MS = 2000  // 2秒起始延迟
+const RETRY_DELAY_BASE_MS = 2000  // 2s initial delay
 
 function normalizeError(error: unknown): {
     name?: string
@@ -51,10 +50,10 @@ interface ArkImageGenerationRequest {
     model: string
     prompt: string
     response_format?: 'url' | 'b64_json'
-    size?: string  // 支持 '1K' | '2K' | '4K' 或具体像素值如 '2560x1440'
-    aspect_ratio?: string  // 宽高比如 '3:2', '16:9', '1:1'
+    size?: string  // '1K' | '2K' | '4K' or pixel e.g. '2560x1440'
+    aspect_ratio?: string  // e.g. '3:2', '16:9', '1:1'
     watermark?: boolean
-    image?: string[]  // 图生图时的参考图片
+    image?: string[]  // Reference images for img2img
     sequential_image_generation?: 'enabled' | 'disabled'
     stream?: boolean
 }
@@ -251,7 +250,7 @@ function validateArkVideoTaskRequest(request: ArkVideoTaskRequest) {
 }
 
 /**
- * 带超时的 fetch 封装
+ * Fetch with timeout
  */
 async function fetchWithTimeout(
     url: string,
@@ -261,10 +260,10 @@ async function fetchWithTimeout(
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 
-    // 🔧 本地模式修复：相对路径需要补全完整 URL
+    // Local mode: relative URLs need full base
     let fullUrl = url
     if (url.startsWith('/')) {
-        // 服务端 fetch 需要完整 URL，使用 localhost:3000 作为基础地址
+        // Server fetch needs full URL; use localhost:3000 as base
         const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
         fullUrl = `${baseUrl}${url}`
     }
@@ -281,7 +280,7 @@ async function fetchWithTimeout(
 }
 
 /**
- * 带重试的 fetch 封装
+ * Fetch with retry
  */
 async function fetchWithRetry(
     url: string,
@@ -294,25 +293,25 @@ async function fetchWithRetry(
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            _ulogInfo(`${logPrefix} 第 ${attempt}/${maxRetries} 次尝试请求`)
+            _ulogInfo(`${logPrefix} Attempt ${attempt}/${maxRetries}`)
 
             const response = await fetchWithTimeout(url, options, timeoutMs)
 
-            // 请求成功
+            // Success
             if (response.ok) {
                 if (attempt > 1) {
-                    _ulogInfo(`${logPrefix} 第 ${attempt} 次尝试成功`)
+                    _ulogInfo(`${logPrefix} Attempt ${attempt} succeeded`)
                 }
                 return response
             }
 
-            // HTTP 错误，但不是网络错误，可能是业务错误
+            // HTTP error (may be business error, not network)
             const errorText = await response.text()
             _ulogError(`${logPrefix} HTTP ${response.status}: ${errorText}`)
 
-            // 对于某些错误不重试（如 400 参数错误、403 权限错误）
+            // Do not retry some errors (e.g. 400, 403)
             if (response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 429) {
-                // 创建一个可以返回原始文本的 Response
+                // Return response with original body
                 return new Response(errorText, {
                     status: response.status,
                     statusText: response.statusText,
@@ -325,7 +324,7 @@ async function fetchWithRetry(
             const normalized = normalizeError(error)
             lastError = error instanceof Error ? error : new Error(normalized.message)
 
-            // 详细记录错误信息
+            // Log error details
             const errorDetails = {
                 attempt,
                 maxRetries,
@@ -337,35 +336,35 @@ async function fetchWithRetry(
                 isNetworkError: normalized.message.includes('fetch failed') || normalized.name === 'TypeError'
             }
 
-            _ulogError(`${logPrefix} 第 ${attempt}/${maxRetries} 次尝试失败:`, JSON.stringify(errorDetails, null, 2))
+            _ulogError(`${logPrefix} Attempt ${attempt}/${maxRetries} failed:`, JSON.stringify(errorDetails, null, 2))
         }
 
-        // 如果不是最后一次尝试，等待后重试
+        // Wait before retry
         if (attempt < maxRetries) {
-            const delayMs = RETRY_DELAY_BASE_MS * Math.pow(2, attempt - 1)  // 指数退避：2s, 4s, 8s
-            _ulogInfo(`${logPrefix} 等待 ${delayMs / 1000} 秒后重试...`)
+            const delayMs = RETRY_DELAY_BASE_MS * Math.pow(2, attempt - 1)  // Backoff: 2s, 4s, 8s
+            _ulogInfo(`${logPrefix} Waiting ${delayMs / 1000}s before retry...`)
             await new Promise(resolve => setTimeout(resolve, delayMs))
         }
     }
 
-    // 所有重试都失败
-    throw lastError || new Error(`${logPrefix} 所有 ${maxRetries} 次重试都失败`)
+    // All retries failed
+    throw lastError || new Error(`${logPrefix} All ${maxRetries} retries failed`)
 }
 
 /**
- * 火山引擎图片生成 API
+ * Volcengine Ark image generation API
  */
 export async function arkImageGeneration(
     request: ArkImageGenerationRequest,
     options?: {
-        apiKey: string  // 必须传入 API Key
+        apiKey: string  // Required
         timeoutMs?: number
         maxRetries?: number
         logPrefix?: string
     }
 ): Promise<ArkImageGenerationResponse> {
     if (!options?.apiKey) {
-        throw new Error('请配置火山引擎 API Key')
+        throw new Error('Please configure Volcengine Ark API Key')
     }
 
     const {
@@ -377,8 +376,8 @@ export async function arkImageGeneration(
 
     const url = `${ARK_BASE_URL}/images/generations`
 
-    _ulogInfo(`${logPrefix} 开始图片生成请求, 模型: ${request.model}`)
-    _ulogInfo(`${logPrefix} 请求参数:`, JSON.stringify({
+    _ulogInfo(`${logPrefix} Starting image generation, model: ${request.model}`)
+    _ulogInfo(`${logPrefix} Request params:`, JSON.stringify({
         model: request.model,
         size: request.size,
         aspect_ratio: request.aspect_ratio,
@@ -404,28 +403,28 @@ export async function arkImageGeneration(
 
     if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`${logPrefix} 图片生成失败: ${response.status} - ${errorText}`)
+        throw new Error(`${logPrefix} Image generation failed: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()
-    _ulogInfo(`${logPrefix} 图片生成成功`)
+    _ulogInfo(`${logPrefix} Image generation succeeded`)
     return data
 }
 
 /**
- * 火山引擎视频任务创建 API
+ * Volcengine Ark video task create API
  */
 export async function arkCreateVideoTask(
     request: ArkVideoTaskRequest,
     options: {
-        apiKey: string  // 必须传入 API Key
+        apiKey: string  // Required
         timeoutMs?: number
         maxRetries?: number
         logPrefix?: string
     }
 ): Promise<{ id: string; [key: string]: unknown }> {
     if (!options.apiKey) {
-        throw new Error('请配置火山引擎 API Key')
+        throw new Error('Please configure Volcengine Ark API Key')
     }
     validateArkVideoTaskRequest(request)
 
@@ -438,7 +437,7 @@ export async function arkCreateVideoTask(
 
     const url = `${ARK_BASE_URL}/contents/generations/tasks`
 
-    _ulogInfo(`${logPrefix} 创建视频任务, 模型: ${request.model}`)
+    _ulogInfo(`${logPrefix} Creating video task, model: ${request.model}`)
 
     const response = await fetchWithRetry(
         url,
@@ -457,29 +456,29 @@ export async function arkCreateVideoTask(
 
     if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`${logPrefix} 创建视频任务失败: ${response.status} - ${errorText}`)
+        throw new Error(`${logPrefix} Create video task failed: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()
     const taskId = data.id
-    _ulogInfo(`${logPrefix} 视频任务创建成功, taskId: ${taskId}`)
+    _ulogInfo(`${logPrefix} Video task created, taskId: ${taskId}`)
     return { id: taskId, ...data }
 }
 
 /**
- * 火山引擎视频任务状态查询 API
+ * Volcengine Ark video task status API
  */
 export async function arkQueryVideoTask(
     taskId: string,
     options: {
-        apiKey: string  // 必须传入 API Key
+        apiKey: string  // Required
         timeoutMs?: number
         maxRetries?: number
         logPrefix?: string
     }
 ): Promise<ArkVideoTaskResponse> {
     if (!options.apiKey) {
-        throw new Error('请配置火山引擎 API Key')
+        throw new Error('Please configure Volcengine Ark API Key')
     }
 
     const {
@@ -506,15 +505,15 @@ export async function arkQueryVideoTask(
 
     if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`${logPrefix} 查询视频任务失败: ${response.status} - ${errorText}`)
+        throw new Error(`${logPrefix} Query video task failed: ${response.status} - ${errorText}`)
     }
 
     return await response.json()
 }
 
 /**
- * 通用的带超时和重试的 fetch 函数
- * 用于下载图片、视频等
+ * Generic fetch with timeout and retry
+ * For downloading images, video, etc.
  */
 export async function fetchWithTimeoutAndRetry(
     url: string,
@@ -534,6 +533,6 @@ export async function fetchWithTimeoutAndRetry(
     return fetchWithRetry(url, fetchOptions, maxRetries, timeoutMs, logPrefix)
 }
 
-// 导出常量，供其他模块参考
+// Export for other modules
 export const ARK_API_TIMEOUT_MS = DEFAULT_TIMEOUT_MS
 export const ARK_API_MAX_RETRIES = MAX_RETRIES

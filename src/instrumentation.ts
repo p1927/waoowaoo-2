@@ -1,18 +1,18 @@
-// Next.js Instrumentation - 在应用启动时执行
+// Next.js Instrumentation - runs on app startup
 // https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
 
 export async function register() {
-  // 在 Edge Runtime 中直接返回，避免加载 Prisma（它使用了动态代码生成）
+  // Skip in Edge Runtime to avoid loading Prisma (uses dynamic codegen)
   if (process.env.NEXT_RUNTIME === 'edge') {
     return
   }
 
-  // 只在 Node.js 服务端运行
+  // Run only on Node.js server
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     const { prisma } = await import('@/lib/prisma')
     const { logInfo: _ulogInfo, logError: _ulogError } = await import('@/lib/logging/core')
 
-    // Phase 1: 将 processing 任务打回 queued
+    // Phase 1: Reset processing tasks to queued
     try {
       const resetResult = await prisma.task.updateMany({
         where: {
@@ -22,8 +22,7 @@ export async function register() {
           status: 'queued',
           startedAt: null,
           heartbeatAt: null,
-          // 保留 externalId，让 worker 重启后能从中断处继续轮询
-          // 而不是重新提交给外部 API（Kling 等），避免重复扣费
+          // Keep externalId so worker can resume polling after restart (avoid re-submit to external API)
         },
       })
 
@@ -34,8 +33,7 @@ export async function register() {
       _ulogError('[Instrumentation] Failed to reset processing tasks:', error)
     }
 
-    // Phase 2: 将所有 queued 任务重新加入 BullMQ 队列
-    // 解决 Redis 重启后 DB 仍为 queued 但 BullMQ Job 丢失的孤儿任务问题
+    // Phase 2: Re-enqueue queued tasks to BullMQ (orphans after Redis restart)
     try {
       const { addTaskJob } = await import('@/lib/task/queues')
       const { locales } = await import('@/i18n/routing')
@@ -201,7 +199,7 @@ export async function register() {
       _ulogError('[Instrumentation] Failed to re-enqueue orphaned tasks:', error)
     }
 
-    // ─── Phase 3: 启动 Task Watchdog（DB ↔ BullMQ 持续对账）───
+    // Phase 3: Start Task Watchdog (DB ↔ BullMQ reconciliation)
     try {
       const { startTaskWatchdog } = await import('@/lib/task/reconcile')
       startTaskWatchdog()

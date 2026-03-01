@@ -31,13 +31,8 @@ function isProjectScoped(projectId: string): boolean {
 }
 
 /**
- * 从计费参数中提取展示用的详细信息，序列化为 JSON 存入 billingMeta
- * 前端按 unit 字段决定展示方式：
- *   image  → "3张 · 2K"
- *   video  → "5秒 · 720p"
- *   token  → "1500 tokens"
- *   second → "30秒"
- *   call   → "1次"
+ * Build display details from billing params, serialize as JSON into billingMeta.
+ * Frontend uses unit to display, e.g. image → "3 · 2K", video → "5s · 720p", token → "1500 tokens", second → "30s", call → "1 call"
  */
 export function buildBillingMeta(params: {
   quantity: number
@@ -46,7 +41,7 @@ export function buildBillingMeta(params: {
   apiType: string
   metadata?: Record<string, unknown>
 }): string {
-  // 尝试从 model composite ID 提取短名 "provider:xxx::model" → "model"
+  // Extract short name from model composite ID "provider:xxx::model" → "model"
   const modelShort = params.model.includes('::')
     ? params.model.split('::').pop() ?? params.model
     : params.model
@@ -58,7 +53,7 @@ export function buildBillingMeta(params: {
     apiType: params.apiType,
   }
 
-  // 从 pricingSelections 提取 capability 字段（图片分辨率、视频时长/分辨率等）
+  // Extract capability from pricingSelections (image resolution, video duration/resolution, etc.)
   const selections = params.metadata?.pricingSelections
   if (selections && typeof selections === 'object') {
     const sel = selections as Record<string, unknown>
@@ -68,11 +63,11 @@ export function buildBillingMeta(params: {
     if (sel.generationMode) meta.generationMode = sel.generationMode
   }
 
-  // 文本计费的 token 信息
+  // Token info for text billing
   if (params.metadata?.inputTokens) meta.inputTokens = params.metadata.inputTokens
   if (params.metadata?.outputTokens) meta.outputTokens = params.metadata.outputTokens
 
-  // 实际使用的模型列表（复合模型场景）
+  // Actual models used (composite model case)
   if (Array.isArray(params.metadata?.actualModels) && (params.metadata.actualModels as unknown[]).length > 0) {
     meta.actualModels = params.metadata.actualModels
   }
@@ -113,7 +108,7 @@ export async function recordUsageCostOnly(
       },
     })
   } else {
-    _ulogInfo(`[计费] 跳过 UsageCost 记录 (projectId=${params.projectId})，仅记录流水`)
+    _ulogInfo(`[Billing] Skip UsageCost record (projectId=${params.projectId}), log flow only`)
   }
 
   await txOrPrisma.balanceTransaction.create({
@@ -132,7 +127,7 @@ export async function recordUsageCostOnly(
     },
   })
 
-  _ulogInfo(`[计费] ${params.action} - ${params.model} - ¥${params.cost.toFixed(4)} (已记录${hasProject ? '' : '，无项目归属'})`)
+  _ulogInfo(`[Billing] ${params.action} - ${params.model} - ¥${params.cost.toFixed(4)} (recorded${hasProject ? '' : ', no project'})`)
 }
 
 export async function getProjectTotalCost(projectId: string): Promise<number> {
@@ -143,7 +138,7 @@ export async function getProjectTotalCost(projectId: string): Promise<number> {
     })
     return toMoneyNumber(result._sum.cost)
   } catch (error) {
-    _ulogError('[计费] 查询项目总费用失败:', error)
+    _ulogError('[Billing] Query project total cost failed:', error)
     return 0
   }
 }
@@ -221,7 +216,7 @@ export async function getUserCostSummary(userId: string) {
       })),
     }
   } catch (error) {
-    _ulogError('[计费] 查询用户费用汇总失败:', error)
+    _ulogError('[Billing] Query user cost summary failed:', error)
     return {
       total: 0,
       byProject: [],

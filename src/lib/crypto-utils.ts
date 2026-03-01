@@ -71,23 +71,23 @@ export function encryptApiKey(plaintext: string): string {
 }
 
 /**
- * 解密 API Key
- * 
- * @param ciphertext 加密后的字符串（encryptApiKey 的返回值）
- * @returns 明文 API Key
- * 
+ * Decrypt API Key
+ *
+ * @param ciphertext Encrypted string (return value of encryptApiKey)
+ * @returns Plain API Key
+ *
  * @example
  * const decrypted = decryptApiKey('a1b2c3d4e5f6....:d7e8f9a0b1c2....:1234567890ab....')
- * // 返回: "sk-or-v1-abc123..."
+ * // Returns: "sk-or-v1-abc123..."
  */
 export function decryptApiKey(ciphertext: string): string {
     if (!ciphertext || ciphertext.trim() === '') {
-        throw new Error('加密数据不能为空')
+        throw new Error('Encrypted data cannot be empty')
     }
 
     const parts = ciphertext.split(':')
     if (parts.length !== 3) {
-        throw new Error('加密数据格式错误')
+        throw new Error('Encrypted data format invalid')
     }
 
     const [ivHex, authTagHex, encryptedHex] = parts
@@ -109,11 +109,11 @@ export function decryptApiKey(ciphertext: string): string {
 }
 
 /**
- * 批量加密 API Key 对象
- * 
- * @param apiKeys 对象，key 为服务名，value 为对象（包含 apiKey 等字段）
- * @returns 加密后的字符串（JSON 格式）
- * 
+ * Encrypt API Key object (batch)
+ *
+ * @param apiKeys Object keyed by service name, values contain apiKey etc.
+ * @returns Encrypted JSON string
+ *
  * @example
  * const encrypted = encryptApiKeyObject({
  *   google: { apiKey: 'abc123' },
@@ -127,7 +127,7 @@ export function encryptApiKeyObject(apiKeys: ApiKeyObject): string {
         if (isApiKeyObject(config)) {
             const encryptedConfig: ApiKeyObject = { ...config }
 
-            // 加密所有包含 'key' 或 'secret' 的字段
+            // Encrypt all fields containing 'key' or 'secret'
             for (const [key, value] of Object.entries(config)) {
                 if (typeof value === 'string' && value.trim() !== '') {
                     const lowerKey = key.toLowerCase()
@@ -144,10 +144,10 @@ export function encryptApiKeyObject(apiKeys: ApiKeyObject): string {
 }
 
 /**
- * 批量解密 API Key 对象
- * 
- * @param encryptedJson 加密后的 JSON 字符串
- * @returns 解密后的对象
+ * Decrypt API Key object (batch)
+ *
+ * @param encryptedJson Encrypted JSON string
+ * @returns Decrypted object
  */
 export function decryptApiKeyObject(encryptedJson: string): ApiKeyObject {
     if (!encryptedJson || encryptedJson.trim() === '') {
@@ -165,7 +165,7 @@ export function decryptApiKeyObject(encryptedJson: string): ApiKeyObject {
             if (isApiKeyObject(config)) {
                 const decryptedConfig: ApiKeyObject = { ...config }
 
-                // 解密所有包含 'key' 或 'secret' 的字段
+                // Decrypt all fields containing 'key' or 'secret'
                 for (const [key, value] of Object.entries(config)) {
                     if (typeof value === 'string' && value.trim() !== '') {
                         const lowerKey = key.toLowerCase()
@@ -173,8 +173,8 @@ export function decryptApiKeyObject(encryptedJson: string): ApiKeyObject {
                             try {
                                 decryptedConfig[key] = decryptApiKey(value)
                             } catch (error) {
-                                _ulogError(`解密 ${provider}.${key} 失败:`, error)
-                                // 如果解密失败，保持原值（可能是明文）
+                                _ulogError(`Decrypt ${provider}.${key} failed:`, error)
+                                // On decrypt failure keep original (may be plaintext)
                                 decryptedConfig[key] = value
                             }
                         }
@@ -186,7 +186,7 @@ export function decryptApiKeyObject(encryptedJson: string): ApiKeyObject {
 
         return decrypted
     } catch (error) {
-        _ulogError('解密 API Key 对象失败:', error)
+        _ulogError('Decrypt API Key object failed:', error)
         return {}
     }
 }

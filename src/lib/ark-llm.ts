@@ -1,5 +1,5 @@
 /**
- * 火山引擎 Ark LLM (Responses API) 封装
+ * Volcengine Ark LLM (Responses API) wrapper
  */
 
 export interface ArkResponsesOptions {
@@ -104,7 +104,7 @@ function extractArkUsage(data: unknown): { promptTokens: number; completionToken
 
 export async function arkResponsesCompletion(options: ArkResponsesOptions): Promise<ArkResponsesResult> {
     if (!options.apiKey) {
-        throw new Error('请配置火山引擎 API Key')
+        throw new Error('Please configure Volcengine Ark API Key')
     }
 
     const thinking = options.thinking
@@ -129,7 +129,7 @@ export async function arkResponsesCompletion(options: ArkResponsesOptions): Prom
 
     if (!response.ok) {
         const errorText = await response.text()
-        throw new Error(`Ark Responses 调用失败: ${response.status} - ${errorText}`)
+        throw new Error(`Ark Responses call failed: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()

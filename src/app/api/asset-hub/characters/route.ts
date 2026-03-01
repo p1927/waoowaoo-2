@@ -96,13 +96,13 @@ export const POST = apiHandler(async (request: NextRequest) => {
         }
     })
 
-    const descText = description?.trim() || `${name.trim()} 的角色设定`
+    const descText = description?.trim() || `Character setting for ${name.trim()}`
     const imageMedia = await resolveMediaRefFromLegacyValue(initialImageUrl || null)
     const appearance = await prisma.globalCharacterAppearance.create({
         data: {
             characterId: character.id,
             appearanceIndex: PRIMARY_APPEARANCE_INDEX,
-            changeReason: '初始形象',
+            changeReason: 'Initial appearance',
             description: descText,
             descriptions: JSON.stringify([descText]),
             imageUrl: initialImageUrl || null,

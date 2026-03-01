@@ -1,7 +1,7 @@
 import { logError as _ulogError } from '@/lib/logging/core'
 /**
- * AI 设计共享工具函数
- * 统一处理 Asset Hub 和 Novel Promotion 的 AI 设计逻辑
+ * AI design shared utilities
+ * Shared AI design logic for Asset Hub and Novel Promotion
  */
 
 import { executeAiTextStep } from '@/lib/ai-runtime'
@@ -17,9 +17,9 @@ export interface AIDesignOptions {
     analysisModel: string
     userInstruction: string
     assetType: AssetType
-    /** 用于计费的上下文：'asset-hub' 或实际的 projectId */
+    /** Billing context: 'asset-hub' or actual projectId */
     projectId?: string
-    /** 任务 worker 内执行时使用，避免和任务计费重复 */
+    /** When run inside task worker, skip billing to avoid double charge */
     skipBilling?: boolean
 }
 
@@ -30,8 +30,7 @@ export interface AIDesignResult {
 }
 
 /**
- * AI 设计通用函数
- * 根据用户指令生成角色或场景的 prompt 描述
+ * AI design: generate character or location prompt from user instruction
  */
 export async function aiDesign(options: AIDesignOptions): Promise<AIDesignResult> {
     const {
@@ -47,14 +46,14 @@ export async function aiDesign(options: AIDesignOptions): Promise<AIDesignResult
     if (!userInstruction?.trim()) {
         return {
             success: false,
-            error: assetType === 'character' ? '请输入人物设计需求' : '请输入场景设计需求'
+            error: assetType === 'character' ? 'Please enter character design requirements' : 'Please enter location design requirements'
         }
     }
 
     if (!analysisModel) {
         return {
             success: false,
-            error: '请先在用户配置中设置分析模型'
+            error: 'Please set the analysis model in user settings first'
         }
     }
 
@@ -70,11 +69,11 @@ export async function aiDesign(options: AIDesignOptions): Promise<AIDesignResult
             },
         })
     } catch {
-        _ulogError('[AI Design] 提示词加载失败')
-        return { success: false, error: '系统配置错误' }
+        _ulogError('[AI Design] Prompt load failed')
+        return { success: false, error: 'System config error' }
     }
 
-    // 调用 LLM
+    // Call LLM
     const action = assetType === 'character' ? 'ai_design_character' : 'ai_design_location'
     const maxInputTokens = Math.max(1200, Math.ceil(finalPrompt.length * 1.2))
     const maxOutputTokens = 1200
@@ -88,7 +87,7 @@ export async function aiDesign(options: AIDesignOptions): Promise<AIDesignResult
             action,
             meta: {
                 stepId: action,
-                stepTitle: assetType === 'character' ? '角色设计' : '场景设计',
+                stepTitle: assetType === 'character' ? 'Character design' : 'Location design',
                 stepIndex: 1,
                 stepTotal: 1,
             },
@@ -107,10 +106,10 @@ export async function aiDesign(options: AIDesignOptions): Promise<AIDesignResult
     const aiResponse = completion.text
 
     if (!aiResponse) {
-        return { success: false, error: 'AI返回内容为空' }
+        return { success: false, error: 'AI returned empty content' }
     }
 
-    // 解析 JSON 响应
+    // Parse JSON response
     let parsedResponse
     try {
         parsedResponse = JSON.parse(aiResponse)
@@ -120,17 +119,17 @@ export async function aiDesign(options: AIDesignOptions): Promise<AIDesignResult
             try {
                 parsedResponse = JSON.parse(jsonMatch[0])
             } catch {
-                _ulogError('[AI Design] AI 响应解析失败:', aiResponse)
-                return { success: false, error: 'AI返回格式错误' }
+                _ulogError('[AI Design] AI response parse failed:', aiResponse)
+                return { success: false, error: 'AI response format error' }
             }
         } else {
-            _ulogError('[AI Design] AI 响应解析失败:', aiResponse)
-            return { success: false, error: 'AI返回格式错误' }
+            _ulogError('[AI Design] AI response parse failed:', aiResponse)
+            return { success: false, error: 'AI response format error' }
         }
     }
 
     if (!parsedResponse.prompt) {
-        return { success: false, error: 'AI返回缺少prompt字段' }
+        return { success: false, error: 'AI response missing prompt field' }
     }
 
     return {

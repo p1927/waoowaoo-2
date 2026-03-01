@@ -62,10 +62,10 @@ export const POST = apiHandler(async (
   // 如果传入了 artStyle，更新项目的 artStylePrompt
   if (artStyle) {
     const ART_STYLES = [
-      { value: 'american-comic', prompt: '美式漫画风格' },
-      { value: 'chinese-comic', prompt: '精致国漫风格' },
-      { value: 'anime', prompt: '日系动漫风格' },
-      { value: 'realistic', prompt: '真人照片写实风格' }
+      { value: 'american-comic', prompt: 'American comic style' },
+      { value: 'chinese-comic', prompt: 'Refined comic style' },
+      { value: 'anime', prompt: 'Anime style' },
+      { value: 'realistic', prompt: 'Photorealistic style' }
     ]
     const style = ART_STYLES.find(s => s.value === artStyle)
     if (style) {
