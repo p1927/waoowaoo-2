@@ -480,17 +480,17 @@ export async function downloadAndUploadToCOS(imageUrl: string, key: string, maxR
     }
   }
 
-  // 所有重试都失败
-  _ulogError(`[图片下载上传] 所有 ${maxRetries} 次重试都失败`)
+  // All retries failed
+  _ulogError(`[Image download/upload] All ${maxRetries} retries failed`)
   throw lastError || new Error('Download and upload failed after all retries')
 }
 
 /**
- * 下载视频并上传到COS（不进行压缩处理，带重试机制）
- * @param videoUrl 视频URL
- * @param key 文件路径
- * @param maxRetries 最大重试次数，默认3次
- * @returns COS Key
+ * Download video and upload to COS (no compression, with retries).
+ * @param videoUrl Video URL
+ * @param key File path/key
+ * @param maxRetries Max retries (default 3)
+ * @returns COS key
  */
 export async function downloadAndUploadVideoToCOS(
   videoUrl: string,
@@ -503,9 +503,9 @@ export async function downloadAndUploadVideoToCOS(
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      _ulogInfo(`[视频下载] 第 ${attempt}/${maxRetries} 次尝试下载: ${videoUrl.substring(0, 100)}...`)
+      _ulogInfo(`[Video download] Attempt ${attempt}/${maxRetries}: ${videoUrl.substring(0, 100)}...`)
 
-      // 使用 AbortController 设置超时（5分钟）
+      // AbortController timeout (5 min)
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000)
 
@@ -523,25 +523,25 @@ export async function downloadAndUploadVideoToCOS(
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
 
-      // 获取内容长度用于进度显示
+      // Content length for progress
       const contentLength = response.headers.get('content-length')
-      _ulogInfo(`[视频下载] 响应状态: ${response.status}, 内容大小: ${contentLength ? (parseInt(contentLength) / 1024 / 1024).toFixed(2) + 'MB' : '未知'}`)
+      _ulogInfo(`[Video download] Status: ${response.status}, size: ${contentLength ? (parseInt(contentLength) / 1024 / 1024).toFixed(2) + 'MB' : 'unknown'}`)
 
       const arrayBuffer = await response.arrayBuffer()
       const buffer = Buffer.from(arrayBuffer)
 
-      _ulogInfo(`[视频下载] 下载完成，视频大小: ${(buffer.length / 1024 / 1024).toFixed(2)}MB`)
+      _ulogInfo(`[Video download] Done, size: ${(buffer.length / 1024 / 1024).toFixed(2)}MB`)
 
-      // 直接上传到COS（视频不进行压缩）
+      // Upload to COS (no compression for video)
       const cosKey = await uploadToCOS(buffer, key)
-      _ulogInfo(`[视频上传] 上传到COS成功: ${cosKey}`)
+      _ulogInfo(`[Video upload] Uploaded to COS: ${cosKey}`)
       return cosKey
 
     } catch (error: unknown) {
       const errorInfo = extractErrorInfo(error)
       lastError = error
 
-      // 详细记录错误信息
+      // Log error details
       const errorDetails = {
         attempt,
         maxRetries,
@@ -556,26 +556,23 @@ export async function downloadAndUploadVideoToCOS(
         fetchUrl: fetchUrl.substring(0, 100) + '...'
       }
 
-      _ulogError(`[视频下载] 第 ${attempt}/${maxRetries} 次尝试失败:`, JSON.stringify(errorDetails, null, 2))
+      _ulogError(`[Video download] Attempt ${attempt}/${maxRetries} failed:`, JSON.stringify(errorDetails, null, 2))
 
-      // 如果是最后一次尝试，不再重试
       if (attempt === maxRetries) {
-        _ulogError(`[视频下载] 已达到最大重试次数 ${maxRetries}，放弃下载`)
+        _ulogError(`[Video download] Max retries ${maxRetries} reached, giving up`)
         break
       }
 
-      // 计算重试延迟（指数退避：2秒、4秒、8秒...）
       const delayMs = Math.pow(2, attempt) * 1000
-      _ulogInfo(`[视频下载] 等待 ${delayMs / 1000} 秒后重试...`)
+      _ulogInfo(`[Video download] Retrying in ${delayMs / 1000}s...`)
       await new Promise(resolve => setTimeout(resolve, delayMs))
     }
   }
 
-  // 构建详细的错误信息
   const lastErrorInfo = lastError ? extractErrorInfo(lastError) : null
   const errorMessage = lastErrorInfo
-    ? `视频下载失败 (重试${maxRetries}次后): ${lastErrorInfo.name || 'Error'} - ${lastErrorInfo.message}${lastErrorInfo.cause ? ` (原因: ${lastErrorInfo.cause})` : ''}`
-    : `视频下载失败 (重试${maxRetries}次后): 未知错误`
+    ? `Video download failed (after ${maxRetries} retries): ${lastErrorInfo.name || 'Error'} - ${lastErrorInfo.message}${lastErrorInfo.cause ? ` (cause: ${lastErrorInfo.cause})` : ''}`
+    : `Video download failed (after ${maxRetries} retries): unknown error`
 
   throw new Error(errorMessage)
 }
@@ -593,21 +590,18 @@ export function generateUniqueKey(prefix: string, ext: string = 'png'): string {
 }
 
 /**
- * 生成文件访问URL（COS签名URL或本地API路径）
- * @param key 文件Key（例如：images/xxx.png）
- * @param expires 兼容旧调用，实际统一固定为24小时
- * @returns 可访问的URL
+ * Get file access URL (COS signed URL or local API path).
+ * @param key File key (e.g. images/xxx.png)
+ * @param _expires Kept for compatibility; expiry is fixed at 24h
+ * @returns Accessible URL
  */
 export function getSignedUrl(key: string, _expires: number = SIGNED_URL_EXPIRES_SECONDS): string {
   void _expires
-  // ==================== Local storage mode ====================
   if (isLocalStorage) {
-    // 返回API路由路径，由文件服务API提供访问
     return `/api/files/${encodeURIComponent(key)}`
   }
 
-  // ==================== COS cloud storage mode ====================
-  // 统一固定为24小时，忽略外部传入的 expires 值
+  // COS: fixed 24h expiry
   const url = cos!.getObjectUrl({
     Bucket: BUCKET,
     Region: REGION,
@@ -619,24 +613,31 @@ export function getSignedUrl(key: string, _expires: number = SIGNED_URL_EXPIRES_
 }
 
 /**
- * 批量生成签名URL
- * @param keys COS文件Key数组
- * @param expires 过期时间（秒）
- * @returns 签名URL数组
+ * Batch generate signed URLs.
+ * @param keys COS file keys
+ * @param _expires Expiry (seconds)
+ * @returns Signed URL array
  */
 export function getSignedUrls(keys: string[], _expires: number = SIGNED_URL_EXPIRES_SECONDS): string[] {
   return keys.map(key => getSignedUrl(key, _expires))
 }
 
 /**
- * 将COS Key转换为签名URL（处理null值）
- * @param key COS Key或null，也兼容已经是完整URL的情况
- * @param expires 过期时间（秒）
- * @returns 签名URL或null
+ * Convert COS key to signed URL (handles null; full URLs returned as-is).
+ * @param key COS key or null
+ * @param _expires Expiry (seconds)
+ * @returns Signed URL or null
  */
 export function cosKeyToSignedUrl(key: string | null, _expires: number = SIGNED_URL_EXPIRES_SECONDS): string | null {
   if (!key) return null
-  // 如果已经是完整URL（旧数据兼容），直接返回
+  if (key.startsWith('http://') || key.startsWith('https://')) {
+    return key
+  }
+  return getSignedUrl(key, _expires)
+}
+
+function _cosKeyToSignedUrlImpl(key: string, _expires: number): string {
+  // Already full URL (legacy) → return as-is
   if (key.startsWith('http://') || key.startsWith('https://')) {
     return key
   }

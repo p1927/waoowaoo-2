@@ -117,7 +117,7 @@ export interface UserModelConfig {
 }
 
 /**
- * 获取项目级模型配置
+ * Get project-level model config
  */
 export async function getProjectModelConfig(
   projectId: string,
@@ -143,7 +143,7 @@ export async function getProjectModelConfig(
 }
 
 /**
- * 获取用户级模型配置（无项目时使用）
+ * Get user-level model config (when no project)
  */
 export async function getUserModelConfig(userId: string): Promise<UserModelConfig> {
   const userPref = await prisma.userPreference.findUnique({
@@ -210,7 +210,7 @@ export async function resolveProjectModelCapabilityGenerationOptions(input: {
 }
 
 /**
- * 检查必需的模型配置是否存在
+ * Check that required model config fields exist
  */
 export function checkRequiredModels(
   config: Partial<ProjectModelConfig | UserModelConfig>,
@@ -220,12 +220,12 @@ export function checkRequiredModels(
   const configValues = config as Record<string, unknown>
 
   const fieldNames: Record<string, string> = {
-    analysisModel: 'AI分析模型',
-    characterModel: '角色图像模型',
-    locationModel: '场景图像模型',
-    storyboardModel: '分镜图像模型',
-    editModel: '修图/编辑模型',
-    videoModel: '视频模型',
+    analysisModel: 'AI analysis model',
+    characterModel: 'Character image model',
+    locationModel: 'Location image model',
+    storyboardModel: 'Storyboard image model',
+    editModel: 'Image edit model',
+    videoModel: 'Video model',
   }
 
   for (const field of requiredFields) {
@@ -238,22 +238,20 @@ export function checkRequiredModels(
 }
 
 /**
- * 生成缺失配置的错误消息
+ * Build error message for missing config
  */
 export function getMissingConfigError(missingFields: string[]): string {
   if (missingFields.length === 0) return ''
   if (missingFields.length === 1) {
-    return `请先在项目设置中配置"${missingFields[0]}"`
+    return `Please configure "${missingFields[0]}" in project settings first`
   }
-  return `请先在项目设置中配置以下模型：${missingFields.join('、')}`
+  return `Please configure the following in project settings: ${missingFields.join(', ')}`
 }
 
 /**
- * 为图片类任务统一构建 billingPayload（项目级，async）
- *
- * 生图和修图统一使用严格模式：用户必须已在项目设置中配置好 resolution。
- * resolution 会同时注入到 billingPayload.generationOptions（计费用）
- * 和 task payload（worker 读取后传给 API 的 imageSize 参数）。
+ * Build billingPayload for image tasks (project-level, async).
+ * Resolution must be configured in project settings; it is injected into
+ * billingPayload.generationOptions and task payload (imageSize for worker/API).
  */
 export async function buildImageBillingPayload(input: {
   projectId: string
@@ -285,9 +283,8 @@ export async function buildImageBillingPayload(input: {
 }
 
 /**
- * 为图片类任务统一构建 billingPayload（用户级，sync）
- *
- * 适用于 asset-hub 等无 projectId 场景，使用已取出的 userModelConfig。
+ * Build billingPayload for image tasks (user-level, sync).
+ * Used when there is no projectId (e.g. asset-hub), with pre-fetched userModelConfig.
  */
 export function buildImageBillingPayloadFromUserConfig(input: {
   userModelConfig: UserModelConfig

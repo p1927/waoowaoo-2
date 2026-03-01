@@ -281,7 +281,7 @@ export async function handleReferenceToCharacterTask(job: Job<TaskJobData>) {
 
   await reportTaskProgress(job, 96, {
     stage: 'reference_to_character_done',
-    stageLabel: '参考图转换完成',
+    stageLabel: 'Reference image conversion complete',
     displayMode: 'detail',
   })
 
