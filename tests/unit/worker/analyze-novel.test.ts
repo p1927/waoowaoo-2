@@ -127,7 +127,7 @@ describe('worker analyze-novel behavior', () => {
     })
     prismaMock.novelPromotionEpisode.findFirst.mockResolvedValueOnce({ novelText: '' })
 
-    await expect(handleAnalyzeNovelTask(buildJob())).rejects.toThrow('请先填写全局资产设定或剧本内容')
+    await expect(handleAnalyzeNovelTask(buildJob())).rejects.toThrow('Please fill global assets or script content')
   })
 
   it('success path -> creates character/location and persists cleaned location descriptions', async () => {

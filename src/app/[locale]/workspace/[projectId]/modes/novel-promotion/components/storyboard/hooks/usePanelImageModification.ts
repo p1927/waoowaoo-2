@@ -75,7 +75,7 @@ export function usePanelImageModification({
         const result = (data || {}) as StoryboardImageMutationResult
 
         if (result.async) {
-          _ulogInfo(`[Modify Panel] 异步任务已提交: ${panelId}`)
+          _ulogInfo(`[Modify Panel] Async task submitted: ${panelId}`)
           isAsync = true
           if (onSilentRefresh) {
             await onSilentRefresh()
@@ -92,7 +92,7 @@ export function usePanelImageModification({
         }
       } catch (error: unknown) {
         if (isAbortError(error)) {
-          _ulogInfo('请求被中断（可能是页面刷新），后端仍在执行')
+          _ulogInfo('Request interrupted (e.g. refresh), backend still running')
           return
         }
         alert(

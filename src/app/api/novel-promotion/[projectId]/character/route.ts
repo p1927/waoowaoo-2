@@ -12,7 +12,7 @@ function toObject(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>
 }
 
-// Update character信息（名字或介绍）
+// Update character (name or intro)
 export const PATCH = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
@@ -48,7 +48,7 @@ export const PATCH = apiHandler(async (
   return NextResponse.json({ success: true, character })
 })
 
-// Delete character（级联删除关联的形象记录）
+// Delete character (cascade appearances)
 export const DELETE = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
@@ -66,7 +66,7 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // Delete character（CharacterAppearance 会级联删除）
+  // Delete character (CharacterAppearance cascade)
   await prisma.novelPromotionCharacter.delete({
     where: { id: characterId }
   })
@@ -74,7 +74,7 @@ export const DELETE = apiHandler(async (
   return NextResponse.json({ success: true })
 })
 
-// 新增角色
+// Create character
 export const POST = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
@@ -97,14 +97,14 @@ export const POST = apiHandler(async (
     referenceImageUrls,
     generateFromReference,
     artStyle,
-    customDescription  // 🔥 新增：文生图模式使用的自定义描述
+    customDescription  // Custom description for text-to-image mode
   } = body
 
   if (!name) {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 🔥 支持多张参考图（最多 5 张），兼容单张旧格式
+  // Support up to 5 reference images, backward compat single
   let allReferenceImages: string[] = []
   if (referenceImageUrls && Array.isArray(referenceImageUrls)) {
     allReferenceImages = referenceImageUrls.slice(0, 5)
@@ -151,7 +151,7 @@ export const POST = apiHandler(async (
         appearanceId: appearance.id,
         isBackgroundJob: true,
         artStyle: artStyle || 'american-comic',
-        customDescription: customDescription || undefined,  // 🔥 传递自定义描述（文生图模式）
+        customDescription: customDescription || undefined,  // Pass custom description (text-to-image)
         locale: taskLocale || undefined,
         meta: {
           ...bodyMeta,
@@ -159,7 +159,7 @@ export const POST = apiHandler(async (
         },
       })
     }).catch(err => {
-      _ulogError('[Character API] 参考图后台生成任务触发failed:', err)
+      _ulogError('[Character API] Reference image task trigger failed:', err)
     })
   } else if (description?.trim()) {
     // Normal create: trigger background image generation
@@ -183,11 +183,11 @@ export const POST = apiHandler(async (
         },
       })
     }).catch(err => {
-      _ulogError('[Character API] 后台图片生成任务触发failed:', err)
+      _ulogError('[Character API] Background image task trigger failed:', err)
     })
   }
 
-  // 返回包含形象的角色数据
+  // Return character with appearances
   const characterWithAppearances = await prisma.novelPromotionCharacter.findUnique({
     where: { id: character.id },
     include: { appearances: true }

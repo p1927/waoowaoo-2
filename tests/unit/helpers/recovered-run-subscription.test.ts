@@ -40,7 +40,7 @@ describe('recovered run subscription', () => {
             stepKey: 'clip_1_phase1',
             attempt: 1,
             payload: {
-              stepTitle: '分镜规划',
+              stepTitle: 'Storyboard planning',
               stepIndex: 1,
               stepTotal: 4,
               message: 'running',

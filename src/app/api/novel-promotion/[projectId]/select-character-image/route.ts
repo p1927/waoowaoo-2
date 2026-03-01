@@ -26,7 +26,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 使用 UUID 直接查询
+  // Query by UUID
   const appearance = await prisma.characterAppearance.findUnique({
     where: { id: appearanceId },
     include: { character: true }
@@ -58,9 +58,9 @@ export const POST = apiHandler(async (
   })
 
   if (selectedIndex !== null) {
-    _ulogInfo(`✓ 角色 ${appearance.character.name} 形象 ${appearanceId}: 选择了索引 ${selectedIndex}`)
+    _ulogInfo(`✓ Character ${appearance.character.name} appearance ${appearanceId}: selected index ${selectedIndex}`)
   } else {
-    _ulogInfo(`✓ 角色 ${appearance.character.name} 形象 ${appearanceId}: 取消选择`)
+    _ulogInfo(`✓ Character ${appearance.character.name} appearance ${appearanceId}: selection cleared`)
   }
 
   const signedUrl = selectedImageKey ? getSignedUrl(selectedImageKey, 7 * 24 * 3600) : null

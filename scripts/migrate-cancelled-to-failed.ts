@@ -5,7 +5,7 @@ const NEW_STATUS = 'failed'
 const OLD_EVENT_TYPE = 'task.cancelled'
 const NEW_EVENT_TYPE = 'task.failed'
 const MIGRATION_ERROR_CODE = 'USER_CANCELLED'
-const MIGRATION_ERROR_MESSAGE = '用户已停止任务。'
+const MIGRATION_ERROR_MESSAGE = 'User stopped the task.'
 
 function log(message: string) {
   process.stdout.write(`${message}\n`)

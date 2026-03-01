@@ -2,8 +2,8 @@
 
 import { useTranslations } from 'next-intl'
 /**
- * 场景卡片组件 - 支持多图片选择
- * 布局：上面名字+描述，下面三张图片
+ * Location card - multi-image selection
+ * Layout: name+description top, three images below
  */
 
 import { useState, useRef } from 'react'
@@ -23,10 +23,10 @@ interface LocationCardProps {
   onDelete: () => void
   onRegenerate: () => void
   onGenerate: () => void
-  onUndo?: () => void  // 撤回到上一版本
+  onUndo?: () => void  // Undo to previous
   onImageClick: (imageUrl: string) => void
   onSelectImage?: (locationId: string, imageIndex: number | null) => void
-  onImageEdit?: (locationId: string, imageIndex: number) => void  // 新增：图片编辑
+  onImageEdit?: (locationId: string, imageIndex: number) => void  // Image edit
   onCopyFromGlobal?: () => void
   activeTaskKeys?: Set<string>
   onClearTaskKey?: (key: string) => void
@@ -49,20 +49,20 @@ export default function LocationCard({
   projectId,
   onConfirmSelection
 }: LocationCardProps) {
-  // 🔥 使用 mutation
+  // Use mutation
   const uploadImage = useUploadProjectLocationImage(projectId)
   const t = useTranslations('assets')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [pendingUploadIndex, setPendingUploadIndex] = useState<number | undefined>(undefined)
   const [isConfirmingSelection, setIsConfirmingSelection] = useState(false)
 
-  // 触发文件选择
+  // Trigger file select
   const triggerUpload = (imageIndex?: number) => {
     setPendingUploadIndex(imageIndex)
     fileInputRef.current?.click()
   }
 
-  // 处理图片上传
+  // Handle image upload
   const handleUpload = () => {
     const file = fileInputRef.current?.files?.[0]
     if (!file) return
@@ -95,17 +95,17 @@ export default function LocationCard({
     )
   }
 
-  // 获取有图片的记录
+  // Get records with images
   const imagesWithUrl = location.images?.filter(img => img.imageUrl) || []
   const hasMultipleImages = imagesWithUrl.length > 1
 
-  // 获取选中的图片
+  // Get selected image
   const selectedImage = location.selectedImageId
     ? location.images?.find(img => img.id === location.selectedImageId)
     : location.images?.find(img => img.isSelected)
   const selectedIndex = selectedImage?.imageIndex ?? null
 
-  // 当前显示的图片及其 imageIndex
+  // Current image and imageIndex
   const currentImageUrl = selectedImage?.imageUrl || imagesWithUrl[0]?.imageUrl || null
   const currentImageIndex = selectedIndex ?? imagesWithUrl[0]?.imageIndex ?? 0
 
@@ -154,17 +154,17 @@ export default function LocationCard({
     })
     : null
 
-  // 统一任务态 + 前端瞬时提交态
+  // Task state + optimistic submit
   const isTaskRunning =
     locationTaskRunning ||
     isAnyTaskRunning
 
-  // 检查是否有历史版本（用于撤回功能）
+  // Check history for undo
   const hasPreviousVersion = location.images?.some(img => img.previousImageUrl) || false
 
   const showSelectionMode = hasMultipleImages
 
-  // 选择模式：显示名字在上，三张图片在下
+  // Selection mode: name top, three images below
   if (showSelectionMode) {
     const selectionHeaderActions = (
       <>
@@ -247,7 +247,7 @@ export default function LocationCard({
     )
   }
 
-  // 单图模式
+  // Single image mode
   const singleOverlayActions = (
     <>
       <button

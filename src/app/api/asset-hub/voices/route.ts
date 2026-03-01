@@ -5,7 +5,7 @@ import { ApiError, apiHandler } from '@/lib/api-errors'
 import { attachMediaFieldsToGlobalVoice } from '@/lib/media/attach'
 import { resolveMediaRefFromLegacyValue } from '@/lib/media/service'
 
-// 获取用户所有音色（支持 folderId 筛选）
+// Get user voices (optional folderId filter)
 export const GET = apiHandler(async (request: NextRequest) => {
     // Auth check
     const authResult = await requireUserAuth()
@@ -34,7 +34,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
     return NextResponse.json({ voices: signedVoices })
 })
 
-// 新建音色
+// Create voice
 export const POST = apiHandler(async (request: NextRequest) => {
     // Auth check
     const authResult = await requireUserAuth()

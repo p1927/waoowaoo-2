@@ -17,15 +17,15 @@ import {
 
 export interface LocationCreationModalProps {
     mode: 'asset-hub' | 'project'
-    // Asset Hub 模式使用
+    // Asset Hub mode
     folderId?: string | null
-    // 项目模式使用
+    // Project mode
     projectId?: string
     onClose: () => void
     onSuccess: () => void
 }
 
-// 内联 SVG 图标
+// Inline SVG icon
 const XMarkIcon = ({ className }: { className?: string }) => (
     <AppIcon name="close" className={className} />
 )
@@ -47,7 +47,7 @@ export function LocationCreationModal({
     const aiCreateProjectLocation = useAiCreateProjectLocation(projectId || '')
     const createProjectLocation = useCreateProjectLocation(projectId || '')
 
-    // 表单字段
+    // Form fields
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [aiInstruction, setAiInstruction] = useState('')
@@ -87,7 +87,7 @@ export function LocationCreationModal({
         return null
     }
 
-    // ESC 键关闭
+    // ESC to close
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape' && !isSubmitting && !isAiDesigning) {
@@ -98,7 +98,7 @@ export function LocationCreationModal({
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [onClose, isSubmitting, isAiDesigning])
 
-    // AI 设计描述
+    // AI design description
     const handleAiDesign = async () => {
         if (!aiInstruction.trim()) return
 
@@ -113,7 +113,7 @@ export function LocationCreationModal({
             if (getErrorStatus(error) === 402) {
                 alert(getErrorMessage(error, t('errors.insufficientBalance')))
             } else {
-                _ulogError('AI设计failed:', error)
+                _ulogError('AI design failed:', error)
                 if (shouldShowError(error)) {
                     alert(getErrorMessage(error, t('errors.aiDesignFailed')))
                 }
@@ -123,7 +123,7 @@ export function LocationCreationModal({
         }
     }
 
-    // 提交创建
+    // Submit create
     const handleSubmit = async () => {
         if (!name.trim() || !description.trim()) return
 
@@ -173,7 +173,7 @@ export function LocationCreationModal({
         }
     }
 
-    // 处理点击遮罩层关闭
+    // Handle backdrop click to close
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget && !isSubmitting && !isAiDesigning) {
             onClose()
@@ -187,7 +187,7 @@ export function LocationCreationModal({
         >
             <div className="glass-surface-modal max-w-2xl w-full max-h-[85vh] flex flex-col">
                 <div className="p-6 overflow-y-auto flex-1">
-                    {/* 标题 */}
+                    {/* Title */}
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-semibold text-[var(--glass-text-primary)]">
                             {t('location.title')}
@@ -201,7 +201,7 @@ export function LocationCreationModal({
                     </div>
 
                     <div className="space-y-5">
-                        {/* 场景名称 */}
+                        {/* Location name */}
                         <div className="space-y-2">
                             <label className="glass-field-label block">
                                 {t('location.name')} <span className="text-[var(--glass-tone-danger-fg)]">*</span>
@@ -215,7 +215,7 @@ export function LocationCreationModal({
                             />
                         </div>
 
-                        {/* 风格选择 */}
+                        {/* Style selection */}
                         <div className="space-y-2">
                             <label className="glass-field-label block">
                                 {t('artStyle.title')}
@@ -238,7 +238,7 @@ export function LocationCreationModal({
                             </div>
                         </div>
 
-                        {/* AI 设计区域 */}
+                        {/* AI design area */}
                         <div className="glass-surface-soft rounded-xl p-4 space-y-3 border border-[var(--glass-stroke-base)]">
                             <div className="flex items-center gap-2 text-sm font-medium text-[var(--glass-tone-info-fg)]">
                                 <SparklesIcon className="w-4 h-4" />
@@ -279,7 +279,7 @@ export function LocationCreationModal({
                             </p>
                         </div>
 
-                        {/* 场景描述 */}
+                        {/* Location description */}
                         <div className="space-y-2">
                             <label className="glass-field-label block">
                                 {t('location.description')} <span className="text-[var(--glass-tone-danger-fg)]">*</span>
@@ -295,7 +295,7 @@ export function LocationCreationModal({
                     </div>
                 </div>
 
-                {/* 固定底部按钮区 */}
+                {/* Fixed bottom buttons */}
                 <div className="flex gap-3 justify-end p-4 border-t border-[var(--glass-stroke-base)] bg-[var(--glass-bg-surface-strong)] rounded-b-xl flex-shrink-0">
                     <button
                         onClick={onClose}

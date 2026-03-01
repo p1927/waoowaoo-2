@@ -11,7 +11,7 @@ function toObject(value: unknown): Record<string, unknown> {
     return value as Record<string, unknown>
 }
 
-// 获取用户所有场景（支持 folderId 筛选）
+// Get user locations (optional folderId filter)
 export const GET = apiHandler(async (request: NextRequest) => {
     // Auth check
     const authResult = await requireUserAuth()
@@ -41,7 +41,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
     return NextResponse.json({ locations: signedLocations })
 })
 
-// 新建场景
+// Create location
 export const POST = apiHandler(async (request: NextRequest) => {
     // Auth check
     const authResult = await requireUserAuth()
@@ -110,7 +110,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
                 },
             })
         }).catch(err => {
-            _ulogError('[Locations API] 后台生成任务触发failed:', err)
+            _ulogError('[Locations API] Background task trigger failed:', err)
         })
     }
 

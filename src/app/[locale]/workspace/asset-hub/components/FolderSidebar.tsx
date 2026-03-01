@@ -17,7 +17,7 @@ interface FolderSidebarProps {
     onDeleteFolder: (folderId: string) => void
 }
 
-// 内联 SVG 图标
+// Inline SVG icon
 const FolderIcon = ({ className }: { className?: string }) => (
     <AppIcon name="folder" className={className} />
 )
@@ -59,7 +59,7 @@ export function FolderSidebar({
                 </div>
 
                 <div className="space-y-1">
-                    {/* 所有资产 */}
+                    {/* All assets */}
                     <button
                         onClick={() => onSelectFolder(null)}
                         className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm transition-colors ${selectedFolderId === null
@@ -71,7 +71,7 @@ export function FolderSidebar({
                         <span className="truncate">{t('allAssets')}</span>
                     </button>
 
-                    {/* 文件夹列表 */}
+                    {/* Folder list */}
                     {folders.map((folder) => (
                         <div
                             key={folder.id}
@@ -88,7 +88,7 @@ export function FolderSidebar({
                                 <span className="truncate">{folder.name}</span>
                             </button>
 
-                            {/* 操作按钮 */}
+                            {/* Actions */}
                             <div className="hidden group-hover:flex items-center gap-0.5">
                                 <button
                                     onClick={(e) => {

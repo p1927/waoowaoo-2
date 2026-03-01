@@ -38,12 +38,12 @@ run_zero_match_check() {
 }
 
 run_usetasktargetstates_check() {
-  local title="useTaskTargetStates 仅允许在 useProjectAssets/useGlobalAssets 中使用"
+  local title="useTaskTargetStates only in useProjectAssets/useGlobalAssets"
   local output
   output="$(git grep -n "useTaskTargetStates" -- src || true)"
 
   if [[ -z "$output" ]]; then
-    print_ok "$title (当前 0 命中)"
+    print_ok "$title (0 hits)"
     return
   fi
 
@@ -62,29 +62,29 @@ run_usetasktargetstates_check() {
 print_header "Task Status Cutover Audit"
 
 run_zero_match_check \
-  "禁止 useTaskHandoff" \
+  "useTaskHandoff forbidden" \
   "useTaskHandoff" \
   src
 
 run_zero_match_check \
-  "禁止 manualRegeneratingItems/setRegeneratingItems/clearRegeneratingItem" \
+  "manualRegeneratingItems/setRegeneratingItems/clearRegeneratingItem forbidden" \
   "manualRegeneratingItems|setRegeneratingItems|clearRegeneratingItem" \
   src
 
 run_zero_match_check \
-  "禁止业务层直接判断 status ===/!== cancelled" \
+  "No status ===/!== cancelled in app code" \
   "status\\s*===\\s*['\\\"]cancelled['\\\"]|status\\s*!==\\s*['\\\"]cancelled['\\\"]" \
   src
 
 run_zero_match_check \
-  "禁止 generatingImage/generatingVideo/generatingLipSync 字段" \
+  "generatingImage/generatingVideo/generatingLipSync forbidden" \
   "\\bgeneratingImage\\b|\\bgeneratingVideo\\b|\\bgeneratingLipSync\\b" \
   src
 
 run_usetasktargetstates_check
 
 run_zero_match_check \
-  "禁止 novel-promotion/asset-hub/shared-assets 中 useState(false) 作为生成态命名" \
+  "No useState(false) as generating state in novel-promotion/asset-hub/shared-assets" \
   "const \\[[^\\]]*(Generating|Regenerating|WaitingForGeneration|AnalyzingAssets|GeneratingAll|CopyingFromGlobal)[^\\]]*\\]\\s*=\\s*useState\\(false\\)" \
   "src/app/[locale]/workspace/[projectId]/modes/novel-promotion" \
   "src/app/[locale]/workspace/asset-hub" \

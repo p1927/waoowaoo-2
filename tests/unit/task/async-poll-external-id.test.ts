@@ -11,8 +11,8 @@ describe('async poll externalId contract', () => {
   })
 
   it('rejects legacy non-standard externalId formats', () => {
-    expect(() => parseExternalId('FAL:fal-ai/wan/v2.6/image-to-video:req_123')).toThrow(/无效 FAL externalId/)
-    expect(() => parseExternalId('batches/legacy')).toThrow(/无法识别的 externalId 格式/)
+    expect(() => parseExternalId('FAL:fal-ai/wan/v2.6/image-to-video:req_123')).toThrow(/Invalid FAL externalId/)
+    expect(() => parseExternalId('batches/legacy')).toThrow(/Unrecognized externalId format/)
   })
 
   it('requires endpoint when formatting FAL externalId', () => {

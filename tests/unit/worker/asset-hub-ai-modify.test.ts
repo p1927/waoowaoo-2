@@ -90,7 +90,7 @@ describe('worker asset-hub-ai-modify behavior', () => {
       modifyInstruction: 'new',
     })
 
-    await expect(handleAssetHubAIModifyTask(job)).rejects.toThrow('请先在用户配置中设置分析模型')
+    await expect(handleAssetHubAIModifyTask(job)).rejects.toThrow('Please set analysis model in user settings first')
   })
 
   it('unsupported type -> explicit error', async () => {

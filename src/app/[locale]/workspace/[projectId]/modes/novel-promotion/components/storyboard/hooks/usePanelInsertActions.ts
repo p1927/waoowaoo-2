@@ -33,7 +33,7 @@ export function usePanelInsertActions({
       const result = (data || {}) as InsertPanelMutationResult
       if (result.async && result.taskId) {
         const taskId = result.taskId
-        _ulogInfo(`[Insert Panel] 占位分镜已创建: #${result.panelNumber}，后台生成内容...`)
+        _ulogInfo(`[Insert Panel] Placeholder #${result.panelNumber} created, generating...`)
         setInsertingAfterPanelId(null)
         await onRefresh()
 
@@ -43,9 +43,9 @@ export function usePanelInsertActions({
               intervalMs: 3000,
               timeoutMs: 120000,
             })
-            _ulogInfo('[Insert Panel] AI内容+图片生成完成，刷新数据')
+            _ulogInfo('[Insert Panel] AI content+image done, refreshing')
           } catch (error: unknown) {
-            _ulogError(`[Insert Panel] 任务终止: ${getErrorMessage(error, t('common.unknownError'))}`)
+            _ulogError(`[Insert Panel] Task aborted: ${getErrorMessage(error, t('common.unknownError'))}`)
           } finally {
             await onRefresh()
           }
@@ -57,10 +57,10 @@ export function usePanelInsertActions({
       setInsertingAfterPanelId(null)
     } catch (error: unknown) {
       if (isAbortError(error)) {
-        _ulogInfo('请求被中断（可能是页面刷新）')
+        _ulogInfo('Request interrupted (e.g. refresh)')
         return
       }
-      _ulogError('插入分镜failed:', error)
+      _ulogError('Insert panel failed:', error)
       alert(
         t('messages.insertPanelFailed', {
           error: getErrorMessage(error, t('common.unknownError')),

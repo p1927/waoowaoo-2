@@ -10,9 +10,9 @@ export const GET = apiHandler(async (request: NextRequest) => {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 生成签名 URL（1小时有效期）
+  // Generate signed URL (1h TTL)
   const signedUrl = toFetchableUrl(getSignedUrl(key, 3600))
 
-  // 重定向到签名 URL
+  // Redirect to signed URL
   return NextResponse.redirect(signedUrl)
 })

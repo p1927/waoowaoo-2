@@ -56,14 +56,14 @@ export default function VideoPanelCardBody({ runtime }: VideoPanelCardBodyProps)
 
       <div className="mt-3 pt-3 border-t border-[var(--glass-stroke-base)]">
         {layout.isLastFrame && layout.prevPanel && !layout.isLinked ? (
-          // 右帧：未链接时，仅显示"作为X的尾帧"占位提示（系统风格标签）
+          // Right frame: when unlinked, show "as X tail frame" placeholder (system label)
           <div className="mb-2 flex flex-wrap gap-1.5">
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--glass-bg-muted)] text-[var(--glass-text-tertiary)] border border-[var(--glass-stroke-base)]">
               <AppIcon name="unplug" className="w-3 h-3" /> {t('firstLastFrame.asLastFrameFor', { number: panelIndex })}
             </span>
           </div>
         ) : layout.isLastFrame && layout.prevPanel && layout.isLinked ? (
-          // 右帧：已链接时，显示尾帧+首帧双标签（info 色系，与系统一致）
+          // Right frame: when linked, show tail+head dual label (info style)
           <div className="mb-2 flex flex-wrap gap-1.5">
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--glass-tone-info-bg)] text-[var(--glass-tone-info-fg)]">
               <AppIcon name="link" className="w-3 h-3" /> {t('firstLastFrame.asLastFrameFor', { number: panelIndex })}

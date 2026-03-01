@@ -2,11 +2,11 @@
 import { logError as _ulogError } from '@/lib/logging/core'
 
 /**
- * useBatchGeneration - 批量生成资产图片
- * 从 AssetsStage.tsx 提取
+ * useBatchGeneration - batch asset image generation
+ * Extracted from AssetsStage
  * 
- * 🔥 V6.5 重构：直接订阅 useProjectAssets，消除 props drilling
- * 🔥 V6.6 重构：内部使用 mutation hooks，移除 onGenerateImage prop
+ * V6.5: subscribe useProjectAssets, no props drilling
+ * V6.6: internal mutation hooks, no onGenerateImage
  */
 
 import { useState, useCallback, useMemo, useEffect } from 'react'
@@ -22,7 +22,7 @@ import {
 
 interface UseBatchGenerationProps {
     projectId: string
-    // 🔥 V6.6：移除 onGenerateImage，内部使用 mutation hooks
+    // V6.6: use internal mutation hooks
     handleGenerateImage?: (type: 'character' | 'location', id: string, appearanceId?: string) => Promise<void> | void
 }
 
@@ -31,19 +31,19 @@ export function useBatchGeneration({
     handleGenerateImage: externalHandleGenerateImage
 }: UseBatchGenerationProps) {
     const t = useTranslations('assets')
-    // 🔥 直接订阅缓存 - 消除 props drilling
+    // Subscribe cache directly
     const { data: assets } = useProjectAssets(projectId)
     const characters = useMemo(() => assets?.characters ?? [], [assets?.characters])
     const locations = useMemo(() => assets?.locations ?? [], [assets?.locations])
 
-    // 🔥 使用刷新函数
+    // Use refetch
     const refreshAssets = useRefreshProjectAssets(projectId)
 
-    // 🔥 V6.6：内部 mutation hooks
+    // V6.6: internal mutation hooks
     const generateCharacterImage = useGenerateProjectCharacterImage(projectId)
     const generateLocationImage = useGenerateProjectLocationImage(projectId)
 
-    // 🔥 内部图片生成函数
+    // Internal image generation
     const internalHandleGenerateImage = useCallback(async (type: 'character' | 'location', id: string, appearanceId?: string) => {
         if (type === 'character' && appearanceId) {
             await generateCharacterImage.mutateAsync({ characterId: id, appearanceId })
@@ -52,7 +52,7 @@ export function useBatchGeneration({
         }
     }, [generateCharacterImage, generateLocationImage])
 
-    // 使用外部传入的函数或内部实现
+    // Use external fn or internal
     const handleGenerateImage = externalHandleGenerateImage || internalHandleGenerateImage
 
     const [isBatchSubmittingAll, setIsBatchSubmittingAll] = useState(false)
@@ -60,7 +60,7 @@ export function useBatchGeneration({
     const [pendingRegenerationKeys, setPendingRegenerationKeys] = useState<Set<string>>(new Set())
     const [pendingRegenerationBaselines, setPendingRegenerationBaselines] = useState<Map<string, ManualRegenerationBaseline>>(new Map())
 
-    // 获取形象列表（内置实现，不再依赖外部传入）
+    // Get appearance list (built-in)
     const getAppearances = useCallback((character: Character): CharacterAppearance[] => {
         return character.appearances || []
     }, [])
@@ -132,7 +132,7 @@ export function useBatchGeneration({
         })
     }, [characters, locations, pendingRegenerationBaselines, pendingRegenerationKeys])
 
-    // 生成全部资产图片（仅缺失图片的）
+    // Generate all missing asset images
     const handleGenerateAllImages = async () => {
         const tasks: Array<{
             type: 'character' | 'location'
@@ -142,7 +142,7 @@ export function useBatchGeneration({
             key: string
         }> = []
 
-        // 收集角色资产
+        // Collect character assets
         characters.forEach(char => {
             const appearances = getAppearances(char)
             appearances.forEach(app => {
@@ -158,7 +158,7 @@ export function useBatchGeneration({
             })
         })
 
-        // 收集场景资产
+        // Collect location assets
         locations.forEach(loc => {
             const hasImage = loc.images?.some(img => img.imageUrl)
             if (!hasImage) {
@@ -225,7 +225,7 @@ export function useBatchGeneration({
         }
     }
 
-    // 重新生成全部资产图片（包含已有图片的）
+    // Regenerate all asset images
     const handleRegenerateAllImages = async () => {
         if (!confirm(t('toolbar.regenerateAllConfirm'))) return
 
@@ -313,7 +313,7 @@ export function useBatchGeneration({
         }
     }
 
-    // 清除单个本地兜底状态（仅用于提交failed场景）
+    // Clear single fallback (submit failed only)
     const clearTransientTaskKey = useCallback((key: string) => {
         setPendingRegenerationKeys(prev => {
             const next = new Set(prev)
@@ -329,17 +329,17 @@ export function useBatchGeneration({
     }, [])
 
     return {
-        // 🔥 暴露数据供组件使用
+        // Expose data for component
         characters,
         locations,
         getAppearances,
-        // 状态
+        // State
         isBatchSubmitting: isBatchSubmittingAll,
         batchProgress,
         activeTaskKeys,
         setTransientRegenerationKeys: setPendingRegenerationKeys,
         clearTransientTaskKey,
-        // 操作
+        // Actions
         handleGenerateAllImages,
         handleRegenerateAllImages
     }

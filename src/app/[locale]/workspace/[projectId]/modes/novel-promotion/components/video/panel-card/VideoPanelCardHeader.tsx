@@ -74,12 +74,12 @@ export default function VideoPanelCardHeader({ runtime }: VideoPanelCardHeaderPr
         <AppIcon name="playCircle" className="w-16 h-16 text-[var(--glass-text-tertiary)]" />
       )}
 
-      {/* Shot编号 */}
+      {/* Shot number */}
       <div className="absolute top-2 left-2 bg-[var(--glass-overlay)] text-white px-2 py-0.5 rounded text-xs font-medium">
         {panelIndex + 1}
       </div>
 
-      {/* 两卡片中间唯一的链接/断开按钮 */}
+      {/* Link/unlink button between cards */}
 
       {showFirstLastFrameSwitch && (
         <div className="absolute -right-6 top-1/2 -translate-y-1/2 z-30">
@@ -99,7 +99,7 @@ export default function VideoPanelCardHeader({ runtime }: VideoPanelCardHeaderPr
               <AppIcon name="unplug" size={16} />
             </button>
 
-            {/* 自定义 Tooltip */}
+            {/* Custom tooltip */}
             {showTooltip && (
               <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 pointer-events-none">
                 <div className="bg-[var(--glass-bg-surface-strong)] text-[var(--glass-text-primary)] text-xs rounded-lg px-3 py-1.5 shadow-[var(--glass-shadow-md)] whitespace-nowrap border border-[var(--glass-stroke-base)]">
@@ -112,7 +112,7 @@ export default function VideoPanelCardHeader({ runtime }: VideoPanelCardHeaderPr
         </div>
       )}
 
-      {/* 口型同步切换 */}
+      {/* Lip-sync toggle */}
       {panel.lipSyncVideoUrl && hasVisibleBaseVideo ? (
         <div
           className="absolute top-2 right-2 flex items-center bg-[var(--glass-overlay)] rounded-full p-0.5 cursor-pointer"
@@ -131,7 +131,7 @@ export default function VideoPanelCardHeader({ runtime }: VideoPanelCardHeaderPr
         </div>
       ) : null}
 
-      {/* 重新生成按钮 */}
+      {/* Regenerate button */}
       {!layout.isLinked && !layout.isLastFrame && (hasVisibleBaseVideo || taskStatus.isVideoTaskRunning) && (
         <button
           onClick={() =>
@@ -150,12 +150,12 @@ export default function VideoPanelCardHeader({ runtime }: VideoPanelCardHeaderPr
         </button>
       )}
 
-      {/* 任务进度遮罩 */}
+      {/* Task progress overlay */}
       {(taskStatus.isVideoTaskRunning || taskStatus.isLipSyncTaskRunning) && (
         <TaskStatusOverlay state={taskStatus.overlayPresentation} className="z-10" />
       )}
 
-      {/* 错误提示 */}
+      {/* Error message */}
       {taskStatus.panelErrorDisplay && !taskStatus.isVideoTaskRunning && !taskStatus.isLipSyncTaskRunning && !errorDismissed && (
         <div className="absolute inset-0 bg-[var(--glass-tone-danger-bg)] flex flex-col items-center justify-center z-10 p-4">
           <button

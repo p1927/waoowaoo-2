@@ -24,7 +24,7 @@ export const POST = apiHandler(async (
 
   let deletedCount = 0
 
-  // 1. 清理角色形象的未选中图片
+  // 1. Cleanup unselected character appearance images
   const appearances = await prisma.characterAppearance.findMany({
     where: { character: { novelPromotionProjectId: novelData.id } },
     include: { character: true }
@@ -51,7 +51,7 @@ export const POST = apiHandler(async (
         }
       }
 
-      // Keep only selected images
+      // Keep only selected
       const selectedUrl = imageUrls[appearance.selectedIndex]
       if (!selectedUrl) continue
       await prisma.characterAppearance.update({
@@ -64,7 +64,7 @@ export const POST = apiHandler(async (
     } catch { }
   }
 
-  // 2. 清理场景的未选中图片
+  // 2. Cleanup unselected location images
   const locations = await prisma.novelPromotionLocation.findMany({
     where: { novelPromotionProjectId: novelData.id },
     include: { images: true }

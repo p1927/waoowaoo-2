@@ -33,7 +33,7 @@ function getErrorStatus(error: unknown): number | null {
   return null
 }
 
-// 内联 SVG 图标
+// Inline SVG icon
 const XMarkIcon = ({ className }: { className?: string }) => (
   <AppIcon name="close" className={className} />
 )
@@ -75,7 +75,7 @@ export default function AddLocationModal({
     })
     : null
 
-  // AI 设计描述
+  // AI design description
   const handleAiDesign = async () => {
     if (!aiInstruction.trim()) return
 
@@ -90,7 +90,7 @@ export default function AddLocationModal({
       if (getErrorStatus(error) === 402) {
         alert(getErrorMessage(error, tc('insufficientBalanceDetail')))
       } else {
-        _ulogError('AI设计failed:', error)
+        _ulogError('AI design failed:', error)
         if (shouldShowError(error)) {
           alert(getErrorMessage(error, t('errors.aiDesignFailed')))
         }
@@ -100,7 +100,7 @@ export default function AddLocationModal({
     }
   }
 
-  // 提交创建
+  // Submit create
   const handleSubmit = async () => {
     if (!name.trim() || !description.trim()) return
 
@@ -128,7 +128,7 @@ export default function AddLocationModal({
     <div className="fixed inset-0 bg-[var(--glass-overlay)] flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--glass-bg-surface)] rounded-xl shadow-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto">
         <div className="p-6">
-          {/* 标题 */}
+          {/* Title */}
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-[var(--glass-text-primary)]">
               {t('modal.addLocation')}
@@ -142,7 +142,7 @@ export default function AddLocationModal({
           </div>
 
           <div className="space-y-5">
-            {/* 场景名称 */}
+            {/* Location name */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[var(--glass-text-secondary)]">
                 {t('location.name')} <span className="text-[var(--glass-tone-danger-fg)]">*</span>
@@ -156,7 +156,7 @@ export default function AddLocationModal({
               />
             </div>
 
-            {/* 风格选择 */}
+            {/* Style selection */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[var(--glass-text-secondary)]">
                 {t('modal.artStyle')}
@@ -179,7 +179,7 @@ export default function AddLocationModal({
               </div>
             </div>
 
-            {/* AI 设计区域 */}
+            {/* AI design area */}
             <div className="bg-[var(--glass-tone-info-bg)] rounded-xl p-4 space-y-3 border border-[var(--glass-stroke-focus)]">
               <div className="flex items-center gap-2 text-sm font-medium text-[var(--glass-tone-info-fg)]">
                 <SparklesIcon className="w-4 h-4" />
@@ -220,7 +220,7 @@ export default function AddLocationModal({
               </p>
             </div>
 
-            {/* 场景描述 */}
+            {/* Location description */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[var(--glass-text-secondary)]">
                 {t('location.description')} <span className="text-[var(--glass-tone-danger-fg)]">*</span>
@@ -235,7 +235,7 @@ export default function AddLocationModal({
             </div>
           </div>
 
-          {/* 按钮区 */}
+          {/* Button area */}
           <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-[var(--glass-stroke-base)]">
             <button
               onClick={onClose}

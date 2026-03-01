@@ -49,7 +49,7 @@ interface AssetHubUndoDb {
 
 /**
  * POST /api/asset-hub/undo-image
- * 撤回到上一版本图片（同时恢复描述词）
+ * Revert to previous image (and description)
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubUndoDb
@@ -83,7 +83,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             ? previousImageUrls
             : (appearance.previousImageUrl ? [appearance.previousImageUrl] : [])
 
-        // 恢复上一版本（图片 + 描述词）
+        // Revert to previous (image + description)
         await db.globalCharacterAppearance.update({
             where: { id: appearance.id },
             data: {
@@ -92,7 +92,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
                 previousImageUrl: null,
                 previousImageUrls: encodeImageUrls([]),
                 selectedIndex: null,
-                // 🔥 同时恢复描述词
+                // Also restore description
                 description: appearance.previousDescription ?? appearance.description,
                 descriptions: appearance.previousDescriptions ?? appearance.descriptions,
                 previousDescription: null,
@@ -100,7 +100,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             }
         })
 
-        return NextResponse.json({ success: true, message: '已撤回到上一版本（图片和描述词）' })
+        return NextResponse.json({ success: true, message: 'Reverted to previous (image and description)' })
 
     } else if (type === 'location') {
         const location = await db.globalLocation.findFirst({
@@ -112,7 +112,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             throw new ApiError('NOT_FOUND')
         }
 
-        // 恢复所有图片的上一版本（图片 + 描述词）
+        // Revert all images to previous
         for (const img of location.images || []) {
             if (img.previousImageUrl) {
                 await db.globalLocationImage.update({
@@ -120,7 +120,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
                     data: {
                         imageUrl: img.previousImageUrl,
                         previousImageUrl: null,
-                        // 🔥 同时恢复描述词
+                        // Also restore description
                         description: img.previousDescription ?? img.description,
                         previousDescription: null
                     }
@@ -128,7 +128,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             }
         }
 
-        return NextResponse.json({ success: true, message: '已撤回到上一版本（图片和描述词）' })
+        return NextResponse.json({ success: true, message: 'Reverted to previous (image and description)' })
 
     } else {
         throw new ApiError('INVALID_PARAMS')

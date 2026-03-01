@@ -9,7 +9,7 @@ import { buildDefaultTaskBillingInfo } from '@/lib/billing'
 import { validatePreviewText, validateVoicePrompt } from '@/lib/qwen-voice-design'
 
 /**
- * 声音设计 API (Asset Hub)
+ * Voice design API (Asset Hub)
  * POST /api/asset-hub/voice-design
  */
 export const POST = apiHandler(async (request: NextRequest) => {

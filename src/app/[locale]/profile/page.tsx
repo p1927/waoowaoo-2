@@ -86,7 +86,7 @@ interface ProjectDetails {
   recentRecords: CostRecord[]
 }
 
-// 类型对应的颜色
+// Color by type
 const TYPE_COLORS: Record<string, { bg: string, text: string, border: string }> = {
   image: { bg: 'bg-[var(--glass-bg-muted)]', text: 'text-[var(--glass-text-secondary)]', border: 'border-[var(--glass-stroke-base)]' },
   video: { bg: 'bg-[var(--glass-bg-muted)]', text: 'text-[var(--glass-text-secondary)]', border: 'border-[var(--glass-stroke-base)]' },
@@ -114,7 +114,7 @@ function formatMoney(amount: number, currency: string, digits = 2): string {
   return `${getCurrencySymbol(currency)}${amount.toFixed(digits)}`
 }
 
-// 交易流水图标映射（简洁黑白风格）- 使用统一 iconRegistry
+// Transaction icon map (iconRegistry)
 const TX_ICON_MAP: Record<string, LucideIcon> = {
   image: iconRegistry.image,
   video: iconRegistry.clapperboard,
@@ -132,7 +132,7 @@ function getTxIcon(tx: Transaction): LucideIcon {
   return iconRegistry.bolt
 }
 
-/** 根据 billingMeta 的 unit 字段生成人类可读的用量描述 */
+/** Human-readable usage from billingMeta.unit */
 function formatBillingDetail(
   meta: Transaction['billingMeta'],
   translate: (key: string, values?: Record<string, unknown>) => string,
@@ -179,14 +179,14 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [detailsLoading, setDetailsLoading] = useState(false)
 
-  // 主要分区：扣费记录 / API配置
+  // Main: billing / API config
   const [activeSection, setActiveSection] = useState<'billing' | 'apiConfig'>('apiConfig')
-  // 扣费记录内的子视图
+  // Billing sub-views
   const [billingView, setBillingView] = useState<'transactions' | 'projects'>('transactions')
   const [projectViewMode, setProjectViewMode] = useState<'summary' | 'records'>('summary')
   const [recordsFilter, setRecordsFilter] = useState<string>('all')
 
-  // 账户流水筛选和分页状态
+  // Transaction filter and pagination
   const [txPage, setTxPage] = useState(1)
   const [txType, setTxType] = useState<'all' | 'recharge' | 'consume'>('all')
   const [txStartDate, setTxStartDate] = useState<string>('')
@@ -211,7 +211,7 @@ export default function ProfilePage() {
         setTransactionPagination(data.pagination || null)
       }
     } catch (error) {
-      _ulogError('获取交易记录failed:', error)
+_ulogError('Get transactions failed:', error)
     }
   }, [txEndDate, txPage, txStartDate, txType])
 
@@ -239,7 +239,7 @@ export default function ProfilePage() {
       }
       await fetchTransactions()
     } catch (error) {
-      _ulogError('获取数据failed:', error)
+_ulogError('Get data failed:', error)
     } finally {
       setLoading(false)
     }
@@ -281,7 +281,7 @@ export default function ProfilePage() {
         })
       }
     } catch (error) {
-      _ulogError('获取项目费用failed:', error)
+_ulogError('Get project billing failed:', error)
     } finally {
       setDetailsLoading(false)
     }
@@ -308,18 +308,18 @@ export default function ProfilePage() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex gap-6 h-[calc(100vh-140px)]">
 
-          {/* 左侧侧边栏 */}
+          {/* Left sidebar */}
           <div className="w-64 flex-shrink-0">
             <div className="glass-surface-elevated h-full flex flex-col p-5">
 
-              {/* 用户信息 */}
+              {/* User info */}
               <div className="mb-6">
                 <div className="mb-4">
                   <h2 className="font-semibold text-[var(--glass-text-primary)]">{session.user?.name || t('user')}</h2>
                   <p className="text-xs text-[var(--glass-text-tertiary)]">{t('personalAccount')}</p>
                 </div>
 
-                {/* 余额卡片 */}
+                {/* Balance card */}
                 <div className="glass-surface-soft rounded-2xl border border-[var(--glass-stroke-base)] p-4">
                   <div className="text-xs font-medium text-[var(--glass-text-secondary)]">{t('availableBalance')}</div>
                   <div className="mt-1 text-2xl font-bold text-[var(--glass-text-primary)]">{formatMoney(balance?.balance || 0, currency)}</div>
@@ -336,7 +336,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* 导航菜单 */}
+                {/* Nav menu */}
               <nav className="flex-1 space-y-2">
                 <button
                   onClick={() => setActiveSection('apiConfig')}
@@ -361,7 +361,7 @@ export default function ProfilePage() {
                 </button>
               </nav>
 
-              {/* 退出登录 */}
+              {/* Logout */}
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className="glass-btn-base glass-btn-tone-danger mt-auto flex items-center gap-2 px-4 py-3 text-sm rounded-xl transition-all cursor-pointer"
@@ -372,7 +372,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* 右侧内容区 */}
+          {/* Right content */}
           <div className="flex-1 min-w-0">
             <div className="glass-surface-elevated h-full flex flex-col">
 
@@ -380,10 +380,10 @@ export default function ProfilePage() {
                 <ApiConfigTab />
               ) : (
                 <>
-                  {/* 扣费记录标题栏 */}
+                  {/* Billing header */}
                   <div className="px-6 py-4 border-b border-[var(--glass-stroke-base)] flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      {/* 返回按钮 */}
+                      {/* Back button */}
                       {selectedProject !== 'all' && (
                         <button onClick={() => setSelectedProject('all')} className="text-sm text-[var(--glass-text-secondary)] hover:text-[var(--glass-text-primary)] flex items-center gap-1 cursor-pointer">
                           <AppIcon name="chevronLeft" className="w-4 h-4" />
@@ -391,7 +391,7 @@ export default function ProfilePage() {
                         </button>
                       )}
 
-                      {/* 视图切换 */}
+                      {/* View switch */}
                       {(() => {
                         const tabs = ['transactions', 'projects'] as const
                         const activeTab = (billingView === 'transactions' && selectedProject === 'all') ? 'transactions' : 'projects'
@@ -425,7 +425,7 @@ export default function ProfilePage() {
                       })()}
                     </div>
 
-                    {/* 项目内视图切换 */}
+                    {/* Project view switch */}
                     {selectedProject !== 'all' && (
                       <div className="flex items-center gap-3">
                         <div className="rounded-lg p-0.5" style={{ background: 'rgba(0,0,0,0.04)' }}>
@@ -468,14 +468,14 @@ export default function ProfilePage() {
                     )}
                   </div>
 
-                  {/* 内容区域 */}
+                  {/* Content area */}
                   <div className="flex-1 overflow-y-auto p-5">
                     {loading ? (
                       <div className="space-y-3">{[1, 2, 3, 4, 5].map(i => <div key={i} className="glass-surface-soft h-16 rounded-xl animate-pulse"></div>)}</div>
                     ) : billingView === 'transactions' && selectedProject === 'all' ? (
-                      /* 账户流水 */
+                      /* Transactions */
                       <div className="h-full flex flex-col">
-                        {/* 筛选按钮 */}
+                        {/* Filter button */}
                         <div className="mb-3 flex items-center justify-between">
                           <button
                             onClick={() => setShowFilters(!showFilters)}
@@ -496,7 +496,7 @@ export default function ProfilePage() {
                           </button>
                         </div>
 
-                        {/* 筛选栏 */}
+                        {/* Filter bar */}
                         {showFilters && (
                           <div className="glass-surface-soft mb-4 space-y-3 rounded-2xl p-4">
                             <div className="flex items-end gap-3">
@@ -541,7 +541,7 @@ export default function ProfilePage() {
                           </div>
                         )}
 
-                        {/* 流水列表 */}
+                        {/* Transaction list */}
                         <div className="flex-1 overflow-y-auto">
                           {transactions.length > 0 ? (
                             <div className="space-y-2">
@@ -616,7 +616,7 @@ export default function ProfilePage() {
                           )}
                         </div>
 
-                        {/* 分页 */}
+                        {/* Pagination */}
                         {transactionPagination && transactionPagination.totalPages > 1 && (
                           <div className="mt-4 flex items-center justify-between border-t border-[var(--glass-stroke-base)] pt-4">
                             <div className="text-sm text-[var(--glass-text-secondary)]">
@@ -638,7 +638,7 @@ export default function ProfilePage() {
                         )}
                       </div>
                     ) : selectedProject === 'all' ? (
-                      /* 项目列表 */
+                      /* Project list */
                       projects.length > 0 ? (
                         <div className="space-y-2">
                           {projects.map(p => (
@@ -658,7 +658,7 @@ export default function ProfilePage() {
                       <div className="space-y-3">{[1, 2, 3].map(i => <div key={i} className="glass-surface-soft h-20 rounded-xl animate-pulse"></div>)}</div>
                     ) : projectDetails ? (
                       projectViewMode === 'summary' ? (
-                        /* 汇总视图 */
+                        /* Summary view */
                         <div className="space-y-6">
                           <div className="flex items-center justify-between">
                             <h4 className="font-medium text-[var(--glass-text-primary)]">{selectedProjectName}</h4>
@@ -701,7 +701,7 @@ export default function ProfilePage() {
                           </div>
                         </div>
                       ) : (
-                        /* 流水视图 */
+                        /* Transaction view */
                         <div className="space-y-2">
                           {filteredRecords.length > 0 ? filteredRecords.map(record => {
                             const colors = TYPE_COLORS[record.apiType] || { bg: 'bg-[var(--glass-bg-muted)]', text: 'text-[var(--glass-text-secondary)]', border: 'border-[var(--glass-stroke-base)]' }

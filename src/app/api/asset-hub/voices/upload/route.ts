@@ -6,7 +6,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * POST /api/asset-hub/voices/upload
- * 上传音频文件到音色库
+ * Upload audio to voice library
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     // Auth check
@@ -28,7 +28,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 支持的音频类型
+    // Supported audio types
     const audioTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/x-m4a', 'audio/aac']
     const isAudioFile = audioTypes.includes(file.type) || file.name.match(/\.(mp3|wav|ogg|m4a|aac)$/i)
 
@@ -50,7 +50,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
     const buffer = Buffer.from(arrayBuffer)
     const audioExt = file.name.split('.').pop()?.toLowerCase() || 'mp3'
 
-    // 上传到 COS
+    // Upload to COS
     const key = generateUniqueKey(`voices/${session.user.id}/${Date.now()}`, audioExt)
     const cosUrl = await uploadToCOS(buffer, key)
 
@@ -70,7 +70,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
         }
     })
 
-    // 签名 URL
+    // Signed URL
     const signedUrl = getSignedUrl(cosUrl, 7 * 24 * 3600)
 
     return NextResponse.json({

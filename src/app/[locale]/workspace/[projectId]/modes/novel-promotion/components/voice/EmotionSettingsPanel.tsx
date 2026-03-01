@@ -48,7 +48,7 @@ export default function EmotionSettingsPanel({
 
     return (
         <div className="px-4 py-3 bg-[var(--glass-tone-info-bg)] space-y-3">
-            {/* 情绪提示词 */}
+            {/* Emotion prompt */}
             <div>
                 <label className="block text-xs text-[var(--glass-tone-info-fg)] mb-1.5 font-medium">
                     {t("emotionPrompt")} <span className="text-[var(--glass-text-tertiary)] font-normal">{t("emotionPromptTip")}</span>
@@ -62,7 +62,7 @@ export default function EmotionSettingsPanel({
                 />
             </div>
 
-            {/* 情绪强度滑块 */}
+            {/* Emotion strength slider */}
             <div>
                 <label className="block text-xs text-[var(--glass-tone-info-fg)] mb-1.5 font-medium">
                     {t("emotionStrength")}: <span className="font-bold">{strength.toFixed(1)}</span>
@@ -82,7 +82,7 @@ export default function EmotionSettingsPanel({
                 </div>
             </div>
 
-            {/* 生成语音按钮 */}
+            {/* Generate voice button */}
             <button
                 onClick={handleGenerate}
                 disabled={isVoiceGenerationRunning}

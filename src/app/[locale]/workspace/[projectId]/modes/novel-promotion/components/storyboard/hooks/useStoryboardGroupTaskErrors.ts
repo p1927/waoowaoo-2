@@ -11,8 +11,8 @@ interface UseStoryboardGroupTaskErrorsParams {
 }
 
 /**
- * 从数据库查询 panel 级别的 failed tasks，并提供 dismiss 能力。
- * dismiss 通过 API 将 task 状态改为 'dismissed'，数据库为唯一来源。
+ * Query panel-level failed tasks from DB, support dismiss.
+ * dismiss: API sets task status to 'dismissed', DB is source of truth.
  */
 export function useStoryboardGroupTaskErrors({
   projectId,

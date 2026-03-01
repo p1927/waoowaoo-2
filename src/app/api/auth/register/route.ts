@@ -21,7 +21,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 检查用户是否已存在
+  // Check if user already exists
   const existingUser = await prisma.user.findUnique({
     where: { name }
   })
@@ -31,7 +31,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 哈希密码
+  // Hash password
   const hashedPassword = await bcrypt.hash(password, 12)
 
   // Create user (transaction)
@@ -43,7 +43,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
         password: hashedPassword}
     })
 
-    // 💰 Create user余额记录（初始余额为0）
+    // Create user balance record (initial 0)
     await tx.userBalance.create({
       data: {
         userId: newUser.id,
@@ -60,7 +60,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
 
   return NextResponse.json(
     {
-      message: "注册成功",
+      message: "Registration successful",
       user: {
         id: user.id,
         name: user.name

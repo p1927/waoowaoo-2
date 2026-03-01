@@ -1,4 +1,4 @@
-import { Worker, type Job } from 'bullmq'
+import { Worker, type Job, type RedisOptions } from 'bullmq'
 import { prisma } from '@/lib/prisma'
 import { queueRedis } from '@/lib/redis'
 import { QUEUE_NAME } from '@/lib/task/queues'
@@ -292,7 +292,7 @@ export function createVideoWorker() {
     QUEUE_NAME.VIDEO,
     async (job) => await withTaskLifecycle(job, processVideoTask),
     {
-      connection: queueRedis,
+      connection: queueRedis as unknown as RedisOptions,
       concurrency: Number.parseInt(process.env.QUEUE_CONCURRENCY_VIDEO || '4', 10) || 4,
     },
   )

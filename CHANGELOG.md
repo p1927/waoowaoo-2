@@ -16,7 +16,7 @@ All notable changes to this project will be documented in this file.
 - 修复默认参数无选择问题
 - 修复关闭计费依然触发计费问题
 - 修复 openai-compatible 被误判为原生 OpenAI 推理问题
-- 修复 JSON 解析失败问题
+- 修复 JSON 解析failed问题
 
 ### ⚙️ 优化
 - 修改为默认计费 off

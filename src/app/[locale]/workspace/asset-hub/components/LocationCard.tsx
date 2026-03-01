@@ -43,7 +43,7 @@ interface LocationCardProps {
 }
 
 export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: LocationCardProps) {
-  // 🔥 使用 mutation hooks
+  // Use mutation hooks
   const generateImage = useGenerateLocationImage()
   const selectImage = useSelectLocationImage()
   const undoImage = useUndoLocationImage()
@@ -57,7 +57,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const latestSelectRequestRef = useRef(0)
 
-  // 解析图片
+  // Parse images
   const imagesWithUrl = location.images?.filter(img => img.imageUrl) || []
   const hasMultipleImages = imagesWithUrl.length > 1
   const selectedImage = location.images?.find(img => img.isSelected)
@@ -85,7 +85,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
       hasOutput: !!displayImageUrl,
     })
     : null
-  // 取第一个有错误的 image 的 lastError
+  // First image lastError
   const firstImageError = !isTaskRunning
     ? (location.images || []).find(img => img.lastError)?.lastError || null
     : null
@@ -99,14 +99,14 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
     })
     : null
 
-  // 生成图片
+  // Generate image
   const handleGenerate = () => {
     generateImage.mutate(location.id, {
       onError: (error) => alert(error.message || t('generateFailed'))
     })
   }
 
-  // 选择图片（依赖 query 缓存乐观更新）
+  // Select image (relies on query cache optimistic update)
   const handleSelectImage = (imageIndex: number | null) => {
     if (imageIndex === effectiveSelectedIndex) return
     const requestId = latestSelectRequestRef.current + 1
@@ -123,7 +123,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
     })
   }
 
-  // 确认选择
+  // Confirm selection
   const handleConfirmSelection = () => {
     if (effectiveSelectedIndex === null) return
     const requestId = latestSelectRequestRef.current + 1
@@ -140,12 +140,12 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
     })
   }
 
-  // 撤回
+  // Undo
   const handleUndo = () => {
     undoImage.mutate(location.id)
   }
 
-  // 上传图片
+  // Upload image
   const handleUpload = () => {
     const file = fileInputRef.current?.files?.[0]
     if (!file) return
@@ -173,13 +173,13 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
     })
   }
 
-  // 多图选择模式
+  // Multi-image selection mode
   if (hasMultipleImages) {
     return (
       <div className="col-span-3 glass-surface p-4">
         <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
 
-        {/* 顶部：名字 + 操作 */}
+        {/* Top: name + actions */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
@@ -213,7 +213,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
           </div>
         </div>
 
-        {/* 任务failed错误提示 */}
+        {/* Task error message */}
         {taskErrorDisplay && !isTaskRunning && (
           <div className="flex items-center gap-2 mb-3 p-2 rounded-lg bg-[var(--glass-danger-ring)] text-[var(--glass-tone-danger-fg)]">
             <AppIcon name="alert" className="w-4 h-4 shrink-0" />
@@ -221,7 +221,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
           </div>
         )}
 
-        {/* 图片列表 */}
+        {/* Image list */}
         <div className="grid grid-cols-3 gap-3">
           {imagesWithUrl.map((img) => {
             const isThisSelected = img.isSelected
@@ -252,7 +252,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
           })}
         </div>
 
-        {/* 确认按钮 */}
+        {/* Confirm button */}
         {effectiveSelectedIndex !== null && (
           <div className="mt-4 flex justify-end">
             <button onClick={handleConfirmSelection} disabled={selectImage.isPending} className="glass-btn-base glass-btn-tone-success px-4 py-2 rounded-lg flex items-center gap-2 text-sm">
@@ -266,7 +266,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
           </div>
         )}
 
-        {/* 删除确认 */}
+        {/* Delete confirm */}
         {showDeleteConfirm && (
           <div className="absolute inset-0 glass-overlay flex items-center justify-center z-20 rounded-xl">
             <div className="glass-surface-modal p-4 m-4">
@@ -282,12 +282,12 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
     )
   }
 
-  // 单图模式
+  // Single image mode
   return (
     <div className="glass-surface overflow-hidden relative group">
       <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
 
-      {/* 图片区域 */}
+      {/* Image area */}
       <div className="relative bg-[var(--glass-bg-muted)] min-h-[100px]">
         {displayImageUrl ? (
           <>
@@ -298,7 +298,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
               className="w-full h-auto object-contain cursor-zoom-in"
               onClick={() => onImageClick?.(displayImageUrl)}
             />
-            {/* 操作按钮 - 非生成时显示 */}
+            {/* Action buttons when not generating */}
             {!isTaskRunning && (
               <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button onClick={() => fileInputRef.current?.click()} disabled={uploadImage.isPending} className="glass-btn-base glass-btn-secondary h-7 w-7 rounded-full">
@@ -338,12 +338,12 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
         )}
       </div>
 
-      {/* 信息区域 */}
+      {/* Info area */}
       <div className="p-3">
         <div className="flex items-center justify-between">
           <h3 className="font-medium text-[var(--glass-text-primary)] text-sm truncate">{location.name}</h3>
           <div className="flex items-center gap-1">
-            {/* 编辑按钮 */}
+            {/* Edit button */}
             <button
               onClick={() => onEdit?.(location, currentImageIndex)}
               className="glass-btn-base glass-btn-soft h-6 w-6 rounded-md opacity-0 group-hover:opacity-100"
@@ -351,7 +351,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
             >
               <AppIcon name="edit" className="w-4 h-4 text-[var(--glass-text-secondary)]" />
             </button>
-            {/* 删除按钮 */}
+            {/* Delete button */}
             <button onClick={() => setShowDeleteConfirm(true)} className="glass-btn-base glass-btn-soft h-6 w-6 rounded-md text-[var(--glass-tone-danger-fg)] opacity-0 group-hover:opacity-100">
               <AppIcon name="trash" className="w-4 h-4" />
             </button>
@@ -360,7 +360,7 @@ export function LocationCard({ location, onImageClick, onImageEdit, onEdit }: Lo
         {location.summary && <p className="mt-1 text-xs text-[var(--glass-text-secondary)] line-clamp-2">{location.summary}</p>}
       </div>
 
-      {/* 删除确认 */}
+      {/* Delete confirm */}
       {showDeleteConfirm && (
         <div className="absolute inset-0 glass-overlay flex items-center justify-center z-20">
           <div className="glass-surface-modal p-4 m-4">

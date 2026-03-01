@@ -6,25 +6,25 @@
   --background: var(--glass-bg-canvas);
   --foreground: var(--glass-text-primary);
 
-  /* 设计系统 - 颜色 */
+  /* Design system - colors */
   --bg-primary: var(--glass-bg-canvas);
-  /* 浅灰背景 */
+  /* Light gray background */
   --bg-card: var(--glass-bg-surface);
-  /* 卡片白色 */
+  /* Card white */
   --bg-glass: var(--glass-bg-surface-strong);
-  /* 玻璃态背景 */
+  /* Glass background */
 
-  /* 设计系统 - 阴影 */
+  /* Design system - shadows */
   --shadow-card: var(--glass-shadow-sm);
   --shadow-card-hover: var(--glass-shadow-md);
   --shadow-glass: var(--glass-shadow-lg);
 
-  /* 设计系统 - 圆角 */
+  /* Design system - radius */
   --radius-card: var(--glass-radius-md);
   --radius-button: var(--glass-radius-sm);
   --radius-input: var(--glass-radius-xs);
 
-  /* 设计系统 - 模糊 */
+  /* Design system - blur */
   --blur-glass: var(--glass-blur-lg);
 }
 
@@ -44,7 +44,7 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-/* 可复用组件类 */
+/* Reusable component classes */
 .card-base {
   background: var(--bg-card);
   border-radius: var(--radius-card);
@@ -69,7 +69,7 @@ body {
   transition: all 0.2s ease;
 }
 
-/* 液体流动动画 */
+/* Liquid flow animation */
 @keyframes float {
 
   0%,
@@ -151,7 +151,7 @@ body {
   animation-delay: -6s;
 }
 
-/* 测试页面动画 - 增强版 */
+/* Test page animation */
 @keyframes float-1 {
 
   0%,
@@ -238,7 +238,7 @@ body {
   animation-delay: -4s;
 }
 
-/* Toast动画 */
+/* Toast animation */
 @keyframes slide-up {
   from {
     transform: translateY(100%);
@@ -255,7 +255,7 @@ body {
   animation: slide-up 0.8s ease-out both;
 }
 
-/* 进度条动画 */
+/* Progress bar animation */
 @keyframes progress {
   0% {
     width: 0%;
@@ -270,7 +270,7 @@ body {
   animation: progress 2s ease-in-out infinite;
 }
 
-/* 确认对话框动画 */
+/* Confirm dialog animation */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -301,13 +301,13 @@ body {
   animation: scale-in 0.22s ease-out both;
 }
 
-/* 竖向文字 */
+/* Vertical text */
 .writing-vertical {
   writing-mode: vertical-rl;
   text-orientation: mixed;
 }
 
-/* 渐变动画 */
+/* Gradient animation */
 @keyframes gradient-x {
   0% {
     background-position: 0% 50%;

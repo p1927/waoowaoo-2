@@ -1,24 +1,24 @@
 'use client'
 
 /**
- * useAssetModals - 资产编辑弹窗状态管理
- * 从 AssetsStage.tsx 提取
+ * useAssetModals - asset modal state
+ * Extracted from AssetsStage
  * 
- * 🔥 V6.5 重构：直接订阅 useProjectAssets，消除 props drilling
+ * V6.5: subscribe useProjectAssets, no props drilling
  */
 
 import { useState, useCallback } from 'react'
 import { CharacterAppearance } from '@/types/project'
 import { useProjectAssets, type Character, type Location } from '@/lib/query/hooks'
 
-// 编辑弹窗状态类型
+// Edit modal state type
 interface EditingAppearance {
     characterId: string
     characterName: string
     appearanceId: string  // UUID
     description: string
     descriptionIndex?: number
-    introduction?: string | null  // 角色介绍
+    introduction?: string | null  // Character intro
 }
 
 interface EditingLocation {
@@ -47,30 +47,30 @@ interface UseAssetModalsProps {
 export function useAssetModals({
     projectId
 }: UseAssetModalsProps) {
-    // 🔥 直接订阅缓存 - 消除 props drilling
+    // Subscribe cache directly
     const { data: assets } = useProjectAssets(projectId)
     const characters = assets?.characters ?? []
     const locations = assets?.locations ?? []
 
-    // 获取形象列表（内置实现）
+    // Get appearance list (built-in)
     const getAppearances = useCallback((character: Character): CharacterAppearance[] => {
         return character.appearances || []
     }, [])
 
-    // 角色编辑弹窗
+    // Character edit modal
     const [editingAppearance, setEditingAppearance] = useState<EditingAppearance | null>(null)
-    // 场景编辑弹窗
+    // Location edit modal
     const [editingLocation, setEditingLocation] = useState<EditingLocation | null>(null)
-    // 新增弹窗
+    // Add modal
     const [showAddCharacter, setShowAddCharacter] = useState(false)
     const [showAddLocation, setShowAddLocation] = useState(false)
-    // 图片编辑弹窗
+    // Image edit modal
     const [imageEditModal, setImageEditModal] = useState<ImageEditModal | null>(null)
     const [characterImageEditModal, setCharacterImageEditModal] = useState<CharacterImageEditModal | null>(null)
-    // 全局资产设定弹窗
+    // Global asset modal
     const [showAssetSettingModal, setShowAssetSettingModal] = useState(false)
 
-    // 编辑特定描述索引的角色形象
+    // Edit character appearance by description index
     const handleEditCharacterDescription = (characterId: string, appearanceIndex: number, descriptionIndex: number) => {
         const character = characters.find(c => c.id === characterId)
         if (!character) return
@@ -90,7 +90,7 @@ export function useAssetModals({
         })
     }
 
-    // 编辑特定描述索引的场景
+    // Edit location by description index
     const handleEditLocationDescription = (locationId: string, imageIndex: number) => {
         const location = locations.find(l => l.id === locationId)
         if (!location) return
@@ -105,7 +105,7 @@ export function useAssetModals({
         })
     }
 
-    // 编辑角色形象
+    // Edit character appearance
     const handleEditAppearance = (characterId: string, characterName: string, appearance: CharacterAppearance, introduction?: string | null) => {
         setEditingAppearance({
             characterId,
@@ -116,7 +116,7 @@ export function useAssetModals({
         })
     }
 
-    // 编辑场景
+    // Edit location
     const handleEditLocation = (location: Location) => {
         const firstImage = location.images?.[0]
         setEditingLocation({
@@ -126,7 +126,7 @@ export function useAssetModals({
         })
     }
 
-    // 打开场景图片编辑弹窗
+    // Open location image edit modal
     const handleOpenLocationImageEdit = (locationId: string, imageIndex: number) => {
         const location = locations.find(l => l.id === locationId)
         if (!location) return
@@ -138,7 +138,7 @@ export function useAssetModals({
         })
     }
 
-    // 打开人物图片编辑弹窗
+    // Open character image edit modal
     const handleOpenCharacterImageEdit = (characterId: string, appearanceId: string, imageIndex: number, characterName: string) => {
         setCharacterImageEditModal({
             characterId,
@@ -148,7 +148,7 @@ export function useAssetModals({
         })
     }
 
-    // 关闭所有弹窗
+    // Close all modals
     const closeEditingAppearance = () => setEditingAppearance(null)
     const closeEditingLocation = () => setEditingLocation(null)
     const closeAddCharacter = () => setShowAddCharacter(false)
@@ -158,11 +158,11 @@ export function useAssetModals({
     const closeAssetSettingModal = () => setShowAssetSettingModal(false)
 
     return {
-        // 🔥 暴露数据供组件使用
+        // Expose data for component
         characters,
         locations,
         getAppearances,
-        // 状态
+        // State
         editingAppearance,
         editingLocation,
         showAddCharacter,

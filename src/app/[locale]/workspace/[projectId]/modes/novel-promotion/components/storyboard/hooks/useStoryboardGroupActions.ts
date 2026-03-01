@@ -41,7 +41,7 @@ export function useStoryboardGroupActions({
       await deleteStoryboardMutation.mutateAsync({ storyboardId })
       await onRefresh()
     } catch (error: unknown) {
-      _ulogError('删除分镜组failed:', error)
+      _ulogError('Delete storyboard group failed:', error)
       alert(
         t('messages.deleteGroupFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -60,14 +60,14 @@ export function useStoryboardGroupActions({
         throw new Error('TASK_ID_MISSING')
       }
       await waitForTaskResult(taskData.taskId, { intervalMs: 2000 })
-      _ulogInfo('[重新生成分镜] 任务完成')
+      _ulogInfo('[Regenerate storyboard] Task complete')
       await onRefresh()
     } catch (error: unknown) {
       if (isAbortError(error)) {
-        _ulogInfo('请求被中断（可能是页面刷新），后端仍在执行')
+        _ulogInfo('Request interrupted (e.g. refresh), backend still running')
         return
       }
-      _ulogError('重新生成分镜failed:', error)
+      _ulogError('Regenerate storyboard failed:', error)
       alert(
         t('messages.regenerateGroupFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -89,7 +89,7 @@ export function useStoryboardGroupActions({
       await addStoryboardGroupMutation.mutateAsync({ episodeId, insertIndex })
       await onRefresh()
     } catch (error: unknown) {
-      _ulogError('添加分镜组failed:', error)
+      _ulogError('Add storyboard group failed:', error)
       alert(
         t('messages.addGroupFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -107,7 +107,7 @@ export function useStoryboardGroupActions({
       await moveStoryboardGroupMutation.mutateAsync({ episodeId, clipId, direction })
       await onRefresh()
     } catch (error: unknown) {
-      _ulogError('移动分镜组failed:', error)
+      _ulogError('Move storyboard group failed:', error)
       alert(
         t('messages.moveGroupFailed', {
           error: getErrorMessage(error, t('common.unknownError')),

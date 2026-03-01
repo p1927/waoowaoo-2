@@ -59,11 +59,11 @@ export function useStoryboardBatchPanelGeneration({
       })
 
       if (panelsToGenerate.length === 0) {
-        _ulogInfo('[批量生成] 没有需要生成的分镜图片')
+        _ulogInfo('[Batch generate] No panels to generate')
         return
       }
 
-      _ulogInfo(`[批量生成] 开始生成 ${panelsToGenerate.length} 个分镜图片`)
+      _ulogInfo(`[Batch generate] Start ${panelsToGenerate.length} panels`)
 
       const concurrencyLimit = 10
       const results: Array<PromiseSettledResult<unknown>> = []
@@ -71,7 +71,7 @@ export function useStoryboardBatchPanelGeneration({
         const batch = panelsToGenerate.slice(index, index + concurrencyLimit)
         const currentBatch = Math.floor(index / concurrencyLimit) + 1
         const totalBatches = Math.ceil(panelsToGenerate.length / concurrencyLimit)
-        _ulogInfo(`[批量生成] 处理第 ${currentBatch}/${totalBatches} 批 (${batch.length} 个)`)
+        _ulogInfo(`[Batch generate] Batch ${currentBatch}/${totalBatches} (${batch.length})`)
 
         const batchResults = await Promise.allSettled(
           batch.map((panelId) => regeneratePanelImage(panelId, 1)),
@@ -79,12 +79,12 @@ export function useStoryboardBatchPanelGeneration({
         results.push(...batchResults)
 
         const completed = Math.min(index + concurrencyLimit, panelsToGenerate.length)
-        _ulogInfo(`[批量生成] 已完成 ${completed}/${panelsToGenerate.length}`)
+        _ulogInfo(`[Batch generate] Done ${completed}/${panelsToGenerate.length}`)
       }
 
       const succeeded = results.filter((result) => result.status === 'fulfilled').length
       const failed = results.filter((result) => result.status === 'rejected').length
-      _ulogInfo(`[批量生成] 完成: 成功 ${succeeded}, failed ${failed}`)
+      _ulogInfo(`[Batch generate] Complete: ${succeeded} ok, ${failed} failed`)
 
       if (failed > 0) {
         const failedReasons = results
@@ -100,10 +100,10 @@ export function useStoryboardBatchPanelGeneration({
           }),
         )
       } else if (succeeded > 0) {
-        _ulogInfo(`[批量生成] 全部成功生成 ${succeeded} 个分镜图片`)
+        _ulogInfo(`[Batch generate] All ${succeeded} panels generated`)
       }
     } catch (error: unknown) {
-      _ulogError('[批量生成] 发生意外错误:', error)
+      _ulogError('[Batch generate] Unexpected error:', error)
       alert(
         t('messages.batchGenerateFailed', {
           error: getErrorMessage(error, t('common.unknownError')),

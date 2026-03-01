@@ -28,7 +28,7 @@ An AI-powered tool for creating short drama / comic videos — automatically gen
 |---|---|---|
 | 🎬 | AI 剧本分析 - 自动解析小说，提取角色、场景、剧情 | AI Script Analysis - parse novels, extract characters, scenes & plot |
 | 🎨 | 角色 & 场景生成 - AI 生成一致性人物和场景图片 | Character & Scene Generation - consistent AI-generated images |
-| 📽️ | 分镜视频制作 - 自动生成分镜头并合成视频 | Storyboard Video - auto-generate shots and compose videos |
+| 📽️ | 分镜视频制作 - 自动生成分Shot并合成视频 | Storyboard Video - auto-generate shots and compose videos |
 | 🎙️ | AI 配音 - 多角色语音合成 | AI Voiceover - multi-character voice synthesis |
 | 🌐 | 多语言支持 - 中文 / 英文界面，右上角一键切换 | Bilingual UI - Chinese / English, switch in the top-right corner |
 

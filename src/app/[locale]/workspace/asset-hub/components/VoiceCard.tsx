@@ -20,20 +20,20 @@ interface Voice {
 
 interface VoiceCardProps {
     voice: Voice
-    onSelect?: (voice: Voice) => void  // 选择模式时使用
-    isSelected?: boolean  // 是否被选中
-    selectionMode?: boolean  // 是否在选择模式
+    onSelect?: (voice: Voice) => void  // When in selection mode
+    isSelected?: boolean  // Whether selected
+    selectionMode?: boolean  // Whether in selection mode
 }
 
 export function VoiceCard({ voice, onSelect, isSelected = false, selectionMode = false }: VoiceCardProps) {
-    // 🔥 使用 mutation hook
+    // Use mutation hook
     const deleteVoice = useDeleteVoice()
     const t = useTranslations('assetHub')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
     const audioRef = useRef<HTMLAudioElement | null>(null)
 
-    // 播放预览
+    // Play preview
     const handlePlay = () => {
         if (!voice.customVoiceUrl) return
 
@@ -58,14 +58,14 @@ export function VoiceCard({ voice, onSelect, isSelected = false, selectionMode =
         })
     }
 
-    // 选择模式点击
+    // Selection mode click
     const handleCardClick = () => {
         if (selectionMode && onSelect) {
             onSelect(voice)
         }
     }
 
-    // 性别图标
+    // Gender icon
     const genderIcon = voice.gender === 'male' ? 'M' : voice.gender === 'female' ? 'F' : ''
 
     return (
@@ -74,27 +74,27 @@ export function VoiceCard({ voice, onSelect, isSelected = false, selectionMode =
             className={`glass-surface overflow-hidden relative group transition-all ${selectionMode ? 'cursor-pointer hover:ring-2 hover:ring-[var(--glass-focus-ring-strong)]' : ''
                 } ${isSelected ? 'ring-2 ring-[var(--glass-stroke-focus)]' : ''}`}
         >
-            {/* 选中标记 */}
+            {/* Selected marker */}
             {isSelected && (
                 <div className="absolute top-2 right-2 w-6 h-6 glass-chip glass-chip-info rounded-full flex items-center justify-center z-10 p-0">
                     <AppIcon name="checkSolid" className="w-4 h-4 text-white" />
                 </div>
             )}
 
-            {/* 音色图标区域 */}
+            {/* Voice icon area */}
             <div className="relative bg-[var(--glass-bg-muted)] p-6 flex items-center justify-center">
                 <div className="w-16 h-16 rounded-full glass-surface-soft flex items-center justify-center">
                     <AppIcon name="mic" className="w-8 h-8 text-[var(--glass-tone-info-fg)]" />
                 </div>
 
-                {/* 性别标签 */}
+                {/* Gender label */}
                 {genderIcon && (
                     <div className="absolute top-2 left-2 glass-chip glass-chip-neutral text-xs px-2 py-0.5 rounded-full">
                         {genderIcon}
                     </div>
                 )}
 
-                {/* 试听按钮 */}
+                {/* Preview button */}
                 {voice.customVoiceUrl && (
                     <button
                         onClick={(e) => { e.stopPropagation(); handlePlay() }}
@@ -112,7 +112,7 @@ export function VoiceCard({ voice, onSelect, isSelected = false, selectionMode =
                 )}
             </div>
 
-            {/* 信息区域 */}
+            {/* Info area */}
             <div className="p-3">
                 <div className="flex items-center justify-between">
                     <h3 className="font-medium text-[var(--glass-text-primary)] text-sm truncate">{voice.name}</h3>
@@ -133,7 +133,7 @@ export function VoiceCard({ voice, onSelect, isSelected = false, selectionMode =
                 )}
             </div>
 
-            {/* 删除确认 */}
+            {/* Delete confirm */}
             {showDeleteConfirm && (
                 <div className="absolute inset-0 glass-overlay flex items-center justify-center z-20">
                     <div className="glass-surface-modal p-4 m-4" onClick={(e) => e.stopPropagation()}>

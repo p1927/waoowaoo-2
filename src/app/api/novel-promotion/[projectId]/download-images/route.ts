@@ -106,7 +106,7 @@ export const GET = apiHandler(async (
     allClips.push(...(episode.clips || []))
   }
 
-  // 遍历所有 storyboard 和 panel
+  // Iterate all storyboards and panels
   for (const storyboard of allStoryboards) {
     // Sort by clip index in clips array
     const clipIndex = allClips.findIndex((clip) => clip.id === storyboard.clipId)

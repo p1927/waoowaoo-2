@@ -28,9 +28,9 @@ export interface StoryboardPanel {
   source_text?: string
   candidateImages?: string
   imageUrl?: string | null
-  photographyRules?: string | null  // 单Shot摄影规则JSON
-  actingNotes?: string | null       // 演技指导数据JSON
-  imageTaskRunning?: boolean  // 任务态运行状态（由 tasks 派生）
+  photographyRules?: string | null  // Per-shot photography rules JSON
+  actingNotes?: string | null       // Acting direction JSON
+  imageTaskRunning?: boolean  // Derived from tasks
 }
 
 interface UseStoryboardStateProps {

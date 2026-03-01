@@ -58,34 +58,34 @@ export default function ConfirmDialog({
 
   return (
     <>
-      {/* 背景遮罩 */}
+      {/* Backdrop */}
       <div
         className="fixed inset-0 z-50 glass-overlay animate-fade-in"
         onClick={onCancel}
       />
 
-      {/* 对话框 */}
+      {/* Dialog */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div
           className="glass-surface-modal max-w-md w-full p-6 pointer-events-auto animate-scale-in"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* 图标 */}
+          {/* Icon */}
           <div className={`w-12 h-12 rounded-full ${currentStyle.iconBg} flex items-center justify-center mb-4`}>
             {currentStyle.icon}
           </div>
 
-          {/* 标题 */}
+          {/* Title */}
           <h3 className="mb-2 text-xl font-semibold text-[var(--glass-text-primary)]">
             {title}
           </h3>
 
-          {/* 消息 */}
+          {/* Message */}
           <p className="mb-6 text-[var(--glass-text-secondary)]">
             {message}
           </p>
 
-          {/* 按钮 */}
+          {/* Buttons */}
           <div className="flex gap-3">
             <button
               onClick={onCancel}

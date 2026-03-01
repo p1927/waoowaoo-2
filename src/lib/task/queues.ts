@@ -1,4 +1,4 @@
-import { JobsOptions, Queue } from 'bullmq'
+import { JobsOptions, Queue, type RedisOptions } from 'bullmq'
 import { queueRedis } from '@/lib/redis'
 import { QueueType, TaskType, TASK_TYPE, type TaskJobData } from './types'
 
@@ -20,22 +20,22 @@ const defaultJobOptions: JobsOptions = {
 }
 
 export const imageQueue = new Queue<TaskJobData>(QUEUE_NAME.IMAGE, {
-  connection: queueRedis as any,
+  connection: queueRedis as unknown as RedisOptions,
   defaultJobOptions,
 })
 
 export const videoQueue = new Queue<TaskJobData>(QUEUE_NAME.VIDEO, {
-  connection: queueRedis as any,
+  connection: queueRedis as unknown as RedisOptions,
   defaultJobOptions,
 })
 
 export const voiceQueue = new Queue<TaskJobData>(QUEUE_NAME.VOICE, {
-  connection: queueRedis as any,
+  connection: queueRedis as unknown as RedisOptions,
   defaultJobOptions,
 })
 
 export const textQueue = new Queue<TaskJobData>(QUEUE_NAME.TEXT, {
-  connection: queueRedis as any,
+  connection: queueRedis as unknown as RedisOptions,
   defaultJobOptions,
 })
 

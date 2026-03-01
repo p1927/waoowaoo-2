@@ -5,7 +5,7 @@ import { TASK_TYPE } from '@/lib/task/types'
 import { maybeSubmitLLMTask } from '@/lib/llm-observe/route-task'
 
 /**
- * 批量确认未确认角色档案
+ * Batch confirm unconfirmed character profiles
  * POST /api/novel-promotion/[projectId]/character-profile/batch-confirm
  */
 export const POST = apiHandler(async (

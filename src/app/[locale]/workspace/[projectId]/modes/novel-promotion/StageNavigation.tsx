@@ -1,5 +1,5 @@
 /**
- * 小说推文模式 - 阶段导航组件
+ * Novel promotion stage navigation
  */
 
 import Link from 'next/link'
@@ -7,16 +7,16 @@ import { useTranslations } from 'next-intl'
 import { AppIcon } from '@/components/ui/icons'
 
 interface StageNavigationProps {
-  projectId: string  // 用于构建链接
-  episodeId?: string | null  // 当前剧集ID，用于新标签页打开时保持剧集
+  projectId: string  // For building link
+  episodeId?: string | null  // Current episode for new-tab open
   currentStage: string
-  hasNovelText: boolean  // 是否有文本输入（用于启用配音阶段）
+  hasNovelText: boolean  // Has text input (enables voice stage)
   hasAudio: boolean
   hasAssets: boolean
   hasStoryboards: boolean
-  hasTextStoryboards: boolean  // 是否有文字分镜（用于启用分镜面板）
+  hasTextStoryboards: boolean  // Has text storyboards (enables panel)
   hasVideos?: boolean
-  hasVoiceLines?: boolean  // 是否有配音台词
+  hasVoiceLines?: boolean  // Has voice lines
   isDisabled: boolean
   onStageClick: (stage: string) => void
 }
@@ -36,7 +36,7 @@ export function StageNavigation({
   onStageClick
 }: StageNavigationProps) {
   const t = useTranslations('stages')
-  // 如果 currentStage 是旧的 'text-storyboard'，自动重定向到 'storyboard'
+  // If currentStage is legacy 'text-storyboard', redirect to 'storyboard'
   const effectiveStage = currentStage === 'text-storyboard' ? 'storyboard' : currentStage
 
   const stages = [
@@ -44,7 +44,7 @@ export function StageNavigation({
     { id: 'assets', label: t('assets'), enabled: hasAudio || hasAssets },
     { id: 'storyboard', label: t('storyboard'), enabled: hasTextStoryboards || hasStoryboards },
     { id: 'videos', label: t('videos'), enabled: hasStoryboards || hasVideos },
-    // 配音阶段只要有文本输入就可以启用，不受其他条件限制
+    // Voice stage enabled when text input exists
     { id: 'voice', label: t('voice'), enabled: hasNovelText || hasVoiceLines }
   ]
 
@@ -53,7 +53,7 @@ export function StageNavigation({
       {stages.map((stage, index) => {
         const isEnabled = stage.enabled && !isDisabled
         const isCurrent = effectiveStage === stage.id
-        // 构建 URL，包含 episode 参数以支持新标签页打开时保持当前剧集
+        // Build URL with episode for new-tab
         const href = episodeId
           ? `/workspace/${projectId}?stage=${stage.id}&episode=${episodeId}`
           : `/workspace/${projectId}?stage=${stage.id}`
@@ -71,12 +71,12 @@ export function StageNavigation({
               <Link
                 href={href}
                 onClick={(e) => {
-                  // 左键点击时阻止默认行为，使用 onStageClick
+                  // Left click: prevent default, use onStageClick
                   if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
                     e.preventDefault()
                     onStageClick(stage.id)
                   }
-                  // 中键点击或 Ctrl/Cmd+点击 会使用默认的链接行为打开新标签
+                  // Middle/Ctrl+click: default link, new tab
                 }}
                 className={className}
               >

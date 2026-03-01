@@ -75,7 +75,7 @@ interface AssetGridProps {
     onVoiceSelect?: (characterId: string) => void
 }
 
-// 内联 SVG 图标
+// Inline SVG icon
 const PlusIcon = ({ className }: { className?: string }) => (
     <AppIcon name="plus" className={className} />
 )
@@ -178,9 +178,9 @@ export function AssetGrid({
 
     return (
         <div className="flex-1 min-w-0">
-            {/* Header: 筛选 Tab + 操作按钮 */}
+            {/* Header: filter tabs + actions */}
             <div className="flex items-center justify-between mb-6">
-                {/* 左侧筛选 */}
+                {/* Left filters */}
                 {(() => {
                     const tabIds = tabs.map(t => t.id)
                     const activeIdx = tabIds.indexOf(filter)
@@ -209,7 +209,7 @@ export function AssetGrid({
                     )
                 })()}
 
-                {/* 右侧新建按钮 */}
+                {/* Right new button */}
                 <div className="flex items-center gap-3">
                     <button
                         onClick={onAddCharacter}
@@ -236,7 +236,7 @@ export function AssetGrid({
             </div>
 
             {isEmpty ? (
-                /* 空状态 */
+                /* Empty state */
                 <div className="glass-surface rounded-xl p-12 text-center">
                     <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--glass-bg-muted)] flex items-center justify-center">
                         <PlusIcon className="w-8 h-8 text-[var(--glass-text-tertiary)]" />
@@ -246,7 +246,7 @@ export function AssetGrid({
                 </div>
             ) : (
                 <div className="space-y-8">
-                    {/* 角色区块 */}
+                    {/* Characters section */}
                     {(filter === 'all' || filter === 'character') && characters.length > 0 && (
                         <section>
                             <h2 className="text-sm font-semibold text-[var(--glass-text-primary)] mb-3 flex items-center gap-2">
@@ -270,7 +270,7 @@ export function AssetGrid({
                         </section>
                     )}
 
-                    {/* 场景区块 */}
+                    {/* Locations section */}
                     {(filter === 'all' || filter === 'location') && locations.length > 0 && (
                         <section>
                             <h2 className="text-sm font-semibold text-[var(--glass-text-primary)] mb-3 flex items-center gap-2">
@@ -292,7 +292,7 @@ export function AssetGrid({
                         </section>
                     )}
 
-                    {/* 音色区块 */}
+                    {/* Voices section */}
                     {(filter === 'all' || filter === 'voice') && voices.length > 0 && (
                         <section>
                             <h2 className="text-sm font-semibold text-[var(--glass-text-primary)] mb-3 flex items-center gap-2">

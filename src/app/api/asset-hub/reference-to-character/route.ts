@@ -14,7 +14,7 @@ function parseReferenceImages(body: Record<string, unknown>): string[] {
 }
 
 /**
- * 资产中心 - 参考图转角色（任务化）
+ * Asset Hub - reference image to character (task-based)
  */
 export const POST = apiHandler(async (request: NextRequest) => {
   const authResult = await requireUserAuth()

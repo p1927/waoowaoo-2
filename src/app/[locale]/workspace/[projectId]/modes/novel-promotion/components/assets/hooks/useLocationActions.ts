@@ -3,10 +3,10 @@ import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core
 import { useTranslations } from 'next-intl'
 
 /**
- * useLocationActions - 场景资产操作 Hook
- * 从 AssetsStage 提取，负责场景的 CRUD 和图片生成操作
+ * useLocationActions - location asset actions
+ * CRUD and image generation for locations
  * 
- * 🔥 V6.5 重构：直接订阅 useProjectAssets，消除 props drilling
+ * V6.5: subscribe useProjectAssets, no props drilling
  */
 
 import { useCallback } from 'react'
@@ -41,14 +41,14 @@ export function useLocationActions({
     showToast
 }: UseLocationActionsProps) {
     const t = useTranslations('assets')
-    // 🔥 直接订阅缓存 - 消除 props drilling
+    // Subscribe cache directly
     const { data: assets } = useProjectAssets(projectId)
     const locations = assets?.locations ?? []
 
-    // 🔥 使用刷新函数 - mutations 完成后刷新缓存
+    // Refetch after mutations
     const refreshAssets = useRefreshProjectAssets(projectId)
 
-    // 🔥 V6.7: 使用重新生成mutation hooks
+    // V6.7: use regenerate mutation hooks
     const regenerateSingleImage = useRegenerateSingleLocationImage(projectId)
     const regenerateGroup = useRegenerateLocationGroup(projectId)
     const deleteLocationMutation = useDeleteProjectLocation(projectId)
@@ -68,34 +68,34 @@ export function useLocationActions({
         }
     }, [deleteLocationMutation, t])
 
-    // 处理场景图片选择
+    // Handle location image selection
     const handleSelectLocationImage = useCallback(async (locationId: string, imageIndex: number | null) => {
         try {
             await selectLocationImageMutation.mutateAsync({ locationId, imageIndex })
         } catch (error: unknown) {
             if (isAbortError(error)) {
-                _ulogInfo('请求被中断（可能是页面刷新），后端仍在执行')
+                _ulogInfo('Request interrupted (e.g. refresh), backend still running')
                 return
             }
             alert(t('image.selectFailed', { error: getErrorMessage(error, t('common.unknownError')) }))
         }
     }, [selectLocationImageMutation, t])
 
-    // 确认选择并删除其他候选图片
+    // Confirm selection and delete other candidates
     const handleConfirmLocationSelection = useCallback(async (locationId: string) => {
         try {
             await confirmLocationSelectionMutation.mutateAsync({ locationId })
             showToast?.(`✓ ${t('image.confirmSuccess')}`, 'success')
         } catch (error: unknown) {
             if (isAbortError(error)) {
-                _ulogInfo('请求被中断（可能是页面刷新），后端仍在执行')
+                _ulogInfo('Request interrupted (e.g. refresh), backend still running')
                 return
             }
             showToast?.(t('image.confirmFailed', { error: getErrorMessage(error, t('common.unknownError')) }), 'error')
         }
     }, [confirmLocationSelectionMutation, showToast, t])
 
-    // 单张重新生成场景图片 - 🔥 V6.7: 使用mutation hook
+    // Single location image regenerate - mutation hook
     const handleRegenerateSingleLocation = useCallback((locationId: string, imageIndex: number) => {
         regenerateSingleImage.mutate(
             { locationId, imageIndex },
@@ -109,7 +109,7 @@ export function useLocationActions({
         )
     }, [regenerateSingleImage, t])
 
-    // 整组重新生成场景图片 - 🔥 V6.7: 使用mutation hook
+    // Full location regenerate - mutation hook
     const handleRegenerateLocationGroup = useCallback((locationId: string) => {
         regenerateGroup.mutate(
             { locationId },
@@ -123,7 +123,7 @@ export function useLocationActions({
         )
     }, [regenerateGroup, t])
 
-    // Update location描述 - 🔥 保存到服务器
+    // Update location description - save to server
     const handleUpdateLocationDescription = useCallback(async (
         locationId: string,
         newDescription: string
@@ -142,7 +142,7 @@ export function useLocationActions({
     }, [refreshAssets, updateLocationDescriptionMutation, t])
 
     return {
-        // 🔥 暴露 locations 供组件使用
+        // Expose locations for component
         locations,
         handleDeleteLocation,
         handleSelectLocationImage,

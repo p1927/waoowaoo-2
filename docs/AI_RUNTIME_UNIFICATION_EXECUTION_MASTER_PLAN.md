@@ -200,13 +200,13 @@
   - 刷新恢复完整率 100%（同一 run）。
   - 人工制造 seq 跳号后，1 次补拉内恢复完整。
 - 稳定性：
-  - 可重试错误均按策略重试；不可重试错误显式失败。
+  - 可重试错误均按策略重试；不可重试错误显式failed。
 - 观测：
   - 每条关键日志含 `runId/stepKey/attempt`。
 
 ## 验证方式
 - 单测：runtime、event seq、state guard、error mapping。
-- 集成：story_to_script_run、script_to_storyboard_run 的成功/失败/重试路径。
+- 集成：story_to_script_run、script_to_storyboard_run 的成功/failed/重试路径。
 - 回归：`npm run test:regression` 全绿。
 
 ## 当前验证执行记录（持续追加）
@@ -216,13 +216,13 @@
 - ✅ `npx vitest run tests/unit/helpers/run-request-executor.run-events.test.ts tests/unit/helpers/recovered-run-subscription.test.ts tests/unit/run-runtime/graph-executor.test.ts`
 - ✅ `npm run build`
 - ✅ `npm run test:regression` guard 阶段已通过（含新增 run routes catalog）
-- ⚠️ `npm run test:regression` 二次执行阻塞于仓库现有单测失败（与本轮 runtime 改造文件无直接耦合）：
+- ⚠️ `npm run test:regression` 二次执行阻塞于仓库现有单测failed（与本轮 runtime 改造文件无直接耦合）：
   - `tests/unit/optimistic/task-target-overlay.test.ts`（2 failures）
   - `tests/unit/billing/cost-error-branches.test.ts`（1 failure）
 - ✅ `npm run build`（含 run-request-executor 改造后再次通过）
 
 ## 当前问题登记（必须先记录再推进）
-- ⚠️ 回归门禁未全绿：存在 3 个历史/并行改动引入的失败用例，导致 `test:regression` 无法通过。
+- ⚠️ 回归门禁未全绿：存在 3 个历史/并行改动引入的failed用例，导致 `test:regression` 无法通过。
 - ⚠️ 本地构建环境 Redis 未监听 `127.0.0.1:16379`，`next build` 期间出现大量连接拒绝日志，但构建产物仍成功输出。
 
 # 5:备注

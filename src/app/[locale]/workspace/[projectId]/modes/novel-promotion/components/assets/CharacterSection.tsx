@@ -7,10 +7,10 @@ import { resolveTaskPresentationState } from '@/lib/task/presentation'
 import { PRIMARY_APPEARANCE_INDEX } from '@/lib/constants'
 
 /**
- * CharacterSection - 角色资产区块组件
- * 从 AssetsStage.tsx 提取，负责角色列表的展示和操作
+ * CharacterSection - character assets section
+ * Character list and actions
  * 
- * 🔥 V6.5 重构：内部直接订阅 useProjectAssets，消除 props drilling
+ * V6.5: subscribe useProjectAssets
  */
 
 import { Character, CharacterAppearance } from '@/types/project'
@@ -19,19 +19,19 @@ import CharacterCard from './CharacterCard'
 import { AppIcon } from '@/components/ui/icons'
 
 interface CharacterSectionProps {
-    // 🔥 V6.5 删除：characters prop - 现在内部直接订阅
+    // V6.5: characters from subscription
     projectId: string
     focusCharacterId?: string | null
     focusCharacterRequestId?: number
     activeTaskKeys: Set<string>
     onClearTaskKey: (key: string) => void
     isAnalyzingAssets: boolean
-    // 回调函数
+    // Callbacks
     onAddCharacter: () => void
     onDeleteCharacter: (characterId: string) => void
     onDeleteAppearance: (characterId: string, appearanceId: string) => void
     onEditAppearance: (characterId: string, characterName: string, appearance: CharacterAppearance, introduction?: string | null) => void
-    // 🔥 V6.6 重构：重命名为 handleGenerateImage
+    // V6.6: handleGenerateImage
     handleGenerateImage: (type: 'character' | 'location', id: string, appearanceId?: string) => void
     onSelectImage: (characterId: string, appearanceId: string, imageIndex: number | null) => void
     onConfirmSelection: (characterId: string, appearanceId: string) => void
@@ -42,14 +42,14 @@ interface CharacterSectionProps {
     onImageEdit: (characterId: string, appearanceId: string, imageIndex: number, characterName: string) => void
     onVoiceChange: (characterId: string, customVoiceUrl: string) => void
     onVoiceDesign: (characterId: string, characterName: string) => void
-    onVoiceSelectFromHub: (characterId: string) => void  // 🆕 从资产中心选择音色
-    onCopyFromGlobal: (characterId: string) => void  // 🆕 从资产中心复制
-    // 辅助函数
+    onVoiceSelectFromHub: (characterId: string) => void  // Pick voice from hub
+    onCopyFromGlobal: (characterId: string) => void  // Copy from hub
+    // Helpers
     getAppearances: (character: Character) => CharacterAppearance[]
 }
 
 export default function CharacterSection({
-    // 🔥 V6.5 删除：characters prop - 现在内部直接订阅
+    // V6.5: characters from subscription
     projectId,
     focusCharacterId = null,
     focusCharacterRequestId = 0,
@@ -84,7 +84,7 @@ export default function CharacterSection({
         })
         : null
 
-    // 🔥 V6.5 重构：直接订阅缓存，消除 props drilling
+    // V6.5: subscribe cache
     const { data: assets } = useProjectAssets(projectId)
     const characters: Character[] = useMemo(() => assets?.characters ?? [], [assets?.characters])
     const [highlightedCharacterId, setHighlightedCharacterId] = useState<string | null>(null)
@@ -171,7 +171,7 @@ export default function CharacterSection({
                 </button>
             </div>
 
-            {/* 按角色分组显示：外层 grid 让多角色并排 */}
+            {/* By character - grid layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {characters.map(character => {
                     const appearances = getAppearances(character)
@@ -189,7 +189,7 @@ export default function CharacterSection({
                             id={`project-character-${character.id}`}
                             className={`glass-surface rounded-xl p-4 scroll-mt-24 transition-all duration-700 ${highlightedCharacterId === character.id ? 'ring-2 ring-[var(--glass-focus-ring)] bg-[var(--glass-tone-info-bg)]/40' : ''}`}
                         >
-                            {/* 角色标题 */}
+                            {/* Character title */}
                             <div className="flex items-center justify-between border-b border-[var(--glass-stroke-base)] pb-2">
                                 <div className="flex items-center gap-3">
                                     <h3 className="text-base font-semibold text-[var(--glass-text-primary)]">{character.name}</h3>
@@ -198,7 +198,7 @@ export default function CharacterSection({
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    {/* 从资产中心复制按钮 */}
+                                    {/* Copy from hub button */}
                                     <button
                                         onClick={() => onCopyFromGlobal(character.id)}
                                         className="text-xs text-[var(--glass-tone-info-fg)] hover:text-[var(--glass-tone-info-fg)] flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-[var(--glass-tone-info-bg)] transition-colors"
@@ -216,7 +216,7 @@ export default function CharacterSection({
                                 </div>
                             </div>
 
-                            {/* 形象网格 */}
+                            {/* Appearance grid */}
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                 {sortedAppearances.map(appearance => {
                                     const isPrimary = appearance.appearanceIndex === (primaryAppearance?.appearanceIndex ?? PRIMARY_APPEARANCE_INDEX)
@@ -229,11 +229,11 @@ export default function CharacterSection({
                                             onDelete={() => onDeleteCharacter(character.id)}
                                             onDeleteAppearance={() => appearance.id && onDeleteAppearance(character.id, appearance.id)}
                                             onRegenerate={() => {
-                                                // 获取有效图片数量
+                                                // Valid image count
                                                 const imageUrls = appearance.imageUrls || []
                                                 const validImageCount = imageUrls.filter(url => !!url).length
 
-                                                _ulogInfo('[CharacterSection] 重新生成判断:', {
+_ulogInfo('[CharacterSection] Regenerate check:', {
                                                     characterName: character.name,
                                                     appearanceIndex: appearance.appearanceIndex,
                                                     imageUrls,
@@ -241,15 +241,15 @@ export default function CharacterSection({
                                                     selectedIndex: appearance.selectedIndex
                                                 })
 
-                                                // 单图：重新生成单张
+                                                // Single: regenerate one
                                                 if (validImageCount === 1) {
                                                     const selectedIndex = appearance.selectedIndex ?? 0
-                                                    _ulogInfo('[CharacterSection] 调用单张重新生成, imageIndex:', selectedIndex)
+_ulogInfo('[CharacterSection] Single regenerate, imageIndex:', selectedIndex)
                                                     onRegenerateSingle(character.id, appearance.id, selectedIndex)
                                                 }
-                                                // 多图或无图：重新生成整组
+                                                // Multi: regenerate group
                                                 else {
-                                                    _ulogInfo('[CharacterSection] 调用整组重新生成')
+_ulogInfo('[CharacterSection] Group regenerate')
                                                     onRegenerateGroup(character.id, appearance.id)
                                                 }
                                             }}

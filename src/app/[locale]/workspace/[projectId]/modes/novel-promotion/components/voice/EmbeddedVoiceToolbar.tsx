@@ -71,7 +71,7 @@ export default function EmbeddedVoiceToolbar({
                     {t("embedded.linesStats", { total: totalLines, audio: linesWithAudio })}
                 </div>
 
-                {/* 重新分析按钮 */}
+                {/* Re-analyze button */}
                 <button
                     onClick={onAnalyze}
                     disabled={analyzing}
@@ -90,7 +90,7 @@ export default function EmbeddedVoiceToolbar({
                     {t("embedded.addLine")}
                 </button>
 
-                {/* 下载按钮 */}
+                {/* Download button */}
                 <button
                     onClick={onDownloadAll}
                     disabled={linesWithAudio === 0 || isDownloading}
@@ -104,7 +104,7 @@ export default function EmbeddedVoiceToolbar({
                     )}
                 </button>
 
-                {/* 生成全部按钮 */}
+                {/* Generate all button */}
                 <button
                     onClick={onGenerateAll}
                     disabled={isBatchSubmitting || !allSpeakersHaveVoice || totalLines === 0}

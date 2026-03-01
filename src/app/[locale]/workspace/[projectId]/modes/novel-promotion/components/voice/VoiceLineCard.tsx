@@ -71,14 +71,14 @@ export default function VoiceLineCard({
             className={`relative glass-surface-elevated overflow-hidden transition-all hover:shadow-[var(--glass-shadow-md)] hover:-translate-y-0.5 ${line.audioUrl ? 'ring-1 ring-[var(--glass-focus-ring)]/60' : hasVoice ? '' : 'ring-1 ring-[var(--glass-stroke-warning)]/60'
                 }`}
         >
-            {/* 顶部：播放/生成区域 */}
+            {/* Top: play/generate area */}
             <div className={`h-14 flex items-center justify-center gap-3 ${line.audioUrl
                 ? 'bg-[var(--glass-tone-success-bg)]/50'
                 : 'bg-[var(--glass-bg-muted)]/50'
                 }`}>
                 {line.audioUrl ? (
                     <div className="flex items-center justify-center gap-3">
-                        {/* 播放按钮 */}
+                        {/* Play button */}
                         <button
                             onClick={() => onTogglePlay(line.id, line.audioUrl!)}
                             className="flex items-center justify-center w-9 h-9 bg-[var(--glass-tone-success-fg)] text-white rounded-xl hover:bg-[var(--glass-tone-success-fg)] shadow-[var(--glass-shadow-sm)] transition-all"
@@ -90,7 +90,7 @@ export default function VoiceLineCard({
                                 <AppIcon name="play" className="w-4 h-4" />
                             )}
                         </button>
-                        {/* 重新生成按钮 */}
+                        {/* Regenerate button */}
                         <button
                             onClick={() => onGenerate(line.id)}
                             disabled={!hasVoice || isVoiceTaskRunning}
@@ -103,7 +103,7 @@ export default function VoiceLineCard({
                                 <AppIcon name="refresh" className="w-3.5 h-3.5" />
                             )}
                         </button>
-                        {/* 下载按钮 */}
+                        {/* Download button */}
                         <button
                             onClick={() => onDownload(line.audioUrl!)}
                             className="flex items-center justify-center w-8 h-8 text-[var(--glass-text-tertiary)] hover:text-[var(--glass-tone-info-fg)] hover:bg-[var(--glass-tone-info-bg)] rounded-xl transition-all"
@@ -113,14 +113,14 @@ export default function VoiceLineCard({
                         </button>
                     </div>
                 ) : isVoiceTaskRunning ? (
-                    /* 生成中状态：显示状态指示器 */
+                    /* Generating: show progress */
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-2 px-5 py-2 bg-[var(--glass-accent-from)] text-white rounded-xl text-sm font-medium shadow-[var(--glass-shadow-sm)]">
                             <TaskStatusInline state={inlineStatusState} className="text-white [&>span]:text-white [&_svg]:text-white" />
                         </div>
                     </div>
                 ) : (
-                    /* 生成按钮 */
+                    /* Generate button */
                     <button
                         onClick={() => onGenerate(line.id)}
                         disabled={!hasVoice}
@@ -132,12 +132,12 @@ export default function VoiceLineCard({
                 )}
             </div>
 
-            {/* 序号标签 */}
+            {/* Index label */}
             <div className="absolute top-2 left-2 bg-[var(--glass-overlay)] backdrop-blur-sm text-white px-2 py-0.5 rounded-lg text-xs font-medium">
                 #{line.lineIndex}
             </div>
 
-            {/* 状态标签+删除配音按钮 */}
+            {/* Status label + delete voice button */}
             {
                 line.audioUrl && (
                     <div className="absolute top-2 right-2 flex items-center gap-1">
@@ -155,13 +155,13 @@ export default function VoiceLineCard({
                 )
             }
 
-            {/* 中间：台词内容 */}
+            {/* Middle: line content */}
             <div className="px-4 py-3">
                 <div className="group">
                     <p className="text-sm text-[var(--glass-text-secondary)] line-clamp-3 leading-relaxed" title={line.content}>
                         {line.content}
                     </p>
-                    {/* 操作按钮组 */}
+                    {/* Action buttons */}
                     <div className="mt-2 flex justify-end gap-0.5">
                         {hasPanelBinding && (
                             <button
@@ -190,7 +190,7 @@ export default function VoiceLineCard({
                 </div>
             </div>
 
-            {/* 情绪设置面板 */}
+            {/* Emotion settings panel */}
             {
                 hasVoice && (
                     <>
@@ -218,7 +218,7 @@ export default function VoiceLineCard({
                 )
             }
 
-            {/* 底部：发言人 */}
+            {/* Bottom: speaker */}
             <div className="px-4 py-2.5 bg-[var(--glass-bg-muted)]/50 border-t border-[var(--glass-stroke-base)]/60 flex items-center justify-between gap-2">
                 <span className="inline-flex items-center px-2.5 py-1 bg-[var(--glass-tone-info-bg)]/80 text-[var(--glass-tone-info-fg)] text-xs rounded-lg truncate max-w-[160px] font-medium" title={line.speaker}>
                     {line.speaker}

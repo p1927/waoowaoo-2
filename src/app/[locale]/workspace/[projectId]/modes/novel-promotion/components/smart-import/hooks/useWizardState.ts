@@ -54,7 +54,7 @@ export function useWizardState({ projectId, importStatus, onImportComplete, t }:
         setStage('preview')
       }
     } catch (err) {
-      _ulogError('[SmartImport] 加载已保存剧集failed:', err)
+      _ulogError('[SmartImport] Load saved episodes failed:', err)
     }
   }, [listProjectEpisodesMutation, t])
 
@@ -70,7 +70,7 @@ export function useWizardState({ projectId, importStatus, onImportComplete, t }:
     setError(null)
 
     try {
-      _ulogInfo('[SmartImport] 开始调用 split API...')
+      _ulogInfo('[SmartImport] Calling split API...')
       const data = await splitProjectEpisodesMutation.mutateAsync({ content: rawContent, async: true })
       const splitEpisodes = data.episodes || []
       setEpisodes(splitEpisodes)
@@ -88,10 +88,10 @@ export function useWizardState({ projectId, importStatus, onImportComplete, t }:
         })
       } catch {
         saveSucceeded = false
-        _ulogWarn('[SmartImport] 自动保存failed，继续显示预览')
+        _ulogWarn('[SmartImport] Auto-save failed, showing preview')
       }
       if (saveSucceeded) {
-        _ulogInfo('[SmartImport] 剧集已自动保存到数据库，状态：pending')
+        _ulogInfo('[SmartImport] Episodes auto-saved, status: pending')
       }
 
       setStage('preview')
@@ -103,8 +103,8 @@ export function useWizardState({ projectId, importStatus, onImportComplete, t }:
   }, [rawContent, saveProjectEpisodesBatchMutation, splitProjectEpisodesMutation, t])
 
   const handleAnalyze = useCallback(async () => {
-    _ulogInfo('[SmartImport] handleAnalyze 被调用')
-    _ulogInfo('[SmartImport] rawContent 长度:', rawContent.length)
+    _ulogInfo('[SmartImport] handleAnalyze called')
+_ulogInfo('[SmartImport] rawContent length:', rawContent.length)
     _ulogInfo('[SmartImport] projectId:', projectId)
 
     if (!rawContent.trim()) {
@@ -113,7 +113,7 @@ export function useWizardState({ projectId, importStatus, onImportComplete, t }:
     }
 
     const detection = detectEpisodeMarkers(rawContent)
-    _ulogInfo('[SmartImport] 标记检测结果:', {
+_ulogInfo('[SmartImport] Marker detection:', {
       hasMarkers: detection.hasMarkers,
       markerType: detection.markerType,
       confidence: detection.confidence,
@@ -127,7 +127,7 @@ export function useWizardState({ projectId, importStatus, onImportComplete, t }:
       return
     }
 
-    _ulogInfo('[SmartImport] 未检测到标记，将使用 AI 分析')
+_ulogInfo('[SmartImport] No markers, will use AI analysis')
     await performAISplit()
   }, [performAISplit, projectId, rawContent, t])
 
@@ -156,10 +156,10 @@ export function useWizardState({ projectId, importStatus, onImportComplete, t }:
         })
       } catch {
         saveSucceeded = false
-        _ulogWarn('[SmartImport] 标记分割保存failed，继续显示预览')
+_ulogWarn('[SmartImport] Marker split save failed, showing preview')
       }
       if (saveSucceeded) {
-        _ulogInfo('[SmartImport] 标记分割剧集已保存')
+_ulogInfo('[SmartImport] Marker-split episodes saved')
       }
 
       setStage('preview')
@@ -241,10 +241,10 @@ export function useWizardState({ projectId, importStatus, onImportComplete, t }:
         triggerGlobalAnalysis,
       })
 
-      _ulogInfo('[SmartImport] 剧集已保存到数据库，状态：completed, 触发全局分析:', triggerGlobalAnalysis)
+_ulogInfo('[SmartImport] Episodes saved, status: completed, trigger global:', triggerGlobalAnalysis)
       onImportComplete(episodes, triggerGlobalAnalysis)
     } catch (err: unknown) {
-      _ulogError('[SmartImport] 保存failed:', err)
+_ulogError('[SmartImport] Save failed:', err)
       const message = err instanceof Error ? err.message : t('errors.saveFailed')
       setError(message || t('errors.saveFailed'))
     } finally {

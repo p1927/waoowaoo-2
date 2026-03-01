@@ -67,7 +67,7 @@ export const PATCH = apiHandler(async (
     return NextResponse.json({ success: true })
 })
 
-// 添加新形象
+// Add new appearance
 export const POST = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ characterId: string; appearanceIndex: string }> }
@@ -102,7 +102,7 @@ export const POST = apiHandler(async (
         data: {
             characterId,
             appearanceIndex: newIndex,
-            changeReason: changeReason || '形象变化',
+            changeReason: changeReason || 'Appearance change',
             description: description.trim(),
             descriptions: JSON.stringify([description.trim()]),
             imageUrls: encodeImageUrls([]),

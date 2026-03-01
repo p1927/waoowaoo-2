@@ -1,13 +1,13 @@
 'use client'
 
 /**
- * ModelCapabilityDropdown - 方案 A 经典分区式
- * 自定义下拉组件：上半区选模型，分割线，下半区配参数
- * 触发器显示模型名 + provider + 参数摘要
+ * ModelCapabilityDropdown - model + params dropdown
+ * Top: model, divider, bottom: params
+ * Trigger: model name + provider + param summary
  *
- * 用于：
- *  - 项目配置中心 (ConfigEditModal / SettingsModal)
- *  - 系统级设置中心 (ApiConfigTabContainer)
+ * Used in:
+ *  - Project config (ConfigEditModal / SettingsModal)
+ *  - System settings (ApiConfigTabContainer)
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'

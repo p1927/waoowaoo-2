@@ -11,7 +11,7 @@ function toObject(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>
 }
 
-// Delete location（级联删除关联的图片记录）
+// Delete location (cascade images)
 export const DELETE = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
@@ -29,7 +29,7 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // Delete location（LocationImage 会级联删除）
+  // Delete location (LocationImage cascade)
   await prisma.novelPromotionLocation.delete({
     where: { id: locationId }
   })
@@ -37,7 +37,7 @@ export const DELETE = apiHandler(async (
   return NextResponse.json({ success: true })
 })
 
-// 新增场景
+// Create location
 export const POST = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
@@ -95,7 +95,7 @@ export const POST = apiHandler(async (
     }
   })
 
-  // 触发后台图片生成
+  // Trigger background image generation
   const { getBaseUrl } = await import('@/lib/env')
   const baseUrl = getBaseUrl()
   fetch(`${baseUrl}/api/novel-promotion/${projectId}/generate-image`, {
@@ -115,10 +115,10 @@ export const POST = apiHandler(async (
       },
     })
   }).catch(err => {
-    _ulogError('[Location API] 后台图片生成任务触发failed:', err)
+    _ulogError('[Location API] Background image task trigger failed:', err)
   })
 
-  // 返回包含图片的场景数据
+  // Return location with images
   const locationWithImages = await prisma.novelPromotionLocation.findUnique({
     where: { id: location.id },
     include: { images: true }
@@ -127,7 +127,7 @@ export const POST = apiHandler(async (
   return NextResponse.json({ success: true, location: locationWithImages })
 })
 
-// Update location（名字或图片描述）
+// Update location (name or image description)
 export const PATCH = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
@@ -145,7 +145,7 @@ export const PATCH = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 如果提供了 name 或 summary，Update location信息
+  // If name or summary provided, update location
   if (name !== undefined || body.summary !== undefined) {
     const updateData: { name?: string; summary?: string | null } = {}
     if (name !== undefined) updateData.name = name.trim()

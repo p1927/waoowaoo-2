@@ -121,7 +121,7 @@ export function useStoryboardAiDataRuntime({
           photographyPlan,
         })
       } catch (error) {
-        _ulogError('保存摄影规则failed:', error)
+        _ulogError('Save photography rules failed:', error)
       }
     }
 
@@ -137,7 +137,7 @@ export function useStoryboardAiDataRuntime({
           actingNotes: actingNotesPayload,
         })
       } catch (error) {
-        _ulogError('保存演技指导failed:', error)
+        _ulogError('Save acting direction failed:', error)
       }
     }
   }, [

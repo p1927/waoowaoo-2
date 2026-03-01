@@ -6,7 +6,7 @@ import { attachMediaFieldsToProject } from '@/lib/media/attach'
 
 /**
  * GET - Get project assets (characters + locations)
- * 🔥 V6.5: 为 useProjectAssets hook 提供统一的资产数据接口
+ * V6.5: Unified assets API for useProjectAssets hook
  */
 export const GET = apiHandler(async (
     request: NextRequest,
@@ -45,7 +45,7 @@ export const GET = apiHandler(async (
         return NextResponse.json({ characters: [], locations: [] })
     }
 
-    // 为资产添加稳定媒体 URL（并保留兼容字段）
+    // Add stable media URL to assets (keep compat)
     const withSignedUrls = await attachMediaFieldsToProject(novelData)
 
     return NextResponse.json({

@@ -168,7 +168,7 @@ export function useProviders(): UseProvidersReturn {
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
     const initializedRef = useRef(false)
 
-    // 始终持有最新值的 refs，用于避免异步保存时读到旧的闭包值
+    // Refs for latest values, avoid stale closure on async save
     const latestModelsRef = useRef(models)
     const latestProvidersRef = useRef(providers)
     const latestDefaultModelsRef = useRef(defaultModels)
@@ -178,7 +178,7 @@ export function useProviders(): UseProvidersReturn {
     useEffect(() => { latestDefaultModelsRef.current = defaultModels }, [defaultModels])
     useEffect(() => { latestCapabilityDefaultsRef.current = capabilityDefaults }, [capabilityDefaults])
 
-    // 加载配置
+    // Load config
     useEffect(() => {
         fetchConfig()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -196,7 +196,7 @@ export function useProviders(): UseProvidersReturn {
             const data = await res.json()
             const pricingDisplay = parsePricingDisplayMap((data as { pricingDisplay?: unknown }).pricingDisplay)
 
-            // 合并预设和已保存的提供商
+            // Merge preset and saved providers
             const savedProviders: Provider[] = data.providers || []
             const allProviders = presetProviders.map(preset => {
                 const saved = savedProviders.find(p => getProviderKey(p.id) === preset.id)
@@ -204,7 +204,7 @@ export function useProviders(): UseProvidersReturn {
                     ...preset,
                     apiKey: saved?.apiKey || '',
                     hasApiKey: !!saved?.apiKey,
-                    // 保留用户保存的 baseUrl（用于自建服务）
+                    // Keep user baseUrl (self-hosted)
                     baseUrl: saved?.baseUrl || preset.baseUrl
                 }
             })
@@ -216,7 +216,7 @@ export function useProviders(): UseProvidersReturn {
             }))
             setProviders([...allProviders, ...customProviders])
 
-            // 合并预设和已保存的模型
+            // Merge preset and saved models
             const savedModelsRaw = data.models || []
             const savedModelsNormalized = savedModelsRaw.map((m: CustomModel) => ({
                 ...m,
@@ -252,13 +252,13 @@ export function useProviders(): UseProvidersReturn {
                 !PRESET_MODELS.find((preset) => encodeModelKey(preset.provider, preset.modelId) === m.modelKey)
             ).map((m: CustomModel) => ({
                 ...applyPricingDisplay(m, pricingDisplay),
-                // 尊重服务端返回的 enabled 字段（后端对 disabled presets 会明确返回 enabled: false）
+                // Respect server enabled (disabled presets return enabled: false)
                 enabled: (m as CustomModel & { enabled?: boolean }).enabled !== false,
             }))
 
             setModels([...allModels, ...customModels])
 
-            // 加载默认模型配置
+            // Load default model config
             if (data.defaultModels) {
                 setDefaultModels(data.defaultModels)
             }
@@ -267,12 +267,12 @@ export function useProviders(): UseProvidersReturn {
             }
             loadedSuccessfully = true
         } catch (error) {
-            _ulogError('获取配置failed:', error)
+            _ulogError('Get config failed:', error)
             setSaveStatus('error')
         } finally {
             setLoading(false)
             if (loadedSuccessfully) {
-                // 延迟设置 initialized，确保所有状态更新完成后才开始监听
+                // Defer initialized until state settled
                 setTimeout(() => {
                     initializedRef.current = true
                 }, 100)
@@ -281,8 +281,8 @@ export function useProviders(): UseProvidersReturn {
     }
 
     /**
-     * 核心保存函数：始终从 ref 读取最新值，支持传入覆盖值（解决异步闭包旧值问题）
-     * optimistic=true 时立刻显示「已保存」，不经历「保存中」状态，failed时才回退为「保存failed」
+     * Core save: read from ref, optional override (avoid stale closure)
+     * optimistic=true: show saved immediately, rollback only on failure
      */
     const performSave = useCallback(async (overrides?: {
         defaultModels?: DefaultModels
@@ -293,7 +293,7 @@ export function useProviders(): UseProvidersReturn {
             saveTimeoutRef.current = null
         }
         if (optimistic) {
-            // 与项目设置一致：立刻显示已保存，不等网络返回
+            // Match project settings: show saved immediately
             setSaveStatus('saved')
             setTimeout(() => setSaveStatus('idle'), 3000)
         } else {
@@ -324,13 +324,13 @@ export function useProviders(): UseProvidersReturn {
                 setSaveStatus('error')
             }
         } catch (error) {
-            _ulogError('保存failed:', error)
+            _ulogError('Save failed:', error)
             setSaveStatus('error')
         }
-    }, []) // 无依赖，所有值均从 ref 读取
+    }, []) // No deps, all from ref
 
-    // 默认模型操作：选中即立刻显示已保存（与项目设置一致）
-    // capabilityFieldsToDefault：切换模型时自动将第一个 option 写入 capabilityDefaults（只填未配置字段）
+    // Default model: show saved on select
+    // On model switch: first option to capabilityDefaults (unset only)
     const updateDefaultModel = useCallback((
         field: string,
         modelKey: string,
@@ -388,7 +388,7 @@ export function useProviders(): UseProvidersReturn {
         })
     }, [performSave])
 
-    // 提供商操作
+    // Provider actions
     const updateProviderApiKey = useCallback((providerId: string, apiKey: string) => {
         setProviders(prev => {
             const next = prev.map(p =>
@@ -413,7 +413,7 @@ export function useProviders(): UseProvidersReturn {
 
             const providerKey = getProviderKey(provider.id)
             if (providerKey === 'gemini-compatible') {
-                // 保存后直接 refetch：后端注入带完整 capabilities 的 Google 预设模型（disabled）
+                // Refetch after save: server injects Google presets with capabilities
                 void performSave(undefined, true).then(() => void fetchConfig())
             } else {
                 void performSave(undefined, true)
@@ -450,7 +450,7 @@ export function useProviders(): UseProvidersReturn {
                     return updates
                 })
                 latestModelsRef.current = nextModels
-                void performSave(undefined, true) // 删除提供商：立刻保存
+                void performSave(undefined, true) // Delete provider: save immediately
                 return nextModels
             })
         }
@@ -478,7 +478,7 @@ export function useProviders(): UseProvidersReturn {
         })
     }, [performSave])
 
-    // 模型操作
+    // Model actions
     const toggleModel = useCallback((modelKey: string, providerId?: string) => {
         if (isPresetComingSoonModelKey(modelKey)) {
             return
@@ -490,7 +490,7 @@ export function useProviders(): UseProvidersReturn {
                     : m
             )
             latestModelsRef.current = next
-            void performSave(undefined, true) // 开关操作：立刻保存
+            void performSave(undefined, true) // Toggle: save immediately
             return next
         })
     }, [performSave])
@@ -537,7 +537,7 @@ export function useProviders(): UseProvidersReturn {
                 },
             ]
             latestModelsRef.current = next
-            void performSave(undefined, true) // 添加模型：立刻保存
+            void performSave(undefined, true) // Add model: save immediately
             return next
         })
     }, [performSave])
@@ -569,13 +569,13 @@ export function useProviders(): UseProvidersReturn {
                     return nextDefaults
                 })
                 latestModelsRef.current = nextModels
-                void performSave(undefined, true) // 删除模型：立刻保存
+                void performSave(undefined, true) // Delete model: save immediately
                 return nextModels
             })
         }
     }, [t, performSave])
 
-    // 过滤器
+    // Filter
     const getModelsByType = useCallback((type: CustomModel['type']) => {
         return models.filter(m => m.type === type)
     }, [models])

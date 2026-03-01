@@ -1,4 +1,4 @@
-import { Worker, type Job } from 'bullmq'
+import { Worker, type Job, type RedisOptions } from 'bullmq'
 import { queueRedis } from '@/lib/redis'
 import { generateVoiceLine } from '@/lib/voice/generate-voice-line'
 import { QUEUE_NAME } from '@/lib/task/queues'
@@ -56,7 +56,7 @@ export function createVoiceWorker() {
     QUEUE_NAME.VOICE,
     async (job) => await withTaskLifecycle(job, processVoiceTask),
     {
-      connection: queueRedis,
+      connection: queueRedis as unknown as RedisOptions,
       concurrency: Number.parseInt(process.env.QUEUE_CONCURRENCY_VOICE || '10', 10) || 10,
     },
   )

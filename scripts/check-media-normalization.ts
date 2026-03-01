@@ -69,7 +69,7 @@ function isMediaLikeFetchArg(arg: string): boolean {
 function main() {
   const targetExpr = TARGETS.join(' ')
 
-  // 规则 1：业务代码中不允许直接调用 extractCOSKey（统一走 resolveStorageKeyFromMediaValue）
+  // Rule 1: no direct extractCOSKey, use resolveStorageKeyFromMediaValue
   const extractOutput = run(`rg -n "extractCOSKey\\\\(" ${targetExpr}`)
   const extractLines = parseLines(extractOutput)
   const extractViolations = extractLines.filter((line) => {
@@ -77,7 +77,7 @@ function main() {
     return !EXTRACT_ALLOWLIST.has(file)
   })
 
-  // 规则 2：媒体相关 fetch 必须包裹 toFetchableUrl
+  // Rule 2: media fetch must use toFetchableUrl
   const fetchOutput = run(`rg -n "fetch\\\\(" ${targetExpr}`)
   const fetchLines = parseLines(fetchOutput)
   const fetchViolations = fetchLines.filter((line) => {

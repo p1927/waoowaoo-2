@@ -23,7 +23,7 @@ export const PATCH = apiHandler(async (
 
     // Verify Clip exists and belongs to project
     // Simplified: update by ID, Prisma handles existence
-    // 严谨做法是先查 Clip -> Episode -> Project 确认归属，但考虑到 projectId 主要是路由参数校验，且用户只能删改自己的数据
+    // Strictly: verify Clip->Episode->Project; projectId is route validation, user can only modify own data
 
     const updateData: {
         characters?: string | null

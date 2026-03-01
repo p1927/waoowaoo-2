@@ -50,7 +50,7 @@ export function useNovelPromotionWorkspaceController({
 
   useEffect(() => {
     _ulogInfo(
-      '[NovelPromotionWorkspace] project prop 更新, characters:',
+      '[NovelPromotionWorkspace] project prop updated, characters:',
       project?.novelPromotionData?.characters?.length,
     )
   }, [project])

@@ -1,11 +1,11 @@
 'use client'
 
 /**
- * 资产库 - 全局浮动按钮,打开后显示完整的资产管理界面
- * 复用AssetsStage组件,保持功能完全一致
+ * Asset library - global floating button, full asset UI
+ * Reuses AssetsStage, same behavior
  * 
- * 🔥 V6.5 重构：删除 characters/locations props，AssetsStage 现在内部直接订阅
- * 🔥 V6.6 重构：删除 onGenerateImage prop，AssetsStage 现在内部使用 mutation hooks
+ * V6.5: remove props, AssetsStage subscribes internally
+ * V6.6: remove onGenerateImage, use mutation hooks
  */
 
 import { useState } from 'react'
@@ -27,7 +27,7 @@ export default function AssetLibrary({
 
   return (
     <>
-      {/* 触发按钮 - 现代玻璃态风格 */}
+      {/* Trigger button */}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
@@ -37,11 +37,11 @@ export default function AssetLibrary({
         {t('assetLibrary.button')}
       </button>
 
-      {/* 全屏弹窗 - 现代玻璃态风格 */}
+      {/* Fullscreen modal */}
       {isOpen && (
         <div className="fixed inset-0 glass-overlay z-50 flex items-center justify-center p-6">
           <div className="glass-surface-modal w-full h-full max-w-[95vw] max-h-[95vh] flex flex-col overflow-hidden">
-            {/* 头部 */}
+            {/* Header */}
             <div className="flex items-center justify-between px-8 py-5 border-b border-[var(--glass-stroke-base)]">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-[var(--glass-accent-from)] rounded-2xl flex items-center justify-center shadow-[var(--glass-shadow-md)]">
@@ -58,7 +58,7 @@ export default function AssetLibrary({
               </button>
             </div>
 
-            {/* 内容区域 - 复用AssetsStage，现在 AssetsStage 内部直接订阅和处理图片生成 */}
+            {/* Content - AssetsStage */}
             <div className="flex-1 overflow-y-auto p-8">
               <AssetsStage
                 projectId={projectId}

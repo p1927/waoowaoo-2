@@ -248,8 +248,8 @@ export function SettingsModal({
     }
 
     /**
-     * 切换模型时，自动将该模型所有 capability fields 的第一个 option 写入 overrides
-     * 解决 UI 视觉上显示默认选中（第一项高亮）但 DB 实际为空，导致 requireAllFields 报错的问题
+     * On model switch: first option of each capability to overrides
+     * Fix UI default selection vs empty DB (requireAllFields)
      */
     const handleModelChange = (
         modelKey: string,
@@ -260,7 +260,7 @@ export function SettingsModal({
         onModelChangeFn?.(modelKey)
         showSaved()
         if (!onCapabilityOverridesChange) return
-        // 用新选中的模型的 capabilities 计算 fields，而不是旧模型的
+        // Compute fields from new model capabilities
         const newModel = modelOptions.find((m) => m.value === modelKey)
         const capabilityFieldsForModel = extractCapabilityFields(newModel?.capabilities, namespace)
         if (capabilityFieldsForModel.length === 0) return
@@ -268,7 +268,7 @@ export function SettingsModal({
         const existing = isRecord(nextOverrides[modelKey])
             ? { ...(nextOverrides[modelKey] as Record<string, CapabilityValue>) }
             : {}
-        // 只对尚未配置的 field 设置默认值（不覆盖已有配置）
+        // Set default for unset fields only
         let changed = false
         for (const def of capabilityFieldsForModel) {
             if (existing[def.field] === undefined && def.options.length > 0) {

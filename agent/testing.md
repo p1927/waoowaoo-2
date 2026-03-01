@@ -1,147 +1,147 @@
-# 测试编写详细规范
+# Testing specification
 
-## 1. 何时必须写或更新测试
+## 1. When to add or update tests
 
-| 触发场景 | 要求 |
+| Trigger | Requirement |
 |---|---|
-| 修改 worker handler 逻辑 | 必须有对应行为测试 |
-| 修复 bug | 必须新增回归测试，`it()` 名称体现该 bug 场景 |
-| 新增 API route 或 task type | 必须更新 `tests/contracts/` 矩阵 |
-| 修改 prompt 后缀、referenceImages 注入、DB 写回字段 | 必须有行为断言覆盖 |
+| Change worker handler logic | Must have corresponding behavior tests |
+| Fix a bug | Add regression test, `it()` name reflects the bug scenario |
+| Add API route or task type | Update `tests/contracts/` matrix |
+| Change prompt suffix, referenceImages injection, DB write-back fields | Must have behavior assertions |
 
-未通过 `npm run test:regression` 不得宣称功能完成。
+Do not claim feature complete without passing `npm run test:regression`.
 
 ---
 
-## 2. 断言必须是行为级（检查具体值）
+## 2. Assertions must be behavior-level (check concrete values)
 
-**正确写法**：
+**Correct**:
 ```ts
-// 断言 DB 写入了具体字段值
+// Assert DB wrote concrete field values
 const updateData = prismaMock.globalCharacterAppearance.update.mock.calls.at(-1)?.[0].data
 expect(updateData.description).toBe('AI_EXTRACTED_DESCRIPTION')
 
-// 断言生图函数收到了正确参数
+// Assert image-gen received correct params
 const { prompt, options } = readGenerateCall(0)
 expect(prompt).toContain(CHARACTER_PROMPT_SUFFIX)
 expect(options.referenceImages).toEqual(['https://ref.example/a.png'])
 
-// 断言返回值
+// Assert return value
 expect(result).toEqual({ success: true, count: 2 })
 ```
 
-**禁止写法**（不能作为唯一主断言）：
+**Forbidden** (cannot be the only main assertion):
 ```ts
-expect(fn).toHaveBeenCalled()        // 只知道"调用了"，不知道"传了什么"
-expect(fn).toHaveBeenCalledTimes(1)  // 次数本身无业务意义时无效
+expect(fn).toHaveBeenCalled()        // Only shows "called", not "with what"
+expect(fn).toHaveBeenCalledTimes(1)  // Count alone has no business meaning
 ```
 
 ---
 
-## 3. Mock 规范
+## 3. Mock rules
 
-**必须 Mock**：
-- `prisma`（所有数据库操作）
+**Must mock**:
+- `prisma` (all DB operations)
 - LLM / chatCompletionWithVision / generateImage
 - COS / uploadToCOS / getSignedUrl
-- 外部 HTTP（fetchWithTimeoutAndRetry 等）
+- External HTTP (fetchWithTimeoutAndRetry etc.)
 
-**禁止 Mock**：
-- 你要测试的业务逻辑函数本身
-- 项目内部常量（如 `CHARACTER_PROMPT_SUFFIX`），直接 import 使用
+**Do not mock**:
+- The business logic under test
+- Project constants (e.g. `CHARACTER_PROMPT_SUFFIX`), import and use directly
 
-**禁止"自给自答"**：
+**No "self-answering"**:
 ```ts
-// 错误：mock 返回 X，马上断言 X，没有经过任何业务逻辑
+// Wrong: mock returns X, assert X, no business logic in between
 mockLLM.mockReturnValue('result')
-expect(await mockLLM()).toBe('result')  // 废测试
+expect(await mockLLM()).toBe('result')  // Useless test
 
-// 正确：mock AI 返回 X，断言业务代码把 X 写进了数据库
-llmMock.getCompletionContent.mockReturnValue('高挑女性')
+// Right: mock AI returns X, assert business code wrote X to DB
+llmMock.getCompletionContent.mockReturnValue('tall woman')
 await handleTask(job)
-expect(prismaMock.update.mock.calls.at(-1)[0].data.description).toBe('高挑女性')
+expect(prismaMock.update.mock.calls.at(-1)[0].data.description).toBe('tall woman')
 ```
 
 ---
 
-## 4. 测试数据规范
+## 4. Test data rules
 
-- **影响分支的字段**须分开写 `it()`，例如：
-  - `有 extraImageUrls` 和 `无 extraImageUrls` 分别写一个用例
-  - `isBackgroundJob: true` 和 `false` 分别写
-- **纯透传字段**（`taskId`、`userId` 等代码不处理）可用占位值 `'task-1'`
-- **每个 `it()` 命名格式**：`[条件] -> [预期结果]`
+- **Fields that affect branches** must have separate `it()` cases, e.g.:
+  - One case for "has extraImageUrls", one for "no extraImageUrls"
+  - One for `isBackgroundJob: true`, one for `false`
+- **Pure pass-through fields** (`taskId`, `userId`, etc.) can use placeholders like `'task-1'`
+- **Each `it()` name format**: `[condition] -> [expected result]`
 
-**命名示例**：
+**Naming examples**:
 ```
-有参考图 -> AI 分析结果写入 description
-无参考图 -> 不触发 AI，description 不变
-AI 调用失败 -> 主流程成功，description 不被污染
-缺少必填参数 -> 抛出包含字段名的错误
-批量确认 2 个角色 -> 逐个处理，count 返回 2
+Has reference image -> AI result written to description
+No reference image -> No AI, description unchanged
+AI call fails -> Main flow succeeds, description not polluted
+Missing required param -> Throw error including field name
+Batch confirm 2 characters -> Process each, count returns 2
 ```
 
 ---
 
-## 5. 每个测试文件的结构
+## 5. Test file structure
 
 ```ts
-// 1. vi.hoisted 定义所有 mock（必须在 import 之前）
+// 1. vi.hoisted for all mocks (before any import)
 const prismaMock = vi.hoisted(() => ({ ... }))
 const llmMock = vi.hoisted(() => ({ ... }))
 
-// 2. vi.mock 注册（在 import 之前）
+// 2. vi.mock registration (before import)
 vi.mock('@/lib/prisma', () => ({ prisma: prismaMock }))
 vi.mock('@/lib/llm-client', () => llmMock)
 
-// 3. import 真实业务代码（在 mock 注册之后）
+// 3. Import real business code (after mocks)
 import { handleXxxTask } from '@/lib/workers/handlers/xxx'
 
-// 4. describe + beforeEach 重置 mock
+// 4. describe + beforeEach reset mocks
 describe('worker xxx behavior', () => {
   beforeEach(() => { vi.clearAllMocks() })
 
-  it('[条件] -> [结果]', async () => {
-    // 准备：覆盖这次场景需要的特殊 mock 返回值
-    // 构造：buildJob(payload, taskType)
-    // 执行：await handleXxxTask(job)
-    // 断言：检查具体值
+  it('[condition] -> [result]', async () => {
+    // Setup: override mocks for this scenario
+    // Build: buildJob(payload, taskType)
+    // Run: await handleXxxTask(job)
+    // Assert: check concrete values
   })
 })
 ```
 
 ---
 
-## 6. 运行命令
+## 6. Run commands
 
-| 场景 | 命令 |
+| Scenario | Command |
 |---|---|
-| 改了 worker 逻辑 | `BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker` |
-| 改了某个具体文件 | `BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker/xxx.test.ts` |
-| 改了 API 路由 | `BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/integration/api` |
-| 改了 helpers / 常量 | `BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/helpers` |
-| 提交前完整验证 | `npm run test:regression` |
+| Changed worker logic | `BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker` |
+| Changed a specific file | `BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker/xxx.test.ts` |
+| Changed API routes | `BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/integration/api` |
+| Changed helpers / constants | `BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/helpers` |
+| Full check before commit | `npm run test:regression` |
 
 ---
 
-## 7. 目录说明
+## 7. Directory overview
 
-| 目录 | 用途 |
+| Directory | Purpose |
 |---|---|
-| `tests/unit/worker/` | worker handler 行为测试（主要回归防线） |
-| `tests/unit/helpers/` | 纯函数 / 工具函数测试 |
-| `tests/unit/optimistic/` | 前端状态 hook 行为测试 |
-| `tests/integration/api/contract/` | API 路由契约（401/400/200 + payload 断言） |
-| `tests/integration/chain/` | queue → worker → 结果完整链路 |
-| `tests/contracts/` | 矩阵与守卫（route/tasktype/requirements） |
-| `tests/helpers/fakes/` | 通用 mock 工具（llm、media、providers） |
+| `tests/unit/worker/` | Worker handler behavior (main regression) |
+| `tests/unit/helpers/` | Pure / helper function tests |
+| `tests/unit/optimistic/` | Frontend state hook behavior |
+| `tests/integration/api/contract/` | API route contract (401/400/200 + payload) |
+| `tests/integration/chain/` | queue → worker → result full chain |
+| `tests/contracts/` | Matrix and guards (route/tasktype/requirements) |
+| `tests/helpers/fakes/` | Shared mocks (llm, media, providers) |
 
 ---
 
-## 8. 验证测试有效性（防假绿灯）
+## 8. Verify tests are not false greens
 
-写完测试后，用以下方式确认测试没有虚假通过：
+After writing tests:
 
-1. 临时注释掉你刚写的业务逻辑，测试应该变红
-2. 还原业务逻辑，测试应该变绿
-3. 如果注释后测试还是绿，说明断言没有覆盖到真实业务路径
+1. Temporarily comment out the business logic you just tested; tests should go red.
+2. Restore the logic; tests should go green.
+3. If they stay green after commenting, assertions are not covering the real code path.

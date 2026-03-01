@@ -5,7 +5,7 @@ import { TASK_TYPE } from '@/lib/task/types'
 import { maybeSubmitLLMTask } from '@/lib/llm-observe/route-task'
 
 /**
- * 确认角色档案并生成视觉描述
+ * Confirm character profile and generate visual description
  * POST /api/novel-promotion/[projectId]/character-profile/confirm
  */
 export const POST = apiHandler(async (

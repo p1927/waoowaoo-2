@@ -115,12 +115,12 @@ export const POST = apiHandler(async (request: NextRequest) => {
 
 /**
  * Update image border label
- * 生成新 COS key 上传，URL 变化后浏览器缓存失效，前端能立即看到新标签
+ * New COS key so URL changes and cache busts, frontend sees new label
  */
 async function updateImageLabel(imageUrl: string, newLabelText: string): Promise<string> {
     const originalKey = await resolveStorageKeyFromMediaValue(imageUrl)
     if (!originalKey) {
-        throw new Error(`无法归一化媒体 key: ${imageUrl}`)
+        throw new Error(`Cannot normalize media key: ${imageUrl}`)
     }
     const signedUrl = getSignedUrl(originalKey, 3600)
 
@@ -150,7 +150,7 @@ async function updateImageLabel(imageUrl: string, newLabelText: string): Promise
         .jpeg({ quality: 90, mozjpeg: true })
         .toBuffer()
 
-    // 生成新 key，使 URL 发生变化，强制浏览器绕过缓存
+    // New key to change URL and bypass cache
     const newKey = generateUniqueKey('labeled-rename', 'jpg')
     await uploadToCOS(processed, newKey)
     return newKey

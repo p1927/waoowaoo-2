@@ -1,8 +1,8 @@
-// 视频阶段共享类型定义
+// Video stage shared types
 import type { ModelCapabilities } from '@/lib/model-config-contract'
 import type { VideoPricingTier } from '@/lib/model-pricing/video-tier'
 
-// 用户视频模型选项
+// User video model options
 export interface VideoModelOption {
   value: string
   label: string
@@ -39,10 +39,10 @@ export interface Panel {
   characters?: string | null
   location?: string | null
   textSegment?: string | null
-  srtSegment?: string | null  // SRT 原文片段
+  srtSegment?: string | null  // SRT source segment
   duration?: number | null
   imagePrompt?: string | null
-  imageUrl?: string | null  // 图片URL
+  imageUrl?: string | null  // Image URL
   videoPrompt?: string | null
   firstLastFramePrompt?: string | null
   videoUrl?: string | null
@@ -50,12 +50,12 @@ export interface Panel {
   videoModel?: string | null
   linkedToNextPanel?: boolean | null
   videoTaskRunning?: boolean | null
-  videoErrorMessage?: string | null  // 视频生成错误消息
+  videoErrorMessage?: string | null  // Video generation error
   imageTaskRunning?: boolean | null
-  // 口型同步相关
+  // Lip-sync
   lipSyncVideoUrl?: string | null
   lipSyncTaskRunning?: boolean | null
-  lipSyncErrorMessage?: string | null  // 口型同步错误消息
+  lipSyncErrorMessage?: string | null  // Lip-sync error
 }
 
 export interface Storyboard {
@@ -77,7 +77,7 @@ export interface Clip {
 }
 
 export interface VideoPanel {
-  panelId?: string  // 任务目标ID
+  panelId?: string  // Task target ID
   storyboardId: string
   panelIndex: number
   textPanel?: TextPanel
@@ -89,7 +89,7 @@ export interface VideoPanel {
   videoErrorMessage?: string  // 视频生成错误消息
   videoModel?: string
   linkedToNextPanel?: boolean
-  // 口型同步相关
+  // Lip-sync
   lipSyncVideoUrl?: string
   lipSyncTaskRunning?: boolean
   lipSyncTaskId?: string

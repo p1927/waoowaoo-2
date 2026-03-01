@@ -1,23 +1,23 @@
 'use client'
 
 /**
- * 🔔 全局 Toast 通知系统
+ * Global Toast notification system
  * 
- * 职责：
- * 1. 提供全局 Toast 状态管理
- * 2. 支持成功/错误/警告/信息四种类型
- * 3. 支持自动翻译错误码
+ * Responsibilities:
+ * 1. Global Toast state
+ * 2. success/error/warning/info types
+ * 3. Auto-translate error codes
  * 
- * 使用示例：
+ * Usage:
  * ```typescript
  * const { showToast, showError } = useToast()
  * 
- * // 显示普通消息
- * showToast('操作成功', 'success')
+ * // Show message
+ * showToast('Success', 'success')
  * 
- * // 显示错误（自动翻译错误码）
+ * // Show error (translate code)
  * showError('RATE_LIMIT', { retryAfter: 55 })
- * // 显示为: "请求过于频繁，请 55 秒后重试"
+ * // e.g. "Too many requests, retry in 55s"
  * ```
  */
 
@@ -26,7 +26,7 @@ import { useTranslations } from 'next-intl'
 import { AppIcon } from '@/components/ui/icons'
 
 // ============================================================
-// 类型定义
+// Types
 // ============================================================
 
 export interface Toast {
@@ -50,7 +50,7 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null)
 
 // ============================================================
-// Provider 组件
+// Provider component
 // ============================================================
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -58,7 +58,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     const t = useTranslations('errors')
 
     /**
-     * 显示 Toast 消息
+     * Show Toast message
      */
     const showToast = useCallback((
         message: string,
@@ -69,7 +69,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
         setToasts(prev => [...prev, { id, message, type, duration }])
 
-        // 自动消失
+        // Auto dismiss
         if (duration > 0) {
             setTimeout(() => {
                 setToasts(prev => prev.filter(toast => toast.id !== id))
@@ -78,12 +78,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }, [])
 
     /**
-     * 显示错误消息（自动翻译错误码）
+     * Show error (translate code)
      */
     const showError = useCallback((code: string, details?: Record<string, unknown>) => {
         let message: string
 
-        // 尝试翻译错误码
+        // Try translate error code
         try {
             const translationValues = Object.fromEntries(
                 Object.entries(details || {}).map(([key, value]) => {
@@ -105,7 +105,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }, [t, showToast])
 
     /**
-     * 关闭 Toast
+     * Close Toast
      */
     const dismissToast = useCallback((id: string) => {
         setToasts(prev => prev.filter(toast => toast.id !== id))
@@ -124,7 +124,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 // ============================================================
 
 /**
- * 获取 Toast 上下文
+ * Get Toast context
  * 
  * @example
  * const { showToast, showError } = useToast()
@@ -138,7 +138,7 @@ export function useToast(): ToastContextValue {
 }
 
 // ============================================================
-// Toast 容器组件
+// Toast container
 // ============================================================
 
 function ToastContainer({
@@ -166,13 +166,13 @@ function ToastContainer({
                         ${getToastStyle(toast.type)}
                     `}
                 >
-                    {/* 图标 */}
+                    {/* Icon */}
                     <span className="w-5 h-5 flex items-center justify-center">{getToastIcon(toast.type)}</span>
 
-                    {/* 消息 */}
+                    {/* Message */}
                     <span className="text-sm font-medium flex-1">{toast.message}</span>
 
-                    {/* 关闭按钮 */}
+                    {/* Close button */}
                     <button
                         onClick={() => onDismiss(toast.id)}
                         className="glass-btn-base glass-btn-ghost w-6 h-6 rounded-md p-0 opacity-70 hover:opacity-100 transition-opacity"
@@ -186,7 +186,7 @@ function ToastContainer({
 }
 
 // ============================================================
-// 工具函数
+// Helpers
 // ============================================================
 
 function getToastStyle(type: Toast['type']): string {

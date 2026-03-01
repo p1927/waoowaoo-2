@@ -61,7 +61,7 @@ describe('task publisher replay', () => {
         payload: {
           lifecycleType: 'task.processing',
           stepId: 'step-1',
-          stepTitle: '阶段1',
+          stepTitle: 'Stage 1',
         },
         createdAt: new Date('2026-02-27T00:00:01.000Z'),
       },

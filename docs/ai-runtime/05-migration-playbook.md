@@ -25,7 +25,7 @@
 1. 建立稳定 `stepKey` 列表。
 2. 执行器改为通过 runtime publish 事件。
 3. 结果落业务表，State 只落 refs。
-4. 新增 1 成功 + 1 可重试失败 + 1 不可重试失败测试。
+4. 新增 1 成功 + 1 可重试failed + 1 不可重试failed测试。
 5. 通过 `test:regression` 后切换流量。
 
 ## 禁止事项

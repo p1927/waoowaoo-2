@@ -46,13 +46,13 @@ export default function Sidebar({
     const [editingName, setEditingName] = useState('')
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
-    // 可拖动位置
-    const [position, setPosition] = useState({ y: 200 }) // 初始Y位置
+    // Draggable position
+    const [position, setPosition] = useState({ y: 200 }) // Initial Y
     const [isDragging, setIsDragging] = useState(false)
     const dragStartY = useRef(0)
     const dragStartPos = useRef(0)
 
-    // 拖动逻辑
+    // Drag logic
     const handleDragStart = (e: React.MouseEvent) => {
         e.preventDefault()
         setIsDragging(true)
@@ -95,7 +95,7 @@ export default function Sidebar({
         }
     }
 
-    // 重命名剧集
+    // Rename episode
     const handleRename = async (id: string) => {
         if (!editingName.trim()) return
         try {
@@ -103,30 +103,30 @@ export default function Sidebar({
             setEditingId(null)
             setEditingName('')
         } catch (err) {
-            _ulogError('重命名failed:', err)
+            _ulogError('Rename failed:', err)
         }
     }
 
-    // 删除剧集
+    // Delete episode
     const handleDelete = async (id: string) => {
         try {
             await onEpisodeDelete(id)
             setDeleteConfirmId(null)
         } catch (err) {
-            _ulogError('删除failed:', err)
+            _ulogError('Delete failed:', err)
         }
     }
 
     return (
         <>
-            {/* 触发条 - 固定在左侧，可拖动 */}
+            {/* Trigger bar - fixed left, draggable */}
             <div
                 className="fixed left-0 z-50"
                 style={{ top: position.y }}
             >
-                {/* 拖动手柄 + 触发按钮 */}
+                {/* Drag handle + trigger */}
                 <div className="flex flex-col items-center">
-                    {/* 拖动手柄 */}
+                    {/* Drag handle */}
                     <div
                         className="w-6 h-4 bg-[var(--glass-bg-muted)] rounded-t cursor-ns-resize flex items-center justify-center hover:bg-[var(--glass-bg-surface-strong)] transition-colors"
                         onMouseDown={handleDragStart}
@@ -139,7 +139,7 @@ export default function Sidebar({
                         </div>
                     </div>
 
-                    {/* 展开按钮 */}
+                    {/* Expand button */}
                     <div
                         className={`glass-surface rounded-r-xl cursor-pointer transition-all flex items-center gap-1 px-2 py-3 ${isExpanded ? 'bg-[var(--glass-tone-info-bg)] border-[var(--glass-stroke-focus)]' : ''
                             }`}
@@ -153,21 +153,21 @@ export default function Sidebar({
                 </div>
             </div>
 
-            {/* 弹出面板 */}
+            {/* Popover panel */}
             {isExpanded && (
                 <>
-                    {/* 背景遮罩 */}
+                    {/* Backdrop */}
                     <div
                         className="fixed inset-0 glass-overlay z-40"
                         onClick={() => setIsExpanded(false)}
                     />
 
-                    {/* 侧边面板 */}
+                    {/* Side panel */}
                     <div
                         className="fixed left-12 glass-surface-modal rounded-r-xl z-50 w-64 max-h-[70vh] overflow-hidden flex flex-col"
                         style={{ top: position.y - 50 }}
                     >
-                        {/* 标题栏 */}
+                        {/* Title bar */}
                         <div className="p-4 border-b border-[var(--glass-stroke-base)] bg-[var(--glass-bg-surface-strong)]">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -185,7 +185,7 @@ export default function Sidebar({
                             </div>
                         </div>
 
-                        {/* 全局资产入口 */}
+                        {/* Global assets entry */}
                         <div className="px-3 py-2 border-b border-[var(--glass-stroke-base)]">
                             <button
                                 onClick={() => {
@@ -202,7 +202,7 @@ export default function Sidebar({
                             </button>
                         </div>
 
-                        {/* 剧集列表 */}
+                        {/* Episode list */}
                         <div className="flex-1 overflow-y-auto p-3 space-y-1">
                             {episodes.length === 0 ? (
                                 <div className="text-center py-6 text-[var(--glass-text-tertiary)] text-sm">
@@ -212,7 +212,7 @@ export default function Sidebar({
                                 episodes.map((ep) => (
                                     <div key={ep.id} className="group relative">
                                         {editingId === ep.id ? (
-                                            // 编辑模式
+                                            // Edit mode
                                             <div className="flex gap-1">
                                                 <input
                                                     type="text"
@@ -233,7 +233,7 @@ export default function Sidebar({
                                                 </button>
                                             </div>
                                         ) : deleteConfirmId === ep.id ? (
-                                            // 删除确认
+                                            // Delete confirm
                                             <div className="bg-[var(--glass-tone-danger-bg)] p-2 rounded-lg">
                                                 <p className="text-xs text-[var(--glass-tone-danger-fg)] mb-2">{t('sidebar.deleteConfirm', { name: ep.name })}</p>
                                                 <div className="flex gap-1">
@@ -252,7 +252,7 @@ export default function Sidebar({
                                                 </div>
                                             </div>
                                         ) : (
-                                            // 正常显示
+                                            // Normal display
                                             <button
                                                 onClick={() => {
                                                     onEpisodeSelect(ep.id)
@@ -269,7 +269,7 @@ export default function Sidebar({
                                                 </span>
                                                 <span className="truncate flex-1">{ep.name}</span>
 
-                                                {/* 操作按钮 */}
+                                                {/* Actions */}
                                                 <div className={`flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ${currentEpisodeId === ep.id && !isGlobalAssetsView ? 'text-white/80' : 'text-[var(--glass-text-tertiary)]'
                                                     }`}>
                                                     <button
@@ -303,7 +303,7 @@ export default function Sidebar({
                             )}
                         </div>
 
-                        {/* 添加剧集 */}
+                        {/* Add episode */}
                         <div className="p-3 border-t border-[var(--glass-stroke-base)] bg-[var(--glass-bg-surface-strong)]">
                             {isCreating ? (
                                 <div className="space-y-2">

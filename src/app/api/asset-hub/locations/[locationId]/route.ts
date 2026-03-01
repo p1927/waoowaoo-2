@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { requireUserAuth, isErrorResponse } from '@/lib/api-auth'
 import { ApiError, apiHandler } from '@/lib/api-errors'
 
-// 获取单个场景
+// Get single location
 export const GET = apiHandler(async (
     request: NextRequest,
     context: { params: Promise<{ locationId: string }> }

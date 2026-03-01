@@ -142,6 +142,6 @@ describe('worker shot-ai-variants behavior', () => {
     const payload = { panelId: 'panel-1' }
     const job = buildJob(payload)
 
-    await expect(handleAnalyzeShotVariantsTask(job, payload)).rejects.toThrow('生成的变体数量不足')
+    await expect(handleAnalyzeShotVariantsTask(job, payload)).rejects.toThrow('Insufficient variants generated')
   })
 })

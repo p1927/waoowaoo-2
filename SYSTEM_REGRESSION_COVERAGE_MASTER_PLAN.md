@@ -72,7 +72,7 @@
 
 ---
 
-### 阶段1: 基线收敛与测试基建
+### Stage 1: 基线收敛与测试基建
 
 🟩✅ Phase 1.1: 完成仓库现状盘点（route/taskType/worker 数量与入口路径）。  
 🟩✅ Phase 1.2: 完成测试策略决策锁定（全域门禁 + 全 fake + 每次 PR 全量）。  
@@ -153,10 +153,10 @@
 覆盖: referenceImages 注入、resolution/aspectRatio 选择、目标实体分支(character/location/storyboard)。
 
 🟩✅ Phase 5.3: 新增 tests/unit/worker/script-to-storyboard.test.ts。  
-覆盖: step orchestration、JSON parse 失败路径、voice line 匹配合法性校验。
+覆盖: step orchestration、JSON parse failed路径、voice line 匹配合法性校验。
 
 🟩✅ Phase 5.4: 新增 tests/unit/worker/episode-split.test.ts。  
-覆盖: 分集数量边界、错误输入显式失败、输出结构一致性。
+覆盖: 分集数量边界、错误输入显式failed、输出结构一致性。
 
 🟩✅ Phase 5.5: 新增 tests/unit/worker/video-worker.test.ts 与 voice-worker.test.ts。  
 覆盖: 必填 payload 校验、外部轮询超时、持久化字段更新。
@@ -213,7 +213,7 @@
 - test:regression
 
 🟩✅ Phase 8.2: 调整 CI，每次 PR 执行 test:pr（全量门禁）。  
-🟩✅ Phase 8.3: 回归失败输出标准化（失败文件、失败断言、首次引入 commit）。  
+🟩✅ Phase 8.3: 回归failed输出标准化（failed文件、failed断言、首次引入 commit）。  
 🟩✅ Phase 8.4: 设置完成判定条件，满足后冻结基线。
 
 🟥⚠️ Phase 8.5: 全量 PR 门禁会拉长反馈时间，需要预留 CI 资源并做缓存优化。
@@ -225,7 +225,7 @@
 - [YYYY-MM-DD HH:mm] 状态变更: <任务ID> <旧状态> -> <新状态>
 - [YYYY-MM-DD HH:mm] 修改文件: <绝对路径列表>
 - [YYYY-MM-DD HH:mm] 运行命令: <命令>
-- [YYYY-MM-DD HH:mm] 结果: <通过/失败 + 摘要>
+- [YYYY-MM-DD HH:mm] 结果: <通过/failed + 摘要>
 - [YYYY-MM-DD HH:mm] 问题: <若有>
 
 - [2026-02-25 10:00] 状态变更: Phase 1.3/1.4/1.5/1.6/1.7 🔄/⏸ -> ✅
@@ -267,7 +267,7 @@
 - [2026-02-25 10:30] 状态变更: Phase 8.3/8.4 ⏸ -> ✅
 - [2026-02-25 10:30] 修改文件: /Users/earth/Desktop/waoowaoo/scripts/test-regression-runner.sh, /Users/earth/Desktop/waoowaoo/package.json
 - [2026-02-25 10:30] 运行命令: npm run test:guards
-- [2026-02-25 10:30] 结果: 回归失败统一诊断脚本已接入 test:pr，guard 通过
+- [2026-02-25 10:30] 结果: 回归failed统一诊断脚本已接入 test:pr，guard 通过
 - [2026-02-25 10:30] 问题: 无
 
 - [2026-02-25 10:40] 状态变更: 回归门禁验收执行
@@ -293,7 +293,7 @@
 4. 每个 PR 全量门禁执行并通过。
 5. 无真实外网调用（测试日志与网络闸门双重确认）。
 6. 关键高频回归场景（编辑类、参考图类、任务状态类）均有自动化用例。
-7. 新增/修改 route 或 TASK_TYPE 时，若未补测试，guard 必须失败。
+7. 新增/修改 route 或 TASK_TYPE 时，若未补测试，guard 必须failed。
 
 ### 4.2 命令级验证
 - `npm run test:guards`
@@ -305,8 +305,8 @@
 ### 4.3 结果记录
 每轮执行后在执行日志追加:
 - 总用例数
-- 失败数
-- 失败模块
+- failed数
+- failed模块
 - 修复后重跑结果
 
 ---
@@ -392,7 +392,7 @@
 
 ---
 
-### 阶段1: 基线收敛与测试基建
+### Stage 1: 基线收敛与测试基建
 
 🟩✅ Phase 1.1: 完成仓库现状盘点（route/taskType/worker 数量与入口路径）。  
 🟩✅ Phase 1.2: 完成测试策略决策锁定（全域门禁 + 全 fake + 每次 PR 全量）。  
@@ -477,10 +477,10 @@
 覆盖: referenceImages 注入、resolution/aspectRatio 选择、目标实体分支(character/location/storyboard)。
 
 🟨⏸ Phase 5.3: 新增 tests/unit/worker/script-to-storyboard.test.ts。  
-覆盖: step orchestration、JSON parse 失败路径、voice line 匹配合法性校验。
+覆盖: step orchestration、JSON parse failed路径、voice line 匹配合法性校验。
 
 🟨⏸ Phase 5.4: 新增 tests/unit/worker/episode-split.test.ts。  
-覆盖: 分集数量边界、错误输入显式失败、输出结构一致性。
+覆盖: 分集数量边界、错误输入显式failed、输出结构一致性。
 
 🟨⏸ Phase 5.5: 新增 tests/unit/worker/video-worker.test.ts 与 voice-worker.test.ts。  
 覆盖: 必填 payload 校验、外部轮询超时、持久化字段更新。
@@ -537,7 +537,7 @@
 - test:regression
 
 🟨⏸ Phase 8.2: 调整 CI，每次 PR 执行 test:pr（全量门禁）。  
-🟨⏸ Phase 8.3: 回归失败输出标准化（失败文件、失败断言、首次引入 commit）。  
+🟨⏸ Phase 8.3: 回归failed输出标准化（failed文件、failed断言、首次引入 commit）。  
 🟨⏸ Phase 8.4: 设置完成判定条件，满足后冻结基线。
 
 🟥⚠️ Phase 8.5: 全量 PR 门禁会拉长反馈时间，需要预留 CI 资源并做缓存优化。
@@ -549,7 +549,7 @@
 - [YYYY-MM-DD HH:mm] 状态变更: <任务ID> <旧状态> -> <新状态>
 - [YYYY-MM-DD HH:mm] 修改文件: <绝对路径列表>
 - [YYYY-MM-DD HH:mm] 运行命令: <命令>
-- [YYYY-MM-DD HH:mm] 结果: <通过/失败 + 摘要>
+- [YYYY-MM-DD HH:mm] 结果: <通过/failed + 摘要>
 - [YYYY-MM-DD HH:mm] 问题: <若有>
 
 ---
@@ -563,7 +563,7 @@
 4. 每个 PR 全量门禁执行并通过。
 5. 无真实外网调用（测试日志与网络闸门双重确认）。
 6. 关键高频回归场景（编辑类、参考图类、任务状态类）均有自动化用例。
-7. 新增/修改 route 或 TASK_TYPE 时，若未补测试，guard 必须失败。
+7. 新增/修改 route 或 TASK_TYPE 时，若未补测试，guard 必须failed。
 
 ### 4.2 命令级验证
 - `npm run test:guards`
@@ -575,8 +575,8 @@
 ### 4.3 结果记录
 每轮执行后在执行日志追加:
 - 总用例数
-- 失败数
-- 失败模块
+- failed数
+- failed模块
 - 修复后重跑结果
 
 ---

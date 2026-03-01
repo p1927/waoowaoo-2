@@ -5,7 +5,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * GET /api/novel-promotion/[projectId]/editor
- * Get episode的编辑器项目数据
+ * Get episode editor project data
  */
 export const GET = apiHandler(async (
     request: NextRequest,
@@ -23,7 +23,7 @@ export const GET = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 查找编辑器项目
+    // Find editor project
     const editorProject = await prisma.videoEditorProject.findUnique({
         where: { episodeId }
     })
@@ -44,7 +44,7 @@ export const GET = apiHandler(async (
 
 /**
  * PUT /api/novel-promotion/[projectId]/editor
- * 保存编辑器项目数据
+ * Save editor project data
  */
 export const PUT = apiHandler(async (
     request: NextRequest,
@@ -63,7 +63,7 @@ export const PUT = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 验证剧集存在
+    // Verify episode exists
     const episode = await prisma.novelPromotionEpisode.findFirst({
         where: {
             id: episodeId,

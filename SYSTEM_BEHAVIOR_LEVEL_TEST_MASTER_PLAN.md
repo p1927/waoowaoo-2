@@ -60,7 +60,7 @@
 修改后：
 - 结构级测试只做守卫，不作为回归主防线。
 - 行为级测试覆盖 route 入参、task payload、worker 分支、DB 写回、返回值契约。
-- 新增或修改功能时，必须补行为级用例，否则 guard 失败。
+- 新增或修改功能时，必须补行为级用例，否则 guard failed。
 
 ### 1.5 规模预估
 - 预计新增/重写测试文件: 45-70 个
@@ -80,7 +80,7 @@
 
 ---
 
-### 阶段1: 基线与约束固化
+### Stage 1: 基线与约束固化
 
 ✅ Phase 1.1: 盘点路由、task type、worker 入口并建立 catalog。  
 修改位置:
@@ -170,7 +170,7 @@
 - `/Users/earth/Desktop/waoowaoo/tests/unit/worker/asset-hub-image-suffix.test.ts`
 - `/Users/earth/Desktop/waoowaoo/tests/unit/worker/modify-image-reference-description.test.ts`
 
-✅ Phase 3.2: 把“失败快照类”worker 测试升级为“结果断言类”。  
+✅ Phase 3.2: 把“failed快照类”worker 测试升级为“结果断言类”。  
 优先重写:
 - `/Users/earth/Desktop/waoowaoo/tests/unit/worker/image-task-handlers-core.test.ts`
 - `/Users/earth/Desktop/waoowaoo/tests/unit/worker/script-to-storyboard.test.ts`
@@ -219,7 +219,7 @@
 必须断言:
 - 任务类型分发到正确 handler
 - handler 结果被正确回传与封装
-- 失败分支日志与错误码一致
+- failed分支日志与错误码一致
 
 ⚠️ Phase 3.5: 避免“mock 自己返回答案”造成假安全。  
 硬要求:
@@ -307,7 +307,7 @@
 ⚠️ Phase 6.4: 矩阵维护成本高。  
 策略:
 - 优先通过脚本自动校验文件存在与 caseId 唯一性
-- 每次新增 route/tasktype 必须更新矩阵，否则 CI 失败
+- 每次新增 route/tasktype 必须更新矩阵，否则 CI failed
 
 ---
 
@@ -327,7 +327,7 @@
 修改:
 - `/Users/earth/Desktop/waoowaoo/.github/workflows/test-regression-pr.yml`
 
-✅ Phase 7.3: 失败诊断脚本已接入（保留）。  
+✅ Phase 7.3: failed诊断脚本已接入（保留）。  
 文件:
 - `/Users/earth/Desktop/waoowaoo/scripts/test-regression-runner.sh`
 
@@ -342,7 +342,7 @@
 ⏸ Phase 8.2: 建立“新增功能必须附行为测试”的提交流程。  
 落地:
 - PR 模板加检查项
-- guard 失败提示明确指出缺失 case
+- guard failed提示明确指出缺失 case
 
 ✅ Phase 8.3: 冻结基线并发布“行为级测试开发规范”。  
 新增:
@@ -379,7 +379,7 @@
 
 ### 3.1 必须覆盖的测试类型
 每个 worker handler 必须至少包含三类用例：
-1. 失败路径：参数缺失/格式错误时，抛出正确错误信息。  
+1. failed路径：参数缺失/格式错误时，抛出正确错误信息。  
 2. 成功路径：正常输入时，副作用结果正确（数据库写入/关键调用参数/返回值）。  
 3. 关键分支：`if/else` 分支每条至少 1 个用例。  
 
@@ -434,7 +434,7 @@ it('[条件] -> [预期结果]', async () => {
 示例：
 1. `没有 extraImageUrls -> 不调用分析，description 不更新`  
 2. `有 extraImageUrls -> AI 分析结果写入 description`  
-3. `AI 调用失败 -> 主流程成功且 description 不被污染`  
+3. `AI 调用failed -> 主流程成功且 description 不被污染`  
 4. `缺少必填参数 -> 抛出包含字段名的错误信息`  
 
 ### 3.7 一条 bug 一条测试（强制）
@@ -449,7 +449,7 @@ it('[条件] -> [预期结果]', async () => {
 - [YYYY-MM-DD HH:mm] 状态变更: <Phase/任务> <旧状态> -> <新状态>
 - [YYYY-MM-DD HH:mm] 修改文件: <绝对路径列表>
 - [YYYY-MM-DD HH:mm] 运行命令: <命令>
-- [YYYY-MM-DD HH:mm] 结果: <通过/失败 + 摘要>
+- [YYYY-MM-DD HH:mm] 结果: <通过/failed + 摘要>
 - [YYYY-MM-DD HH:mm] 问题: <若有>
 
 - [2026-02-25 21:59] 状态变更: Phase 3.1 ⏸ -> ✅
@@ -491,7 +491,7 @@ it('[条件] -> [预期结果]', async () => {
 - [2026-02-25 23:06] 状态变更: Phase 3.2 🔄 -> ✅, Phase 3.4 ⏸ -> ✅
 - [2026-02-25 23:06] 修改文件: /Users/earth/Desktop/waoowaoo/tests/unit/worker/image-task-handlers-core.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/episode-split.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/script-to-storyboard.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/video-worker.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/voice-worker.test.ts
 - [2026-02-25 23:06] 运行命令: BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker/script-to-storyboard.test.ts tests/unit/worker/video-worker.test.ts tests/unit/worker/voice-worker.test.ts tests/unit/worker/image-task-handlers-core.test.ts tests/unit/worker/episode-split.test.ts
-- [2026-02-25 23:06] 结果: worker 测试已升级为结果级断言，覆盖失败路径、成功路径、关键分支与关键写库字段
+- [2026-02-25 23:06] 结果: worker 测试已升级为结果级断言，覆盖failed路径、成功路径、关键分支与关键写库字段
 - [2026-02-25 23:06] 问题: 无
 
 - [2026-02-25 23:07] 状态变更: Phase 4.2 ⏸ -> 🔄, Phase 4.3 ⏸ -> 🔄, Phase 4.4 ⏸ -> 🔄
@@ -536,7 +536,7 @@ it('[条件] -> [预期结果]', async () => {
 - [2026-02-25 23:16] 状态变更: Phase 3.3 ⏸ -> 🔄
 - [2026-02-25 23:16] 修改文件: /Users/earth/Desktop/waoowaoo/tests/unit/worker/shot-ai-tasks.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/voice-design.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/asset-hub-ai-design.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/asset-hub-ai-modify.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/shot-ai-prompt-appearance.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/shot-ai-prompt-location.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/shot-ai-prompt-shot.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/shot-ai-variants.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/llm-proxy.test.ts
 - [2026-02-25 23:16] 运行命令: BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker/shot-ai-tasks.test.ts tests/unit/worker/voice-design.test.ts tests/unit/worker/asset-hub-ai-design.test.ts tests/unit/worker/asset-hub-ai-modify.test.ts tests/unit/worker/shot-ai-prompt-appearance.test.ts tests/unit/worker/shot-ai-prompt-location.test.ts tests/unit/worker/shot-ai-prompt-shot.test.ts tests/unit/worker/shot-ai-variants.test.ts tests/unit/worker/llm-proxy.test.ts
-- [2026-02-25 23:16] 结果: 新增 9 个 worker 行为测试文件（20 条用例+5 条用例），覆盖 shot-ai 分发、prompt 修改链路、asset-hub ai 设计/修改、voice-design、llm-proxy 显式失败
+- [2026-02-25 23:16] 结果: 新增 9 个 worker 行为测试文件（20 条用例+5 条用例），覆盖 shot-ai 分发、prompt 修改链路、asset-hub ai 设计/修改、voice-design、llm-proxy 显式failed
 - [2026-02-25 23:16] 问题: 无
 
 - [2026-02-25 23:16] 运行命令: BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker
@@ -547,7 +547,7 @@ it('[条件] -> [预期结果]', async () => {
 
 - [2026-02-25 23:25] 修改文件: /Users/earth/Desktop/waoowaoo/tests/unit/worker/story-to-script.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/screenplay-convert.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/analyze-novel.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/analyze-global.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/voice-analyze.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/clips-build.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/character-profile.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/character-image-task-handler.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/location-image-task-handler.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/panel-image-task-handler.test.ts, /Users/earth/Desktop/waoowaoo/tests/unit/worker/panel-variant-task-handler.test.ts
 - [2026-02-25 23:25] 运行命令: BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker/story-to-script.test.ts tests/unit/worker/screenplay-convert.test.ts tests/unit/worker/analyze-novel.test.ts tests/unit/worker/analyze-global.test.ts tests/unit/worker/voice-analyze.test.ts tests/unit/worker/clips-build.test.ts tests/unit/worker/character-profile.test.ts tests/unit/worker/character-image-task-handler.test.ts tests/unit/worker/location-image-task-handler.test.ts tests/unit/worker/panel-image-task-handler.test.ts tests/unit/worker/panel-variant-task-handler.test.ts
-- [2026-02-25 23:25] 结果: 新增 11 个 worker handler 行为测试文件，覆盖剩余未落地入口（文本链路 + 图片链路），失败路径/成功路径/关键分支断言全部落地
+- [2026-02-25 23:25] 结果: 新增 11 个 worker handler 行为测试文件，覆盖剩余未落地入口（文本链路 + 图片链路），failed路径/成功路径/关键分支断言全部落地
 - [2026-02-25 23:25] 问题: 首轮运行出现 5 个断言问题（重试分支 mock 泄漏与断言过窄），已在同轮修复
 
 - [2026-02-25 23:26] 运行命令: BILLING_TEST_BOOTSTRAP=0 npx vitest run tests/unit/worker
@@ -594,7 +594,7 @@ it('[条件] -> [预期结果]', async () => {
 3. 结构级 contract/chain 主断言占比: `0%`（不得再以源码字符串匹配作为主断言）。  
 4. 关键回归场景覆盖: `100%`（参考图链路、后缀链路、编辑写回链路、task state 链路）。  
 5. 外部真实调用次数: `0`（测试环境必须全 fake）。  
-6. PR 门禁: `100%` 执行 `test:behavior:full`，任一缺失即失败。  
+6. PR 门禁: `100%` 执行 `test:behavior:full`，任一缺失即failed。  
 7. Worker 用例规范符合率: `100%`（每个 worker 测试文件均满足 3.1~3.7 规则）。  
 8. Billing + Concurrency 维度通过率: `100%`（纳入统一验收报告）。
 
@@ -610,7 +610,7 @@ it('[条件] -> [预期结果]', async () => {
 每个新增行为测试必须至少满足两条：
 1. 断言具体业务字段值（例如 `description/imageUrls/locale/meta/referenceImages`）。  
 2. 覆盖至少一个历史回归分支。  
-3. 覆盖一个失败分支（权限/参数/模型未配置）。  
+3. 覆盖一个failed分支（权限/参数/模型未配置）。  
 4. 不使用“mock 自己返回结果并直接断言调用次数”的空测试模式。  
 
 ---

@@ -60,7 +60,7 @@ export function usePanelCandidates({
 
   const confirmPanelCandidate = useCallback(async (panelId: string, imageUrl: string) => {
     try {
-      _ulogInfo('[confirmPanelCandidate] 🎯 开始确认候选图片')
+      _ulogInfo('[confirmPanelCandidate] Confirm candidate')
       _ulogInfo('[confirmPanelCandidate] panelId:', panelId)
       _ulogInfo('[confirmPanelCandidate] imageUrl:', imageUrl.substring(0, 100))
 
@@ -72,7 +72,7 @@ export function usePanelCandidates({
       const result = (data || {}) as SelectPanelCandidateResult
 
       candidateSystem.clearCandidates(panelId)
-      _ulogInfo('[confirmPanelCandidate] ✅ 已清除本地候选状态')
+      _ulogInfo('[confirmPanelCandidate] Cleared local candidate state')
 
       const confirmedImageUrl = result.imageUrl || imageUrl
       onConfirmed?.(panelId, confirmedImageUrl)
@@ -88,9 +88,9 @@ export function usePanelCandidates({
       }
       refreshEpisode()
       refreshStoryboards()
-      _ulogInfo('[confirmPanelCandidate] ✅ 数据刷新完成')
+      _ulogInfo('[confirmPanelCandidate] Data refreshed')
     } catch (error: unknown) {
-      _ulogError('[confirmPanelCandidate] ❌ 确认failed:', error)
+      _ulogError('[confirmPanelCandidate] Confirm failed:', error)
       alert(
         t('messages.selectCandidateFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -127,7 +127,7 @@ export function usePanelCandidates({
       refreshEpisode()
       refreshStoryboards()
     } catch (error: unknown) {
-      _ulogError('取消选择failed:', error)
+      _ulogError('Deselect failed:', error)
     }
   }, [
     candidateSystem,

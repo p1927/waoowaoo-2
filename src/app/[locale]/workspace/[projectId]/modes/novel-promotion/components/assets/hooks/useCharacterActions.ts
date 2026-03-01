@@ -3,10 +3,10 @@ import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core
 import { useTranslations } from 'next-intl'
 
 /**
- * useCharacterActions - 角色资产操作 Hook
- * 从 AssetsStage 提取，负责角色的 CRUD 和图片生成操作
+ * useCharacterActions - character asset actions
+ * CRUD and image generation for characters
  * 
- * 🔥 V6.5 重构：直接订阅 useProjectAssets，消除 props drilling
+ * V6.5: subscribe useProjectAssets, no props drilling
  */
 
 import { useCallback } from 'react'
@@ -44,14 +44,14 @@ export function useCharacterActions({
     showToast
 }: UseCharacterActionsProps) {
     const t = useTranslations('assets')
-    // 🔥 直接订阅缓存 - 消除 props drilling
+    // Subscribe cache directly
     const { data: assets } = useProjectAssets(projectId)
     const characters = assets?.characters ?? []
 
-    // 🔥 使用刷新函数 - mutations 完成后刷新缓存
+    // Refetch after mutations
     const refreshAssets = useRefreshProjectAssets(projectId)
 
-    // 🔥 V6.7: 使用重新生成mutation hooks
+    // V6.7: use regenerate mutation hooks
     const regenerateSingleImage = useRegenerateSingleCharacterImage(projectId)
     const regenerateGroup = useRegenerateCharacterGroup(projectId)
     const deleteCharacterMutation = useDeleteProjectCharacter(projectId)
@@ -60,7 +60,7 @@ export function useCharacterActions({
     const confirmCharacterSelectionMutation = useConfirmProjectCharacterSelection(projectId)
     const updateAppearanceDescriptionMutation = useUpdateProjectAppearanceDescription(projectId)
 
-    // 获取形象列表
+    // Get appearance list
     const getAppearances = useCallback((character: Character): CharacterAppearance[] => {
         return character.appearances || []
     }, [])
@@ -77,12 +77,12 @@ export function useCharacterActions({
         }
     }, [deleteCharacterMutation, t])
 
-    // 删除单个形象
+    // Delete single appearance
     const handleDeleteAppearance = useCallback(async (characterId: string, appearanceId: string) => {
         if (!confirm(t('character.deleteAppearanceConfirm'))) return
         try {
             await deleteAppearanceMutation.mutateAsync({ characterId, appearanceId })
-            // 🔥 刷新缓存
+            // Refetch cache
             refreshAssets()
         } catch (error: unknown) {
             if (!isAbortError(error)) {
@@ -91,7 +91,7 @@ export function useCharacterActions({
         }
     }, [deleteAppearanceMutation, refreshAssets, t])
 
-    // 处理角色图片选择
+    // Handle character image selection
     const handleSelectCharacterImage = useCallback(async (
         characterId: string,
         appearanceId: string,
@@ -105,28 +105,28 @@ export function useCharacterActions({
             })
         } catch (error: unknown) {
             if (isAbortError(error)) {
-                _ulogInfo('请求被中断（可能是页面刷新），后端仍在执行')
+                _ulogInfo('Request interrupted (e.g. refresh), backend still running')
                 return
             }
             alert(t('image.selectFailed', { error: getErrorMessage(error, t('common.unknownError')) }))
         }
     }, [selectCharacterImageMutation, t])
 
-    // 确认选择并删除其他候选图片
+    // Confirm selection and delete other candidates
     const handleConfirmSelection = useCallback(async (characterId: string, appearanceId: string) => {
         try {
             await confirmCharacterSelectionMutation.mutateAsync({ characterId, appearanceId })
             showToast?.(`✓ ${t('image.confirmSuccess')}`, 'success')
         } catch (error: unknown) {
             if (isAbortError(error)) {
-                _ulogInfo('请求被中断（可能是页面刷新），后端仍在执行')
+                _ulogInfo('Request interrupted (e.g. refresh), backend still running')
                 return
             }
             showToast?.(t('image.confirmFailed', { error: getErrorMessage(error, t('common.unknownError')) }), 'error')
         }
     }, [confirmCharacterSelectionMutation, showToast, t])
 
-    // 单张重新生成角色图片 - 🔥 V6.7: 使用mutation hook
+    // Single character image regenerate - mutation hook
     const handleRegenerateSingleCharacter = useCallback((
         characterId: string,
         appearanceId: string,
@@ -144,7 +144,7 @@ export function useCharacterActions({
         )
     }, [regenerateSingleImage, t])
 
-    // 整组重新生成角色图片 - 🔥 V6.7: 使用mutation hook
+    // Full character regenerate - mutation hook
     const handleRegenerateCharacterGroup = useCallback((characterId: string, appearanceId: string) => {
         regenerateGroup.mutate(
             { characterId, appearanceId },
@@ -158,7 +158,7 @@ export function useCharacterActions({
         )
     }, [regenerateGroup, t])
 
-    // Update appearance description - 🔥 仍需保存到服务器
+    // Update appearance description - save to server
     const handleUpdateAppearanceDescription = useCallback(async (
         characterId: string,
         appearanceId: string,
@@ -181,7 +181,7 @@ export function useCharacterActions({
     }, [refreshAssets, updateAppearanceDescriptionMutation, t])
 
     return {
-        // 🔥 暴露 characters 供组件使用（可选，组件也可以自己订阅）
+        // Expose characters for component
         characters,
         getAppearances,
         handleDeleteCharacter,

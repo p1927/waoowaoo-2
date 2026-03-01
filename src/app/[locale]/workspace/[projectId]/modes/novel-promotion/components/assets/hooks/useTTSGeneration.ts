@@ -3,10 +3,10 @@ import { logError as _ulogError } from '@/lib/logging/core'
 import { useTranslations } from 'next-intl'
 
 /**
- * useTTSGeneration - TTS 和音色相关逻辑
- * 从 AssetsStage.tsx 提取
+ * useTTSGeneration - TTS and voice logic
+ * Extracted from AssetsStage
  * 
- * 🔥 V6.5 重构：直接订阅 useProjectAssets，消除 props drilling
+ * V6.5: subscribe useProjectAssets, no props drilling
  */
 
 import { useState } from 'react'
@@ -40,18 +40,18 @@ export function useTTSGeneration({
     projectId
 }: UseTTSGenerationProps) {
     const t = useTranslations('assets')
-    // 🔥 直接订阅缓存 - 消除 props drilling
+    // Subscribe cache directly
     const { data: assets } = useProjectAssets(projectId)
     const characters = assets?.characters ?? []
 
-    // 🔥 使用刷新函数
+    // Use refetch
     const refreshAssets = useRefreshProjectAssets(projectId)
     const updateVoiceSettingsMutation = useUpdateProjectCharacterVoiceSettings(projectId)
     const saveDesignedVoiceMutation = useSaveProjectDesignedVoice(projectId)
 
     const [voiceDesignCharacter, setVoiceDesignCharacter] = useState<VoiceDesignCharacter | null>(null)
 
-    // 音色变更回调 - 🔥 保存到服务器而不是本地更新
+    // Voice change: save to server, not local
     const handleVoiceChange = async (characterId: string, voiceType: string, voiceId: string, customVoiceUrl?: string) => {
         try {
             await updateVoiceSettingsMutation.mutateAsync({
@@ -61,14 +61,14 @@ export function useTTSGeneration({
                 customVoiceUrl,
             })
 
-            // 🔥 刷新缓存
+            // Refetch cache
             refreshAssets()
         } catch (error: unknown) {
             _ulogError('Update voicefailed:', getErrorMessage(error, t('common.unknownError')))
         }
     }
 
-    // 打开 AI 声音设计对话框
+    // Open AI voice design dialog
     const handleOpenVoiceDesign = (characterId: string, characterName: string) => {
         const character = characters.find(c => c.id === characterId)
         setVoiceDesignCharacter({
@@ -78,7 +78,7 @@ export function useTTSGeneration({
         })
     }
 
-    // 保存 AI 设计的声音
+    // Save AI-designed voice
     const handleVoiceDesignSave = async (voiceId: string, audioBase64: string) => {
         if (!voiceDesignCharacter) return
 
@@ -97,13 +97,13 @@ export function useTTSGeneration({
         }
     }
 
-    // 关闭声音设计对话框
+    // Close voice design dialog
     const handleCloseVoiceDesign = () => {
         setVoiceDesignCharacter(null)
     }
 
     return {
-        // 🔥 暴露 characters 供组件使用
+        // Expose characters for component
         characters,
         voiceDesignCharacter,
         handleVoiceChange,

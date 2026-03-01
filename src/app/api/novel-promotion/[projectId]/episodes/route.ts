@@ -46,7 +46,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取下一个剧集编号
+  // Get next episode number
   const lastEpisode = await prisma.novelPromotionEpisode.findFirst({
     where: { novelPromotionProjectId: novelData.id },
     orderBy: { episodeNumber: 'desc' }

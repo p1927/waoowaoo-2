@@ -6,9 +6,9 @@ interface SpeakerVoiceStatusProps {
     speakerStats: Record<string, number>
     getSpeakerVoiceUrl: (speaker: string) => string | null
     onOpenAssetLibrary: (speaker: string) => void
-    /** 内联绑定回调：当发言人不在资产库中时调用 */
+    /** Inline bind callback when speaker not in asset hub */
     onOpenInlineBinding?: (speaker: string) => void
-    /** 判断发言人是否有匹配的项目角色 */
+    /** Whether speaker has a matching project character */
     hasSpeakerCharacter?: (speaker: string) => boolean
     embedded?: boolean
 }
@@ -27,9 +27,9 @@ export default function SpeakerVoiceStatus({
     if (speakers.length === 0) return null
 
     /**
-     * 点击"音色设置"按钮的处理逻辑：
-     * - 有匹配的项目角色 → 跳转资产中心（现有行为）
-     * - 无匹配的项目角色 → 打开内联绑定弹窗
+     * On "voice settings" click:
+     * - Has matching project character -> go to asset hub
+     * - No matching character -> open inline bind dialog
      */
     const handleVoiceSettings = (speaker: string) => {
         const hasCharacter = hasSpeakerCharacter ? hasSpeakerCharacter(speaker) : true
@@ -40,7 +40,7 @@ export default function SpeakerVoiceStatus({
         }
     }
 
-    // 嵌入模式：紧凑布局
+    // Embedded: compact layout
     if (embedded) {
         return (
             <div className="glass-surface px-4 py-3 mb-3 mx-4">
@@ -68,7 +68,7 @@ export default function SpeakerVoiceStatus({
                                     }`}>
                                     {hasVoice ? t("speakerVoice.configuredStatus") : t("speakerVoice.pendingStatus")}
                                 </span>
-                                {/* 无匹配角色时显示内联标记 */}
+                                {/* Inline marker when no matching character */}
                                 {!hasCharacter && !hasVoice && (
                                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--glass-tone-info-bg)] text-[var(--glass-tone-info-fg)]">
                                         {t("speakerVoice.inlineLabel")}
@@ -88,7 +88,7 @@ export default function SpeakerVoiceStatus({
         )
     }
 
-    // 标准模式：完整布局
+    // Standard: full layout
     return (
         <div className="glass-surface p-5">
             <h3 className="text-lg font-bold text-[var(--glass-text-primary)] mb-4 flex items-center gap-2">
@@ -113,7 +113,7 @@ export default function SpeakerVoiceStatus({
                             <span className={`text-xs px-2 py-1 rounded-full ${hasVoice ? 'bg-[var(--glass-tone-success-bg)] text-[var(--glass-tone-success-fg)]' : 'bg-[var(--glass-tone-warning-bg)] text-[var(--glass-tone-warning-fg)]'}`}>
                                 {hasVoice ? t("speakerVoice.configuredStatus") : t("speakerVoice.pendingStatus")}
                             </span>
-                            {/* 无匹配角色时显示内联标记 */}
+                            {/* Inline marker when no matching character */}
                             {!hasCharacter && !hasVoice && (
                                 <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--glass-tone-info-bg)] text-[var(--glass-tone-info-fg)]">
                                     {t("speakerVoice.inlineLabel")}

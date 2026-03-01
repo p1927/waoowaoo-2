@@ -15,7 +15,7 @@ export default function ImagePreviewModal({ imageUrl, onClose }: ImagePreviewMod
   const t = useTranslations('common')
 
   useEffect(() => {
-    // 禁用body滚动
+    // Disable body scroll
     document.body.style.overflow = 'hidden'
 
     const handleEscape = (e: KeyboardEvent) => {
@@ -44,7 +44,7 @@ export default function ImagePreviewModal({ imageUrl, onClose }: ImagePreviewMod
       style={{ margin: 0, padding: 0 }}
     >
       <div className="relative max-w-7xl max-h-[90vh] p-4">
-        {/* 关闭按钮 */}
+        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-6 right-6 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-[var(--glass-overlay)] hover:bg-[var(--glass-overlay)] text-white transition-colors"
@@ -63,7 +63,7 @@ export default function ImagePreviewModal({ imageUrl, onClose }: ImagePreviewMod
           </a>
         )}
 
-        {/* 图片 */}
+        {/* Image */}
         <MediaImageWithLoading
           src={displayImageUrl}
           alt={t('preview')}

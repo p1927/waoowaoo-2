@@ -1,4 +1,4 @@
-import { Worker, type Job } from 'bullmq'
+import { Worker, type Job, type RedisOptions } from 'bullmq'
 import { prisma } from '@/lib/prisma'
 import { queueRedis } from '@/lib/redis'
 import { executeAiTextStep } from '@/lib/ai-runtime'
@@ -659,7 +659,7 @@ export function createTextWorker() {
     QUEUE_NAME.TEXT,
     async (job) => await withTaskLifecycle(job, processTextTask),
     {
-      connection: queueRedis,
+      connection: queueRedis as unknown as RedisOptions,
       concurrency: Number.parseInt(process.env.QUEUE_CONCURRENCY_TEXT || '10', 10) || 10,
     },
   )

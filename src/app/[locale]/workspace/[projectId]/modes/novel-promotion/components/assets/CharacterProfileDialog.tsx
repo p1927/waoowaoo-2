@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * 角色档案编辑对话框
- * 允许用户编辑角色档案的各项属性
+ * Character profile edit dialog
+ * Edit profile attributes
  */
 
 import { useTranslations } from 'next-intl'
@@ -104,7 +104,7 @@ export default function CharacterProfileDialog({
                 className="bg-[var(--glass-bg-surface)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* 头部 */}
+                {/* Header */}
                 <div className="sticky top-0 bg-[var(--glass-bg-surface)] border-b border-[var(--glass-stroke-base)] px-6 py-4 flex items-center justify-between">
                     <h2 className="text-xl font-semibold text-[var(--glass-text-primary)]">{t('characterProfile.editDialogTitle', { name: characterName })}</h2>
                     <button
@@ -115,9 +115,9 @@ export default function CharacterProfileDialog({
                     </button>
                 </div>
 
-                {/* 表单内容 */}
+                {/* Form content */}
                 <div className="p-6 space-y-4">
-                    {/* 角色层级 */}
+                    {/* Character tier */}
                     <div>
                         <label className="block text-sm font-medium text-[var(--glass-text-secondary)] mb-2">{t('characterProfile.importanceLevel')}</label>
                         <select
@@ -133,7 +133,7 @@ export default function CharacterProfileDialog({
                         </select>
                     </div>
 
-                    {/* 角色原型 */}
+                    {/* Character archetype */}
                     <div>
                         <label className="block text-sm font-medium text-[var(--glass-text-secondary)] mb-2">{t('characterProfile.characterArchetype')}</label>
                         <input
@@ -145,7 +145,7 @@ export default function CharacterProfileDialog({
                         />
                     </div>
 
-                    {/* 性格标签 */}
+                    {/* Personality tags */}
                     <div>
                         <label className="block text-sm font-medium text-[var(--glass-text-secondary)] mb-2">{t('characterProfile.personalityTags')}</label>
                         <div className="flex gap-2 mb-2">
@@ -173,7 +173,7 @@ export default function CharacterProfileDialog({
                         </div>
                     </div>
 
-                    {/* 服装华丽度 */}
+                    {/* Costume richness */}
                     <div>
                         <label className="block text-sm font-medium text-[var(--glass-text-secondary)] mb-2">{t('characterProfile.costumeLevelLabel')}</label>
                         <select
@@ -189,7 +189,7 @@ export default function CharacterProfileDialog({
                         </select>
                     </div>
 
-                    {/* 建议色彩 */}
+                    {/* Suggested colors */}
                     <div>
                         <label className="block text-sm font-medium text-[var(--glass-text-secondary)] mb-2">{t('characterProfile.suggestedColors')}</label>
                         <div className="flex gap-2 mb-2 flex-wrap">
@@ -217,7 +217,7 @@ export default function CharacterProfileDialog({
                         </div>
                     </div>
 
-                    {/* 辨识标志 */}
+                    {/* Distinguishing marks */}
                     <div>
                         <label className="block text-sm font-medium text-[var(--glass-text-secondary)] mb-2">
                             {t('characterProfile.primaryMarker')} <span className="text-xs text-[var(--glass-text-tertiary)]">{t('characterProfile.markerNote')}</span>
@@ -231,7 +231,7 @@ export default function CharacterProfileDialog({
                         />
                     </div>
 
-                    {/* 视觉关键词 */}
+                    {/* Visual keywords */}
                     <div>
                         <label className="block text-sm font-medium text-[var(--glass-text-secondary)] mb-2">{t('characterProfile.visualKeywords')}</label>
                         <div className="flex gap-2 mb-2 flex-wrap">
@@ -260,7 +260,7 @@ export default function CharacterProfileDialog({
                     </div>
                 </div>
 
-                {/* 底部按钮 */}
+                {/* Footer buttons */}
                 <div className="sticky bottom-0 bg-[var(--glass-bg-surface)] border-t border-[var(--glass-stroke-base)] px-6 py-4 flex gap-3 justify-end">
                     <button
                         onClick={onClose}

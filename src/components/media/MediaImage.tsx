@@ -69,7 +69,7 @@ export function MediaImage({
   }
 
   return (
-    // 外部 URL 兜底，避免 next/image 远程域名限制影响兼容链路
+    // Fallback for remote URL (next/image domain limit)
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}

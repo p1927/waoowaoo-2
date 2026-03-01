@@ -5,7 +5,7 @@ import { TASK_TYPE } from '@/lib/task/types'
 import { maybeSubmitLLMTask } from '@/lib/llm-observe/route-task'
 
 /**
- * 全局资产分析（任务化）
+ * Global asset analysis (task-based)
  */
 export const POST = apiHandler(async (
   request: NextRequest,

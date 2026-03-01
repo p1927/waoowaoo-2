@@ -8,7 +8,7 @@ import { attachMediaFieldsToProject } from '@/lib/media/attach'
 import { resolveMediaRefFromLegacyValue } from '@/lib/media/service'
 
 /**
- * GET - 获取单个剧集的完整数据
+ * GET - Get single episode full data
  */
 export const GET = apiHandler(async (
   request: NextRequest,
@@ -20,7 +20,7 @@ export const GET = apiHandler(async (
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
-  // Get episode及其关联数据
+  // Get episode and related data
   const episode = await prisma.novelPromotionEpisode.findUnique({
     where: { id: episodeId },
     include: {
@@ -47,13 +47,13 @@ export const GET = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // Update last edited episode ID（异步，不阻塞响应）
+  // Update last edited episode ID (async, non-blocking)
   prisma.novelPromotionProject.update({
     where: { projectId },
     data: { lastEpisodeId: episodeId }
   }).catch(err => _ulogError('Update lastEpisodeId failed:', err))
 
-  // 转换为稳定媒体 URL（并保留兼容字段）
+  // Convert to stable media URL (keep compat fields)
   const episodeWithSignedUrls = await attachMediaFieldsToProject(episode)
 
   return NextResponse.json({ episode: episodeWithSignedUrls })
@@ -118,7 +118,7 @@ export const DELETE = apiHandler(async (
   })
 
   if (novelPromotionProject?.lastEpisodeId === episodeId) {
-    // 找到另一个剧集作为默认
+    // Find another episode as default
     const anotherEpisode = await prisma.novelPromotionEpisode.findFirst({
       where: { novelPromotionProjectId: novelPromotionProject.id },
       orderBy: { episodeNumber: 'asc' }

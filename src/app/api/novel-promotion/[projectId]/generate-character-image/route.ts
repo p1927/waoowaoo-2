@@ -13,7 +13,7 @@ function toObject(value: unknown): Record<string, unknown> {
 /**
  * POST /api/novel-promotion/[projectId]/generate-character-image
  * Simplified API to trigger character image generation
- * 内部Call generate-image API
+ * Internal: call generate-image API
  */
 export const POST = apiHandler(async (
     request: NextRequest,

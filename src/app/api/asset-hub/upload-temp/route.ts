@@ -5,8 +5,8 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * POST /api/asset-hub/upload-temp
- * 上传临时文件（Base64），返回签名 URL
- * 支持图片和音频格式
+ * Upload temp file (Base64), return signed URL
+ * Supports image and audio
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     // Auth check
@@ -17,15 +17,15 @@ export const POST = apiHandler(async (request: NextRequest) => {
     const body = await request.json()
     const { imageBase64, base64, extension } = body
 
-    // 支持两种调用方式：
-    // 1. 图片模式：{ imageBase64: "data:image/..." }
-    // 2. 通用模式：{ base64: "...", type: "audio/wav", extension: "wav" }
+    // Two modes:
+    // 1. Image: { imageBase64: "data:image/..." }
+    // 2. Generic: { base64, type, extension }
 
     let buffer: Buffer
     let ext: string
 
     if (imageBase64) {
-        // 图片模式
+        // Image mode
         const matches = imageBase64.match(/^data:image\/(\w+);base64,(.+)$/)
         if (!matches) {
             throw new ApiError('INVALID_PARAMS')
@@ -33,18 +33,18 @@ export const POST = apiHandler(async (request: NextRequest) => {
         ext = matches[1] === 'jpeg' ? 'jpg' : matches[1]
         buffer = Buffer.from(matches[2], 'base64')
     } else if (base64 && extension) {
-        // 通用模式（音频等）
+        // Generic (audio etc)
         buffer = Buffer.from(base64, 'base64')
         ext = extension
     } else {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 上传到 COS
+    // Upload to COS
     const key = generateUniqueKey(`temp-${session.user.id}-${Date.now()}`, ext)
     await uploadToCOS(buffer, key)
 
-    // 返回签名 URL（有效期 1 小时）
+    // Return signed URL (1h TTL)
     const signedUrl = getSignedUrl(key, 3600)
 
     return NextResponse.json({

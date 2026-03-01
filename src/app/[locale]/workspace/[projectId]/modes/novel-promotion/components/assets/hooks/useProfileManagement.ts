@@ -1,8 +1,8 @@
 /**
- * 角色档案管理 Hook
- * 处理未确认档案的显示和确认逻辑
+ * Character profile management hook
+ * Unconfirmed profile display and confirm
  * 
- * 🔥 V6.5 重构：直接订阅 useProjectAssets，消除 props drilling
+ * V6.5: subscribe useProjectAssets, no props drilling
  */
 
 'use client'
@@ -28,17 +28,17 @@ export function useProfileManagement({
     showToast
 }: UseProfileManagementProps) {
     const t = useTranslations('assets')
-    // 🔥 直接订阅缓存 - 消除 props drilling
+    // Subscribe cache directly
     const { data: assets } = useProjectAssets(projectId)
     const characters = useMemo(() => assets?.characters ?? [], [assets?.characters])
 
-    // 🔥 使用刷新函数
+    // Use refetch
     const refreshAssets = useRefreshProjectAssets(projectId)
     const deleteCharacterMutation = useDeleteProjectCharacter(projectId)
     const confirmCharacterProfileMutation = useConfirmProjectCharacterProfile(projectId)
     const batchConfirmProfilesMutation = useBatchConfirmProjectCharacterProfiles(projectId)
 
-    // 🔥 修复：使用 Set 支持同时确认多个角色
+    // Use Set for batch confirm
     const [confirmingCharacterIds, setConfirmingCharacterIds] = useState<Set<string>>(new Set())
     const [deletingCharacterId, setDeletingCharacterId] = useState<string | null>(null)
     const [batchConfirming, setBatchConfirming] = useState(false)
@@ -48,13 +48,13 @@ export function useProfileManagement({
         profileData: CharacterProfileData
     } | null>(null)
 
-    // 获取未确认的角色
+    // Get unconfirmed characters
     const unconfirmedCharacters = useMemo(() =>
         characters.filter(char => char.profileData && !char.profileConfirmed),
         [characters]
     )
 
-    // 打开编辑对话框
+    // Open edit dialog
     const handleEditProfile = useCallback((characterId: string, characterName: string) => {
         const character = characters.find(c => c.id === characterId)
         if (!character?.profileData) return
@@ -68,12 +68,12 @@ export function useProfileManagement({
         setEditingProfile({ characterId, characterName, profileData })
     }, [characters, showToast, t])
 
-    // 确认单个角色
+    // Confirm single character
     const handleConfirmProfile = useCallback(async (
         characterId: string,
         updatedProfileData?: CharacterProfileData
     ) => {
-        // 🔥 添加到确认中集合
+        // Add to confirming set
         setConfirmingCharacterIds(prev => new Set(prev).add(characterId))
         try {
             await confirmCharacterProfileMutation.mutateAsync({
@@ -88,7 +88,7 @@ export function useProfileManagement({
             const message = error instanceof Error ? error.message : t('common.unknownError')
             showToast?.(t('characterProfile.confirmFailed', { error: message }), 'error')
         } finally {
-            // 🔥 从确认中集合移除
+            // Remove from confirming set
             setConfirmingCharacterIds(prev => {
                 const newSet = new Set(prev)
                 newSet.delete(characterId)
@@ -98,7 +98,7 @@ export function useProfileManagement({
         }
     }, [confirmCharacterProfileMutation, refreshAssets, showToast, t])
 
-    // 批量确认所有角色
+    // Batch confirm all characters
     const handleBatchConfirm = useCallback(async () => {
         if (unconfirmedCharacters.length === 0) {
             showToast?.(t('characterProfile.noPendingCharacters'), 'warning')
@@ -123,7 +123,7 @@ export function useProfileManagement({
         }
     }, [batchConfirmProfilesMutation, refreshAssets, showToast, t, unconfirmedCharacters.length])
 
-    // Delete character档案（同时Delete character）
+    // Delete profile (and character)
     const handleDeleteProfile = useCallback(async (characterId: string) => {
         if (!confirm(t('characterProfile.deleteConfirm'))) {
             return
@@ -143,7 +143,7 @@ export function useProfileManagement({
     }, [deleteCharacterMutation, refreshAssets, showToast, t])
 
     return {
-        // 🔥 暴露 characters 供组件使用
+        // Expose characters for component
         characters,
         unconfirmedCharacters,
         confirmingCharacterIds,

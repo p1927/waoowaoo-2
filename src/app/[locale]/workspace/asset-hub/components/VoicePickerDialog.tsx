@@ -51,12 +51,12 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
     useEffect(() => {
         if (!isOpen) return
         refetchVoices().catch((error) => {
-            _ulogError('加载音色failed:', error)
+            _ulogError('Load voice failed:', error)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen])
 
-    // 播放预览
+    // Play preview
     const handlePlay = (voice: Voice) => {
         if (!voice.customVoiceUrl) return
 
@@ -78,7 +78,7 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
         setPlayingId(voice.id)
     }
 
-    // 确认选择
+    // Confirm selection
     const handleConfirm = () => {
         if (selectedVoice) {
             onSelect(selectedVoice)
@@ -86,7 +86,7 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
         }
     }
 
-    // 关闭时清理
+    // Cleanup on close
     const handleClose = () => {
         if (audioRef.current) {
             audioRef.current.pause()
@@ -101,15 +101,15 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
 
     const dialogContent = (
         <>
-            {/* 背景遮罩 */}
+            {/* Backdrop */}
             <div className="fixed inset-0 z-[9999] glass-overlay" onClick={handleClose} />
 
-            {/* 对话框 */}
+            {/* Dialog */}
             <div
                 className="fixed z-[10000] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 glass-surface-modal w-full max-w-2xl max-h-[80vh] overflow-hidden"
                 onClick={e => e.stopPropagation()}
             >
-                {/* 头部 */}
+                {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--glass-stroke-base)] bg-[var(--glass-bg-surface-strong)]">
                     <div className="flex items-center gap-2">
                         <AppIcon name="mic" className="w-5 h-5 text-[var(--glass-tone-info-fg)]" />
@@ -120,7 +120,7 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
                     </button>
                 </div>
 
-                {/* 内容区 */}
+                {/* Content */}
                 <div className="p-5 overflow-y-auto max-h-[60vh]">
                     {loading ? (
                         <div className="flex items-center justify-center py-12">
@@ -147,14 +147,14 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
                                             : 'border-[var(--glass-stroke-base)] hover:border-[var(--glass-stroke-focus)] bg-[var(--glass-bg-surface)]'
                                             }`}
                                     >
-                                        {/* 选中标记 */}
+                                        {/* Selected marker */}
                                         {isSelected && (
                                             <div className="absolute -top-1.5 -right-1.5 w-5 h-5 glass-chip glass-chip-info rounded-full flex items-center justify-center p-0">
                                                 <AppIcon name="checkSolid" className="w-3 h-3 text-white" />
                                             </div>
                                         )}
 
-                                        {/* 音色信息 */}
+                                        {/* Voice info */}
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full glass-surface-soft flex items-center justify-center flex-shrink-0">
                                                 <AppIcon name="mic" className="w-5 h-5 text-[var(--glass-tone-info-fg)]" />
@@ -170,7 +170,7 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
                                             </div>
                                         </div>
 
-                                        {/* 试听按钮 */}
+                                        {/* Preview button */}
                                         {voice.customVoiceUrl && (
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handlePlay(voice) }}
@@ -199,7 +199,7 @@ export default function VoicePickerDialog({ isOpen, onClose, onSelect }: VoicePi
                     )}
                 </div>
 
-                {/* 底部操作 */}
+                {/* Footer actions */}
                 <div className="flex gap-2 p-4 border-t border-[var(--glass-stroke-base)] bg-[var(--glass-bg-surface-strong)]">
                     <button
                         onClick={handleClose}

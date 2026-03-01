@@ -14,7 +14,7 @@ export interface VoiceCreationModalShellProps {
     folderId: string | null
     onClose: () => void
     onSuccess: () => void
-    /** 预填充的音色名称（如发言人名字） */
+    /** Prefill voice name (e.g. speaker name) */
     initialVoiceName?: string
 }
 
@@ -26,7 +26,7 @@ interface GeneratedVoice {
 
 type CreationMode = 'design' | 'upload'
 
-// 声音风格预设
+// Voice style presets
 const VOICE_PRESET_KEYS = [
     'maleBroadcaster',
     'gentleFemale',
@@ -42,10 +42,10 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
     const tv = useTranslations('voice.voiceDesign')
     const tvCreate = useTranslations('voice.voiceCreate')
 
-    // 创建模式：设计 or 上传
+    // Create mode: design or upload
     const [mode, setMode] = useState<CreationMode>('design')
 
-    // 设计模式状态
+    // Design mode state
     const [voiceName, setVoiceName] = useState(initialVoiceName ?? '')
     const [voicePrompt, setVoicePrompt] = useState('')
     const [previewText, setPreviewText] = useState('')
@@ -65,7 +65,7 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         })
         : null
 
-    // 上传模式状态
+    // Upload mode state
     const [uploadFile, setUploadFile] = useState<File | null>(null)
     const [uploadPreviewUrl, setUploadPreviewUrl] = useState<string | null>(null)
     const [isUploading, setIsUploading] = useState(false)
@@ -83,7 +83,7 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
     const saveDesignedMutation = useSaveDesignedAssetHubVoice()
     const uploadVoiceMutation = useUploadAssetHubVoice()
 
-    // 生成音色
+    // Generate voice
     const handleGenerate = async () => {
         if (!voicePrompt.trim()) {
             setError(tv('pleaseSelectStyle'))
@@ -139,15 +139,15 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         }
     }
 
-    // 播放音色（支持暂停切换）
+    // Play voice (toggle pause)
     const handlePlayVoice = (index: number) => {
-        // 点击正在播放的音色 → 暂停
+        // Click playing voice to pause
         if (playingIndex === index && audioRef.current) {
             audioRef.current.pause()
             setPlayingIndex(null)
             return
         }
-        // 停止当前播放
+    // Stop current playback
         if (audioRef.current) {
             audioRef.current.pause()
         }
@@ -159,7 +159,7 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         void audio.play()
     }
 
-    // 保存音色到音色库（设计模式）
+    // Save voice to library (design mode)
     const handleSaveDesigned = async () => {
         if (selectedIndex === null || !generatedVoices[selectedIndex]) return
         if (!voiceName.trim()) {
@@ -191,9 +191,9 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         }
     }
 
-    // 处理文件选择
+    // Handle file select
     const handleFileSelect = useCallback((file: File) => {
-        // Validate file type（仅音频）
+        // Validate file type (audio only)
         const audioTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/x-m4a', 'audio/aac']
         const isValid = audioTypes.includes(file.type) || file.name.match(/\.(mp3|wav|ogg|m4a|aac)$/i)
 
@@ -202,7 +202,7 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
             return
         }
 
-        // 验证文件大小（最大 50MB）
+        // Validate file size (max 50MB)
         if (file.size > 50 * 1024 * 1024) {
             setError(tvCreate('fileTooLarge'))
             return
@@ -211,18 +211,18 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         setUploadFile(file)
         setError(null)
 
-        // 创建预览 URL
+        // Create preview URL
         const url = URL.createObjectURL(file)
         setUploadPreviewUrl(url)
 
-        // 自动填充名称（如果为空）
+        // Auto-fill name if empty
         if (!voiceName.trim()) {
-            const baseName = file.name.replace(/\.[^/.]+$/, '') // 移除扩展名
+            const baseName = file.name.replace(/\.[^/.]+$/, '') // Strip extension
             setVoiceName(baseName)
         }
     }, [voiceName, tvCreate])
 
-    // 处理拖放
+    // Handle drag and drop
     const handleDragOver = useCallback((e: React.DragEvent) => {
         e.preventDefault()
         setIsDragging(true)
@@ -242,7 +242,7 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         }
     }, [handleFileSelect])
 
-    // 播放上传的音频
+    // Play uploaded audio
     const handlePlayUpload = () => {
         if (!uploadPreviewUrl) return
         if (audioRef.current) {
@@ -253,7 +253,7 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         audio.play()
     }
 
-    // 上传文件保存
+    // Upload and save file
     const handleSaveUploaded = async () => {
         if (!uploadFile) return
         if (!voiceName.trim()) {
@@ -281,7 +281,7 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         }
     }
 
-    // 关闭弹窗
+    // Close modal
     const handleClose = () => {
         setMode('design')
         setVoiceName(initialVoiceName ?? '')
@@ -303,11 +303,11 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
         onClose()
     }
 
-    // 切换模式
+    // Switch mode
     const handleModeChange = (newMode: CreationMode) => {
         setMode(newMode)
         setError(null)
-        // 清理状态
+        // Reset state
         setGeneratedVoices([])
         setSelectedIndex(null)
         setUploadFile(null)

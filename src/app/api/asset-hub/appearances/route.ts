@@ -35,7 +35,7 @@ interface AssetHubAppearancesDb {
 
 /**
  * POST /api/asset-hub/appearances
- * 添加子形象
+ * Add sub-appearance
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubAppearancesDb

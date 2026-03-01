@@ -28,7 +28,7 @@ interface PanelCardProps {
   isSubmittingPanelImageTask: boolean
   failedError: string | null
   candidateData: PanelCandidateData | null
-  previousImageUrl?: string | null  // 支持撤回
+  previousImageUrl?: string | null  // For undo
   onUpdate: (updates: Partial<PanelEditData>) => void
   onDelete: () => void
   onOpenCharacterPicker: () => void
@@ -43,11 +43,11 @@ interface PanelCardProps {
   onConfirmCandidate: (panelId: string, imageUrl: string) => Promise<void>
   onCancelCandidate: (panelId: string) => void
   onClearError: () => void
-  onUndo?: (panelId: string) => void  // 撤回到上一版本
-  onPreviewImage?: (url: string) => void  // 放大预览图片
-  onInsertAfter?: () => void  // 在此Shot后插入
-  onVariant?: () => void  // 生成Shot变体
-  isInsertDisabled?: boolean  // 插入按钮是否禁用
+  onUndo?: (panelId: string) => void  // Undo to previous
+  onPreviewImage?: (url: string) => void  // Preview image
+  onInsertAfter?: () => void  // Insert after this shot
+  onVariant?: () => void  // Generate shot variant
+  isInsertDisabled?: boolean  // Insert button disabled
 }
 
 export default function PanelCard({
@@ -94,7 +94,7 @@ export default function PanelCard({
       className="relative overflow-visible transition-all hover:shadow-[var(--glass-shadow-md)] group/card"
       data-storyboard-id={storyboardId}
     >
-      {/* 删除按钮 - 右上角外部 */}
+      {/* Delete button - top right */}
       {!isModifying && !isDeleting && (
         <button
           onClick={onDelete}
@@ -105,7 +105,7 @@ export default function PanelCard({
         </button>
       )}
 
-      {/* Shot图片区域 - 包含插入按钮 */}
+      {/* Shot image area with insert button */}
       <div className="relative">
         <ImageSection
           panelId={panel.id}
@@ -129,7 +129,7 @@ export default function PanelCard({
           onUndo={onUndo}
           onPreviewImage={onPreviewImage}
         />
-        {/* 插入分镜/Shot变体按钮 - 在图片区域右侧垂直居中 */}
+        {/* Insert panel / shot variant button */}
         {(onInsertAfter || onVariant) && (
           <div className="absolute -right-[22px] top-1/2 -translate-y-1/2 z-50">
             <PanelActionButtons
@@ -142,7 +142,7 @@ export default function PanelCard({
         )}
       </div>
 
-      {/* 分镜信息编辑区 */}
+      {/* Panel info edit area */}
       <div className="p-3">
         <PanelEditForm
           panelData={panelData}

@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * AnimatedBackground - 流光极光背景动画
- * 用于页面全局背景
+ * AnimatedBackground - aurora background
+ * Page background
  */
 export function AnimatedBackground() {
     return (
@@ -18,7 +18,7 @@ export function AnimatedBackground() {
 }
 
 /**
- * GlassPanel - 毛玻璃卡片容器
+ * GlassPanel - glass card container
  */
 export function GlassPanel({
     children,
@@ -38,7 +38,7 @@ export function GlassPanel({
 }
 
 /**
- * Button - 通用按钮组件
+ * Button - shared button
  */
 export function Button({
     children,

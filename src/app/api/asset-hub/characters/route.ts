@@ -14,7 +14,7 @@ function toObject(value: unknown): Record<string, unknown> {
     return value as Record<string, unknown>
 }
 
-// 获取用户所有角色（支持 folderId 筛选）
+// Get user characters (optional folderId filter)
 export const GET = apiHandler(async (request: NextRequest) => {
     // Auth check
     const authResult = await requireUserAuth()
@@ -44,7 +44,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
     return NextResponse.json({ characters: signedCharacters })
 })
 
-// 新建角色
+// Create character
 export const POST = apiHandler(async (request: NextRequest) => {
     // Auth check
     const authResult = await requireUserAuth()
@@ -136,7 +136,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
                 },
             })
         }).catch(err => {
-            _ulogError('[Characters API] 后台生成任务触发failed:', err)
+            _ulogError('[Characters API] Background task trigger failed:', err)
         })
     }
 

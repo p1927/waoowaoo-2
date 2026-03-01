@@ -6,8 +6,8 @@ import { resolveTaskPresentationState } from '@/lib/task/presentation'
 import { AppIcon } from '@/components/ui/icons'
 
 /**
- * AssetToolbar - 资产管理工具栏组件
- * 从 AssetsStage.tsx 提取，负责批量操作和刷新按钮
+ * AssetToolbar - asset toolbar
+ * Batch actions and refresh
  */
 
 interface AssetToolbarProps {
@@ -37,7 +37,7 @@ export default function AssetToolbar({
     onRegenerateAll,
     onGlobalAnalyze
 }: AssetToolbarProps) {
-    // 🔥 使用 React Query 刷新
+    // React Query refetch
     const onRefresh = useRefreshProjectAssets(projectId)
     const t = useTranslations('assets')
     const assetTaskRunningState = isBatchSubmitting
@@ -59,7 +59,7 @@ export default function AssetToolbar({
                     <span className="text-sm text-[var(--glass-text-tertiary)]">
                         {t("toolbar.assetCount", { total: totalAssets, appearances: totalAppearances, locations: totalLocations })}
                     </span>
-                    {/* 全局资产分析按钮 */}
+                    {/* Global asset analysis button */}
                     {onGlobalAnalyze && (
                         <button
                             onClick={onGlobalAnalyze}

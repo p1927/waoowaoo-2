@@ -63,7 +63,7 @@ export const POST = apiHandler(async (
         'EPISODE_SPLIT_BY_MARKERS',
         userId,
         username,
-        `Marker split done - ${episodes.length} 集，标记类型: ${markerResult.markerType}`,
+        `Marker split done - ${episodes.length} episodes, marker type: ${markerResult.markerType}`,
         {
             markerType: markerResult.markerType,
             confidence: markerResult.confidence,

@@ -7,7 +7,7 @@ import { maybeSubmitLLMTask } from '@/lib/llm-observe/route-task'
 import { getUserModelConfig } from '@/lib/config-service'
 
 /**
- * 资产中心 - AI 设计场景描述（任务化）
+ * Asset Hub - AI design location description (task-based)
  */
 export const POST = apiHandler(async (request: NextRequest) => {
   const authResult = await requireUserAuth()

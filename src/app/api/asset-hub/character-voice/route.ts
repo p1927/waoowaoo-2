@@ -26,7 +26,7 @@ interface AssetHubCharacterVoiceDb {
 
 /**
  * POST /api/asset-hub/character-voice
- * 上传自定义音色音频
+ * Upload custom voice audio
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubCharacterVoiceDb
@@ -37,7 +37,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
 
     const contentType = request.headers.get('content-type') || ''
 
-    // 处理 JSON 请求（AI 声音设计）
+    // Handle JSON request (AI voice design)
     if (contentType.includes('application/json')) {
         const body = (await request.json()) as CharacterVoiceJsonBody
         const { characterId, voiceDesign } = body
@@ -80,7 +80,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
         })
     }
 
-    // 处理 FormData 请求（文件上传）
+    // Handle FormData (file upload)
     const formData = await request.formData()
     const file = formData.get('file') as File
     const characterId = formData.get('characterId') as string

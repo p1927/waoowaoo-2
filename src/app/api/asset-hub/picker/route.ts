@@ -8,7 +8,7 @@ import { PRIMARY_APPEARANCE_INDEX } from '@/lib/constants'
 
 /**
  * GET /api/asset-hub/picker
- * 获取用户的全局资产列表，用于在项目中选择要复制的资产
+ * Get user global assets for copying into project
  * 
  * Query params:
  * - type: 'character' | 'location'

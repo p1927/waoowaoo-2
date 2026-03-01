@@ -19,9 +19,9 @@ interface SpeakerVoiceBindingDialogProps {
 }
 
 /**
- * 内联音色绑定弹窗
- * 用于不在资产库中的角色/发言人在配音阶段直接绑定音色
- * 提供三种绑定方式：从音色库选择、上传音频、AI设计音色（Tab 切换）
+ * Inline voice binding dialog
+ * Bind voice for characters not in asset hub
+ * Three modes: pick from library, upload, AI design (tabs)
  */
 export default function SpeakerVoiceBindingDialog({
     isOpen,
@@ -31,7 +31,7 @@ export default function SpeakerVoiceBindingDialog({
 }: SpeakerVoiceBindingDialogProps) {
     const t = useTranslations('voice.inlineBinding')
     const [activeTab, setActiveTab] = useState<BindingTab>('select')
-    // 子弹窗打开标记
+    // Sub-dialog open flag
     const [subDialogOpen, setSubDialogOpen] = useState(false)
 
     const handleClose = useCallback(() => {
@@ -40,7 +40,7 @@ export default function SpeakerVoiceBindingDialog({
         onClose()
     }, [onClose])
 
-    // 从音色库选择后的回调
+    // Callback after picking from library
     const handleVoiceSelected = useCallback((voice: {
         id: string
         customVoiceUrl: string | null
@@ -54,9 +54,9 @@ export default function SpeakerVoiceBindingDialog({
         onClose()
     }, [speaker, onBound, onClose])
 
-    // AI 设计音色或上传音频后的回调
+    // Callback after AI design or upload
     const handleCreationSuccess = useCallback(() => {
-        // 创建成功后切换到选择模式，让用户从音色库选取刚创建的音色
+        // After create, switch to pick mode for new voice
         setActiveTab('select')
         setSubDialogOpen(true)
     }, [])
@@ -73,7 +73,7 @@ export default function SpeakerVoiceBindingDialog({
     if (!isOpen) return null
     if (typeof document === 'undefined') return null
 
-    // 音色库选择 — 直接渲染 VoicePickerDialog
+    // Library: render VoicePickerDialog
     if (activeTab === 'select' && subDialogOpen) {
         return (
             <VoicePickerDialog
@@ -84,7 +84,7 @@ export default function SpeakerVoiceBindingDialog({
         )
     }
 
-    // 上传/AI设计 — 渲染 VoiceCreationModal
+    // Upload/AI design: render VoiceCreationModal
     if ((activeTab === 'upload' || activeTab === 'design') && subDialogOpen) {
         return (
             <VoiceCreationModal
@@ -97,7 +97,7 @@ export default function SpeakerVoiceBindingDialog({
         )
     }
 
-    // 主弹窗：Tab 切换
+    // Main dialog: tab switch
     return createPortal(
         <>
             <div className="fixed inset-0 z-[9999] glass-overlay" onClick={handleClose} />
@@ -105,7 +105,7 @@ export default function SpeakerVoiceBindingDialog({
                 className="fixed z-[10000] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 glass-surface-modal w-full max-w-md overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* 头部 */}
+                {/* Header */}
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--glass-stroke-base)] bg-[var(--glass-bg-surface-strong)]">
                     <div className="flex items-center gap-2 min-w-0">
                         <AppIcon name="mic" className="w-5 h-5 text-[var(--glass-tone-info-fg)] shrink-0" />
@@ -118,14 +118,14 @@ export default function SpeakerVoiceBindingDialog({
                     </button>
                 </div>
 
-                {/* 描述 */}
+                {/* Description */}
                 <div className="px-5 pt-4 pb-2">
                     <p className="text-sm text-[var(--glass-text-secondary)]">
                         {t('description')}
                     </p>
                 </div>
 
-                {/* 胶囊分段选择器 */}
+                {/* Capsule segment selector */}
                 <div className="px-5 py-3">
                     {(() => {
                         const tabs = [
@@ -163,7 +163,7 @@ export default function SpeakerVoiceBindingDialog({
                     })()}
                 </div>
 
-                {/* Tab 内容区 — 显示描述和进入按钮 */}
+                {/* Tab content: description and enter button */}
                 <div className="p-5">
                     <div className="text-center py-6">
                         <div className={`w-14 h-14 mx-auto rounded-full flex items-center justify-center mb-3 ${activeTab === 'select' ? 'bg-[var(--glass-tone-info-bg)]'

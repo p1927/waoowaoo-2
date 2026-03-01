@@ -3,17 +3,17 @@ import { useTranslations } from 'next-intl'
 import { AppIcon } from '@/components/ui/icons'
 
 /**
- * PanelActionButtons - 面板间操作按钮组
- * 包含两个按钮：
- * - + 插入分镜（原有功能）
- * - Shot变体（新功能）
+ * PanelActionButtons - panel action buttons
+ * Two buttons:
+ * - + Insert panel
+ * - Shot variant
  */
 
 interface PanelActionButtonsProps {
     onInsertPanel: () => void
     onVariant: () => void
     disabled?: boolean
-    hasImage: boolean // 原Shot是否有图片（没图片不能做变体）
+    hasImage: boolean // Source shot has image (required for variant)
 }
 
 export default function PanelActionButtons({
@@ -40,7 +40,7 @@ export default function PanelActionButtons({
 
     return (
         <div className="flex flex-col items-center gap-1">
-            {/* 插入分镜按钮 */}
+            {/* Insert panel button */}
             <button
                 onClick={onInsertPanel}
                 disabled={disabled}
@@ -52,7 +52,7 @@ export default function PanelActionButtons({
             >
                 <AppIcon name="plus" className="w-4 h-4" />
 
-                {/* Hover 时显示提示 */}
+                {/* Tooltip on hover */}
                 <span className={`
                     absolute -top-8 left-1/2 -translate-x-1/2
                     px-2 py-1 text-xs text-white bg-[var(--glass-overlay)] rounded
@@ -65,7 +65,7 @@ export default function PanelActionButtons({
                 </span>
             </button>
 
-            {/* Shot变体按钮 */}
+            {/* Shot variant button */}
             <button
                 onClick={onVariant}
                 disabled={disabled || !hasImage}
@@ -77,7 +77,7 @@ export default function PanelActionButtons({
             >
                 <AppIcon name="videoAlt" className="w-4 h-4" />
 
-                {/* Hover 时显示提示 */}
+                {/* Tooltip on hover */}
                 <span className={`
                     absolute -top-8 left-1/2 -translate-x-1/2
                     px-2 py-1 text-xs text-white bg-[var(--glass-overlay)] rounded

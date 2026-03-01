@@ -1,5 +1,5 @@
 /**
- * API 配置类型定义和预设常量
+ * API config types and preset constants
  */
 import {
     composeModelKey,
@@ -8,7 +8,7 @@ import {
     type UnifiedModelType,
 } from '@/lib/model-config-contract'
 
-// 统一提供商接口
+// Unified provider interface
 export interface Provider {
     id: string
     name: string
@@ -28,18 +28,18 @@ export interface MediaCustomPricing {
     optionPrices?: Record<string, Record<string, number>>
 }
 
-// 用户自定义定价 V2（能力参数可定价）
+// User pricing V2 (capability params)
 export interface CustomModelPricing {
     llm?: LlmCustomPricing
     image?: MediaCustomPricing
     video?: MediaCustomPricing
 }
 
-// 模型接口
+// Model interface
 export interface CustomModel {
-    modelId: string       // 唯一标识符（如 anthropic/claude-sonnet-4.5）
-    modelKey: string      // 唯一主键（provider::modelId）
-    name: string          // 显示名称
+    modelId: string       // Unique id (e.g. anthropic/claude-sonnet-4.5)
+    modelKey: string      // Unique key (provider::modelId)
+    name: string          // Display name
     type: UnifiedModelType
     provider: string
     price: number
@@ -63,7 +63,7 @@ export interface PricingDisplayItem {
 
 export type PricingDisplayMap = Record<string, PricingDisplayItem>
 
-// API 配置响应
+// API config response
 export interface ApiConfig {
     models: CustomModel[]
     providers: Provider[]
@@ -72,19 +72,19 @@ export interface ApiConfig {
 
 type PresetModel = Omit<CustomModel, 'enabled' | 'modelKey' | 'price'>
 
-// 预设模型
+// Preset models
 export const PRESET_MODELS: PresetModel[] = [
-    // 文本模型
+    // Text models
     { modelId: 'google/gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro', type: 'llm', provider: 'openrouter' },
     { modelId: 'google/gemini-3-pro-preview', name: 'Gemini 3 Pro', type: 'llm', provider: 'openrouter' },
     { modelId: 'google/gemini-3-flash-preview', name: 'Gemini 3 Flash', type: 'llm', provider: 'openrouter' },
     { modelId: 'anthropic/claude-sonnet-4.5', name: 'Claude Sonnet 4.5', type: 'llm', provider: 'openrouter' },
     { modelId: 'anthropic/claude-sonnet-4', name: 'Claude Sonnet 4', type: 'llm', provider: 'openrouter' },
-    // Google AI Studio 文本模型
+    // Google AI Studio text models
     { modelId: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro', type: 'llm', provider: 'google' },
     { modelId: 'gemini-3-pro-preview', name: 'Gemini 3 Pro', type: 'llm', provider: 'google' },
     { modelId: 'gemini-3-flash-preview', name: 'Gemini 3 Flash', type: 'llm', provider: 'google' },
-    // 火山引擎 Doubao 文本模型
+    // Volcengine Doubao text models
     { modelId: 'doubao-seed-1-8-251228', name: 'Doubao Seed 1.8', type: 'llm', provider: 'ark' },
     { modelId: 'doubao-seed-2-0-pro-260215', name: 'Doubao Seed 2.0 Pro', type: 'llm', provider: 'ark' },
     { modelId: 'doubao-seed-2-0-lite-260215', name: 'Doubao Seed 2.0 Lite', type: 'llm', provider: 'ark' },
@@ -92,7 +92,7 @@ export const PRESET_MODELS: PresetModel[] = [
     { modelId: 'doubao-seed-1-6-251015', name: 'Doubao Seed 1.6', type: 'llm', provider: 'ark' },
     { modelId: 'doubao-seed-1-6-lite-251015', name: 'Doubao Seed 1.6 Lite', type: 'llm', provider: 'ark' },
 
-    // 图像模型
+    // Image models
     { modelId: 'banana', name: 'Banana Pro', type: 'image', provider: 'fal' },
     { modelId: 'banana-2', name: 'Banana 2', type: 'image', provider: 'fal' },
     { modelId: 'doubao-seedream-4-5-251128', name: 'Seedream 4.5', type: 'image', provider: 'ark' },
@@ -104,11 +104,11 @@ export const PRESET_MODELS: PresetModel[] = [
     { modelId: 'imagen-4.0-generate-001', name: 'Imagen 4', type: 'image', provider: 'google' },
     { modelId: 'imagen-4.0-ultra-generate-001', name: 'Imagen 4 Ultra', type: 'image', provider: 'google' },
     { modelId: 'imagen-4.0-fast-generate-001', name: 'Imagen 4 Fast', type: 'image', provider: 'google' },
-    // 视频模型
+    // Video models
     { modelId: 'doubao-seedance-1-0-pro-fast-251015', name: 'Seedance 1.0 Pro Fast', type: 'video', provider: 'ark' },
     { modelId: 'doubao-seedance-1-0-lite-i2v-250428', name: 'Seedance 1.0 Lite', type: 'video', provider: 'ark' },
     { modelId: 'doubao-seedance-1-5-pro-251215', name: 'Seedance 1.5 Pro', type: 'video', provider: 'ark' },
-    { modelId: 'doubao-seedance-2-0-260128', name: 'Seedance 2.0（待上线）', type: 'video', provider: 'ark' },
+    { modelId: 'doubao-seedance-2-0-260128', name: 'Seedance 2.0（Coming soon）', type: 'video', provider: 'ark' },
     { modelId: 'doubao-seedance-1-0-pro-250528', name: 'Seedance 1.0 Pro', type: 'video', provider: 'ark' },
     // Google Veo
     { modelId: 'veo-3.1-generate-preview', name: 'Veo 3.1', type: 'video', provider: 'google' },
@@ -123,20 +123,20 @@ export const PRESET_MODELS: PresetModel[] = [
     { modelId: 'fal-ai/kling-video/v3/standard/image-to-video', name: 'Kling 3 Standard', type: 'video', provider: 'fal' },
     { modelId: 'fal-ai/kling-video/v3/pro/image-to-video', name: 'Kling 3 Pro', type: 'video', provider: 'fal' },
 
-    // 音频模型
+    // Audio models
     { modelId: 'fal-ai/index-tts-2/text-to-speech', name: 'IndexTTS 2', type: 'audio', provider: 'fal' },
-    // 口型同步模型
+    // Lip-sync models
     { modelId: 'fal-ai/kling-video/lipsync/audio-to-video', name: 'Kling Lip Sync', type: 'lipsync', provider: 'fal' },
     { modelId: 'vidu-lipsync', name: 'Vidu Lip Sync', type: 'lipsync', provider: 'vidu' },
 
-    // MiniMax 视频模型
+    // MiniMax video models
     { modelId: 'minimax-hailuo-2.3', name: 'Hailuo 2.3', type: 'video', provider: 'minimax' },
     { modelId: 'minimax-hailuo-2.3-fast', name: 'Hailuo 2.3 Fast', type: 'video', provider: 'minimax' },
     { modelId: 'minimax-hailuo-02', name: 'Hailuo 02', type: 'video', provider: 'minimax' },
     { modelId: 't2v-01', name: 'T2V-01', type: 'video', provider: 'minimax' },
     { modelId: 't2v-01-director', name: 'T2V-01 Director', type: 'video', provider: 'minimax' },
 
-    // Vidu 视频模型
+    // Vidu video models
     { modelId: 'viduq3-pro', name: 'Vidu Q3 Pro', type: 'video', provider: 'vidu' },
     { modelId: 'viduq2-pro-fast', name: 'Vidu Q2 Pro Fast', type: 'video', provider: 'vidu' },
     { modelId: 'viduq2-pro', name: 'Vidu Q2 Pro', type: 'video', provider: 'vidu' },
@@ -158,7 +158,7 @@ export function isPresetComingSoonModelKey(modelKey: string): boolean {
     return PRESET_COMING_SOON_MODEL_KEYS.has(modelKey)
 }
 
-// 预设提供商（API Key 唯一归属于 provider id）
+// Preset providers (API Key belongs to provider id)
 export const PRESET_PROVIDERS: Omit<Provider, 'apiKey' | 'hasApiKey'>[] = [
     { id: 'ark', name: 'Volcengine Ark' },
     { id: 'google', name: 'Google AI Studio' },
@@ -170,9 +170,9 @@ export const PRESET_PROVIDERS: Omit<Provider, 'apiKey' | 'hasApiKey'>[] = [
 ]
 
 const ZH_PROVIDER_NAME_MAP: Record<string, string> = {
-    ark: '火山引擎 Ark',
-    minimax: '海螺 MiniMax',
-    vidu: '生数科技 Vidu',
+    ark: 'Volcengine Ark',
+    minimax: 'MiniMax',
+    vidu: 'Vidu',
 }
 
 function isZhLocale(locale?: string): boolean {
@@ -185,7 +185,7 @@ export function resolvePresetProviderName(providerId: string, fallbackName: stri
 }
 
 /**
- * 提取提供商主键（用于多实例场景，如 gemini-compatible:uuid）
+ * Extract provider key (e.g. gemini-compatible:uuid)
  */
 export function getProviderKey(providerId?: string): string {
     if (!providerId) return ''
@@ -194,9 +194,9 @@ export function getProviderKey(providerId?: string): string {
 }
 
 /**
- * 获取厂商的友好显示名称
- * @param providerId - 厂商ID（如 'ark', 'google'）
- * @returns 友好名称（如 '火山引擎(方舟)', 'Google AI Studio'）
+ * Get provider display name
+ * @param providerId - Provider id (e.g. ark, google)
+ * @returns Display name
  */
 export function getProviderDisplayName(providerId?: string, locale?: string): string {
     if (!providerId) return ''
@@ -207,19 +207,19 @@ export function getProviderDisplayName(providerId?: string, locale?: string): st
 }
 
 /**
- * 编码模型复合 Key（用于区分同名模型）
- * @param provider - 厂商 ID
- * @param modelId - 模型 ID
- * @returns 复合 Key，格式为 `provider::modelId`（使用双冒号避免与 provider ID 中的冒号冲突）
+ * Encode model composite key
+ * @param provider - Provider ID
+ * @param modelId - Model ID
+ * @returns Composite key provider::modelId
  */
 export function encodeModelKey(provider: string, modelId: string): string {
     return composeModelKey(provider, modelId)
 }
 
 /**
- * 解析模型复合 Key
- * @param key - 复合 Key（provider::modelId）
- * @returns 解析后的 { provider, modelId }，如果无法解析返回 null
+ * Parse model composite key
+ * @param key - Composite key
+ * @returns { provider, modelId } or null
  */
 export function parseModelKey(key: string | undefined | null): { provider: string, modelId: string } | null {
     const parsed = parseModelKeyStrict(key)
@@ -231,11 +231,11 @@ export function parseModelKey(key: string | undefined | null): { provider: strin
 }
 
 /**
- * 检查一个复合 Key 是否匹配指定的模型
- * @param key - 复合 Key（provider::modelId）
- * @param provider - 目标厂商 ID
- * @param modelId - 目标模型 ID
- * @returns 是否匹配
+ * Check if composite key matches model
+ * @param key - Composite key
+ * @param provider - Target provider ID
+ * @param modelId - Target model ID
+ * @returns Whether match
  */
 export function matchesModelKey(key: string | undefined | null, provider: string, modelId: string): boolean {
     const parsed = parseModelKeyStrict(key)
@@ -243,20 +243,20 @@ export function matchesModelKey(key: string | undefined | null, provider: string
     return parsed.provider === provider && parsed.modelId === modelId
 }
 
-// 教程步骤接口
+// Tutorial step interface
 export interface TutorialStep {
-    text: string           // 步骤描述 (i18n key)
-    url?: string           // 可选的链接地址
+    text: string           // Step description (i18n key)
+    url?: string           // Optional URL
 }
 
-// 厂商教程接口
+// Provider tutorial interface
 export interface ProviderTutorial {
     providerId: string
     steps: TutorialStep[]
 }
 
-// 厂商开通教程配置
-// 注意: text 字段使用 i18n key, 翻译在 apiConfig.tutorials 下
+// Provider onboarding tutorial config
+// Note: text is i18n key under apiConfig.tutorials
 export const PROVIDER_TUTORIALS: ProviderTutorial[] = [
     {
         providerId: 'ark',
@@ -344,9 +344,9 @@ export const PROVIDER_TUTORIALS: ProviderTutorial[] = [
 ]
 
 /**
- * 根据厂商ID获取教程配置
- * @param providerId - 厂商ID
- * @returns 教程配置，如果不存在则返回 undefined
+ * Get tutorial config by provider ID
+ * @param providerId - Provider ID
+ * @returns Tutorial config or undefined
  */
 export function getProviderTutorial(providerId: string): ProviderTutorial | undefined {
     const providerKey = getProviderKey(providerId)
@@ -354,9 +354,9 @@ export function getProviderTutorial(providerId: string): ProviderTutorial | unde
 }
 
 /**
- * 获取 Google 官方模型列表的克隆副本，provider 替换为指定 ID。
- * 用于 gemini-compatible 新增时自动预设模型。
- * 排除 batch 模型（Google 特有的异步批量处理）。
+ * Clone Google official model list, replace provider with given ID.
+ * Used when adding gemini-compatible to preset models.
+ * Exclude batch models (Google async batch).
  */
 export function getGoogleCompatiblePresetModels(providerId: string): PresetModel[] {
     return PRESET_MODELS

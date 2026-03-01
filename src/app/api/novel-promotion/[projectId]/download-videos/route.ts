@@ -114,7 +114,7 @@ export const POST = apiHandler(async (
     allClips.push(...(episode.clips || []))
   }
 
-  // 遍历所有 storyboard 和 panel
+  // Iterate all storyboards and panels
   for (const storyboard of allStoryboards) {
     // Sort by clip index in clips array
     const clipIndex = allClips.findIndex((clip) => clip.id === storyboard.clipId)
@@ -183,7 +183,7 @@ export const POST = apiHandler(async (
     })
   })
 
-  // 使用 PassThrough 流来收集数据
+  // Use PassThrough stream to collect data
   const chunks: Uint8Array[] = []
   archive.on('data', (chunk) => {
     chunks.push(chunk)

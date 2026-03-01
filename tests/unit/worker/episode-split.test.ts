@@ -101,7 +101,7 @@ describe('worker episode-split', () => {
 
   it('fails fast when content is too short', async () => {
     const job = buildJob('short text')
-    await expect(handleEpisodeSplitTask(job)).rejects.toThrow('文本太短，至少需要 100 字')
+    await expect(handleEpisodeSplitTask(job)).rejects.toThrow('Text too short, need at least 100 characters')
   })
 
   it('returns matched episodes when ai boundaries are valid', async () => {

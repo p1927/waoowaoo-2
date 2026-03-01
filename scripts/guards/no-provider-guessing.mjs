@@ -57,7 +57,7 @@ const apiViolations = forbiddenApiConfigTokens
   .filter((token) => apiConfigText.includes(token))
   .map((token) => `src/lib/api-config.ts contains forbidden provider-guessing token: ${token}`)
 
-// 验证 api-config.ts 使用严格 provider.id 精确匹配（不按 type 过滤，不做 providerKey 模糊匹配）
+// api-config: strict provider.id match, no type filter, no providerKey guess
 if (!apiConfigText.includes('pickProviderStrict(')) {
   apiViolations.push('src/lib/api-config.ts missing strict provider resolution function (pickProviderStrict)')
 }

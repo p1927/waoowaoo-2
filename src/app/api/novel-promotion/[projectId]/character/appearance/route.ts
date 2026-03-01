@@ -65,7 +65,7 @@ export const POST = apiHandler(async (
       previousImageUrls: encodeImageUrls([])}
   })
 
-  _ulogInfo(`✓ 添加子形象: ${character.name} - ${changeReason} (index: ${newIndex})`)
+  _ulogInfo(`✓ Add sub-appearance: ${character.name} - ${changeReason} (index: ${newIndex})`)
 
   return NextResponse.json({
     success: true,
@@ -140,7 +140,7 @@ export const PATCH = apiHandler(async (
     }
   })
 
-  _ulogInfo(`✓ Update appearance description: ${appearance.character.name} - ${appearance.changeReason || '形象' + appearance.appearanceIndex}`)
+  _ulogInfo(`✓ Update appearance description: ${appearance.character.name} - ${appearance.changeReason || 'appearance' + appearance.appearanceIndex}`)
 
   return NextResponse.json({
     success: true
@@ -183,7 +183,7 @@ export const DELETE = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 检查是否是最后一个形象
+  // Check if last appearance
   const appearanceCount = await prisma.characterAppearance.count({
     where: { characterId }
   })
@@ -248,8 +248,8 @@ export const DELETE = apiHandler(async (
     }
   }
 
-  _ulogInfo(`✓ Delete appearance: ${appearance.character.name} - ${appearance.changeReason || '形象' + appearance.appearanceIndex}`)
-  _ulogInfo(`✓ 删除了 ${deletedImages.length} 张 COS 图片`)
+  _ulogInfo(`✓ Delete appearance: ${appearance.character.name} - ${appearance.changeReason || 'appearance' + appearance.appearanceIndex}`)
+  _ulogInfo(`✓ Deleted ${deletedImages.length} COS images`)
 
   return NextResponse.json({
     success: true,

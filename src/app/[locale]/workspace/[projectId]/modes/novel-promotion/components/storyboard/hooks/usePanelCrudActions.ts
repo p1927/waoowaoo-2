@@ -98,7 +98,7 @@ export function usePanelCrudActions({
         })
       },
       resolveErrorMessage: (error) => {
-        _ulogError('保存failed:', error)
+        _ulogError('Save failed:', error)
         return getErrorMessage(error, t('common.unknownError'))
       },
     })
@@ -137,7 +137,7 @@ export function usePanelCrudActions({
       })
     },
     resolveErrorMessage: (error) => {
-      _ulogError('保存failed:', error)
+      _ulogError('Save failed:', error)
       return getErrorMessage(error, t('common.unknownError'))
     },
   })
@@ -209,7 +209,7 @@ export function usePanelCrudActions({
       })
       await onRefresh()
     } catch (error: unknown) {
-      _ulogError('添加分镜failed:', error)
+      _ulogError('Add panel failed:', error)
       alert(
         t('messages.addPanelFailed', {
           error: getErrorMessage(error, t('common.unknownError')),
@@ -236,7 +236,7 @@ export function usePanelCrudActions({
       }))
     } catch (error: unknown) {
       if (isAbortError(error)) {
-        _ulogInfo('请求被中断（可能是页面刷新），后端仍在执行')
+        _ulogInfo('Request interrupted (e.g. refresh), backend still running')
         return
       }
       alert(

@@ -9,8 +9,8 @@ import { MediaImageWithLoading } from '@/components/media/MediaImageWithLoading'
 import { AppIcon } from '@/components/ui/icons'
 
 /**
- * InsertPanelModal - 插入分镜模态框
- * 使用 Portal 渲染到 document.body，确保在用户屏幕中央显示
+ * InsertPanelModal - insert panel modal
+ * Renders via Portal to document.body, centered
  */
 
 interface PanelInfo {
@@ -91,7 +91,7 @@ export default function InsertPanelModal({
                 className="glass-surface-modal w-full max-w-lg"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* 标题 */}
+                {/* Title */}
                 <div className="px-5 py-3 border-b border-[var(--glass-stroke-base)] bg-[var(--glass-bg-surface-strong)] rounded-t-2xl">
                     <div className="flex items-center justify-between">
                         <h2 className="text-base font-bold text-[var(--glass-text-primary)] flex items-center gap-2">
@@ -108,11 +108,11 @@ export default function InsertPanelModal({
                     </div>
                 </div>
 
-                {/* 内容 */}
+                {/* Content */}
                 <div className="p-5 space-y-4">
-                    {/* 前后Shot预览 - 更紧凑 */}
+                    {/* Prev/next shot preview */}
                     <div className="flex gap-3 items-center">
-                        {/* 前一个Shot */}
+                        {/* Previous shot */}
                         <div className="flex-1 bg-[var(--glass-bg-muted)] rounded-lg p-2 text-center">
                             {prevPanel.imageUrl ? (
                                 <MediaImageWithLoading
@@ -129,14 +129,14 @@ export default function InsertPanelModal({
                             <div className="text-xs text-[var(--glass-text-tertiary)] mt-1">#{prevPanel.panelNumber}</div>
                         </div>
 
-                        {/* 插入指示 */}
+                        {/* Insert indicator */}
                         <div className="flex flex-col items-center">
                             <div className="w-10 h-10 rounded-full bg-[var(--glass-tone-info-bg)] text-[var(--glass-tone-info-fg)] flex items-center justify-center text-xl font-bold">
                                 +
                             </div>
                         </div>
 
-                        {/* 后一个Shot */}
+                        {/* Next shot */}
                         <div className="flex-1 bg-[var(--glass-bg-muted)] rounded-lg p-2 text-center">
                             {nextPanel ? (
                                 <>
@@ -165,7 +165,7 @@ export default function InsertPanelModal({
                         </div>
                     </div>
 
-                    {/* 用户输入 */}
+                    {/* User input */}
                     <div>
                         <textarea
                             value={userInput}
@@ -176,7 +176,7 @@ export default function InsertPanelModal({
                         />
                     </div>
 
-                    {/* 操作按钮 */}
+                    {/* Actions */}
                     <div className="flex gap-3">
                         <button
                             onClick={handleAutoAnalyze}
@@ -209,6 +209,6 @@ export default function InsertPanelModal({
         </div>
     )
 
-    // 使用 Portal 渲染到 document.body
+    // Render via Portal to document.body
     return createPortal(modalContent, document.body)
 }

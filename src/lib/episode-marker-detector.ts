@@ -29,58 +29,6 @@ export interface EpisodeMarkerResult {
     previewSplits: PreviewSplit[]
 }
 
-// Chinese numeral mapping (keys kept for parsing input)
-const CHINESE_NUMBERS: Record<string, number> = {
-    '零': 0, '〇': 0,
-    '一': 1, '壹': 1,
-    '二': 2, '贰': 2, '两': 2,
-    '三': 3, '叁': 3,
-    '四': 4, '肆': 4,
-    '五': 5, '伍': 5,
-    '六': 6, '陆': 6,
-    '七': 7, '柒': 7,
-    '八': 8, '捌': 8,
-    '九': 9, '玖': 9,
-    '十': 10, '拾': 10,
-    '百': 100, '佰': 100,
-    '千': 1000, '仟': 1000,
-}
-
-/**
- * Converts Chinese numerals to Arabic numbers.
- */
-function chineseToNumber(chinese: string): number {
-    // if already digits, return as-is
-    if (/^\d+$/.test(chinese)) {
-        return parseInt(chinese, 10)
-    }
-
-    let result = 0
-    let temp = 0
-    let lastUnit = 1
-
-    for (const char of chinese) {
-        const num = CHINESE_NUMBERS[char]
-        if (num === undefined) continue
-
-        if (num >= 10) {
-            // unit (ten, hundred, thousand)
-            if (temp === 0) temp = 1
-            temp *= num
-            if (num >= lastUnit) {
-                result += temp
-                temp = 0
-            }
-            lastUnit = num
-        } else {
-            // digit
-            temp = num
-        }
-    }
-
-    return result + temp
-}
-
 // Detection pattern definitions
 interface DetectionPattern {
     regex: RegExp
@@ -91,33 +39,9 @@ interface DetectionPattern {
 }
 
 const DETECTION_PATTERNS: DetectionPattern[] = [
-    // 1. Chinese "Episode X"
+    // 1. Scene number X-Y [scene] - use first number as episode
     {
-        regex: /^第([一二三四五六七八九十百千\d]+)集[：:\s]*(.*)?/gm,
-        typeKey: 'episode',
-        typeName: 'Episode X',
-        extractNumber: (match) => chineseToNumber(match[1]),
-        extractTitle: (match) => match[2]?.trim() || ''
-    },
-    // 2. Chinese "Chapter X"
-    {
-        regex: /^第([一二三四五六七八九十百千\d]+)章[：:\s]*(.*)?/gm,
-        typeKey: 'chapter',
-        typeName: 'Chapter X',
-        extractNumber: (match) => chineseToNumber(match[1]),
-        extractTitle: (match) => match[2]?.trim() || ''
-    },
-    // 3. Chinese "Act X"
-    {
-        regex: /^第([一二三四五六七八九十百千\d]+)幕[：:\s]*(.*)?/gm,
-        typeKey: 'act',
-        typeName: 'Act X',
-        extractNumber: (match) => chineseToNumber(match[1]),
-        extractTitle: (match) => match[2]?.trim() || ''
-    },
-    // 4. Scene number X-Y【scene】 - use first number as episode
-    {
-        regex: /^(\d+)-\d+[【\[](.*?)[】\]]/gm,
+        regex: /^(\d+)-\d+[\[\[](.*?)[\]\]]/gm,
         typeKey: 'scene',
         typeName: 'X-Y [Scene]',
         extractNumber: (match) => parseInt(match[1], 10),
@@ -139,9 +63,9 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim().slice(0, 20) || ''
     },
-    // 5.6 Digit followed directly by Chinese (no separator) - digit at line or paragraph start
+    // 5.6 Digit followed by letter (no separator) at line or paragraph start
     {
-        regex: /(?:^|\n\n)(\d+)([\u4e00-\u9fa5])/gm,
+        regex: /(?:^|\n\n)(\d+)([a-zA-Z])/gm,
         typeKey: 'numberedDirect',
         typeName: 'Number + text',
         extractNumber: (match) => parseInt(match[1], 10),

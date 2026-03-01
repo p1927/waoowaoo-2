@@ -101,7 +101,7 @@ export const POST = apiHandler(async (
     })
   })
 
-  _ulogInfo(`✓ 场景确认选择: ${location.name}`)
+  _ulogInfo(`✓ Location selection confirmed: ${location.name}`)
   _ulogInfo(`✓ Deleted ${deletedImages.length} unselected images`)
 
   return NextResponse.json({

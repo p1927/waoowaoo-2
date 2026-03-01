@@ -11,22 +11,22 @@ interface NavItemData {
     icon: string
     label: string
     status: StepStatus
-    href?: string  // 可选的链接地址
-    disabled?: boolean  // 是否禁用（开发中）
-    disabledLabel?: string  // 禁用时显示的提示文字
+    href?: string  // Optional URL
+    disabled?: boolean  // Disabled (in development)
+    disabledLabel?: string  // Label when disabled
 }
 
 interface CapsuleNavProps {
     items: NavItemData[]
     activeId: string
     onItemClick: (id: string) => void
-    projectId?: string  // 用于构建链接
-    episodeId?: string  // 用于构建链接
+    projectId?: string  // For building link
+    episodeId?: string  // For building link
 }
 
 /**
- * NavItem - 胶囊导航单项
- * 支持左键点击切换、中键/Ctrl+点击在新标签页打开
+ * NavItem - capsule nav item
+ * Left click to switch; middle/Ctrl+click to open in new tab
  */
 function NavItem({
     active,
@@ -87,7 +87,7 @@ function NavItem({
                 ) : (
                     <span className="text-base font-semibold">{label}</span>
                 )}
-                {/* 底部指示条 */}
+                {/* Bottom indicator */}
                 <span className={`absolute bottom-1.5 left-1/2 -translate-x-1/2 h-[3px] rounded-full transition-all duration-300 ease-out
                     ${active
                         ? 'w-6 bg-gradient-to-r from-[var(--glass-accent-from)] to-[var(--glass-accent-to)] shadow-[0_2px_8px_var(--glass-accent-shadow-soft)]'
@@ -117,11 +117,11 @@ function NavItem({
 
 
 /**
- * CapsuleNav - 胶囊形态悬浮导航
- * 支持中键和Ctrl+点击在新标签页打开
+ * CapsuleNav - capsule floating nav
+ * Middle/Ctrl+click to open in new tab
  */
 export function CapsuleNav({ items, activeId, onItemClick, projectId, episodeId }: CapsuleNavProps) {
-    // 构建每个导航项的链接地址
+    // Build link for each nav item
     const buildHref = (stageId: string): string | undefined => {
         if (!projectId) return undefined
         const params = new URLSearchParams()
@@ -162,7 +162,7 @@ export function CapsuleNav({ items, activeId, onItemClick, projectId, episodeId 
 }
 
 /**
- * EpisodeSelector - 剧集选择器
+ * EpisodeSelector - episode selector
  */
 interface Episode {
     id: string
@@ -182,7 +182,7 @@ interface EpisodeSelectorProps {
     onAdd?: () => void
     onRename?: (id: string, newName: string) => void
     onDelete?: (id: string) => void
-    projectName?: string  // 项目名称，显示在左上角
+    projectName?: string  // Project name, shown top-left
 }
 
 export function EpisodeSelector({
@@ -245,7 +245,7 @@ export function EpisodeSelector({
                                     ? 'bg-[var(--glass-accent-from)]'
                                     : 'bg-[var(--glass-stroke-strong)]'
 
-                            // 编辑模式
+                            // Edit mode
                             if (editingId === ep.id) {
                                 return (
                                     <div key={ep.id} className="flex items-center gap-2 p-3 rounded-xl bg-[var(--glass-tone-info-bg)] border border-[var(--glass-stroke-focus)]">
@@ -286,7 +286,7 @@ export function EpisodeSelector({
                                 )
                             }
 
-                            // 删除确认模式
+                            // Delete confirm mode
                             if (deletingId === ep.id) {
                                 return (
                                     <div key={ep.id} className="flex items-center gap-2 p-3 rounded-xl bg-[var(--glass-tone-danger-bg)] border border-[var(--glass-tone-danger-fg)]/30">

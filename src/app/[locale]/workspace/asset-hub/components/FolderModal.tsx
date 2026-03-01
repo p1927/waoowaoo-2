@@ -15,7 +15,7 @@ interface FolderModalProps {
     onSave: (name: string) => void
 }
 
-// 内联 SVG 图标
+// Inline SVG icon
 const XMarkIcon = ({ className }: { className?: string }) => (
     <AppIcon name="close" className={className} />
 )
@@ -35,7 +35,7 @@ export function FolderModal({ folder, onClose, onSave }: FolderModalProps) {
         <div className="fixed inset-0 glass-overlay flex items-center justify-center z-50 p-4">
             <div className="glass-surface-modal max-w-sm w-full">
                 <div className="p-5">
-                    {/* 标题 */}
+                    {/* Title */}
                     <div className="flex items-center justify-between mb-5">
                         <h3 className="text-lg font-semibold text-[var(--glass-text-primary)]">
                             {folder ? t('editFolder') : t('newFolder')}

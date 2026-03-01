@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { requireUserAuth, isErrorResponse } from '@/lib/api-auth'
 import { ApiError, apiHandler } from '@/lib/api-errors'
 
-// 获取用户所有文件夹
+// Get user folders
 export const GET = apiHandler(async () => {
     // Auth check
     const authResult = await requireUserAuth()

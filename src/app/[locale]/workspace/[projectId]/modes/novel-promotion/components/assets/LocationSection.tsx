@@ -3,10 +3,10 @@ import { logInfo as _ulogInfo } from '@/lib/logging/core'
 import { useTranslations } from 'next-intl'
 
 /**
- * LocationSection - 场景资产区块组件
- * 从 AssetsStage.tsx 提取，负责场景列表的展示和操作
+ * LocationSection - location assets section
+ * Location list and actions
  * 
- * 🔥 V6.5 重构：内部直接订阅 useProjectAssets，消除 props drilling
+ * V6.5: subscribe useProjectAssets
  */
 
 import { Location } from '@/types/project'
@@ -15,15 +15,15 @@ import LocationCard from './LocationCard'
 import { AppIcon } from '@/components/ui/icons'
 
 interface LocationSectionProps {
-    // 🔥 V6.5 删除：locations prop - 现在内部直接订阅
+    // V6.5: locations from subscription
     projectId: string
     activeTaskKeys: Set<string>
     onClearTaskKey: (key: string) => void
-    // 回调函数
+    // Callbacks
     onAddLocation: () => void
     onDeleteLocation: (locationId: string) => void
     onEditLocation: (location: Location) => void
-    // 🔥 V6.6 重构：重命名为 handleGenerateImage
+    // V6.6: handleGenerateImage
     handleGenerateImage: (type: 'character' | 'location', id: string, appearanceId?: string) => void
     onSelectImage: (locationId: string, imageIndex: number | null) => void
     onConfirmSelection: (locationId: string) => void
@@ -32,11 +32,11 @@ interface LocationSectionProps {
     onUndo: (locationId: string) => void
     onImageClick: (imageUrl: string) => void
     onImageEdit: (locationId: string, imageIndex: number, locationName: string) => void
-    onCopyFromGlobal: (locationId: string) => void  // 🆕 从资产中心复制
+    onCopyFromGlobal: (locationId: string) => void  // Copy from hub
 }
 
 export default function LocationSection({
-    // 🔥 V6.5 删除：locations prop - 现在内部直接订阅
+    // V6.5: locations from subscription
     projectId,
     activeTaskKeys,
     onClearTaskKey,
@@ -55,7 +55,7 @@ export default function LocationSection({
 }: LocationSectionProps) {
     const t = useTranslations('assets')
 
-    // 🔥 V6.5 重构：直接订阅缓存，消除 props drilling
+    // V6.5: subscribe cache
     const { data: assets } = useProjectAssets(projectId)
     const locations: Location[] = assets?.locations ?? []
 
@@ -87,25 +87,25 @@ export default function LocationSection({
                         onEdit={() => onEditLocation(location)}
                         onDelete={() => onDeleteLocation(location.id)}
                         onRegenerate={() => {
-                            // 获取有效图片数量
+                            // Valid image count
                             const validImages = location.images?.filter(img => img.imageUrl) || []
 
-                            _ulogInfo('[LocationSection] 重新生成判断:', {
+_ulogInfo('[LocationSection] Regenerate check:', {
                                 locationName: location.name,
                                 images: location.images,
                                 validImages,
                                 validImageCount: validImages.length
                             })
 
-                            // 单图：重新生成单张
+                            // Single: regenerate one
                             if (validImages.length === 1) {
                                 const imageIndex = validImages[0].imageIndex
-                                _ulogInfo('[LocationSection] 调用单张重新生成, imageIndex:', imageIndex)
+_ulogInfo('[LocationSection] Single regenerate, imageIndex:', imageIndex)
                                 onRegenerateSingle(location.id, imageIndex)
                             }
-                            // 多图或无图：重新生成整组
+                            // Multi: regenerate group
                             else {
-                                _ulogInfo('[LocationSection] 调用整组重新生成')
+_ulogInfo('[LocationSection] Group regenerate')
                                 onRegenerateGroup(location.id)
                             }
                         }}

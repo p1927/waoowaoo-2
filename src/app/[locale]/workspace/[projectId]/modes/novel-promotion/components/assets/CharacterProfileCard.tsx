@@ -4,8 +4,8 @@ import { useTranslations } from 'next-intl'
 import TaskStatusInline from '@/components/task/TaskStatusInline'
 import { resolveTaskPresentationState } from '@/lib/task/presentation'
 /**
- * 角色档案卡片组件
- * 展示角色档案摘要，点击可编辑
+ * Character profile card
+ * Shows profile summary, click to edit
  */
 
 import { CharacterProfileData } from '@/types/character-profile'
@@ -74,7 +74,7 @@ export default function CharacterProfileCard({
 
     return (
         <div className="bg-[var(--glass-bg-surface)] rounded-xl border border-[var(--glass-stroke-base)] p-4 hover:shadow-md transition-shadow">
-            {/* 头部 */}
+            {/* Header */}
             <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                     <h3 className="font-semibold text-[var(--glass-text-primary)] mb-1">{name}</h3>
@@ -85,7 +85,7 @@ export default function CharacterProfileCard({
                         <span className="text-xs text-[var(--glass-text-tertiary)]">{profileData.archetype}</span>
                     </div>
                 </div>
-                {/* 删除按钮 */}
+                {/* Delete button */}
                 {onDelete && (
                     <button
                         onClick={onDelete}
@@ -102,7 +102,7 @@ export default function CharacterProfileCard({
                 )}
             </div>
 
-            {/* 档案摘要 */}
+            {/* Profile summary */}
             <div className="space-y-1.5 mb-3">
                 <div className="flex items-center gap-2 text-sm">
                     <span className="text-[var(--glass-text-tertiary)] w-16">{t('characterProfile.summary.gender')}</span>
@@ -150,7 +150,7 @@ export default function CharacterProfileCard({
                 )}
             </div>
 
-            {/* 操作按钮 */}
+            {/* Actions */}
             <div className="flex gap-2">
                 <button
                     onClick={onEdit}

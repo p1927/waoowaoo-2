@@ -14,8 +14,8 @@ interface VideoToolbarProps {
   onGenerateAll: () => void
   onDownloadAll: () => void
   onBack: () => void
-  onEnterEditor?: () => void  // 进入剪辑器
-  videosReady?: boolean  // 是否有视频可以剪辑
+  onEnterEditor?: () => void  // Enter editor
+  videosReady?: boolean  // Whether videos are ready to edit
 }
 
 export default function VideoToolbar({

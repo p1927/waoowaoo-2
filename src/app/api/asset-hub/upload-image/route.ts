@@ -42,7 +42,7 @@ interface AssetHubUploadDb {
 
 /**
  * POST /api/asset-hub/upload-image
- * 上传用户自定义图片作为角色或场景资产
+ * Upload user image as character/location asset
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     await initializeFonts()
@@ -65,7 +65,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 读取文件并处理
+    // Read and process file
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
@@ -105,7 +105,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
 
         const currentImageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'globalCharacterAppearance.imageUrls')
 
-        // 保存历史版本
+        // Save history version
         if (appearance.imageUrl || currentImageUrls.length > 0) {
             await db.globalCharacterAppearance.update({
                 where: { id: appearance.id },
@@ -157,7 +157,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             const existingImage = location.images?.find((img) => img.imageIndex === targetImageIndex)
 
             if (existingImage) {
-                // 保存历史版本
+                // Save history version
                 if (existingImage.imageUrl) {
                     await db.globalLocationImage.update({
                         where: { id: existingImage.id },

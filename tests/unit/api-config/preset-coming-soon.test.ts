@@ -20,7 +20,7 @@ describe('api-config preset coming soon', () => {
       (entry) => entry.provider === 'ark' && entry.modelId === 'doubao-seedance-2-0-260128',
     )
     expect(model).toBeDefined()
-    expect(model?.name).toContain('待上线')
+    expect(model?.name).toContain('Coming soon')
   })
 
   it('recognizes coming-soon model by provider/modelId and modelKey', () => {

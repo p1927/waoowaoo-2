@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * 音色设置组件 - 从 CharacterCard 提取
- * 支持上传自定义音频和 AI 声音设计
+ * VoiceSettings - from CharacterCard
+ * Upload custom audio and AI voice design
  */
 
 import { useRef, useState } from 'react'
@@ -18,8 +18,8 @@ interface VoiceSettingsProps {
     projectId: string
     onVoiceChange?: (characterId: string, customVoiceUrl?: string) => void
     onVoiceDesign?: (characterId: string, characterName: string) => void
-    onSelectFromHub?: (characterId: string) => void  // 从资产中心选择音色
-    compact?: boolean  // 紧凑模式（单图卡片用）
+    onSelectFromHub?: (characterId: string) => void  // Pick from hub
+    compact?: boolean  // Compact (single-image card)
 }
 
 function getErrorMessage(error: unknown, fallback: string): string {
@@ -42,7 +42,7 @@ export default function VoiceSettings({
     compact = false
 }: VoiceSettingsProps) {
     const t = useTranslations('assets')
-    // 🔥 使用 mutation
+    // Use mutation
     const uploadVoice = useUploadProjectCharacterVoice(projectId)
     const voiceFileInputRef = useRef<HTMLInputElement>(null)
     const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -50,11 +50,11 @@ export default function VoiceSettings({
 
     const hasCustomVoice = !!customVoiceUrl
 
-    // 预览音色（播放/暂停自定义音频）
+    // Preview voice (play/pause custom audio)
     const handlePreviewVoice = async () => {
         if (!customVoiceUrl) return
 
-        // 如果正在播放，点击则暂停
+        // If playing, click to pause
         if (isPreviewingVoice && audioRef.current) {
             audioRef.current.pause()
             setIsPreviewingVoice(false)
@@ -79,7 +79,7 @@ export default function VoiceSettings({
         }
     }
 
-    // 上传自定义音频
+    // Upload custom audio
     const handleUploadVoice = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file || !projectId) return
@@ -105,7 +105,7 @@ export default function VoiceSettings({
         )
     }
 
-    // 紧凑模式样式
+    // Compact style
     const containerClass = compact
         ? 'border border-[var(--glass-stroke-base)] rounded-xl p-3 bg-[var(--glass-bg-surface-strong)]'
         : 'mt-4 border border-[var(--glass-stroke-base)] rounded-xl p-4 bg-[var(--glass-bg-surface-strong)]'
@@ -128,7 +128,7 @@ export default function VoiceSettings({
                 </span>
             </div>
 
-            {/* 隐藏的音频文件输入 */}
+            {/* Hidden audio input */}
             <input
                 ref={voiceFileInputRef}
                 type="file"
@@ -138,7 +138,7 @@ export default function VoiceSettings({
             />
 
             <div className="flex flex-wrap gap-2 w-full justify-center">
-                {/* 上传音频按钮 */}
+                {/* Upload audio button */}
                 <button
                     onClick={() => voiceFileInputRef.current?.click()}
                     disabled={uploadVoice.isPending}
@@ -150,7 +150,7 @@ export default function VoiceSettings({
                     </div>
                 </button>
 
-                {/* 从资产中心选择按钮 */}
+                {/* Select from hub button */}
                 {onSelectFromHub && (
                     <button
                         onClick={() => onSelectFromHub(characterId)}
@@ -163,7 +163,7 @@ export default function VoiceSettings({
                     </button>
                 )}
 
-                {/* AI设计按钮 */}
+                {/* AI design button */}
                 {onVoiceDesign && (
                     <button
                         onClick={() => onVoiceDesign(characterId, characterName)}
@@ -177,7 +177,7 @@ export default function VoiceSettings({
                 )}
             </div>
 
-            {/* 试听按钮 - 仅在有音频时显示 */}
+            {/* Preview button - when audio exists */}
             {hasCustomVoice && (
                 <button
                     onClick={handlePreviewVoice}

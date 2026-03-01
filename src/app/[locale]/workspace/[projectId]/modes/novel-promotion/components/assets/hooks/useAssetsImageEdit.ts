@@ -115,19 +115,19 @@ export function useAssetsImageEdit({
 
     closeImageEditModal()
 
-    _ulogInfo(`[场景编辑] 开始编辑 ${locationName}, locationId=${locationId}, imageIndex=${imageIndex}`)
+    _ulogInfo(`[Location edit] Start ${locationName}, locationId=${locationId}, imageIndex=${imageIndex}`)
 
     modifyLocationImage.mutate(
       { locationId, imageIndex, modifyPrompt, extraImageUrls },
       {
         onSuccess: (data) => {
           const result = (data || {}) as { descriptionUpdated?: boolean }
-          _ulogInfo(`[场景编辑] ✅ 完成: ${locationName}`)
+_ulogInfo(`[Location edit] Done: ${locationName}`)
           const descNote = result.descriptionUpdated ? t('stage.updateSuccess') : ''
           showToast(`${locationName} ${t('image.editSuccess')}${descNote}`, 'success')
         },
         onError: (error: unknown) => {
-          _ulogInfo(`[场景编辑] ❌ failed: ${locationName}`, error)
+_ulogInfo(`[Location edit] Failed: ${locationName}`, error)
           if (isAbortError(error)) return
           showToast(`${t('image.editFailed')}: ${getErrorMessage(error)}`, 'error')
         },
@@ -141,19 +141,19 @@ export function useAssetsImageEdit({
 
     closeCharacterImageEditModal()
 
-    _ulogInfo(`[角色编辑] 开始编辑 ${characterName}, characterId=${characterId}, appearanceId=${appearanceId}, imageIndex=${imageIndex}`)
+_ulogInfo(`[Character edit] Start ${characterName}, characterId=${characterId}, appearanceId=${appearanceId}, imageIndex=${imageIndex}`)
 
     modifyCharacterImage.mutate(
       { characterId, appearanceId, imageIndex, modifyPrompt, extraImageUrls },
       {
         onSuccess: (data) => {
           const result = (data || {}) as { descriptionUpdated?: boolean }
-          _ulogInfo(`[角色编辑] ✅ 完成: ${characterName}`)
+_ulogInfo(`[Character edit] Done: ${characterName}`)
           const descNote = result.descriptionUpdated ? t('stage.updateSuccess') : ''
           showToast(`${characterName} ${t('image.editSuccess')}${descNote}`, 'success')
         },
         onError: (error: unknown) => {
-          _ulogInfo(`[角色编辑] ❌ failed: ${characterName}`, error)
+_ulogInfo(`[Character edit] Failed: ${characterName}`, error)
           if (isAbortError(error)) return
           showToast(`${t('image.editFailed')}: ${getErrorMessage(error)}`, 'error')
         },

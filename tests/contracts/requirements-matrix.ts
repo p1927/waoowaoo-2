@@ -13,8 +13,8 @@ export const REQUIREMENTS_MATRIX: ReadonlyArray<RequirementCoverageEntry> = [
   {
     id: 'REQ-ASSETHUB-CHARACTER-EDIT',
     feature: 'Asset Hub character edit',
-    userValue: '角色信息编辑后立即可见并正确保存',
-    risk: '字段映射漂移导致保存failed或误写',
+    userValue: 'Character edit visible and saved correctly',
+    risk: 'Field mapping drift causes save failure or wrong write',
     priority: 'P0',
     tests: [
       'tests/integration/api/contract/crud-routes.test.ts',
@@ -24,8 +24,8 @@ export const REQUIREMENTS_MATRIX: ReadonlyArray<RequirementCoverageEntry> = [
   {
     id: 'REQ-ASSETHUB-REFERENCE-TO-CHARACTER',
     feature: 'Asset Hub reference-to-character',
-    userValue: '上传参考图后生成角色形象且使用参考图',
-    risk: 'referenceImages 丢失或分支走错',
+    userValue: 'Generate character from reference image and use it',
+    risk: 'referenceImages lost or wrong branch',
     priority: 'P0',
     tests: [
       'tests/unit/helpers/reference-to-character-helpers.test.ts',
@@ -36,8 +36,8 @@ export const REQUIREMENTS_MATRIX: ReadonlyArray<RequirementCoverageEntry> = [
   {
     id: 'REQ-NP-GENERATE-IMAGE',
     feature: 'Novel promotion image generation',
-    userValue: '角色/场景/分镜图可稳定生成并回写',
-    risk: '任务 payload 漂移、worker 写回错误实体',
+    userValue: 'Character/location/panel images generated and written back',
+    risk: 'Task payload drift, worker writes wrong entity',
     priority: 'P0',
     tests: [
       'tests/integration/api/contract/direct-submit-routes.test.ts',
@@ -48,8 +48,8 @@ export const REQUIREMENTS_MATRIX: ReadonlyArray<RequirementCoverageEntry> = [
   {
     id: 'REQ-NP-GENERATE-VIDEO',
     feature: 'Novel promotion video generation',
-    userValue: '面板视频可生成并可追踪状态',
-    risk: 'panel 定位错误、model 能力判断错误、状态错乱',
+    userValue: 'Panel video generated and state tracked',
+    risk: 'Wrong panel, wrong model capability, state mismatch',
     priority: 'P0',
     tests: [
       'tests/integration/api/contract/direct-submit-routes.test.ts',
@@ -60,8 +60,8 @@ export const REQUIREMENTS_MATRIX: ReadonlyArray<RequirementCoverageEntry> = [
   {
     id: 'REQ-NP-TEXT-ANALYSIS',
     feature: 'Text analysis and storyboard orchestration',
-    userValue: '文本分析链路稳定并可回放结果',
-    risk: 'step 编排变化导致结果结构损坏',
+    userValue: 'Text analysis pipeline stable and replayable',
+    risk: 'Step orchestration change breaks result structure',
     priority: 'P1',
     tests: [
       'tests/integration/api/contract/llm-observe-routes.test.ts',
@@ -72,8 +72,8 @@ export const REQUIREMENTS_MATRIX: ReadonlyArray<RequirementCoverageEntry> = [
   {
     id: 'REQ-TASK-STATE-CONSISTENCY',
     feature: 'Task state and SSE consistency',
-    userValue: '前端状态与任务真实状态一致',
-    risk: 'target-state 与 SSE 失配导致误提示',
+    userValue: 'Frontend state matches task state',
+    risk: 'target-state vs SSE mismatch causes wrong toast',
     priority: 'P0',
     tests: [
       'tests/unit/helpers/task-state-service.test.ts',

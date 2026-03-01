@@ -44,7 +44,7 @@ interface AssetHubSelectDb {
 
 /**
  * POST /api/asset-hub/select-image
- * 选择/确认图片方案
+ * Select/confirm image
  */
 export const POST = apiHandler(async (request: NextRequest) => {
     const db = prisma as unknown as AssetHubSelectDb
@@ -69,7 +69,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             throw new ApiError('NOT_FOUND')
         }
 
-        // 如果是确认选择，将 selectedIndex 对应的图片设置为 imageUrl
+        // If confirm, set selected image as imageUrl
         if (confirm && appearance.selectedIndex !== null) {
             const imageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'globalCharacterAppearance.imageUrls')
             const selectedUrl = imageUrls[appearance.selectedIndex]
@@ -79,13 +79,13 @@ export const POST = apiHandler(async (request: NextRequest) => {
                     where: { id: appearance.id },
                     data: {
                         imageUrl: selectedUrl,
-                        imageUrls: encodeImageUrls([selectedUrl]), // Keep only selected images
+                        imageUrls: encodeImageUrls([selectedUrl]), // Keep only selected
                         selectedIndex: 0
                     }
                 })
             }
         } else {
-            // 只是选择，不确认
+            // Select only, no confirm
             await db.globalCharacterAppearance.update({
                 where: { id: appearance.id },
                 data: { selectedIndex: imageIndex }

@@ -289,7 +289,7 @@ describe('api contract - task infra routes (behavior)', () => {
         payload: {
           lifecycleType: 'processing',
           stepId: 'clip_1_phase1',
-          stepTitle: '分镜规划',
+          stepTitle: 'Storyboard planning',
           stepIndex: 1,
           stepTotal: 3,
           message: 'running',

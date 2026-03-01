@@ -11,7 +11,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
  * POST - Confirm selection and delete unselected candidates
  * Body: { characterId, appearanceId }
  * 
- * 工作流程：
+ * Workflow:
  * 1. Verify one image selected (selectedIndex not null)
  * 2. Delete unselected from imageUrls (COS + DB)
  * 3. Set selected as sole image
@@ -43,7 +43,7 @@ export const POST = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 检查是否已选择
+  // Check if already selected
   if (appearance.selectedIndex === null || appearance.selectedIndex === undefined) {
     throw new ApiError('INVALID_PARAMS')
   }
@@ -55,7 +55,7 @@ export const POST = apiHandler(async (
     // Already single image, no-op
     return NextResponse.json({
       success: true,
-      message: '已确认选择',
+      message: 'Selection confirmed',
       deletedCount: 0
     })
   }
@@ -92,20 +92,20 @@ export const POST = apiHandler(async (
   }
   const selectedDescription = descriptions[selectedIndex] || appearance.description || ''
 
-  // 更新数据库：Keep only selected images
+  // Update DB: keep only selected images
   await prisma.characterAppearance.update({
     where: { id: appearance.id },
     data: {
       imageUrl: selectedImageUrl,
       imageUrls: encodeImageUrls([selectedImageUrl]),  // Keep only selected images
-      selectedIndex: 0,  // 现在只有一张，索引为0
+      selectedIndex: 0,  // Only one image now
       description: selectedDescription,
       descriptions: JSON.stringify([selectedDescription])
     }
   })
 
-  _ulogInfo(`✓ 确认选择: ${appearance.character.name} - ${appearance.changeReason}`)
-  _ulogInfo(`✓ 删除了 ${deletedImages.length} 张未选中的图片`)
+  _ulogInfo(`✓ Selection confirmed: ${appearance.character.name} - ${appearance.changeReason}`)
+  _ulogInfo(`✓ Deleted ${deletedImages.length} unselected images`)
 
   return NextResponse.json({
     success: true,
