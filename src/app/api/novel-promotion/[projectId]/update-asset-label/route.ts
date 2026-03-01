@@ -79,7 +79,7 @@ export const POST = apiHandler(async (
 
       const firstUrl = newImageUrls.find((u) => !!u) || null
 
-      // 更新数据库
+      // Update database
       await prisma.characterAppearance.update({
         where: { id: appearance.id },
         data: {
@@ -105,7 +105,7 @@ export const POST = apiHandler(async (
       throw new ApiError('NOT_FOUND')
     }
 
-    // 更新每张图片的标签
+    // Update each image label
     const updatePromises = location.images.map(async (image) => {
       if (!image.imageUrl) return null
 
@@ -169,7 +169,7 @@ async function updateImageLabel(imageUrl: string, newLabelText: string): Promise
     .extract({ left: 0, top: barH, width: w, height: h - barH })
     .toBuffer()
 
-  // 创建新的 SVG 标签条
+  // Create new SVG label bar
   const svg = await createLabelSVG(w, barH, fontSize, pad, newLabelText)
 
   // 添加新标签条到图片顶部

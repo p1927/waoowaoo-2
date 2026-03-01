@@ -75,7 +75,7 @@ export function parseExternalId(externalId: string): {
         const type = parts[1]
         const requestId = parts.slice(2).join(':')
         if ((type !== 'VIDEO' && type !== 'IMAGE') || !requestId) {
-            throw new Error(`无效 ARK externalId: "${externalId}"，应为 ARK:TYPE:requestId`)
+            throw new Error(`Invalid ARK externalId: "${externalId}", expected ARK:TYPE:requestId`)
         }
         return {
             provider: 'ARK',
@@ -89,7 +89,7 @@ export function parseExternalId(externalId: string): {
         const type = parts[1]
         const requestId = parts.slice(2).join(':')
         if (type !== 'BATCH' || !requestId) {
-            throw new Error(`无效 GEMINI externalId: "${externalId}"，应为 GEMINI:BATCH:batchName`)
+            throw new Error(`Invalid GEMINI externalId: "${externalId}", expected GEMINI:BATCH:batchName`)
         }
         return {
             provider: 'GEMINI',
@@ -103,7 +103,7 @@ export function parseExternalId(externalId: string): {
         const type = parts[1]
         const requestId = parts.slice(2).join(':')
         if (type !== 'VIDEO' || !requestId) {
-            throw new Error(`无效 GOOGLE externalId: "${externalId}"，应为 GOOGLE:VIDEO:operationName`)
+            throw new Error(`Invalid GOOGLE externalId: "${externalId}", expected GOOGLE:VIDEO:operationName`)
         }
         return {
             provider: 'GOOGLE',
@@ -117,7 +117,7 @@ export function parseExternalId(externalId: string): {
         const type = parts[1]
         const requestId = parts.slice(2).join(':')
         if ((type !== 'VIDEO' && type !== 'IMAGE') || !requestId) {
-            throw new Error(`无效 MINIMAX externalId: "${externalId}"，应为 MINIMAX:TYPE:taskId`)
+            throw new Error(`Invalid MINIMAX externalId: "${externalId}", expected MINIMAX:TYPE:taskId`)
         }
         return {
             provider: 'MINIMAX',
@@ -131,7 +131,7 @@ export function parseExternalId(externalId: string): {
         const type = parts[1]
         const requestId = parts.slice(2).join(':')
         if ((type !== 'VIDEO' && type !== 'IMAGE') || !requestId) {
-            throw new Error(`无效 VIDU externalId: "${externalId}"，应为 VIDU:TYPE:taskId`)
+            throw new Error(`Invalid VIDU externalId: "${externalId}", expected VIDU:TYPE:taskId`)
         }
         return {
             provider: 'VIDU',
@@ -146,7 +146,7 @@ export function parseExternalId(externalId: string): {
         const providerToken = parts[2]
         const requestId = parts.slice(3).join(':')
         if (type !== 'VIDEO' || !providerToken || !requestId) {
-            throw new Error(`无效 OPENAI externalId: "${externalId}"，应为 OPENAI:VIDEO:providerToken:videoId`)
+            throw new Error(`Invalid OPENAI externalId: "${externalId}", expected OPENAI:VIDEO:providerToken:videoId`)
         }
         return {
             provider: 'OPENAI',
@@ -157,25 +157,25 @@ export function parseExternalId(externalId: string): {
     }
 
     throw new Error(
-        `无法识别的 externalId 格式: "${externalId}". ` +
-        `支持的格式: FAL:TYPE:endpoint:requestId, ARK:TYPE:requestId, GEMINI:BATCH:batchName, GOOGLE:VIDEO:operationName, MINIMAX:TYPE:taskId, VIDU:TYPE:taskId, OPENAI:VIDEO:providerToken:videoId`
+        `Unrecognized externalId format: "${externalId}". ` +
+        `Supported: FAL:TYPE:endpoint:requestId, ARK:TYPE:requestId, GEMINI:BATCH:batchName, GOOGLE:VIDEO:operationName, MINIMAX:TYPE:taskId, VIDU:TYPE:taskId, OPENAI:VIDEO:providerToken:videoId`
     )
 }
 
 /**
- * 统一轮询入口
- * 根据 externalId 格式自动选择正确的查询函数
+ * Unified polling entry
+ * Selects query function by externalId format
  */
 export async function pollAsyncTask(
     externalId: string,
     userId: string
 ): Promise<PollResult> {
     if (!userId) {
-        throw new Error('缺少用户ID，无法获取 API Key')
+        throw new Error('Missing user ID, cannot get API Key')
     }
 
     const parsed = parseExternalId(externalId)
-    _ulogInfo(`[Poll] 解析 ${externalId.slice(0, 30)}... → provider=${parsed.provider}, type=${parsed.type}`)
+    _ulogInfo(`[Poll] Parsed ${externalId.slice(0, 30)}... → provider=${parsed.provider}, type=${parsed.type}`)
 
     switch (parsed.provider) {
         case 'FAL':
@@ -193,8 +193,8 @@ export async function pollAsyncTask(
         case 'OPENAI':
             return await pollOpenAIVideoTask(parsed.requestId, userId, parsed.providerToken)
         default:
-            // 🔥 移除 fallback：未知 provider 直接抛出错误
-            throw new Error(`未知的 Provider: ${parsed.provider}`)
+            // Unknown provider, throw directly
+            throw new Error(`Unknown provider: ${parsed.provider}`)
     }
 }
 
@@ -278,7 +278,7 @@ async function pollOpenAIVideoTask(
 }
 
 /**
- * FAL 任务轮询
+ * FAL task polling
  */
 async function pollFalTask(
     endpoint: string,
@@ -298,7 +298,7 @@ async function pollFalTask(
 }
 
 /**
- * Ark 任务轮询
+ * Ark task polling
  */
 async function pollArkTask(
     taskId: string,
@@ -316,7 +316,7 @@ async function pollArkTask(
 }
 
 /**
- * Gemini Batch 任务轮询
+ * Gemini Batch task polling
  */
 async function pollGeminiTask(
     batchName: string,
@@ -334,7 +334,7 @@ async function pollGeminiTask(
 }
 
 /**
- * Google Veo 视频任务轮询
+ * Google Veo video task polling
  */
 async function pollGoogleVideoTask(
     operationName: string,
@@ -352,7 +352,7 @@ async function pollGoogleVideoTask(
 }
 
 /**
- * MiniMax 任务轮询
+ * MiniMax task polling
  */
 async function pollMinimaxTask(
     taskId: string,
@@ -371,7 +371,7 @@ async function pollMinimaxTask(
 }
 
 /**
- * 查询 MiniMax 任务状态
+ * Query MiniMax task status
  */
 async function queryMinimaxTaskStatus(
     taskId: string,
@@ -388,10 +388,10 @@ async function queryMinimaxTaskStatus(
 
         if (!response.ok) {
             const errorText = await response.text()
-            _ulogError(`${logPrefix} 查询失败:`, response.status, errorText)
+            _ulogError(`${logPrefix} Query failed:`, response.status, errorText)
             return {
                 status: 'failed',
-                error: `查询失败: ${response.status}`
+                error: `Query failed: ${response.status}`
             }
         }
 
@@ -399,8 +399,8 @@ async function queryMinimaxTaskStatus(
 
         // 检查响应
         if (data.base_resp?.status_code !== 0) {
-            const errMsg = data.base_resp?.status_msg || '未知错误'
-            _ulogError(`${logPrefix} task_id=${taskId} 错误:`, errMsg)
+            const errMsg = data.base_resp?.status_msg || 'Unknown error'
+            _ulogError(`${logPrefix} task_id=${taskId} error:`, errMsg)
             return {
                 status: 'failed',
                 error: errMsg
@@ -412,15 +412,15 @@ async function queryMinimaxTaskStatus(
         if (status === 'Success') {
             const fileId = data.file_id
             if (!fileId) {
-                _ulogError(`${logPrefix} task_id=${taskId} 成功但无file_id`)
+                _ulogError(`${logPrefix} task_id=${taskId} success but no file_id`)
                 return {
                     status: 'failed',
-                    error: '任务完成但未返回视频'
+                    error: 'Task completed but no video returned'
                 }
             }
 
-            // 🔥 使用 file_id 调用文件检索API获取真实下载URL
-            _ulogInfo(`${logPrefix} task_id=${taskId} 完成，正在获取下载URL...`)
+            // Use file_id to call file retrieve API for download URL
+            _ulogInfo(`${logPrefix} task_id=${taskId} complete, fetching download URL...`)
             try {
                 const fileResponse = await fetch(`https://api.minimaxi.com/v1/files/retrieve?file_id=${fileId}`, {
                     headers: {
@@ -430,10 +430,10 @@ async function queryMinimaxTaskStatus(
 
                 if (!fileResponse.ok) {
                     const errorText = await fileResponse.text()
-                    _ulogError(`${logPrefix} 文件检索失败:`, fileResponse.status, errorText)
+                    _ulogError(`${logPrefix} File retrieve failed:`, fileResponse.status, errorText)
                     return {
                         status: 'failed',
-                        error: `文件检索失败: ${fileResponse.status}`
+                        error: `File retrieve failed: ${fileResponse.status}`
                     }
                 }
 
@@ -441,35 +441,35 @@ async function queryMinimaxTaskStatus(
                 const downloadUrl = fileData.file?.download_url
 
                 if (!downloadUrl) {
-                    _ulogError(`${logPrefix} 文件检索成功但无download_url:`, fileData)
+                    _ulogError(`${logPrefix} File retrieve success but no download_url:`, fileData)
                     return {
                         status: 'failed',
-                        error: '无法获取视频下载链接'
+                        error: 'Cannot get video download URL'
                     }
                 }
 
-                _ulogInfo(`${logPrefix} 获取下载URL成功: ${downloadUrl.substring(0, 80)}...`)
+                _ulogInfo(`${logPrefix} Got download URL: ${downloadUrl.substring(0, 80)}...`)
                 return {
                     status: 'completed',
                     videoUrl: downloadUrl
                 }
             } catch (error: unknown) {
                 const errorMessage = getErrorMessage(error)
-                _ulogError(`${logPrefix} 文件检索异常:`, error)
+                _ulogError(`${logPrefix} File retrieve exception:`, error)
                 return {
                     status: 'failed',
-                    error: `文件检索失败: ${errorMessage}`
+                    error: `File retrieve failed: ${errorMessage}`
                 }
             }
         } else if (status === 'Failed') {
-            const errMsg = data.error_message || '生成失败'
-            _ulogError(`${logPrefix} task_id=${taskId} 失败:`, errMsg)
+            const errMsg = data.error_message || 'Generation failed'
+            _ulogError(`${logPrefix} task_id=${taskId} failed:`, errMsg)
             return {
                 status: 'failed',
                 error: errMsg
             }
         } else {
-            // Processing 或其他状态都视为 pending
+            // Processing or other status treated as pending
             return {
                 status: 'pending'
             }

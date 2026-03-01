@@ -1,6 +1,6 @@
 import { logError as _ulogError } from '@/lib/logging/core'
 /**
- * 撤回重新生成的图片，恢复到上一版本
+ * Undo regenerated image, restore to previous version
  * POST /api/novel-promotion/[projectId]/undo-regenerate
  */
 
@@ -73,13 +73,13 @@ export const POST = apiHandler(async (
     const { projectId } = await context.params
     const db = prisma as unknown as UndoRegenerateDb
 
-    // 🔐 统一权限验证
+    // Auth verification
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 
     const { type, id, appearanceId } = await request.json()
 
-    // 🔒 UUID 格式验证辅助函数
+    // UUID format validation helper
     const isValidUUID = (str: unknown): boolean => {
         if (typeof str !== 'string') return false
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -91,9 +91,9 @@ export const POST = apiHandler(async (
     }
 
     if (type === 'character') {
-        // 🔒 验证 appearanceId 是有效的 UUID
+        // Verify appearanceId is valid UUID
         if (!appearanceId || !isValidUUID(appearanceId)) {
-            _ulogError(`[undo-regenerate] 收到无效的 appearanceId: ${appearanceId} (类型: ${typeof appearanceId})`)
+            _ulogError(`[undo-regenerate] Invalid appearanceId: ${appearanceId} (type: ${typeof appearanceId})`)
             throw new ApiError('INVALID_PARAMS')
         }
         return await undoCharacterRegenerate(db, appearanceId)
@@ -107,7 +107,7 @@ export const POST = apiHandler(async (
 })
 
 async function undoCharacterRegenerate(db: UndoRegenerateDb, appearanceId: string) {
-    // 使用 UUID 直接查询形象
+    // Query appearance by UUID
     const appearance = await db.characterAppearance.findUnique({
         where: { id: appearanceId },
         include: { character: true }
@@ -119,12 +119,12 @@ async function undoCharacterRegenerate(db: UndoRegenerateDb, appearanceId: strin
 
     const previousImageUrls = decodeImageUrlsFromDb(appearance.previousImageUrls, 'characterAppearance.previousImageUrls')
 
-    // 检查是否有上一版本
+    // Check if previous version exists
     if (!appearance.previousImageUrl && previousImageUrls.length === 0) {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 删除当前图片
+    // Delete current image
     const currentImageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'characterAppearance.imageUrls')
     for (const key of currentImageUrls) {
         if (key) {
@@ -148,7 +148,7 @@ async function undoCharacterRegenerate(db: UndoRegenerateDb, appearanceId: strin
                 previousImageUrl: null,
                 previousImageUrls: encodeImageUrls([]),
                 selectedIndex: null,
-                // 🔥 同时恢复描述词
+                // Also restore description
                 description: appearance.previousDescription ?? appearance.description,
                 descriptions: appearance.previousDescriptions ?? appearance.descriptions,
                 previousDescription: null,
@@ -159,12 +159,12 @@ async function undoCharacterRegenerate(db: UndoRegenerateDb, appearanceId: strin
 
     return NextResponse.json({
         success: true,
-        message: '已撤回到上一版本（图片和描述词）'
+        message: 'Reverted to previous version (image and description)'
     })
 }
 
 async function undoLocationRegenerate(db: UndoRegenerateDb, locationId: string) {
-    // 获取场景和图片
+    // Fetch location and images
     const location = await db.novelPromotionLocation.findUnique({
         where: { id: locationId },
         include: { images: { orderBy: { imageIndex: 'asc' } } }
@@ -174,30 +174,30 @@ async function undoLocationRegenerate(db: UndoRegenerateDb, locationId: string) 
         throw new ApiError('NOT_FOUND')
     }
 
-    // 检查是否有上一版本
+    // Check if previous version exists
     const hasPrevious = location.images?.some((img) => img.previousImageUrl)
     if (!hasPrevious) {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 删除当前图片并恢复上一版本
+    // Delete current image并恢复上一版本
     await db.$transaction(async (tx) => {
         for (const img of location.images || []) {
             if (img.previousImageUrl) {
-                // 删除当前图片
+                // Delete current image
                 if (img.imageUrl) {
                     try {
                         const storageKey = await resolveStorageKeyFromMediaValue(img.imageUrl)
                         if (storageKey) await deleteCOSObject(storageKey)
                     } catch { }
                 }
-                // 恢复上一版本（图片 + 描述词）
+                // Restore previous version (image + description)
                 await tx.locationImage.update({
                     where: { id: img.id },
                     data: {
                         imageUrl: img.previousImageUrl,
                         previousImageUrl: null,
-                        // 🔥 同时恢复描述词
+                        // Also restore description
                         description: img.previousDescription ?? img.description,
                         previousDescription: null
                     }
@@ -208,15 +208,15 @@ async function undoLocationRegenerate(db: UndoRegenerateDb, locationId: string) 
 
     return NextResponse.json({
         success: true,
-        message: '已撤回到上一版本（图片和描述词）'
+        message: 'Reverted to previous version (image and description)'
     })
 }
 
 /**
- * 撤回 Panel 镜头图片到上一版本
+ * Undo Panel shot image to previous version
  */
 async function undoPanelRegenerate(db: UndoRegenerateDb, panelId: string) {
-    // 获取镜头
+    // Fetch panel
     const panel = await db.novelPromotionPanel.findUnique({
         where: { id: panelId }
     })
@@ -225,12 +225,12 @@ async function undoPanelRegenerate(db: UndoRegenerateDb, panelId: string) {
         throw new ApiError('NOT_FOUND')
     }
 
-    // 检查是否有上一版本
+    // Check if previous version exists
     if (!panel.previousImageUrl) {
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 删除当前图片（如果存在）
+    // Delete current image（如果存在）
     if (panel.imageUrl) {
         try {
             const storageKey = await resolveStorageKeyFromMediaValue(panel.imageUrl)
@@ -238,18 +238,18 @@ async function undoPanelRegenerate(db: UndoRegenerateDb, panelId: string) {
         } catch { }
     }
 
-    // 恢复上一版本
+    // Restore previous version
     await db.novelPromotionPanel.update({
         where: { id: panelId },
         data: {
             imageUrl: panel.previousImageUrl,
             previousImageUrl: null,
-            candidateImages: null  // 清空候选图片
+            candidateImages: null  // Clear candidate images
         }
     })
 
     return NextResponse.json({
         success: true,
-        message: '镜头图片已撤回到上一版本'
+        message: 'Panel image reverted to previous version'
     })
 }

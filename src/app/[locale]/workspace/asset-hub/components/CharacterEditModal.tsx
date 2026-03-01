@@ -117,7 +117,7 @@ export function CharacterEditModal({
                 await updateName.mutateAsync({ characterId, name: editingName.trim() })
             }
 
-            // 保存描述
+            // Save description
             await updateAppearanceDescription.mutateAsync({
                 characterId,
                 appearanceIndex,
@@ -135,34 +135,34 @@ export function CharacterEditModal({
         }
     }
 
-    // 保存并生成图片
+    // Save and generate image
     const handleSaveAndGenerate = async () => {
         const descToSave = editingDescription
         const nameToSave = editingName.trim()
 
-        // 立即关闭弹窗
+        // Close modal immediately
         onClose()
 
-            // 后台执行保存和生成
+            // Execute save and generate in background
             ; (async () => {
                 try {
-                    // 如果名字变了，先保存名字
+                    // If name changed, save name first
                     if (nameToSave !== characterName) {
                         await updateName.mutateAsync({ characterId, name: nameToSave })
                     }
 
-                    // 保存描述
+                    // Save description
                     await updateAppearanceDescription.mutateAsync({
                         characterId,
                         appearanceIndex,
                         description: descToSave,
                     })
 
-                    // 触发生成
+                    // Trigger generation
                     onSave()
                     onRefresh()
                 } catch (error: unknown) {
-                    _ulogError('保存并生成失败:', error)
+                    _ulogError('Save and generate failed:', error)
                     if (shouldShowError(error)) {
                         alert(t('errors.saveFailed'))
                     }
@@ -174,7 +174,7 @@ export function CharacterEditModal({
         <div className="fixed inset-0 glass-overlay flex items-center justify-center z-50 p-4">
             <div className="glass-surface-modal max-w-2xl w-full max-h-[80vh] overflow-y-auto">
                 <div className="p-6 space-y-4">
-                    {/* 标题 */}
+                    {/* Title */}
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-semibold text-[var(--glass-text-primary)]">
                             {t('modal.editCharacter')} - {characterName}
@@ -184,7 +184,7 @@ export function CharacterEditModal({
                         </button>
                     </div>
 
-                    {/* 角色名字编辑 */}
+                    {/* Character name edit */}
                     <div className="space-y-2">
                         <label className="glass-field-label block">
                             {t('character.name')}
@@ -209,12 +209,12 @@ export function CharacterEditModal({
                         </div>
                     </div>
 
-                    {/* 形象标识 */}
+                    {/* Appearance label */}
                     <div className="text-sm text-[var(--glass-text-secondary)]">
                         {t('character.appearance')}: <span className="font-medium text-[var(--glass-text-primary)]">{changeReason}</span>
                     </div>
 
-                    {/* AI 修改区域 */}
+                    {/* AI modify area */}
                     <div className="space-y-2 glass-surface-soft p-4 rounded-lg border border-[var(--glass-stroke-base)]">
                         <label className="glass-field-label block flex items-center gap-2">
                             <AppIcon name="bolt" className="w-4 h-4" />
@@ -255,7 +255,7 @@ export function CharacterEditModal({
                         </p>
                     </div>
 
-                    {/* 描述编辑 */}
+                    {/* Description edit */}
                     <div className="space-y-2">
                         <label className="glass-field-label block">
                             {t('modal.appearancePrompt')}
@@ -269,7 +269,7 @@ export function CharacterEditModal({
                         />
                     </div>
 
-                    {/* 操作按钮 */}
+                    {/* Action buttons */}
                     <div className="flex gap-3 justify-end">
                         <button
                             onClick={onClose}

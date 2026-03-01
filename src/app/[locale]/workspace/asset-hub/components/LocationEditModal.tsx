@@ -91,7 +91,7 @@ export function LocationEditModal({
         }
     }
 
-    // 保存名字
+    // Save name
     const handleSaveName = () => {
         if (!editingName.trim() || editingName === locationName) return
 
@@ -165,7 +165,7 @@ export function LocationEditModal({
         <div className="fixed inset-0 glass-overlay flex items-center justify-center z-50 p-4">
             <div className="glass-surface-modal max-w-2xl w-full max-h-[80vh] overflow-y-auto">
                 <div className="p-6 space-y-4">
-                    {/* 标题 */}
+                    {/* Title */}
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-semibold text-[var(--glass-text-primary)]">
                             {t('modal.editLocation')} - {locationName}
@@ -175,7 +175,7 @@ export function LocationEditModal({
                         </button>
                     </div>
 
-                    {/* 场景名字编辑 */}
+                    {/* Location name edit */}
                     <div className="space-y-2">
                         <label className="glass-field-label block">
                             {t('location.name')}
@@ -200,7 +200,7 @@ export function LocationEditModal({
                         </div>
                     </div>
 
-                    {/* AI 修改区域 */}
+                    {/* AI modify area */}
                     <div className="space-y-2 glass-surface-soft p-4 rounded-lg border border-[var(--glass-stroke-base)]">
                         <label className="glass-field-label block flex items-center gap-2">
                             <AppIcon name="bolt" className="w-4 h-4" />
@@ -241,7 +241,7 @@ export function LocationEditModal({
                         </p>
                     </div>
 
-                    {/* 描述编辑 */}
+                    {/* Description edit */}
                     <div className="space-y-2">
                         <label className="glass-field-label block">
                             {t('location.description')}
@@ -255,7 +255,7 @@ export function LocationEditModal({
                         />
                     </div>
 
-                    {/* 操作按钮 */}
+                    {/* Action buttons */}
                     <div className="flex gap-3 justify-end">
                         <button
                             onClick={onClose}

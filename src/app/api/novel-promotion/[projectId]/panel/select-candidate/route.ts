@@ -31,10 +31,10 @@ function parsePanelHistory(jsonValue: string | null): PanelHistoryEntry[] {
 
 /**
  * POST /api/novel-promotion/[projectId]/panel/select-candidate
- * 统一的候选图片操作 API
- * 
- * action: 'select' - 选择候选图片作为最终图片
- * action: 'cancel' - 取消选择，清空候选列表
+ * Unified candidate image operation API
+ *
+ * action: 'select' - Select candidate image as final image
+ * action: 'cancel' - Cancel selection, clear candidate list
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -42,7 +42,7 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -53,7 +53,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // === 取消操作 ===
+  // === Cancel action ===
   if (action === 'cancel') {
     await prisma.novelPromotionPanel.update({
       where: { id: panelId },
@@ -62,16 +62,16 @@ export const POST = apiHandler(async (
 
     return NextResponse.json({
       success: true,
-      message: '已取消选择'
+      message: 'Selection cancelled'
     })
   }
 
-  // === 选择操作 ===
+  // === Select action ===
   if (!selectedImageUrl) {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 获取 Panel
+  // Fetch Panel
   const panel = await prisma.novelPromotionPanel.findUnique({
     where: { id: panelId }
   })
@@ -80,7 +80,7 @@ export const POST = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 验证选择的图片是否在候选列表中
+  // Verify selected image is in candidate list
   const candidateImages = parseUnknownArray(panel.candidateImages)
 
   const selectedCosKey = await resolveStorageKeyFromMediaValue(selectedImageUrl)
@@ -116,7 +116,7 @@ export const POST = apiHandler(async (
 
   const signedUrl = getSignedUrl(finalImageKey, 7 * 24 * 3600)
 
-  // 更新 Panel：设置新图片，清空候选列表
+  // Update Panel: set new image, clear candidate list
   await prisma.novelPromotionPanel.update({
     where: { id: panelId },
     data: {
