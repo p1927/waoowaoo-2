@@ -636,14 +636,6 @@ export function cosKeyToSignedUrl(key: string | null, _expires: number = SIGNED_
   return getSignedUrl(key, _expires)
 }
 
-function _cosKeyToSignedUrlImpl(key: string, _expires: number): string {
-  // Already full URL (legacy) → return as-is
-  if (key.startsWith('http://') || key.startsWith('https://')) {
-    return key
-  }
-  return getSignedUrl(key, _expires)
-}
-
 /**
  * Add signed URLs to Character object
  */
@@ -654,13 +646,12 @@ export function addSignedUrlsToCharacter(character: CharacterLike) {
       .map((key) => cosKeyToSignedUrl(key))
       .filter((url): url is string => !!url)
 
-    // 解析 descriptions JSON 字符串
     let descriptions: string[] | null = null
     if (app.descriptions) {
       try {
         descriptions = typeof app.descriptions === 'string' ? JSON.parse(app.descriptions) : app.descriptions
       } catch (error: unknown) {
-        _ulogError(`[签名URL] 解析descriptions失败:`, app.descriptions, error)
+        _ulogError(`[Signed URL] Failed to parse descriptions:`, app.descriptions, error)
       }
     }
 

@@ -163,7 +163,7 @@ export function useVoiceGenerationActions({
       const url = window.URL.createObjectURL(blob)
       const anchor = document.createElement('a')
       anchor.href = url
-      anchor.download = `配音_${new Date().toISOString().slice(0, 10)}.zip`
+      anchor.download = `voiceover_${new Date().toISOString().slice(0, 10)}.zip`
       document.body.appendChild(anchor)
       anchor.click()
       window.URL.revokeObjectURL(url)

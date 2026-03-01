@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-GRSAI 原生 REST API 模型测试脚本 (并行版本)
-使用 /v1/draw/nano-banana 端点测试所有模型
+GRSAI native REST API model test script (parallel).
+Uses /v1/draw/nano-banana endpoint to test all models.
 """
 
 import requests
@@ -23,7 +23,7 @@ MODELS = [
 ]
 
 def test_model(model_name):
-    """测试单个模型 - 使用原生 REST API"""
+    """Test a single model using native REST API."""
     url = f"{BASE_URL}/v1/draw/nano-banana"
     headers = {
         "Content-Type": "application/json",
@@ -31,10 +31,10 @@ def test_model(model_name):
     }
     payload = {
         "model": model_name,
-        "prompt": "一只可爱的小猫",
+        "prompt": "A cute little cat",
         "aspectRatio": "1:1",
         "imageSize": "1K",
-        "shutProgress": True  # 关闭进度，等待最终结果
+        "shutProgress": True  # Disable progress, wait for final result
     }
     
     start_time = time.time()
@@ -46,14 +46,14 @@ def test_model(model_name):
             elapsed = time.time() - start_time
             return model_name, False, f"HTTP {response.status_code}: {response.text[:50]}", elapsed
         
-        # 解析流式响应，获取最后一条数据
+        # Parse stream, keep last data line
         last_data = None
         for line in response.iter_lines():
             if line:
                 line_str = line.decode('utf-8')
                 if line_str.startswith('data: '):
                     try:
-                        json_str = line_str[6:]  # 去掉 "data: " 前缀
+                        json_str = line_str[6:]  # Strip "data: " prefix
                         last_data = json.loads(json_str)
                     except:
                         pass
@@ -61,7 +61,7 @@ def test_model(model_name):
         elapsed = time.time() - start_time
         
         if not last_data:
-            return model_name, False, "无响应数据", elapsed
+            return model_name, False, "No response data", elapsed
         
         status = last_data.get("status", "")
         
@@ -69,32 +69,32 @@ def test_model(model_name):
             results = last_data.get("results", [])
             if results and results[0].get("url"):
                 url = results[0]["url"]
-                return model_name, True, f"成功! URL: {url[:50]}...", elapsed
-            return model_name, False, "成功但无图片URL", elapsed
-        
+                return model_name, True, f"Success! URL: {url[:50]}...", elapsed
+            return model_name, False, "Success but no image URL", elapsed
+
         elif status == "failed":
             reason = last_data.get("failure_reason", "")
             error = last_data.get("error", "")
-            return model_name, False, f"失败: {reason} - {error[:30]}", elapsed
-        
+            return model_name, False, f"Failed: {reason} - {error[:30]}", elapsed
+
         else:
-            return model_name, False, f"未知状态: {status}", elapsed
-        
+            return model_name, False, f"Unknown status: {status}", elapsed
+
     except requests.exceptions.Timeout:
-        return model_name, False, "请求超时 (>300s)", time.time() - start_time
+        return model_name, False, "Request timeout (>300s)", time.time() - start_time
     except Exception as e:
-        return model_name, False, f"异常: {str(e)[:50]}", time.time() - start_time
+        return model_name, False, f"Error: {str(e)[:50]}", time.time() - start_time
 
 def main():
     print("=" * 70)
-    print("GRSAI 原生 REST API 模型测试 (/v1/draw/nano-banana)")
+    print("GRSAI native REST API model test (/v1/draw/nano-banana)")
     print("=" * 70)
-    print(f"测试 {len(MODELS)} 个模型，所有模型同时请求...\n")
-    
+    print(f"Testing {len(MODELS)} models in parallel...\n")
+
     results = {}
     start_total = time.time()
-    
-    # 并行执行所有测试
+
+    # Run all tests in parallel
     with ThreadPoolExecutor(max_workers=len(MODELS)) as executor:
         futures = {executor.submit(test_model, model): model for model in MODELS}
         
@@ -107,12 +107,12 @@ def main():
     total_time = time.time() - start_total
     
     print("\n" + "=" * 70)
-    print("测试结果汇总")
+    print("Test results summary")
     print("=" * 70)
-    
+
     success_count = sum(1 for s, _, _ in results.values() if s)
-    
-    # 按原始顺序显示
+
+    # Show in original order
     for model in MODELS:
         if model in results:
             success, message, elapsed = results[model]
@@ -120,7 +120,7 @@ def main():
             print(f"  {status} {model}")
     
     print("-" * 70)
-    print(f"  成功: {success_count}/{len(MODELS)} | 总耗时: {total_time:.1f}s")
+    print(f"  Passed: {success_count}/{len(MODELS)} | Total: {total_time:.1f}s")
     print("=" * 70)
 
 if __name__ == "__main__":

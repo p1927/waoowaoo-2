@@ -153,7 +153,7 @@ export function LocationEditModal({
                     onSave()
                     onRefresh()
                 } catch (error: unknown) {
-                    _ulogError('保存并生成失败:', error)
+                    _ulogError('Save and generate failed:', error)
                     if (shouldShowError(error)) {
                         alert(t('errors.saveFailed'))
                     }

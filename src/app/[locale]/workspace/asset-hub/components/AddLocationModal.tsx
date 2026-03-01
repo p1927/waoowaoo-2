@@ -63,11 +63,11 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
             setSummary(data.prompt || '')
             setAiInstruction('')
         } catch (error) {
-            _ulogError('AI设计失败:', error)
+            _ulogError('AI design failed:', error)
         }
     }
 
-    // 提交
+    // submit
     const handleSubmit = async () => {
         if (!name.trim() || !summary.trim()) return
 
@@ -80,7 +80,7 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
             })
             onSuccess()
         } catch (error) {
-            _ulogError('创建场景失败:', error)
+            _ulogError('Create location failed:', error)
         }
     }
 
@@ -157,7 +157,7 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
                             />
                         </div>
 
-                        {/* 风格选择 */}
+                        {/* Style selection */}
                         <div className="space-y-2">
                             <label className="glass-field-label block">
                                 {t('modal.artStyle')}
@@ -180,7 +180,7 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
                             </div>
                         </div>
 
-                        {/* 场景描述 */}
+                        {/* Location description */}
                         <div className="space-y-2">
                             <label className="glass-field-label block">
                                 {t('modal.locationSummaryLabel')}

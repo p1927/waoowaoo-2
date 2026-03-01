@@ -161,6 +161,7 @@ export function getArtStylePrompt(
   artStyle: string | null | undefined,
   _locale?: 'zh' | 'en',
 ): string {
+  void _locale
   if (!artStyle) return ''
   const style = ART_STYLES.find(s => s.value === artStyle)
   if (!style) return ''

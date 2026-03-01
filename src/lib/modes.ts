@@ -1,6 +1,6 @@
 import { ProjectMode } from '@/types/project'
 
-// 重新导出 ProjectMode 类型，方便其他文件使用
+// Re-export ProjectMode for use elsewhere
 export type { ProjectMode }
 
 export interface ModeConfig {
@@ -14,14 +14,14 @@ export interface ModeConfig {
 
 export const PROJECT_MODE: ModeConfig = {
   id: 'novel-promotion',
-  name: '小说推文',
-  description: '从小说生成推广短视频',
+  name: 'Novel to short video',
+  description: 'Generate short videos from novel content',
   icon: 'N',
   color: 'purple',
   available: true
 }
 
-// 为了兼容性保留
+// Kept for compatibility
 export const PROJECT_MODES: ModeConfig[] = [PROJECT_MODE]
 
 export function getModeConfig(mode: ProjectMode): ModeConfig | undefined {

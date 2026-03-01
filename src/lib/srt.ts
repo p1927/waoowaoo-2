@@ -9,14 +9,13 @@ export interface SRTEntry {
 }
 
 /**
- * 解析SRT格式文本
- * @param srtText SRT格式文本
- * @returns SRT条目数组
+ * Parse SRT format text into entries.
+ * @param srtText SRT format text
+ * @returns Array of SRT entries
  */
 export function parseSRT(srtText: string): SRTEntry[] {
   const entries: SRTEntry[] = []
   
-  // 按空行分割
   const blocks = srtText.trim().split(/\n\s*\n/)
   
   for (const block of blocks) {
@@ -27,7 +26,7 @@ export function parseSRT(srtText: string): SRTEntry[] {
     const timeLine = lines[1]
     const text = lines.slice(2).join('\n')
     
-    // 解析时间行：00:00:00,000 --> 00:00:02,000
+    // Parse time line: 00:00:00,000 --> 00:00:02,000
     const timeMatch = timeLine.match(/(\S+)\s*-->\s*(\S+)/)
     if (!timeMatch) continue
     
@@ -43,11 +42,11 @@ export function parseSRT(srtText: string): SRTEntry[] {
 }
 
 /**
- * 根据序号范围切割SRT内容
- * @param srtText 完整SRT文本
- * @param start 起始序号（包含）
- * @param end 结束序号（包含）
- * @returns 切割后的SRT文本
+ * Slice SRT content by index range.
+ * @param srtText Full SRT text
+ * @param start Start index (inclusive)
+ * @param end End index (inclusive)
+ * @returns Sliced SRT text
  */
 export function sliceSRT(srtText: string, start: number, end: number): string {
   const entries = parseSRT(srtText)

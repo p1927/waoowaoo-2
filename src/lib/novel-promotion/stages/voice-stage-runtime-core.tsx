@@ -191,7 +191,7 @@ export function useVoiceStageRuntime({
     deleteVoiceLineMutation,
   })
 
-  // ─── 内联音色绑定弹窗状态 ───────────────────────────
+  // ─── Inline voice-binding modal state ───────────────────────────
   const [inlineBindingSpeaker, setInlineBindingSpeaker] = useState<string | null>(null)
 
   const handleOpenInlineBinding = useCallback((speaker: string) => {
@@ -203,15 +203,15 @@ export function useVoiceStageRuntime({
   }, [])
 
   /**
-   * 判断发言人是否有匹配的项目角色
-   * 有匹配角色 → 跳转资产中心；无匹配 → 打开内联绑定弹窗
+   * Check if speaker has a matching project character.
+   * If match → go to asset hub; if no match → open inline binding modal.
    */
   const hasSpeakerCharacter = useCallback((speaker: string): boolean => {
     return !!matchCharacterBySpeaker(speaker)
   }, [matchCharacterBySpeaker])
 
   /**
-   * 内联绑定完成后的回调：将音色信息写入 episode.speakerVoices
+   * Callback after inline binding: write voice info to episode.speakerVoices
    */
   const handleInlineVoiceBound = useCallback(async (
     speaker: string,
@@ -227,10 +227,10 @@ export function useVoiceStageRuntime({
         voiceType,
         voiceId,
       })
-      // 重新加载数据以刷新 speakerVoices
+      // reload data to refresh speakerVoices
       await loadData()
     } catch {
-      // 处理后的错误会被 mutation 的 onError 捕获
+      // handled error is caught by mutation onError
     }
     setInlineBindingSpeaker(null)
   }, [episodeId, loadData, updateSpeakerVoiceMutation])
@@ -300,7 +300,7 @@ export function useVoiceStageRuntime({
         />
       </VoiceControlPanel>
 
-      {/* 内联音色绑定弹窗 */}
+      {/* Inline voice binding modal */}
       <SpeakerVoiceBindingDialog
         isOpen={!!inlineBindingSpeaker}
         speaker={inlineBindingSpeaker ?? ''}

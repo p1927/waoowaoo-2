@@ -266,8 +266,8 @@ export async function runScriptToStoryboardOrchestrator(
   }
 
   const totalStepCount = clips.length * 4 + 2
-  const charactersLibName = (novelPromotionData.characters || []).map((c) => c.name).join(', ') || '无'
-  const locationsLibName = (novelPromotionData.locations || []).map((l) => l.name).join(', ') || '无'
+  const charactersLibName = (novelPromotionData.characters || []).map((c) => c.name).join(', ') || 'None'
+  const locationsLibName = (novelPromotionData.locations || []).map((l) => l.name).join(', ') || 'None'
   const charactersIntroduction = buildCharactersIntroduction(novelPromotionData.characters || [])
 
   const phase1PanelsByClipId = new Map<string, StoryboardPanel[]>()
@@ -303,7 +303,7 @@ export async function runScriptToStoryboardOrchestrator(
 
       const screenplay = parseScreenplay(clip.screenplay)
       if (screenplay) {
-        phase1Prompt = phase1Prompt.replace('{clip_content}', `【剧本格式】\n${JSON.stringify(screenplay, null, 2)}`)
+        phase1Prompt = phase1Prompt.replace('{clip_content}', `[Screenplay format]\n${JSON.stringify(screenplay, null, 2)}`)
       } else {
         phase1Prompt = phase1Prompt.replace('{clip_content}', clipContent)
       }
@@ -405,7 +405,7 @@ export async function runScriptToStoryboardOrchestrator(
           (text) => {
             const panels = parseJsonArray<StoryboardPanel>(text, `phase3:${formatClipId(clip)}`)
             const filtered = panels.filter(
-              (panel) => panel.description && panel.description !== '无' && panel.location !== '无',
+              (panel) => panel.description && panel.description !== 'None' && panel.location !== 'None',
             )
             if (filtered.length === 0) {
               throw new Error(`Phase 3 returned empty valid panels for clip ${formatClipId(clip)}`)

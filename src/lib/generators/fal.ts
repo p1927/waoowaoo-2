@@ -181,9 +181,9 @@ export class FalImageGenerator extends BaseImageGenerator {
         return {
             success: true,
             async: true,
-            requestId,        // 向后兼容
-            endpoint,         // 向后兼容
-            externalId: `FAL:IMAGE:${endpoint}:${requestId}`  // 🔥 标准格式
+            requestId,        // backward compat
+            endpoint,         // backward compat
+            externalId: `FAL:IMAGE:${endpoint}:${requestId}`  // standard format
         }
     }
 }
@@ -294,9 +294,9 @@ export class FalVideoGenerator extends BaseVideoGenerator {
             return {
                 success: true,
                 async: true,
-                requestId,  // 向后兼容
-                endpoint,   // 向后兼容  
-                externalId: `FAL:VIDEO:${endpoint}:${requestId}`  // 🔥 标准格式
+                requestId,  // backward compat
+                endpoint,   // backward compat
+                externalId: `FAL:VIDEO:${endpoint}:${requestId}`  // standard format
             }
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : 'Unknown error'

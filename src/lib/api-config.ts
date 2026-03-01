@@ -1,10 +1,7 @@
 /**
- * API 配置读取器（配置中心严格模式）
- *
- * 规则：
- * 1) 模型唯一键必须是 provider::modelId
- * 2) 禁止 provider 猜测、静态映射、默认降级
- * 3) 运行时只从配置中心读取 provider 与密钥
+ * API config reader (strict config-center mode).
+ * Rules: 1) Model key must be provider::modelId  2) No provider guessing/static mapping/fallback
+ * 3) Runtime reads provider and keys from config center only.
  */
 
 import { prisma } from './prisma'
@@ -225,7 +222,7 @@ function findModelByKey(models: CustomModel[], modelKey: string): CustomModel | 
 }
 
 /**
- * 提取提供商主键（用于多实例场景，如 gemini-compatible:uuid）
+ * Extract provider key (for multi-instance e.g. gemini-compatible:uuid)
  */
 export function getProviderKey(providerId?: string): string {
   if (!providerId) return ''
@@ -234,7 +231,7 @@ export function getProviderKey(providerId?: string): string {
 }
 
 /**
- * 统一模型选择解析（严格模式）
+ * Resolve model selection (strict)
  */
 export async function resolveModelSelection(
   userId: string,
@@ -279,7 +276,7 @@ async function resolveSingleModelSelection(
 }
 
 /**
- * 统一模型选择解析（允许显式 model_key；未传时仅允许单模型）
+ * Resolve model selection or single model (when model_key omitted, only one model allowed)
  */
 export async function resolveModelSelectionOrSingle(
   userId: string,
@@ -294,13 +291,8 @@ export async function resolveModelSelectionOrSingle(
 }
 
 /**
- * Provider 配置
- *
- * 返回 provider 的完整连接信息（apiKey 已解密）。
- * baseUrl 和 apiMode 为可选——不同 provider 需求不同，由调用方自行校验。
- *
- * ⚠️ 调用方必须先通过 resolveModelSelection 校验模型归属，
- * 再使用 selection.provider 调用本函数，禁止直接传入未校验的 providerId。
+ * Provider config: full connection info (apiKey decrypted). baseUrl/apiMode optional.
+ * Caller must resolve model selection first, then call with selection.provider.
  */
 export interface ProviderConfig {
   id: string
@@ -328,7 +320,7 @@ export async function getProviderConfig(userId: string, providerId: string): Pro
 }
 
 /**
- * 获取用户自定义模型列表
+ * Get user custom model list
  */
 export async function getUserModels(userId: string): Promise<CustomModel[]> {
   const { models } = await readUserConfig(userId)
@@ -336,7 +328,7 @@ export async function getUserModels(userId: string): Promise<CustomModel[]> {
 }
 
 /**
- * 获取模型关联 provider
+ * Get provider for model
  */
 export async function getModelProvider(userId: string, model: string): Promise<string | null> {
   const { models } = await readUserConfig(userId)
@@ -345,7 +337,7 @@ export async function getModelProvider(userId: string, model: string): Promise<s
 }
 
 /**
- * 获取指定类型模型列表
+ * Get models by type
  */
 export async function getModelsByType(userId: string, type: ModelMediaType): Promise<CustomModel[]> {
   const models = await getUserModels(userId)
@@ -353,7 +345,7 @@ export async function getModelsByType(userId: string, type: ModelMediaType): Pro
 }
 
 /**
- * 解析模型 ID（严格从 model_key 提取）
+ * Resolve model ID (strictly from model_key)
  */
 export async function resolveModelId(userId: string, model: string): Promise<string> {
   const selection = await resolveModelSelection(userId, model, 'llm')
@@ -361,7 +353,7 @@ export async function resolveModelId(userId: string, model: string): Promise<str
 }
 
 /**
- * 获取模型价格
+ * Get model price
  */
 export async function getModelPrice(userId: string, model: string): Promise<number> {
   const { models } = await readUserConfig(userId)
@@ -373,7 +365,7 @@ export async function getModelPrice(userId: string, model: string): Promise<numb
 }
 
 /**
- * 根据音频模型键获取音频 API Key（未传模型时要求仅存在单一音频模型）
+ * Get audio API key by model key (single audio model required if model omitted)
  */
 export async function getAudioApiKey(userId: string, model?: string | null): Promise<string> {
   const selection = await resolveModelSelectionOrSingle(userId, model, 'audio')
@@ -381,7 +373,7 @@ export async function getAudioApiKey(userId: string, model?: string | null): Pro
 }
 
 /**
- * 根据口型同步模型键获取 API Key（未传模型时要求仅存在单一 lipsync 模型）
+ * Get lipsync API key by model key (single lipsync model required if model omitted)
  */
 export async function getLipSyncApiKey(userId: string, model?: string | null): Promise<string> {
   const selection = await resolveModelSelectionOrSingle(userId, model, 'lipsync')
@@ -389,7 +381,7 @@ export async function getLipSyncApiKey(userId: string, model?: string | null): P
 }
 
 /**
- * 检查用户是否有任意 API 配置
+ * Check if user has any API config
  */
 export async function hasApiConfig(userId: string): Promise<boolean> {
   const pref = await prisma.userPreference.findUnique({

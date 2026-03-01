@@ -417,11 +417,11 @@ export async function runStoryToScriptOrchestrator(
     onLog,
   } = input
 
-  const baseCharactersText = baseCharacters.length > 0 ? baseCharacters.join('、') : '无'
-  const baseLocationsText = baseLocations.length > 0 ? baseLocations.join('、') : '无'
+  const baseCharactersText = baseCharacters.length > 0 ? baseCharacters.join('、') : 'None'
+  const baseLocationsText = baseLocations.length > 0 ? baseLocations.join('、') : 'None'
   const baseCharacterInfo = baseCharacterIntroductions.length > 0
     ? baseCharacterIntroductions.map((item, index) => `${index + 1}. ${item.name}`).join('\n')
-    : '暂无已有角色'
+    : 'No existing characters yet'
 
   const characterPrompt = applyTemplate(promptTemplates.characterPromptTemplate, {
     input: content,
@@ -433,7 +433,7 @@ export async function runStoryToScriptOrchestrator(
     locations_lib_name: baseLocationsText,
   })
 
-  onLog?.('开始步骤1：角色/场景分析（并行）')
+  onLog?.('Step 1: character/location analysis (parallel)')
   const [
     { output: characterStep, parsed: charactersObject },
     { output: locationStep, parsed: locationsObject },
@@ -466,7 +466,7 @@ export async function runStoryToScriptOrchestrator(
     .map((item) => asString(item.name).trim())
     .filter(Boolean)
 
-  // 合并新发现角色与已有角色库（新角色优先，已有角色补充），避免已有角色被覆盖丢失
+  // Merge new characters with existing; new first, then existing not overwritten
   const analyzedCharacterNameSet = new Set(analyzedCharacterNames)
   const mergedCharacterNames = [
     ...analyzedCharacterNames,
@@ -480,7 +480,7 @@ export async function runStoryToScriptOrchestrator(
     ? analyzedLocationNames.join('、')
     : baseLocationsText
 
-  // 合并角色介绍：新角色 + 未被新角色覆盖的已有角色介绍
+  // Merge character intros: new + existing not overwritten by new
   const mergedCharacterIntroductions = [
     ...analyzedCharacters.map((item) => ({
       name: asString(item.name),
@@ -502,16 +502,16 @@ export async function runStoryToScriptOrchestrator(
       })),
   )
 
-  onLog?.('开始步骤2：片段切分（最多重试1次）', {
+  onLog?.('Step 2: clip split (max 1 retry)', {
     charactersLibName,
     locationsLibName,
   })
 
   const splitPromptBase = applyTemplate(promptTemplates.clipPromptTemplate, {
     input: content,
-    locations_lib_name: locationsLibName || '无',
-    characters_lib_name: charactersLibName || '无',
-    characters_introduction: charactersIntroduction || '暂无角色介绍',
+    locations_lib_name: locationsLibName || 'None',
+    characters_lib_name: charactersLibName || 'None',
+    characters_introduction: charactersIntroduction || 'No character introductions yet',
   })
   const splitPrompt = `${splitPromptBase}${CLIP_BOUNDARY_SUFFIX}`
 
@@ -538,7 +538,7 @@ export async function runStoryToScriptOrchestrator(
     )
     if (rawClipList.length === 0) {
       lastBoundaryError = new Error('split_clips returned empty clips')
-      onLog?.('片段切分结果为空', {
+      onLog?.('Clip split returned empty', {
         attempt,
         maxAttempts: MAX_SPLIT_BOUNDARY_ATTEMPTS,
       })
@@ -582,7 +582,7 @@ export async function runStoryToScriptOrchestrator(
       for (const clip of nextClipList) {
         levelCount[clip.matchLevel] += 1
       }
-      onLog?.('片段边界匹配成功', {
+      onLog?.('Clip boundary match succeeded', {
         attempt,
         clipCount: nextClipList.length,
         levelCount,
@@ -593,7 +593,7 @@ export async function runStoryToScriptOrchestrator(
     lastBoundaryError = new Error(
       `split_clips boundary matching failed at ${failedAt.clipId}: start="${failedAt.startText}" end="${failedAt.endText}"`,
     )
-    onLog?.('片段边界匹配失败', {
+    onLog?.('Clip boundary match failed', {
       attempt,
       maxAttempts: MAX_SPLIT_BOUNDARY_ATTEMPTS,
       failedClip: failedAt.clipId,
@@ -606,7 +606,7 @@ export async function runStoryToScriptOrchestrator(
     throw lastBoundaryError || new Error('split_clips boundary matching failed')
   }
 
-  onLog?.('开始步骤3：对每个片段做剧本转换（并行）', { clipCount: clipList.length })
+  onLog?.('Step 3: screenplay conversion per clip (parallel)', { clipCount: clipList.length })
 
   const screenplayResults = await Promise.all(
     clipList.map(async (clip, index): Promise<StoryToScriptScreenplayResult> => {
@@ -620,9 +620,9 @@ export async function runStoryToScriptOrchestrator(
       try {
         const screenplayPrompt = applyTemplate(promptTemplates.screenplayPromptTemplate, {
           clip_content: clip.content,
-          locations_lib_name: locationsLibName || '无',
-          characters_lib_name: charactersLibName || '无',
-          characters_introduction: charactersIntroduction || '暂无角色介绍',
+          locations_lib_name: locationsLibName || 'None',
+          characters_lib_name: charactersLibName || 'None',
+          characters_introduction: charactersIntroduction || 'No character introductions yet',
           clip_id: clip.id,
         })
 

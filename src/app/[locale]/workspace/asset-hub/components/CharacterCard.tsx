@@ -319,7 +319,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                     </div>
                 )}
 
-                {/* 音色设置 */}
+                {/* Voice settings */}
                 <VoiceSettings
                     characterId={character.id}
                     characterName={character.name}
@@ -446,7 +446,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
 
                 {appearance?.description && <p className="mt-2 text-xs text-[var(--glass-text-secondary)] line-clamp-2">{appearance.description}</p>}
 
-                {/* 音色设置 */}
+                {/* Voice settings */}
                 <VoiceSettings
                     characterId={character.id}
                     characterName={character.name}
@@ -470,7 +470,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                 </div>
             )}
 
-            {/* 删除菜单 */}
+            {/* Delete menu */}
             {showDeleteMenu && appearanceCount > 1 && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setShowDeleteMenu(false)} />

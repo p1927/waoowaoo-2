@@ -48,7 +48,7 @@ export function useVideoDownloadAll({
         panelPreferences[panelKey] = panelVideoPreference.get(panelKey) ?? true
       })
 
-      _ulogInfo('[下载视频] 获取视频URL列表...')
+      _ulogInfo('[Download video] Fetching video URL list...')
       const data = await listEpisodeVideoUrlsMutation.mutateAsync({
         episodeId,
         panelPreferences,
@@ -61,24 +61,24 @@ export function useVideoDownloadAll({
         throw new Error(t('stage.noVideos'))
       }
 
-      _ulogInfo(`[下载视频] 共 ${videos.length} 个视频，开始下载...`)
+      _ulogInfo(`[Download video] ${videos.length} videos, starting download...`)
       setDownloadProgress({ current: 0, total: videos.length })
 
       const zip = new JSZip()
       for (let index = 0; index < videos.length; index += 1) {
         const video = videos[index]
-        _ulogInfo(`[下载视频] 下载 ${index + 1}/${videos.length}: ${video.fileName}`)
+        _ulogInfo(`[Download video] Downloading ${index + 1}/${videos.length}: ${video.fileName}`)
         setDownloadProgress({ current: index + 1, total: videos.length })
 
         try {
           const blob = await downloadRemoteBlobMutation.mutateAsync(video.videoUrl)
           zip.file(video.fileName, blob)
         } catch (error) {
-          _ulogError(`[下载视频] 下载失败: ${video.fileName}`, error)
+          _ulogError(`[Download video] Download failed: ${video.fileName}`, error)
         }
       }
 
-      _ulogInfo('[下载视频] 生成 ZIP 文件...')
+      _ulogInfo('[Download video] Generating ZIP file...')
       const zipBlob = await zip.generateAsync({ type: 'blob' })
       const url = window.URL.createObjectURL(zipBlob)
       const anchor = document.createElement('a')
@@ -88,9 +88,9 @@ export function useVideoDownloadAll({
       anchor.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(anchor)
-      _ulogInfo('[下载视频] 完成!')
+      _ulogInfo('[Download video] Done!')
     } catch (error: unknown) {
-      _ulogError('[下载视频] 错误:', error)
+      _ulogError('[Download video] Error:', error)
       alert(`${t('stage.downloadFailed')}: ${getErrorMessage(error) || t('errors.unknownError')}`)
     } finally {
       setIsDownloading(false)

@@ -1,6 +1,5 @@
 /**
- * 🔐 API 权限验证工具
- * 集中管理 Session 验证、项目权限检查等通用逻辑
+ * API auth helpers: session verification, project permission checks.
  */
 
 import { getServerSession } from 'next-auth/next'
@@ -14,7 +13,7 @@ import { getErrorSpec, type UnifiedErrorCode } from '@/lib/errors/codes'
 import { getLogContext, setLogContext } from '@/lib/logging/context'
 
 // ============================================================
-// 类型定义
+// Type definitions
 // ============================================================
 
 export interface AuthSession {
@@ -57,7 +56,7 @@ async function getInternalTaskSession(): Promise<AuthSession | null> {
 }
 
 /**
- * 可选的关联数据加载配置
+ * Optional related data loading for project auth
  */
 export type ProjectAuthIncludes = {
     characters?: boolean
@@ -82,7 +81,7 @@ interface AuthEpisodeLike {
 }
 
 /**
- * 基础 novelData 类型
+ * Base novelData type
  */
 export interface NovelDataBase {
     id: string
@@ -90,7 +89,7 @@ export interface NovelDataBase {
 }
 
 /**
- * 根据 include 选项推断的 novelData 类型
+ * novelData type inferred from include options
  */
 export type NovelDataWithIncludes<T extends ProjectAuthIncludes> = NovelDataBase
     & (T['characters'] extends true ? { characters: AuthCharacterLike[] } : Record<string, never>)
@@ -98,7 +97,7 @@ export type NovelDataWithIncludes<T extends ProjectAuthIncludes> = NovelDataBase
     & (T['episodes'] extends true ? { episodes: AuthEpisodeLike[] } : Record<string, never>)
 
 /**
- * 完整的认证上下文（带泛型）
+ * Full auth context (generic)
  */
 export interface ProjectAuthContextWithIncludes<T extends ProjectAuthIncludes = ProjectAuthIncludes> {
     session: AuthSession
@@ -112,12 +111,12 @@ export interface ProjectAuthContextWithIncludes<T extends ProjectAuthIncludes = 
 }
 
 /**
- * 向后兼容的类型别名
+ * Backward-compatible type alias
  */
 export type ProjectAuthContext = ProjectAuthContextWithIncludes<ProjectAuthIncludes>
 
 // ============================================================
-// 错误响应工具
+// Error response helpers
 // ============================================================
 
 function buildErrorResponse(code: UnifiedErrorCode, message?: string, details: Record<string, unknown> = {}) {
@@ -163,12 +162,12 @@ export function serverError(message = 'Internal server error') {
 }
 
 // ============================================================
-// 权限验证函数
+// Auth helpers
 // ============================================================
 
 /**
- * 验证用户 Session
- * @returns session 或 null
+ * Get auth session.
+ * @returns session or null
  */
 export async function getAuthSession(): Promise<AuthSession | null> {
     const internalSession = await getInternalTaskSession()
@@ -178,8 +177,7 @@ export async function getAuthSession(): Promise<AuthSession | null> {
 }
 
 /**
- * 要求用户登录
- * @throws 返回 401 响应
+ * Require authenticated user; throws 401 response if not logged in.
  */
 export async function requireAuth(): Promise<AuthSession> {
     const session = await getAuthSession()
@@ -191,38 +189,23 @@ export async function requireAuth(): Promise<AuthSession> {
 }
 
 /**
- * 验证项目访问权限
- * 包含：Session 验证 + 项目存在检查 + 所有权验证 + NovelPromotionData 检查
- * 
- * @param projectId 项目 ID
- * @param options 可选配置，支持按需加载关联数据
- * @returns 验证上下文（session, project, novelData）
- * @throws 返回对应的错误响应
- * 
- * @example
- * ```typescript
- * // 基础用法（不加载关联数据）
- * const authResult = await requireProjectAuth(projectId)
- * 
- * // 加载 characters 和 locations
- * const authResult = await requireProjectAuth(projectId, {
- *   include: { characters: true, locations: true }
- * })
- * // authResult.novelData.characters 和 locations 自动可用
- * ```
+ * Verify project access: session + project exists + ownership + NovelPromotionData.
+ * @param projectId Project ID
+ * @param options Optional include for related data
+ * @returns Auth context (session, project, novelData) or error response
  */
 export async function requireProjectAuth<T extends ProjectAuthIncludes = ProjectAuthIncludes>(
     projectId: string,
     options?: { include?: T }
 ): Promise<ProjectAuthContextWithIncludes<T> | NextResponse> {
-    // 1. 验证 Session
+    // 1. Verify session
     const session = await getAuthSession()
     if (!session?.user?.id) {
         return unauthorized()
     }
     bindAuthLogContext(session, projectId)
 
-    // 2. 构建动态 include 对象
+    // 2. Build dynamic include
     const novelPromotionIncludes: Record<string, boolean> = {}
     if (options?.include?.characters) {
         novelPromotionIncludes.characters = true
@@ -234,7 +217,7 @@ export async function requireProjectAuth<T extends ProjectAuthIncludes = Project
         novelPromotionIncludes.episodes = true
     }
 
-    // 3. 获取项目（包含 novelPromotionData 及其可选关联）
+    // 3. Fetch project (with novelPromotionData and optional relations)
     const hasIncludes = Object.keys(novelPromotionIncludes).length > 0
     const project = await withPrismaRetry(() =>
         prisma.project.findUnique({
@@ -247,22 +230,22 @@ export async function requireProjectAuth<T extends ProjectAuthIncludes = Project
         })
     )
 
-    // 4. 项目存在检查
+    // 4. Project exists
     if (!project) {
         return notFound('Project')
     }
 
-    // 5. 所有权验证
+    // 5. Ownership
     if (project.userId !== session.user.id) {
         return forbidden()
     }
 
-    // 6. NovelPromotionData 检查
+    // 6. NovelPromotionData required
     if (!project.novelPromotionData) {
         return notFound('Novel promotion data')
     }
 
-    // 统一返回 modelKey（provider::modelId），禁止降级为纯 modelId
+    // Return modelKey (provider::modelId) only
     const rawNovelData = project.novelPromotionData as {
         analysisModel?: string | null
         characterModel?: string | null
@@ -290,16 +273,7 @@ export async function requireProjectAuth<T extends ProjectAuthIncludes = Project
 }
 
 /**
- * 仅验证 Session，不检查项目权限
- * 适用于用户级 API（如资产库）
- * 
- * @example
- * ```typescript
- * const authResult = await requireUserAuth()
- * if (authResult instanceof NextResponse) return authResult
- * 
- * const { session } = authResult
- * ```
+ * Verify session only (no project check). Use for user-level APIs (e.g. asset hub).
  */
 export async function requireUserAuth(): Promise<{ session: AuthSession } | NextResponse> {
     const session = await getAuthSession()
@@ -311,8 +285,7 @@ export async function requireUserAuth(): Promise<{ session: AuthSession } | Next
 }
 
 /**
- * 验证项目权限（不要求 NovelPromotionData）
- * 适用于某些不需要 novelPromotionData 的 API
+ * Verify project access without requiring NovelPromotionData.
  */
 export async function requireProjectAuthLight(
     projectId: string
@@ -341,11 +314,11 @@ export async function requireProjectAuthLight(
 }
 
 // ============================================================
-// 类型守卫
+// Type guards
 // ============================================================
 
 /**
- * 检查是否是错误响应
+ * Check if value is an error response (NextResponse).
  */
 export function isErrorResponse(result: unknown): result is NextResponse {
     return result instanceof NextResponse

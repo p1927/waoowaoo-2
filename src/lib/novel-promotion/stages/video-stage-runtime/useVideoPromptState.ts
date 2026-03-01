@@ -135,7 +135,7 @@ export function useVideoPromptState({
     try {
       await onUpdateVideoPrompt(storyboardId, panelIndex, value, field)
     } catch (error) {
-      _ulogError('保存视频提示词失败:', error)
+      _ulogError('Save video prompt failed:', error)
     } finally {
       setSavingPrompts((prev) => {
         const next = new Set(prev)

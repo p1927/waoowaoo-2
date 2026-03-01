@@ -1,14 +1,14 @@
 /**
- * 分集标记检测器
- * 用于检测文本中是否存在明确的分集标记，支持预分割
+ * Episode marker detector.
+ * Detects explicit episode markers in text and supports pre-splitting.
  */
 
 import { countWords } from './word-count'
 
 export interface EpisodeMarkerMatch {
-    index: number          // 在原文中的位置
-    text: string           // 匹配到的标记文本
-    episodeNumber: number  // 推断的集数
+    index: number          // position in source text
+    text: string           // matched marker text
+    episodeNumber: number  // inferred episode number
 }
 
 export interface PreviewSplit {
@@ -17,7 +17,7 @@ export interface PreviewSplit {
     wordCount: number
     startIndex: number
     endIndex: number
-    preview: string        // 前20字预览
+    preview: string        // first 20 chars preview
 }
 
 export interface EpisodeMarkerResult {
@@ -29,7 +29,7 @@ export interface EpisodeMarkerResult {
     previewSplits: PreviewSplit[]
 }
 
-// 中文数字映射
+// Chinese numeral mapping (keys kept for parsing input)
 const CHINESE_NUMBERS: Record<string, number> = {
     '零': 0, '〇': 0,
     '一': 1, '壹': 1,
@@ -47,10 +47,10 @@ const CHINESE_NUMBERS: Record<string, number> = {
 }
 
 /**
- * 将中文数字转换为阿拉伯数字
+ * Converts Chinese numerals to Arabic numbers.
  */
 function chineseToNumber(chinese: string): number {
-    // 如果是纯数字，直接返回
+    // if already digits, return as-is
     if (/^\d+$/.test(chinese)) {
         return parseInt(chinese, 10)
     }
@@ -64,7 +64,7 @@ function chineseToNumber(chinese: string): number {
         if (num === undefined) continue
 
         if (num >= 10) {
-            // 单位（十、百、千）
+            // unit (ten, hundred, thousand)
             if (temp === 0) temp = 1
             temp *= num
             if (num >= lastUnit) {
@@ -73,7 +73,7 @@ function chineseToNumber(chinese: string): number {
             }
             lastUnit = num
         } else {
-            // 数字
+            // digit
             temp = num
         }
     }
@@ -81,7 +81,7 @@ function chineseToNumber(chinese: string): number {
     return result + temp
 }
 
-// 检测模式定义
+// Detection pattern definitions
 interface DetectionPattern {
     regex: RegExp
     typeKey: string
@@ -91,7 +91,7 @@ interface DetectionPattern {
 }
 
 const DETECTION_PATTERNS: DetectionPattern[] = [
-    // 1. 中文"第X集"
+    // 1. Chinese "Episode X"
     {
         regex: /^第([一二三四五六七八九十百千\d]+)集[：:\s]*(.*)?/gm,
         typeKey: 'episode',
@@ -99,7 +99,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => chineseToNumber(match[1]),
         extractTitle: (match) => match[2]?.trim() || ''
     },
-    // 2. 中文"第X章"
+    // 2. Chinese "Chapter X"
     {
         regex: /^第([一二三四五六七八九十百千\d]+)章[：:\s]*(.*)?/gm,
         typeKey: 'chapter',
@@ -107,7 +107,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => chineseToNumber(match[1]),
         extractTitle: (match) => match[2]?.trim() || ''
     },
-    // 3. 中文"第X幕"
+    // 3. Chinese "Act X"
     {
         regex: /^第([一二三四五六七八九十百千\d]+)幕[：:\s]*(.*)?/gm,
         typeKey: 'act',
@@ -115,7 +115,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => chineseToNumber(match[1]),
         extractTitle: (match) => match[2]?.trim() || ''
     },
-    // 4. 场景编号 X-Y【场景】 - 只取第一个数字作为集数
+    // 4. Scene number X-Y【scene】 - use first number as episode
     {
         regex: /^(\d+)-\d+[【\[](.*?)[】\]]/gm,
         typeKey: 'scene',
@@ -123,7 +123,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim() || ''
     },
-    // 5. 数字前缀 "1. 标题" 或 "1、标题"
+    // 5. Numeric prefix "1. title" or "1、title"
     {
         regex: /^(\d+)[\.、：:]\s*(.+)/gm,
         typeKey: 'numbered',
@@ -131,7 +131,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim().slice(0, 20) || ''
     },
-    // 5.5 数字+转义点 "1\." 或 "3\."（Markdown格式）
+    // 5.5 Number + escaped dot "1\." or "3\." (Markdown)
     {
         regex: /^(\d+)\\\.\s*(.+)/gm,
         typeKey: 'numberedEscaped',
@@ -139,7 +139,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim().slice(0, 20) || ''
     },
-    // 5.6 纯数字后直接跟中文（无分隔符）如 "1太子带回" - 需要数字在行首或段首
+    // 5.6 Digit followed directly by Chinese (no separator) - digit at line or paragraph start
     {
         regex: /(?:^|\n\n)(\d+)([\u4e00-\u9fa5])/gm,
         typeKey: 'numberedDirect',
@@ -147,7 +147,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim().slice(0, 20) || ''
     },
-    // 6. 英文 Episode
+    // 6. English Episode
     {
         regex: /^Episode\s*(\d+)[：:\s]*(.*)?/gim,
         typeKey: 'episodeEn',
@@ -155,7 +155,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim() || ''
     },
-    // 7. 英文 Chapter
+    // 7. English Chapter
     {
         regex: /^Chapter\s*(\d+)[：:\s]*(.*)?/gim,
         typeKey: 'chapterEn',
@@ -163,8 +163,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: (match) => match[2]?.trim() || ''
     },
-    // 8. Markdown加粗数字标记 (如 "...内容**1**内容..." 或 "...内容**3**内容...")
-    // 支持行内出现，不要求单独一行
+    // 8. Markdown bold number (e.g. "...content**1**..." ); may appear inline
     {
         regex: /\*\*(\d+)\*\*/g,
         typeKey: 'boldNumber',
@@ -172,7 +171,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
         extractNumber: (match) => parseInt(match[1], 10),
         extractTitle: () => ''
     },
-    // 9. 纯数字单独一行 (如 "1\n内容")
+    // 9. Plain number on its own line (e.g. "1\ncontent")
     {
         regex: /^(\d+)\s*$/gm,
         typeKey: 'pureNumber',
@@ -183,7 +182,7 @@ const DETECTION_PATTERNS: DetectionPattern[] = [
 ]
 
 /**
- * 检测文本中的分集标记
+ * Detects episode markers in text.
  */
 export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
     const result: EpisodeMarkerResult = {
@@ -199,7 +198,7 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
         return result
     }
 
-    // 尝试每种模式
+    // try each pattern
     for (const pattern of DETECTION_PATTERNS) {
         const regex = new RegExp(pattern.regex.source, pattern.regex.flags)
         const matches: EpisodeMarkerMatch[] = []
@@ -208,11 +207,11 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
         while ((match = regex.exec(content)) !== null) {
             const episodeNumber = pattern.extractNumber(match)
 
-            // 场景编号特殊处理：同一集只记录第一次出现
+            // scene pattern: record only first occurrence per episode
             if (pattern.typeKey === 'scene') {
                 const existingMatch = matches.find(m => m.episodeNumber === episodeNumber)
                 if (existingMatch) {
-                    continue // 跳过同一集的后续场景
+                    continue // skip later scenes in same episode
                 }
             }
 
@@ -223,7 +222,7 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
             })
         }
 
-        // 如果这种模式匹配数量更多，使用它
+        // use this pattern if it yields more matches
         if (matches.length >= 2 && matches.length > result.matches.length) {
             result.matches = matches
             result.markerType = pattern.typeName
@@ -236,10 +235,10 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
         return result
     }
 
-    // 按位置排序
+    // sort by position
     result.matches.sort((a, b) => a.index - b.index)
 
-    // 计算置信度
+    // compute confidence
     const matchCount = result.matches.length
     const avgDistance = result.matches.length > 1
         ? (result.matches[result.matches.length - 1].index - result.matches[0].index) / (result.matches.length - 1)
@@ -253,15 +252,13 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
         result.confidence = 'low'
     }
 
-    // 生成预览分割
+    // build preview splits
     const previewSplits: PreviewSplit[] = []
 
-    // 🔥 检查第一个标记是否不是第1集，如果是且前面有内容，自动补充缺失的集
+    // if first marker is not episode 1 and there is content before it, backfill missing episodes
     const firstMatch = result.matches[0]
     if (firstMatch && firstMatch.episodeNumber > 1 && firstMatch.index > 100) {
-        // 补充从第1集到第一个标记前的所有集
         for (let i = 1; i < firstMatch.episodeNumber; i++) {
-            // 只有第1集使用所有前面的内容
             if (i === 1) {
                 const episodeContent = content.slice(0, firstMatch.index)
                 const preview = episodeContent.slice(0, 50).trim().slice(0, 20)
@@ -273,12 +270,12 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
                     endIndex: firstMatch.index,
                     preview: preview + (preview.length >= 20 ? '...' : '')
                 })
-                break // 只补充第1集，后续的1和2可能只是格式不同
+                break // only backfill episode 1
             }
         }
     }
 
-    // 处理正常检测到的标记
+    // process detected markers
     result.matches.forEach((match, idx) => {
         const startIndex = idx === 0 && previewSplits.length === 0 ? 0 : match.index
         const endIndex = idx < result.matches.length - 1
@@ -288,12 +285,11 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
         const episodeContent = content.slice(startIndex, endIndex)
         const wordCount = countWords(episodeContent)
 
-        // 标题固定使用"第 X 集"格式
         const title = `第 ${match.episodeNumber} 集`
 
-        // 生成预览：从数字前缀后开始取内容（只跳过如 "1." 这样的前缀，不跳过整行）
+        // preview: content after numeric prefix (skip "1." etc., not whole line)
         const markerPositionInContent = match.index - startIndex
-        // 计算数字前缀的长度
+        // length of numeric prefix
         const markerPrefix = match.text.match(/^(?:第[一二三四五六七八九十百千\d]+[集章幕]|Episode\s*\d+|Chapter\s*\d+|\*\*\d+\*\*|\d+)[\.、：:\s]*/i)?.[0] || ''
         const prefixLength = markerPrefix.length || match.text.length
         const previewStart = markerPositionInContent + prefixLength
@@ -315,7 +311,7 @@ export function detectEpisodeMarkers(content: string): EpisodeMarkerResult {
 }
 
 /**
- * 根据检测结果分割内容
+ * Splits content by detection result.
  */
 export function splitByMarkers(content: string, markerResult: EpisodeMarkerResult): Array<{
     number: number
@@ -334,7 +330,7 @@ export function splitByMarkers(content: string, markerResult: EpisodeMarkerResul
         return {
             number: split.number,
             title: split.title || `第 ${split.number} 集`,
-            summary: '', // 标识符分集不生成摘要
+            summary: '', // marker-based split does not generate summary
             content: episodeContent,
             wordCount: countWords(episodeContent)
         }

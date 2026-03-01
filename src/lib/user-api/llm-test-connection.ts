@@ -27,7 +27,7 @@ function normalizeProvider(payload: TestConnectionPayload): SupportedProvider {
   const provider = typeof payload.provider === 'string' ? payload.provider.trim().toLowerCase() : ''
   if (!provider) {
     if (typeof payload.baseUrl === 'string' && payload.baseUrl.trim()) return 'custom'
-    throw new ApiError('INVALID_PARAMS', { message: '缺少必要参数 provider' })
+    throw new ApiError('INVALID_PARAMS', { message: 'Missing required parameter: provider' })
   }
 
   switch (provider) {
@@ -38,14 +38,14 @@ function normalizeProvider(payload: TestConnectionPayload): SupportedProvider {
     case 'custom':
       return provider
     default:
-      throw new ApiError('INVALID_PARAMS', { message: `不支持的渠道: ${provider}` })
+      throw new ApiError('INVALID_PARAMS', { message: `Unsupported provider: ${provider}` })
   }
 }
 
 function requireApiKey(payload: TestConnectionPayload): string {
   const apiKey = typeof payload.apiKey === 'string' ? payload.apiKey.trim() : ''
   if (!apiKey) {
-    throw new ApiError('INVALID_PARAMS', { message: '缺少必要参数 apiKey' })
+    throw new ApiError('INVALID_PARAMS', { message: 'Missing required parameter: apiKey' })
   }
   return apiKey
 }
@@ -53,7 +53,7 @@ function requireApiKey(payload: TestConnectionPayload): string {
 function requireBaseUrl(payload: TestConnectionPayload): string {
   const baseUrl = typeof payload.baseUrl === 'string' ? payload.baseUrl.trim() : ''
   if (!baseUrl) {
-    throw new ApiError('INVALID_PARAMS', { message: '自定义渠道需要提供 baseUrl' })
+    throw new ApiError('INVALID_PARAMS', { message: 'Custom provider requires baseUrl' })
   }
   return baseUrl
 }
@@ -65,7 +65,7 @@ async function testGoogleAI(apiKey: string): Promise<void> {
   )
   if (!response.ok) {
     const error = await response.text()
-    throw new Error(`Google AI 认证失败: ${error}`)
+    throw new Error(`Google AI auth failed: ${error}`)
   }
 }
 
@@ -85,7 +85,7 @@ async function testOpenAICompatibleConnection(params: {
   if (params.model) {
     const response = await client.chat.completions.create({
       model: params.model,
-      messages: [{ role: 'user', content: '1+1等于几？只回答数字' }],
+      messages: [{ role: 'user', content: 'What is 1+1? Reply with only the number.' }],
       max_tokens: 10,
       temperature: 0,
     })
@@ -112,11 +112,11 @@ export async function testLlmConnection(payload: TestConnectionPayload): Promise
         baseURL: 'https://openrouter.ai/api/v1',
         model: requestedModel || undefined,
       })
-      return { provider, message: 'openrouter 连接成功', ...tested }
+      return { provider, message: 'OpenRouter connected', ...tested }
     }
     case 'google':
       await testGoogleAI(apiKey)
-      return { provider, message: 'google 连接成功' }
+      return { provider, message: 'Google connected' }
     case 'anthropic': {
       const tested = await testOpenAICompatibleConnection({
         apiKey,
@@ -124,14 +124,14 @@ export async function testLlmConnection(payload: TestConnectionPayload): Promise
         model: requestedModel || 'claude-3-haiku-20240307',
         defaultHeaders: { 'anthropic-version': '2023-06-01' },
       })
-      return { provider, message: 'anthropic 连接成功', ...tested }
+      return { provider, message: 'Anthropic connected', ...tested }
     }
     case 'openai': {
       const tested = await testOpenAICompatibleConnection({
         apiKey,
         model: requestedModel || undefined,
       })
-      return { provider, message: 'openai 连接成功', ...tested }
+      return { provider, message: 'OpenAI connected', ...tested }
     }
     case 'custom': {
       const tested = await testOpenAICompatibleConnection({
@@ -139,7 +139,7 @@ export async function testLlmConnection(payload: TestConnectionPayload): Promise
         baseURL: requireBaseUrl(payload),
         model: requestedModel || undefined,
       })
-      return { provider, message: 'custom 连接成功', ...tested }
+      return { provider, message: 'Custom provider connected', ...tested }
     }
   }
 }

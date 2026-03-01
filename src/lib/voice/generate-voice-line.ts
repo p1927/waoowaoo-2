@@ -170,7 +170,7 @@ export async function generateVoiceLine(params: {
   const speakerVoice = speakerVoices[line.speaker]
   const referenceAudioUrl = character?.customVoiceUrl || speakerVoice?.audioUrl
   if (!referenceAudioUrl) {
-    throw new Error('请先为该发言人设置参考音频')
+    throw new Error('Please set reference audio for this speaker first')
   }
 
   const text = (line.content || '').trim()
@@ -178,25 +178,20 @@ export async function generateVoiceLine(params: {
     throw new Error('Voice line text is empty')
   }
 
-  // 将各种格式的 referenceAudioUrl 统一转为可访问的 URL
-  // 兼容旧数据中存的 /m/m_xxx 媒体路由格式
+  // Normalize referenceAudioUrl to an accessible URL (supports /m/m_xxx media route format)
   let fullAudioUrl: string
   if (referenceAudioUrl.startsWith('http') || referenceAudioUrl.startsWith('data:')) {
-    // http/data: 直接用
     fullAudioUrl = referenceAudioUrl
   } else if (referenceAudioUrl.startsWith('/m/')) {
-    // 媒体路由格式：从数据库解析 storageKey → 再 getSignedUrl
     const storageKey = await resolveStorageKeyFromMediaValue(referenceAudioUrl)
     if (!storageKey) {
-      throw new Error(`无法解析参考音频路径: ${referenceAudioUrl}`)
+      throw new Error(`Cannot resolve reference audio path: ${referenceAudioUrl}`)
     }
     fullAudioUrl = getSignedUrl(storageKey, 3600)
   } else if (referenceAudioUrl.startsWith('/api/files/')) {
-    // 本地签名路径：extractCOSKey → getSignedUrl
     const storageKey = extractCOSKey(referenceAudioUrl)
     fullAudioUrl = storageKey ? getSignedUrl(storageKey, 3600) : referenceAudioUrl
   } else {
-    // 原始 storageKey（如 voice/xxx.wav）
     fullAudioUrl = getSignedUrl(referenceAudioUrl, 3600)
   }
   const audioSelection = await resolveModelSelectionOrSingle(params.userId, params.audioModel, 'audio')

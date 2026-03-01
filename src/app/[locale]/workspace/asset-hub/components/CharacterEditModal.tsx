@@ -112,7 +112,7 @@ export function CharacterEditModal({
         try {
             setIsSaving(true)
 
-            // 如果名字变了，先保存名字
+            // if name changed, save name first
             if (editingName.trim() !== characterName) {
                 await updateName.mutateAsync({ characterId, name: editingName.trim() })
             }

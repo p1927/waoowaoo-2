@@ -268,7 +268,7 @@ export class GoogleGeminiBatchImageGenerator extends BaseImageGenerator {
             }
         }
 
-        // 返回异步标识
+        // return async id
         _ulogInfo(`[Gemini Batch Generator] Async task submitted: ${result.batchName}`)
         return {
             success: true,

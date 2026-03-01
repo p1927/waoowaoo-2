@@ -237,52 +237,50 @@ export async function queryGoogleVideoStatus(operationName: string, apiKey: stri
             }
         }
 
-        // 提取视频 URL
+        // Extract video URL
         const generatedVideos = response.generatedVideos
         if (Array.isArray(generatedVideos) && generatedVideos.length > 0) {
             const first = generatedVideos[0]
             const videoUri = first?.video?.uri
 
             if (videoUri) {
-                logInternal('Veo', 'INFO', `${logPrefix} 成功获取视频`, {
+                logInternal('Veo', 'INFO', `${logPrefix} Got video`, {
                     operationName,
                     videoUri: videoUri.substring(0, 80),
                 })
                 return { status: 'completed', videoUrl: videoUri }
             }
 
-            // video 对象存在但没有 uri，打印完整结构以便调试
-            logInternal('Veo', 'ERROR', `${logPrefix} generatedVideos[0] 存在但无 video.uri`, {
+            logInternal('Veo', 'ERROR', `${logPrefix} generatedVideos[0] exists but no video.uri`, {
                 operationName,
                 firstVideo: JSON.stringify(first, null, 2),
             })
-            return { status: 'failed', error: 'Veo 视频对象存在但缺少 URI' }
+            return { status: 'failed', error: 'Veo video object exists but missing URI' }
         }
 
-        // generatedVideos 为空或不存在，打印完整 response 以便诊断
-        logInternal('Veo', 'ERROR', `${logPrefix} 无 generatedVideos`, {
+        logInternal('Veo', 'ERROR', `${logPrefix} No generatedVideos`, {
             operationName,
             responseKeys: Object.keys(responseRecord),
             fullResponse: JSON.stringify(responseRecord, null, 2).substring(0, 2000),
             raiFilteredCount: raiFilteredCount ?? 'N/A',
             raiFilteredReasons: raiFilteredReasons ?? 'N/A',
         })
-        return { status: 'failed', error: 'Veo 任务完成但未返回视频 (generatedVideos 为空)' }
+        return { status: 'failed', error: 'Veo task completed but no video (generatedVideos empty)' }
     } catch (error: unknown) {
         const message = getErrorMessage(error)
-        logInternal('Veo', 'ERROR', `${logPrefix} 查询异常`, { operationName, error: message })
+        logInternal('Veo', 'ERROR', `${logPrefix} Query error`, { operationName, error: message })
         return { status: 'failed', error: message }
     }
 }
 
 /**
- * 查询 Seedance 视频任务状态
- * @param taskId 任务ID
- * @param apiKey 火山引擎 API Key
+ * Query Seedance video task status.
+ * @param taskId Task ID
+ * @param apiKey Volcengine API Key
  */
 export async function querySeedanceVideoStatus(taskId: string, apiKey: string): Promise<TaskStatus> {
     if (!apiKey) {
-        throw new Error('请配置火山引擎 API Key')
+        throw new Error('Please configure Volcengine API Key')
     }
 
     try {

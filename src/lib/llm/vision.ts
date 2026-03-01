@@ -63,8 +63,8 @@ export async function chatCompletionWithVision(
   }
 
   if (!model) {
-    _ulogError('[LLM Vision] 模型未配置，调用栈:', new Error().stack)
-    throw new Error('ANALYSIS_MODEL_NOT_CONFIGURED: 请先在设置页面配置分析模型')
+    _ulogError('[LLM Vision] Model not configured, call stack:', new Error().stack)
+    throw new Error('ANALYSIS_MODEL_NOT_CONFIGURED: Please configure the analysis model in settings first')
   }
 
   const selection = await resolveLlmRuntimeModel(userId, model)
