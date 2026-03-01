@@ -228,7 +228,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
         const imageUrl = arkData.data?.[0]?.url
 
         if (!imageUrl) {
-            throw new Error('ARK 未返回图片 URL')
+            throw new Error('ARK did not return image URL')
         }
 
         return {
@@ -239,7 +239,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
 }
 
 // ============================================================
-// ARK 视频生成器 (Seedance)
+// ARK video generator (Seedance)
 // ============================================================
 
 export class ArkVideoGenerator extends BaseVideoGenerator {
@@ -254,7 +254,7 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
             frames,
             aspectRatio,
             generateAudio,
-            lastFrameImageUrl,  // 首尾帧模式的尾帧图片
+            lastFrameImageUrl,  // Last frame image for first/last frame mode
             serviceTier,
             executionExpiresAfter,
             returnLastFrame,
@@ -289,7 +289,7 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
             }
         }
 
-        // 解析批量模式
+        // Parse batch mode
         const isBatchMode = modelId.endsWith('-batch')
         const realModel = isBatchMode ? modelId.replace('-batch', '') : modelId
         const modelSpec = ARK_SEEDANCE_MODEL_SPECS[realModel]
@@ -366,19 +366,19 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
             }
         }
 
-        _ulogInfo(`[ARK Video] 模型: ${realModel}, 批量: ${isBatchMode}, 分辨率: ${resolution || '(默认)'}, 时长: ${duration ?? '(默认)'}`)
+        _ulogInfo(`[ARK Video] model: ${realModel}, batch: ${isBatchMode}, resolution: ${resolution || '(default)'}, duration: ${duration ?? '(default)'}`)
 
-        // 转换图片为 base64
+        // Convert image to base64
         const imageBase64 = await imageUrlToBase64(imageUrl)
 
-        // 构建请求体 content
+        // Build request body content
         const content: ArkVideoContentItem[] = []
         if (prompt.trim()) {
             content.push({ type: 'text', text: prompt })
         }
 
         if (lastFrameImageUrl) {
-            // 首尾帧模式
+            // First/last frame mode
             const lastImageBase64 = await imageUrlToBase64(lastFrameImageUrl)
             content.push({
                 type: 'image_url',
@@ -390,7 +390,7 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
                 image_url: { url: lastImageBase64 },
                 role: 'last_frame'
             })
-            _ulogInfo(`[ARK Video] 首尾帧模式`)
+            _ulogInfo(`[ARK Video] First/last frame mode`)
         } else {
             content.push({
                 type: 'image_url',
@@ -452,16 +452,16 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
             requestBody.execution_expires_after = executionExpiresAfter
         }
 
-        // 批量模式参数
+        // Batch mode parameters
         if (isBatchMode) {
             requestBody.service_tier = 'flex'
             if (requestBody.execution_expires_after === undefined) {
                 requestBody.execution_expires_after = 86400
             }
-            _ulogInfo('[ARK Video] 批量模式: service_tier=flex')
+            _ulogInfo('[ARK Video] Batch mode: service_tier=flex')
         }
 
-        // 音频生成（仅 Seedance 1.5 Pro）
+        // Audio generation (Seedance 1.5 Pro only)
         if (generateAudio !== undefined) {
             requestBody.generate_audio = generateAudio
         }
@@ -475,27 +475,27 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
             const taskId = taskData.id
 
             if (!taskId) {
-                throw new Error('ARK 未返回 task_id')
+                throw new Error('ARK did not return task_id')
             }
 
-            _ulogInfo(`[ARK Video] 任务已创建: ${taskId}`)
+            _ulogInfo(`[ARK Video] Task created: ${taskId}`)
 
             return {
                 success: true,
                 async: true,
-                requestId: taskId,  // 向后兼容
-                externalId: `ARK:VIDEO:${taskId}`  // 🔥 标准格式
+                requestId: taskId,  // Backward compatible
+                externalId: `ARK:VIDEO:${taskId}`  // Standard format
             }
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : '未知错误'
-            _ulogError(`[ARK Video] 创建任务失败:`, message)
-            throw new Error(`ARK 视频任务创建失败: ${message}`)
+            const message = error instanceof Error ? error.message : 'Unknown error'
+            _ulogError(`[ARK Video] Task creation failed:`, message)
+            throw new Error(`ARK video task creation failed: ${message}`)
         }
     }
 }
 
 // ============================================================
-// 向后兼容别名
+// Backward compatible aliases
 // ============================================================
 
 export const ArkSeedreamGenerator = ArkImageGenerator

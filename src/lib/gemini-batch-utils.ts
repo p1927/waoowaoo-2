@@ -120,7 +120,7 @@ export async function submitGeminiBatch(
       imageConfig.aspectRatio = options.aspectRatio
     }
     if (options?.resolution) {
-      imageConfig.imageSize = options.resolution  // 'HD', '4K' 等
+      imageConfig.imageSize = options.resolution  // 'HD', '4K', etc.
     }
 
     const inlinedRequests = [

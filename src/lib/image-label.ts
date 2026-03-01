@@ -1,7 +1,7 @@
 import { logError as _ulogError } from '@/lib/logging/core'
 /**
- * 图片黑边标签处理工具
- * 用于给图片添加/更新顶部的黑边文字标签
+ * Image black-bar label utilities
+ * Add or update top black-bar text labels on images
  */
 
 import sharp from 'sharp'
@@ -11,20 +11,20 @@ import { resolveStorageKeyFromMediaValue } from '@/lib/media/service'
 import { initializeFonts, createLabelSVG } from '@/lib/fonts'
 
 /**
- * 更新图片的黑边标签（裁剪旧标签 + 添加新标签）
- * 
- * @param imageUrl - 原始图片 URL 或 COS key
- * @param newLabelText - 新的标签文本
- * @param options - 可选配置
- * @returns 更新后的 COS key
+ * Update image black-bar label (crop old label + add new label)
+ *
+ * @param imageUrl - Original image URL or COS key
+ * @param newLabelText - New label text
+ * @param options - Optional config
+ * @returns Updated COS key
  */
 export async function updateImageLabel(
     imageUrl: string,
     newLabelText: string,
     options?: {
-        /** 是否生成新的 key（默认覆盖原 key） */
+        /** Whether to generate new key (default: overwrite original) */
         generateNewKey?: boolean
-        /** 新 key 的前缀（仅当 generateNewKey=true 时有效） */
+        /** New key prefix (only when generateNewKey=true) */
         keyPrefix?: string
     }
 ): Promise<string> {
@@ -32,43 +32,43 @@ export async function updateImageLabel(
 
     const originalKey = await resolveStorageKeyFromMediaValue(imageUrl)
     if (!originalKey) {
-        throw new Error(`无法归一化媒体 key: ${imageUrl}`)
+        throw new Error(`Cannot normalize media key: ${imageUrl}`)
     }
     const signedUrl = getSignedUrl(originalKey, 3600)
 
-    // 下载图片
+    // Download image
     const response = await fetch(toFetchableUrl(signedUrl))
     if (!response.ok) {
         throw new Error(`Failed to download image: ${response.status}`)
     }
     const buffer = Buffer.from(await response.arrayBuffer())
 
-    // 获取图片元数据
+    // Get image metadata
     const meta = await sharp(buffer).metadata()
     const w = meta.width || 2160
     const h = meta.height || 2160
 
-    // 计算标签条高度（与生成时一致：高度的 4%）
+    // Compute label bar height (same as generation: 4% of height)
     const fontSize = Math.floor(h * 0.04)
     const pad = Math.floor(fontSize * 0.5)
     const barH = fontSize + pad * 2
 
-    // 裁剪掉顶部的旧标签条
+    // Crop out top old label bar
     const croppedBuffer = await sharp(buffer)
         .extract({ left: 0, top: barH, width: w, height: h - barH })
         .toBuffer()
 
-    // 创建新的 SVG 标签条
+    // Create new SVG label bar
     const svg = await createLabelSVG(w, barH, fontSize, pad, newLabelText)
 
-    // 添加新标签条到图片顶部
+    // Add new label bar to top of image
     const processed = await sharp(croppedBuffer)
         .extend({ top: barH, bottom: 0, left: 0, right: 0, background: { r: 0, g: 0, b: 0, alpha: 1 } })
         .composite([{ input: svg, top: 0, left: 0 }])
         .jpeg({ quality: 90, mozjpeg: true })
         .toBuffer()
 
-    // 决定使用原始 key 还是生成新 key
+    // Decide whether to use original key or generate new key
     const finalKey = options?.generateNewKey
         ? generateUniqueKey(options.keyPrefix || 'labeled-image', 'jpg')
         : originalKey
@@ -78,8 +78,8 @@ export async function updateImageLabel(
 }
 
 /**
- * 批量更新角色形象的标签
- * 用于从资产中心复制角色到项目时更新标签
+ * Batch update character appearance labels
+ * Used when copying character from Asset Hub to project
  */
 export async function updateCharacterAppearanceLabels(
     appearances: Array<{
@@ -93,7 +93,7 @@ export async function updateCharacterAppearanceLabels(
 
     for (const appearance of appearances) {
         try {
-            // 获取图片 URLs
+            // Get image URLs
             let imageUrls = decodeImageUrlsFromDb(appearance.imageUrls, 'appearance.imageUrls')
             if (imageUrls.length === 0 && appearance.imageUrl) {
                 imageUrls = [appearance.imageUrl]

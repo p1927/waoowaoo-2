@@ -1,8 +1,8 @@
 /**
- * 异步任务工具函数
- * 用于查询第三方 AI 服务的任务状态
- * 
- * 注意：API Key 现在通过参数传入，不再使用环境变量
+ * Async task utility functions
+ * For querying third-party AI service task status
+ *
+ * Note: API Key is now passed via parameters, no longer uses env vars
  */
 
 import { logInternal } from './logging/semantic'
@@ -40,13 +40,13 @@ interface GeminiBatchClient {
 }
 
 /**
- * 查询 FAL Banana 任务状态
- * @param requestId 任务ID
+ * Query FAL Banana task status
+ * @param requestId Task ID
  * @param apiKey FAL API Key
  */
 export async function queryBananaTaskStatus(requestId: string, apiKey: string): Promise<TaskStatus> {
     if (!apiKey) {
-        throw new Error('请配置 FAL API Key')
+        throw new Error('Please configure FAL API Key')
     }
 
     try {
@@ -66,7 +66,7 @@ export async function queryBananaTaskStatus(requestId: string, apiKey: string): 
         const data = await statusResponse.json()
 
         if (data.status === 'COMPLETED') {
-            // 获取结果
+            // Fetch result
             const resultResponse = await fetch(
                 `https://queue.fal.run/fal-ai/nano-banana-pro/requests/${requestId}`,
                 {
@@ -97,27 +97,27 @@ export async function queryBananaTaskStatus(requestId: string, apiKey: string): 
 }
 
 /**
- * 查询 Gemini Batch 任务状态
- * 使用 ai.batches.get() 方法查询任务状态
- * @param batchName 任务名称（如 batches/xxx）
+ * Query Gemini Batch task status
+ * Uses ai.batches.get() to query task status
+ * @param batchName Batch name (e.g. batches/xxx)
  * @param apiKey Google AI API Key
  */
 export async function queryGeminiBatchStatus(batchName: string, apiKey: string): Promise<TaskStatus> {
     if (!apiKey) {
-        throw new Error('请配置 Google AI API Key')
+        throw new Error('Please configure Google AI API Key')
     }
 
     try {
         const { GoogleGenAI } = await import('@google/genai')
         const ai = new GoogleGenAI({ apiKey })
 
-        // 🔥 使用 ai.batches.get 查询任务状态
+        // Use ai.batches.get to query task status
         const batchClient = ai as unknown as GeminiBatchClient
         const batchJob = await batchClient.batches.get({ name: batchName })
         const batchRecord = asRecord(batchJob) || {}
 
         const state = typeof batchRecord.state === 'string' ? batchRecord.state : 'UNKNOWN'
-        logInternal('GeminiBatch', 'INFO', `查询状态: ${batchName} -> ${state}`)
+        logInternal('GeminiBatch', 'INFO', `Query status: ${batchName} -> ${state}`)
 
         // 检查完成状态
         if (state === 'JOB_STATE_SUCCEEDED') {
@@ -173,7 +173,7 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
  */
 export async function queryGoogleVideoStatus(operationName: string, apiKey: string): Promise<TaskStatus> {
     if (!apiKey) {
-        throw new Error('请配置 Google AI API Key')
+        throw new Error('Please configure Google AI API Key')
     }
 
     const logPrefix = '[Veo Query]'

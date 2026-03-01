@@ -1,11 +1,11 @@
 import { logInfo as _ulogInfo } from '@/lib/logging/core'
 /**
- * 生成器统一入口（增强版）
- * 
- * 支持：
- * - 严格使用 model_key（provider::modelId）
- * - 用户自定义模型的动态路由（仅通过配置中心）
- * - 统一错误处理
+ * Generator unified entry (enhanced)
+ *
+ * Supports:
+ * - Strict use of model_key (provider::modelId)
+ * - Dynamic routing for user custom models (via config center only)
+ * - Unified error handling
  */
 
 import { createAudioGenerator, createImageGenerator, createVideoGenerator } from './generators/factory'
@@ -13,12 +13,12 @@ import type { GenerateResult } from './generators/base'
 import { resolveModelSelection } from './api-config'
 
 /**
- * 生成图片（简化版）
- * 
- * @param userId 用户 ID
- * @param modelKey 模型唯一键（provider::modelId）
- * @param prompt 提示词
- * @param options 生成选项
+ * Generate image (simplified)
+ *
+ * @param userId User ID
+ * @param modelKey Model unique key (provider::modelId)
+ * @param prompt Prompt
+ * @param options Generation options
  */
 export async function generateImage(
     userId: string,
@@ -29,15 +29,15 @@ export async function generateImage(
         aspectRatio?: string
         resolution?: string
         outputFormat?: string
-        keepOriginalAspectRatio?: boolean  // 🔥 编辑时保持原图比例
-        size?: string  // 🔥 直接指定像素尺寸如 "5016x3344"（优先于 aspectRatio）
+        keepOriginalAspectRatio?: boolean  // Keep original aspect ratio when editing
+        size?: string  // Direct pixel size e.g. "5016x3344" (takes precedence over aspectRatio)
     }
 ): Promise<GenerateResult> {
     const selection = await resolveModelSelection(userId, modelKey, 'image')
     const generator = createImageGenerator(selection.provider, selection.modelId)
     _ulogInfo(`[generateImage] resolved model selection: ${selection.modelKey}`)
 
-    // 调用生成（提取 referenceImages 单独传递，其余选项合并进 options）
+    // Call generate (pass referenceImages separately, merge other options into options)
     const { referenceImages, ...generatorOptions } = options || {}
     return generator.generate({
         userId,
@@ -53,12 +53,12 @@ export async function generateImage(
 }
 
 /**
- * 生成视频（增强版）
- * 
- * @param userId 用户 ID
- * @param modelKey 模型唯一键（provider::modelId）
- * @param imageUrl 输入图片 URL
- * @param options 生成选项
+ * Generate video (enhanced)
+ *
+ * @param userId User ID
+ * @param modelKey Model unique key (provider::modelId)
+ * @param imageUrl Input image URL
+ * @param options Generation options
  */
 export async function generateVideo(
     userId: string,
@@ -70,8 +70,8 @@ export async function generateVideo(
         fps?: number
         resolution?: string      // '720p' | '1080p'
         aspectRatio?: string     // '16:9' | '9:16'
-        generateAudio?: boolean  // 仅 Seedance 1.5 Pro 支持
-        lastFrameImageUrl?: string  // 首尾帧模式的尾帧图片
+        generateAudio?: boolean  // Seedance 1.5 Pro only
+        lastFrameImageUrl?: string  // Last frame image for first-last frame mode
         [key: string]: string | number | boolean | undefined
     }
 ): Promise<GenerateResult> {
@@ -95,7 +95,7 @@ export async function generateVideo(
 }
 
 /**
- * 生成语音
+ * Generate audio/speech
  */
 export async function generateAudio(
     userId: string,

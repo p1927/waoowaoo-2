@@ -222,11 +222,11 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
     }
 }
 
-// ==================== Ark 视频任务 ====================
+// ==================== Ark Video Task ====================
 
 /**
- * 查询Ark视频任务状态
- * @param taskId Ark任务ID
+ * Query Ark video task status
+ * @param taskId Ark task ID
  * @param apiKey ARK API Key
  */
 export async function queryArkVideoStatus(taskId: string, apiKey: string): Promise<{
@@ -237,7 +237,7 @@ export async function queryArkVideoStatus(taskId: string, apiKey: string): Promi
     error?: string
 }> {
     if (!apiKey) {
-        throw new Error('请配置火山引擎 API Key')
+        throw new Error('Please configure Volcano Engine API Key')
     }
 
     const response = await fetch(
@@ -272,13 +272,13 @@ export async function queryArkVideoStatus(taskId: string, apiKey: string): Promi
 
     if (status === 'failed') {
         const errorObj = data.error || {}
-        let errorMessage = errorObj.message || '任务失败'
+        let errorMessage = errorObj.message || 'Task failed'
 
-        // 友好的错误信息
+        // User-friendly error messages
         if (errorObj.code === 'OutputVideoSensitiveContentDetected') {
-            errorMessage = '视频生成失败：内容审核未通过'
+            errorMessage = 'Video generation failed: content policy violation'
         } else if (errorObj.code === 'InputImageSensitiveContentDetected') {
-            errorMessage = '视频生成失败：输入图片审核未通过'
+            errorMessage = 'Video generation failed: input image content policy violation'
         }
 
         return {
@@ -296,17 +296,17 @@ export async function queryArkVideoStatus(taskId: string, apiKey: string): Promi
     }
 }
 
-// ==================== 通用接口 ====================
+// ==================== Generic Interface ====================
 
 export type AsyncTaskProvider = 'fal' | 'ark'
 export type AsyncTaskType = 'video' | 'image' | 'tts' | 'lipsync'
 
 /**
- * 统一查询任务状态
- * @param provider 服务提供商
- * @param taskId 任务ID
+ * Unified task status query
+ * @param provider Service provider
+ * @param taskId Task ID
  * @param apiKey API Key
- * @param endpoint FAL端点（仅FAL需要）
+ * @param endpoint FAL endpoint (FAL only)
  */
 export async function queryAsyncTaskStatus(
     provider: AsyncTaskProvider,

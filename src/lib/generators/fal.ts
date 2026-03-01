@@ -1,15 +1,15 @@
 import { createScopedLogger, logError as _ulogError } from '@/lib/logging/core'
 /**
- * FAL 生成器（统一图像 + 视频）
- * 
- * 图像模型：
+ * FAL generator (unified image + video)
+ *
+ * Image models:
  * - Banana Pro (2K/4K) - fal-ai/nano-banana-pro       (modelId: 'banana')
  * - Banana 2  (1K/2K/4K) - fal-ai/nano-banana-2       (modelId: 'banana-2')
- * 
- * 视频模型：
+ *
+ * Video models:
  * - Wan 2.6 (fal-wan25) - wan/v2.6/image-to-video
  * - Veo 3.1 (fal-veo31) - fal-ai/veo3.1/fast/image-to-video
- * - Sora 2 (fal-sora2) - fal-ai/sora-2/image-to-video  
+ * - Sora 2 (fal-sora2) - fal-ai/sora-2/image-to-video
  * - Kling 2.5 Turbo Pro - fal-ai/kling-video/v2.5-turbo/pro/image-to-video
  * - Kling 3 Standard - fal-ai/kling-video/v3/standard/image-to-video
  * - Kling 3 Pro - fal-ai/kling-video/v3/pro/image-to-video
@@ -27,7 +27,7 @@ import { submitFalTask } from '@/lib/async-submit'
 import { imageUrlToBase64 } from '@/lib/cos'
 
 // ============================================================
-// 图像模型端点映射（modelId → FAL 端点前缀）
+// Image model endpoint mapping (modelId -> FAL endpoint prefix)
 // ============================================================
 
 const FAL_IMAGE_ENDPOINTS: Record<string, { base: string; edit: string }> = {
@@ -36,7 +36,7 @@ const FAL_IMAGE_ENDPOINTS: Record<string, { base: string; edit: string }> = {
 }
 
 // ============================================================
-// 视频模型端点映射
+// Video model endpoint mapping
 // ============================================================
 
 const FAL_VIDEO_ENDPOINTS: Record<string, string> = {
@@ -49,7 +49,7 @@ const FAL_VIDEO_ENDPOINTS: Record<string, string> = {
 }
 
 // ============================================================
-// FAL 图像生成器 (Banana Pro / Banana 2)
+// FAL image generator (Banana Pro / Banana 2)
 // ============================================================
 
 export class FalImageGenerator extends BaseImageGenerator {
@@ -89,7 +89,7 @@ export class FalImageGenerator extends BaseImageGenerator {
             throw new Error(`FAL_IMAGE_OPTION_VALUE_UNSUPPORTED: resolution=${resolution}`)
         }
 
-        // 根据 modelId 和是否有参考图片选择端点
+        // Select endpoint based on modelId and whether reference images exist
         const hasReferenceImages = referenceImages.length > 0
         const endpointConfig = FAL_IMAGE_ENDPOINTS[optModelId] || FAL_IMAGE_ENDPOINTS['banana']
         const endpoint = hasReferenceImages ? endpointConfig.edit : endpointConfig.base
