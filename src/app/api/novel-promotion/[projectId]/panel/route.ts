@@ -263,7 +263,7 @@ export const PATCH = apiHandler(async (
     throw new ApiError('NOT_FOUND')
   }
 
-  // 构建更新数据
+  // Build update data
   const updateData: {
     videoPrompt?: string | null
     firstLastFramePrompt?: string | null

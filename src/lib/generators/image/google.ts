@@ -1,10 +1,10 @@
 import { logInfo as _ulogInfo, logWarn as _ulogWarn } from '@/lib/logging/core'
 /**
- * Google AI 图片生成器
- * 
- * 支持：
- * - Gemini 3 Pro Image (实时)
- * - Gemini 2.5 Flash Image (实时)
+ * Google AI image generator
+ *
+ * Supports:
+ * - Gemini 3 Pro Image (real-time)
+ * - Gemini 2.5 Flash Image (real-time)
  * - Imagen 4
  */
 
@@ -29,7 +29,7 @@ function getErrorMessage(error: unknown): string {
         const candidate = (error as { message?: unknown }).message
         if (typeof candidate === 'string') return candidate
     }
-    return '未知错误'
+    return 'Unknown error'
 }
 
 export class GoogleGeminiImageGenerator extends BaseImageGenerator {
@@ -71,15 +71,15 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
 
         const ai = new GoogleGenAI({ apiKey })
 
-        // 构建内容数组
+        // Build content array
         const contentParts: ContentPart[] = []
 
-        // 添加参考图片（最多 14 张）
+        // Add reference images (max 14)
         for (let i = 0; i < Math.min(referenceImages.length, 14); i++) {
             const imageData = referenceImages[i]
 
             if (imageData.startsWith('data:')) {
-                // Base64 格式
+                // Base64 format
                 const base64Start = imageData.indexOf(';base64,')
                 if (base64Start !== -1) {
                     const mimeType = imageData.substring(5, base64Start)
@@ -87,9 +87,9 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
                     contentParts.push({ inlineData: { mimeType, data } })
                 }
             } else if (imageData.startsWith('http') || imageData.startsWith('/')) {
-                // URL 格式（包括本地相对路径 /api/files/...）：下载转 base64
+                // URL format (including local path /api/files/...): download and convert to base64
                 try {
-                    // 🔧 本地模式修复：相对路径需要补全完整 URL
+                    // Local mode fix: relative path needs full URL
                     let fullUrl = imageData
                     if (imageData.startsWith('/')) {
                         const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
@@ -103,20 +103,20 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
                         contentParts.push({ inlineData: { mimeType, data } })
                     }
                 } catch (e) {
-                    _ulogWarn(`下载参考图片 ${i + 1} 失败:`, e)
+                    _ulogWarn(`Failed to download reference image ${i + 1}:`, e)
                 }
             } else {
-                // 纯 base64
+                // Raw base64
                 contentParts.push({
                     inlineData: { mimeType: 'image/png', data: imageData }
                 })
             }
         }
 
-        // 添加文本提示
+        // Add text prompt
         contentParts.push({ text: prompt })
 
-        // 安全配置（关闭过滤）
+        // Safety config (filtering disabled)
         const safetySettings = [
             { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
             { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
@@ -124,7 +124,7 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
             { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
         ]
 
-        // 调用 API
+        // Call API
         const response = await ai.models.generateContent({
             model: this.modelId,
             contents: [{ parts: contentParts }],
@@ -142,7 +142,7 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
             }
         })
 
-        // 提取图片
+        // Extract image
         const candidate = response.candidates?.[0]
         const parts = candidate?.content?.parts || []
 
@@ -160,13 +160,13 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
             }
         }
 
-        // 检查失败原因
+        // Check failure reason
         const finishReason = candidate?.finishReason
         if (finishReason === 'IMAGE_SAFETY' || finishReason === 'SAFETY') {
-            throw new Error('内容因安全策略被过滤')
+            throw new Error('Content filtered by safety policy')
         }
 
-        throw new Error('Gemini 未返回图片')
+        throw new Error('Gemini did not return image')
     }
 }
 

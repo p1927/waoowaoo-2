@@ -1,12 +1,12 @@
 /**
- * Gemini Batch 工具函数
- * 
- * 用于提交和查询 Google Gemini Batch API 的任务
- * 参考: https://ai.google.dev/gemini-api/docs/batch-api
- * 
- * 特点：
- * - 价格是标准 API 的 50%
- * - 处理时间 24 小时内
+ * Gemini Batch utility functions
+ *
+ * For submitting and querying Google Gemini Batch API tasks
+ * Reference: https://ai.google.dev/gemini-api/docs/batch-api
+ *
+ * Features:
+ * - 50% of standard API pricing
+ * - Processing within 24 hours
  */
 
 import { GoogleGenAI } from '@google/genai'
@@ -38,14 +38,14 @@ interface GeminiBatchClient {
 }
 
 /**
- * 提交 Gemini Batch 图片生成任务
- * 
- * 使用 ai.batches.create() 方法提交批量任务
- * 
+ * Submit Gemini Batch image generation task
+ *
+ * Uses ai.batches.create() to submit batch tasks
+ *
  * @param apiKey Google AI API Key
- * @param prompt 图片生成提示词
- * @param options 生成选项
- * @returns 返回 batchName（如 batches/xxx）用于后续查询
+ * @param prompt Image generation prompt
+ * @param options Generation options
+ * @returns batchName (e.g. batches/xxx) for subsequent queries
  */
 export async function submitGeminiBatch(
   apiKey: string,
@@ -61,22 +61,22 @@ export async function submitGeminiBatch(
   error?: string
 }> {
   if (!apiKey) {
-    return { success: false, error: '请配置 Google AI API Key' }
+    return { success: false, error: 'Please configure Google AI API Key' }
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey })
 
-    // 构建 content parts
+    // Build content parts
     const contentParts: UnknownRecord[] = []
 
-    // 添加参考图片（最多 14 张）
+    // Add reference images (max 14)
     const referenceImages = options?.referenceImages || []
     for (let i = 0; i < Math.min(referenceImages.length, 14); i++) {
       const imageData = referenceImages[i]
 
       if (imageData.startsWith('data:')) {
-        // Base64 格式
+        // Base64 format
         const base64Start = imageData.indexOf(';base64,')
         if (base64Start !== -1) {
           const mimeType = imageData.substring(5, base64Start)
@@ -84,7 +84,7 @@ export async function submitGeminiBatch(
           contentParts.push({ inlineData: { mimeType, data } })
         }
       } else if (imageData.startsWith('http') || imageData.startsWith('/')) {
-        // URL 格式（包括本地相对路径 /api/files/...）：下载转 base64
+        // URL format (including local relative paths /api/files/...): download and convert to base64
         try {
           // 🔧 本地模式修复：相对路径需要补全完整 URL
           let fullUrl = imageData

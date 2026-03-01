@@ -1,8 +1,8 @@
 /**
- * 用户 API 配置管理接口
+ * User API config management
  *
- * GET  - 读取用户配置(解密)
- * PUT  - 保存/更新配置(加密)
+ * GET  - Read user config (decrypted)
+ * PUT  - Save/update config (encrypted)
  */
 
 import { NextRequest, NextResponse } from 'next/server'

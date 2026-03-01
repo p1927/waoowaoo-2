@@ -143,18 +143,18 @@ export const POST = apiHandler(async (
 async function updateImageLabel(imageUrl: string, newLabelText: string): Promise<string> {
   const originalKey = await resolveStorageKeyFromMediaValue(imageUrl)
   if (!originalKey) {
-    throw new Error(`无法归一化媒体 key: ${imageUrl}`)
+    throw new Error(`Failed to normalize media key: ${imageUrl}`)
   }
   const signedUrl = getSignedUrl(originalKey, 3600)
 
-  // 下载图片
+  // Download image
   const response = await fetch(toFetchableUrl(signedUrl))
   if (!response.ok) {
     throw new Error(`Failed to download image: ${response.status}`)
   }
   const buffer = Buffer.from(await response.arrayBuffer())
 
-  // 获取图片元数据
+  // Get image metadata
   const meta = await sharp(buffer).metadata()
   const w = meta.width || 2160
   const h = meta.height || 2160

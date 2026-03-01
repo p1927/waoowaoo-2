@@ -573,9 +573,9 @@ export async function executePhase3(
 ): Promise<PhaseResult> {
     const clipId = formatClipId(clip)
     void taskId
-    _ulogInfo(`[Phase 3] Clip ${clipId}: 开始补充镜头细节...`)
+    _ulogInfo(`[Phase 3] Clip ${clipId}: Starting to add shot details...`)
 
-    // 读取提示词
+    // Read prompt template
     const detailPromptTemplate = getPromptTemplate(PROMPT_IDS.NP_AGENT_STORYBOARD_DETAIL, locale)
 
     // Parse clip data
@@ -613,7 +613,7 @@ export async function executePhase3(
                 action: 'storyboard_phase3_detail',
                 meta: {
                     stepId: 'storyboard_phase3_detail',
-                    stepTitle: '镜头细化',
+                    stepTitle: 'Shot refinement',
                     stepIndex: 1,
                     stepTotal: 1,
                 },
@@ -621,12 +621,12 @@ export async function executePhase3(
 
             const detailResponseText = detailResult.text
             if (!detailResponseText) {
-                throw new Error(`Phase 3: 无响应 clip ${clipId}`)
+                throw new Error(`Phase 3: No response clip ${clipId}`)
             }
 
             finalPanels = parseJsonResponse<StoryboardPanel>(detailResponseText, clipId, 3)
 
-            // 记录第三阶段完整输出（过滤前）
+            // Record Phase 3 full output (before filtering)
             logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
                 action: 'STORYBOARD_PHASE3_OUTPUT',
                 output: {
@@ -637,11 +637,11 @@ export async function executePhase3(
                 model: novelPromotionData.analysisModel
             })
 
-            // Filter out empty panels (supports both "无" and "None" for locale compatibility)
+            // Filter out empty panels (supports both "None" in legacy data and current locale)
             const beforeFilterCount = finalPanels.length
             finalPanels = finalPanels.filter((panel) =>
-                panel.description && panel.description !== '无' && panel.description !== 'None' &&
-                panel.location !== '无' && panel.location !== 'None'
+                panel.description && panel.description !== 'None' &&
+                panel.location !== 'None'
             )
             _ulogInfo(`[Phase 3] Clip ${clipId}: Filtered empty panels ${beforeFilterCount} -> ${finalPanels.length} valid panels`)
 

@@ -1,17 +1,17 @@
 /**
- * 字数统计工具函数
- * 
- * 按照 Word 的字数统计规则：
- * - 中文：每个汉字算 1 字
- * - 英文：每个单词算 1 字（用空格分隔）
- * - 空格、换行符、标点不计入字数
+ * Word count utility functions
+ *
+ * Following Microsoft Word's word count rules:
+ * - Chinese: 1 count per Chinese character
+ * - English: 1 count per word (space-separated)
+ * - Spaces, newlines, and punctuation are not counted
  */
 
 /**
- * 计算文本的字数（模拟 Microsoft Word 的字数统计）
- * 
- * @param text 输入文本
- * @returns 字数（不是字符数！）
+ * Count words in text (simulating Microsoft Word word count)
+ *
+ * @param text Input text
+ * @returns Word count (not character count!)
  */
 export function countWords(text: string): number {
     if (!text) return 0
@@ -24,8 +24,8 @@ export function countWords(text: string): number {
         return '' // 移除英文单词，剩下的就是中文和其他字符
     })
 
-    // 统计中文字符数量
-    // 使用 Unicode 范围匹配常用汉字 + 扩展 A/B 区
+    // Count Chinese characters
+    // Use Unicode ranges for common CJK + extended A/B
     const chineseMatches = textWithoutEnglish.match(/[\u4e00-\u9fa5\u3400-\u4dbf\u20000-\u2a6df]/g)
     const chineseCount = chineseMatches ? chineseMatches.length : 0
 
@@ -33,21 +33,21 @@ export function countWords(text: string): number {
 }
 
 /**
- * 计算文本的字符数（包括所有字符）
- * 这相当于 JavaScript 的 string.length
- * 
- * @param text 输入文本
- * @returns 字符数
+ * Count characters in text (including all characters)
+ * Equivalent to JavaScript's string.length
+ *
+ * @param text Input text
+ * @returns Character count
  */
 export function countCharacters(text: string): number {
     return text?.length || 0
 }
 
 /**
- * 计算文本的字符数（不含空格）
- * 
- * @param text 输入文本
- * @returns 字符数（不含空格）
+ * Count characters in text (excluding spaces)
+ *
+ * @param text Input text
+ * @returns Character count (excluding spaces)
  */
 export function countCharactersNoSpaces(text: string): number {
     if (!text) return 0

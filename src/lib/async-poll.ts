@@ -47,7 +47,7 @@ export function parseExternalId(externalId: string): {
     requestId: string
     providerToken?: string
 } {
-    // 标准格式：PROVIDER:TYPE:...
+    // Standard format: PROVIDER:TYPE:...
     if (externalId.startsWith('FAL:')) {
         const parts = externalId.split(':')
 
@@ -397,7 +397,7 @@ async function queryMinimaxTaskStatus(
 
         const data = await response.json()
 
-        // 检查响应
+        // Check response
         if (data.base_resp?.status_code !== 0) {
             const errMsg = data.base_resp?.status_msg || 'Unknown error'
             _ulogError(`${logPrefix} task_id=${taskId} error:`, errMsg)
@@ -476,7 +476,7 @@ async function queryMinimaxTaskStatus(
         }
     } catch (error: unknown) {
         const errorMessage = getErrorMessage(error)
-        _ulogError(`${logPrefix} task_id=${taskId} 异常:`, error)
+        _ulogError(`${logPrefix} task_id=${taskId} exception:`, error)
         return {
             status: 'failed',
             error: errorMessage
@@ -485,7 +485,7 @@ async function queryMinimaxTaskStatus(
 }
 
 /**
- * Vidu 任务轮询
+ * Vidu task polling
  */
 async function pollViduTask(
     taskId: string,
@@ -574,7 +574,7 @@ async function queryViduTaskStatus(
             _ulogError(`${logPrefix} task_id=${taskId} failed: ${errCode}`)
             return {
                 status: 'failed',
-                error: `Vidu: ${errCode}`  // 添加前缀以便错误映射识别
+                error: `Vidu: ${errCode}`  // Add prefix for error mapping
             }
         } else {
             // created, queueing, processing all treated as pending
@@ -584,7 +584,7 @@ async function queryViduTaskStatus(
         }
     } catch (error: unknown) {
         const errorMessage = getErrorMessage(error)
-        _ulogError(`${logPrefix} task_id=${taskId} 异常:`, error)
+        _ulogError(`${logPrefix} task_id=${taskId} exception:`, error)
         return {
             status: 'failed',
             error: `Vidu: ${errorMessage}`  // Add prefix for error mapping
