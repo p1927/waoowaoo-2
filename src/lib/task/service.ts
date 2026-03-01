@@ -9,15 +9,15 @@ const ACTIVE_STATUSES: TaskStatus[] = [TASK_STATUS.QUEUED, TASK_STATUS.PROCESSIN
 const taskModel = prisma.task
 
 /**
- * 校验 BullMQ Job 是否仍然活着。
- * 检查失败时（如 Redis 不可用）安全降级为 true，不阻塞正常创建流程。
+ * Check if BullMQ job is still alive.
+ * On check failure (e.g. Redis down), safely fall back to true so creation is not blocked.
  */
 async function verifyJobAlive(taskId: string): Promise<boolean> {
   try {
     const { isJobAlive } = await import('./reconcile')
     return await isJobAlive(taskId)
   } catch {
-    // Redis 异常等不可控情况 → 降级信任 DB 状态
+    // Redis down etc. → fall back to trusting DB state
     return true
   }
 }
@@ -177,7 +177,7 @@ export async function createTask(input: CreateTaskInput) {
         if (!hasTaskLocale(existing.payload)) {
           await failTaskWithMissingLocale(existing)
         } else {
-          // 校验 BullMQ Job 是否真的还活着，防止 DB 与队列状态脱节导致永久卡死
+          // Verify BullMQ job is still alive to avoid permanent stuck when DB and queue diverge
           const jobAlive = await verifyJobAlive(existing.id)
           if (jobAlive) {
             return { task: existing, deduped: true as const }
@@ -193,7 +193,7 @@ export async function createTask(input: CreateTaskInput) {
             'Queue job lost, replaced by new task',
           )
 
-          // Job 已死（terminal / missing）→ 终止孤儿任务，释放 dedupeKey，继续创建新任务
+          // Job dead (terminal/missing) → fail orphan, release dedupeKey, create new task
           await model.update({
             where: { id: existing.id },
             data: {
@@ -249,7 +249,7 @@ export async function createTask(input: CreateTaskInput) {
           if (!hasTaskLocale(collided.payload)) {
             await failTaskWithMissingLocale(collided)
           } else {
-            // P2002 竞态路径：同样校验 BullMQ Job 状态
+            // P2002 race path: also verify BullMQ job state
             const jobAlive = await verifyJobAlive(collided.id)
             if (jobAlive) {
               return { task: collided, deduped: true as const }

@@ -16,12 +16,11 @@
 export function countWords(text: string): number {
     if (!text) return 0
 
-    // 处理英文和数字：将连续的英文字母和数字视为一个"单词"
-    // 先用正则替换掉英文+数字组成的单词，同时计数
+    // Treat consecutive letters and digits as one "word"; replace and count
     let englishWordCount = 0
     const textWithoutEnglish = text.replace(/[a-zA-Z0-9]+/g, () => {
         englishWordCount++
-        return '' // 移除英文单词，剩下的就是中文和其他字符
+        return '' // Remove English words; remainder is CJK and other characters
     })
 
     // Count Chinese characters

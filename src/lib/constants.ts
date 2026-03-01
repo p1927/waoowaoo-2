@@ -57,8 +57,8 @@ export const IMAGE_MODEL_OPTIONS = [
 
 // Banana model resolution options (for 9-panel storyboard only, single image fixed at 2K)
 export const BANANA_RESOLUTION_OPTIONS = [
-  { value: '2K', label: '2K (推荐，快速)' },
-  { value: '4K', label: '4K (高清，较慢)' }
+  { value: '2K', label: '2K (recommended, fast)' },
+  { value: '4K', label: '4K (HD, slower)' }
 ]
 
 // Banana models that support resolution selection
@@ -89,19 +89,19 @@ export const SEEDANCE_BATCH_MODELS = [
   'doubao-seedance-1-0-lite-i2v-250428-batch',
 ]
 
-// 支持生成音频的模型（仅 Seedance 1.5 Pro 支持，包含批量版本）
+// Models that support audio generation (Seedance 1.5 Pro only, including batch)
 export const AUDIO_SUPPORTED_MODELS = ['doubao-seedance-1-5-pro-251215', 'doubao-seedance-1-5-pro-251215-batch']
 
-// 首尾帧视频模型（能力权威来源是 standards/capabilities；此常量仅作静态兜底展示）
+// First/last frame video models (authoritative source: standards/capabilities; this constant is for static fallback display only)
 export const FIRST_LAST_FRAME_MODELS = [
-  { value: 'doubao-seedance-1-5-pro-251215', label: 'Seedance 1.5 Pro (首尾帧)' },
-  { value: 'doubao-seedance-1-5-pro-251215-batch', label: 'Seedance 1.5 Pro (首尾帧/批量) 省50%' },
-  { value: 'doubao-seedance-1-0-pro-250528', label: 'Seedance 1.0 Pro (首尾帧)' },
-  { value: 'doubao-seedance-1-0-pro-250528-batch', label: 'Seedance 1.0 Pro (首尾帧/批量) 省50%' },
-  { value: 'doubao-seedance-1-0-lite-i2v-250428', label: 'Seedance 1.0 Lite (首尾帧)' },
-  { value: 'doubao-seedance-1-0-lite-i2v-250428-batch', label: 'Seedance 1.0 Lite (首尾帧/批量) 省50%' },
-  { value: 'veo-3.1-generate-preview', label: 'Veo 3.1 (首尾帧)' },
-  { value: 'veo-3.1-fast-generate-preview', label: 'Veo 3.1 Fast (首尾帧)' }
+  { value: 'doubao-seedance-1-5-pro-251215', label: 'Seedance 1.5 Pro (first/last frame)' },
+  { value: 'doubao-seedance-1-5-pro-251215-batch', label: 'Seedance 1.5 Pro (first/last frame, batch) 50% off' },
+  { value: 'doubao-seedance-1-0-pro-250528', label: 'Seedance 1.0 Pro (first/last frame)' },
+  { value: 'doubao-seedance-1-0-pro-250528-batch', label: 'Seedance 1.0 Pro (first/last frame, batch) 50% off' },
+  { value: 'doubao-seedance-1-0-lite-i2v-250428', label: 'Seedance 1.0 Lite (first/last frame)' },
+  { value: 'doubao-seedance-1-0-lite-i2v-250428-batch', label: 'Seedance 1.0 Lite (first/last frame, batch) 50% off' },
+  { value: 'veo-3.1-generate-preview', label: 'Veo 3.1 (first/last frame)' },
+  { value: 'veo-3.1-fast-generate-preview', label: 'Veo 3.1 Fast (first/last frame)' }
 ]
 
 export const VIDEO_RESOLUTIONS = [
@@ -110,128 +110,125 @@ export const VIDEO_RESOLUTIONS = [
 ]
 
 export const TTS_RATES = [
-  { value: '+0%', label: '正常速度 (1.0x)' },
-  { value: '+20%', label: '轻微加速 (1.2x)' },
-  { value: '+50%', label: '加速 (1.5x)' },
-  { value: '+100%', label: '快速 (2.0x)' }
+  { value: '+0%', label: 'Normal speed (1.0x)' },
+  { value: '+20%', label: 'Slight speedup (1.2x)' },
+  { value: '+50%', label: 'Faster (1.5x)' },
+  { value: '+100%', label: 'Fast (2.0x)' }
 ]
 
 export const TTS_VOICES = [
-  { value: 'zh-CN-YunxiNeural', label: '云希 (男声)', preview: '男' },
-  { value: 'zh-CN-XiaoxiaoNeural', label: '晓晓 (女声)', preview: '女' },
-  { value: 'zh-CN-YunyangNeural', label: '云扬 (男声)', preview: '男' },
-  { value: 'zh-CN-XiaoyiNeural', label: '晓伊 (女声)', preview: '女' }
+  { value: 'zh-CN-YunxiNeural', label: 'Yunxi (male)', preview: 'M' },
+  { value: 'zh-CN-XiaoxiaoNeural', label: 'Xiaoxiao (female)', preview: 'F' },
+  { value: 'zh-CN-YunyangNeural', label: 'Yunyang (male)', preview: 'M' },
+  { value: 'zh-CN-XiaoyiNeural', label: 'Xiaoyi (female)', preview: 'F' }
 ]
 
 export const ART_STYLES = [
   {
     value: 'american-comic',
-    label: '漫画风',
-    preview: '漫',
-    promptZh: '日式动漫风格',
+    label: 'Comic style',
+    preview: 'Comic',
     promptEn: 'Japanese anime style'
   },
   {
     value: 'chinese-comic',
-    label: '精致国漫',
-    preview: '国',
-    promptZh: '现代高质量漫画风格，动漫风格，细节丰富精致，线条锐利干净，质感饱满，超清，干净的画面风格，2D风格，动漫风格。',
+    label: 'Premium comic',
+    preview: 'CN',
     promptEn: 'Modern premium Chinese comic style, rich details, clean sharp line art, full texture, ultra-clear 2D anime aesthetics.'
   },
   {
     value: 'japanese-anime',
-    label: '日系动漫风',
-    preview: '日',
-    promptZh: '现代日系动漫风格，赛璐璐上色，清晰干净的线条，视觉小说CG感。高质量2D风格',
+    label: 'Japanese anime',
+    preview: 'JP',
     promptEn: 'Modern Japanese anime style, cel shading, clean line art, visual-novel CG look, high-quality 2D style.'
   },
   {
     value: 'realistic',
-    label: '真人风格',
-    preview: '实',
-    promptZh: '真实电影级画面质感，真实现实场景，色彩饱满通透，画面干净精致，真实感',
+    label: 'Realistic',
+    preview: 'Real',
     promptEn: 'Realistic cinematic look, real-world scene fidelity, rich transparent colors, clean and refined image quality.'
   }
 ]
 
 /**
- * 🔥 实时从 ART_STYLES 常量获取风格 prompt
- * 这是获取风格 prompt 的唯一正确方式，确保始终使用最新的常量定义
- * 
- * @param artStyle - 风格标识符，如 'realistic', 'american-comic' 等
- * @returns 对应的风格 prompt，如果找不到则返回空字符串
+ * Get style prompt from ART_STYLES constant (single source of truth).
+ *
+ * @param artStyle - Style key, e.g. 'realistic', 'american-comic'
+ * @param _locale - Unused; kept for API compatibility
+ * @returns The style prompt, or empty string if not found
  */
 export function getArtStylePrompt(
   artStyle: string | null | undefined,
-  locale: 'zh' | 'en',
+  _locale?: 'zh' | 'en',
 ): string {
   if (!artStyle) return ''
   const style = ART_STYLES.find(s => s.value === artStyle)
   if (!style) return ''
-  return locale === 'en' ? style.promptEn : style.promptZh
+  return style.promptEn
 }
 
-// 角色形象生成的系统后缀（始终添加到提示词末尾，不显示给用户）- 左侧面部特写+右侧三视图
-export const CHARACTER_PROMPT_SUFFIX = '角色设定图，画面分为左右两个区域：【左侧区域】占约1/3宽度，是角色的正面特写（如果是人类则展示完整正脸，如果是动物/生物则展示最具辨识度的正面形态）；【右侧区域】占约2/3宽度，是角色三视图横向排列（从左到右依次为：正面全身、侧面全身、背面全身），三视图高度一致。纯白色背景，无其他元素。'
+// Character reference sheet system suffix (appended to prompt, not shown to user): left face close-up + right side three-view
+export const CHARACTER_PROMPT_SUFFIX = 'Character reference sheet. Layout: left third = front face close-up (full face for human, most recognizable front for animal/creature); right two-thirds = three-view row (front full, side full, back full), same height. Pure white background, no other elements.'
 
-// 场景图片生成的系统后缀（已禁用四视图，直接生成单张场景图）
+// Location image system suffix (single scene image; four-view disabled)
 export const LOCATION_PROMPT_SUFFIX = ''
 
-// 角色图片生成比例（16:9横版，左侧面部特写+右侧全身）
+// Character image aspect ratio (16:9 landscape, left face + right full body)
 export const CHARACTER_IMAGE_RATIO = '16:9'
-// 角色图片尺寸（用于Seedream API）
-export const CHARACTER_IMAGE_SIZE = '3840x2160'  // 16:9 横版
-// 角色图片尺寸（用于Banana API）
+// Character image size (Seedream API)
+export const CHARACTER_IMAGE_SIZE = '3840x2160'  // 16:9 landscape
+// Character image ratio (Banana API)
 export const CHARACTER_IMAGE_BANANA_RATIO = '3:2'
 
-// 场景图片生成比例（1:1 正方形单张场景）
+// Location image aspect ratio (1:1 single scene)
 export const LOCATION_IMAGE_RATIO = '1:1'
-// 场景图片尺寸（用于Seedream API）- 4K
-export const LOCATION_IMAGE_SIZE = '4096x4096'  // 1:1 正方形 4K
-// 场景图片尺寸（用于Banana API）
+// Location image size (Seedream API) - 4K
+export const LOCATION_IMAGE_SIZE = '4096x4096'  // 1:1 4K
+// Location image ratio (Banana API)
 export const LOCATION_IMAGE_BANANA_RATIO = '1:1'
 
-// 从提示词中移除角色系统后缀（用于显示给用户）
+// Remove character system suffix from prompt (for user-facing display)
 export function removeCharacterPromptSuffix(prompt: string): string {
   if (!prompt) return ''
   return prompt.replace(CHARACTER_PROMPT_SUFFIX, '').trim()
 }
 
-// 添加角色系统后缀到提示词（用于生成图片）
+// Append character system suffix to prompt (for image generation)
 export function addCharacterPromptSuffix(prompt: string): string {
   if (!prompt) return CHARACTER_PROMPT_SUFFIX
   const cleanPrompt = removeCharacterPromptSuffix(prompt)
-  return `${cleanPrompt}${cleanPrompt ? '，' : ''}${CHARACTER_PROMPT_SUFFIX}`
+  return `${cleanPrompt}${cleanPrompt ? ', ' : ''}${CHARACTER_PROMPT_SUFFIX}`
 }
 
-// 从提示词中移除场景系统后缀（用于显示给用户）
+// Remove location system suffix from prompt (for user-facing display)
 export function removeLocationPromptSuffix(prompt: string): string {
   if (!prompt) return ''
-  return prompt.replace(LOCATION_PROMPT_SUFFIX, '').replace(/，$/, '').trim()
+  return prompt.replace(LOCATION_PROMPT_SUFFIX, '').replace(/,\s*$/, '').trim()
 }
 
-// 添加场景系统后缀到提示词（用于生成图片）
+// Append location system suffix to prompt (for image generation)
 export function addLocationPromptSuffix(prompt: string): string {
-  // 后缀为空时直接返回原提示词
+  // If suffix is empty, return prompt as-is
   if (!LOCATION_PROMPT_SUFFIX) return prompt || ''
   if (!prompt) return LOCATION_PROMPT_SUFFIX
   const cleanPrompt = removeLocationPromptSuffix(prompt)
-  return `${cleanPrompt}${cleanPrompt ? '，' : ''}${LOCATION_PROMPT_SUFFIX}`
+  return `${cleanPrompt}${cleanPrompt ? ', ' : ''}${LOCATION_PROMPT_SUFFIX}`
 }
 
 /**
- * 构建角色介绍字符串（用于发送给 AI，帮助理解"我"和称呼对应的角色）
- * @param characters - 角色列表，需要包含 name 和 introduction 字段
- * @returns 格式化的角色介绍字符串
+ * Build character introduction string for AI (maps "I" and names to characters).
+ *
+ * @param characters - List with name and introduction
+ * @returns Formatted character introduction string
  */
 export function buildCharactersIntroduction(characters: Array<{ name: string; introduction?: string | null }>): string {
-  if (!characters || characters.length === 0) return '暂无角色介绍'
+  if (!characters || characters.length === 0) return 'No character introductions'
 
   const introductions = characters
     .filter(c => c.introduction && c.introduction.trim())
-    .map(c => `- ${c.name}：${c.introduction}`)
+    .map(c => `- ${c.name}: ${c.introduction}`)
 
-  if (introductions.length === 0) return '暂无角色介绍'
+  if (introductions.length === 0) return 'No character introductions'
 
   return introductions.join('\n')
 }

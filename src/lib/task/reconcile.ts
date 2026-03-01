@@ -1,11 +1,11 @@
 /**
- * Task Reconciliation — DB ↔ BullMQ 状态对账
+ * Task Reconciliation — DB ↔ BullMQ state sync
  *
- * 解决 DB 任务状态与 BullMQ Job 状态脱节导致的任务永久卡死问题。
- * 提供三个层次的对账能力：
- *   1. isJobAlive   — 单任务即时检查（供 createTask 去重时调用）
- *   2. reconcileActiveTasks — 批量对账（供 watchdog 定时调用）
- *   3. startTaskWatchdog    — 定时巡检入口（在 instrumentation.ts 启动）
+ * Fixes tasks stuck when DB task state and BullMQ job state diverge.
+ * Three levels:
+ *   1. isJobAlive   — single-task check (used by createTask for dedup)
+ *   2. reconcileActiveTasks — batch reconcile (used by watchdog)
+ *   3. startTaskWatchdog    — watchdog entry (started in instrumentation.ts)
  */
 
 import { prisma } from '@/lib/prisma'
@@ -20,36 +20,36 @@ import {
     textQueue,
 } from './queues'
 
-// ────────────────────── 常量 ──────────────────────
+// ────────────────────── Constants ──────────────────────
 
 const ACTIVE_STATUSES = [TASK_STATUS.QUEUED, TASK_STATUS.PROCESSING]
 
-/** watchdog 巡检间隔 */
+/** Watchdog check interval */
 const WATCHDOG_INTERVAL_MS = 60_000
 
-/** processing 心跳超时阈值 */
+/** Processing heartbeat timeout */
 const PROCESSING_TIMEOUT_MS = 5 * 60_000
 
-/** 每次对账扫描上限 */
+/** Max tasks per reconcile scan */
 const RECONCILE_BATCH_SIZE = 200
 
-/** terminal 态短暂竞态保护窗口，避免 worker 刚结束时被误判为孤儿任务 */
+/** Grace window for terminal state to avoid misclassifying just-finished worker as orphan */
 const TERMINAL_RECONCILE_GRACE_MS = 90_000
 
-/** missing 态短暂竞态保护窗口，避免 createTask→enqueue 之间被误判为孤儿任务 */
+/** Grace window for missing state to avoid misclassifying createTask→enqueue gap as orphan */
 const MISSING_RECONCILE_GRACE_MS = 30_000
 
-// ────────────────────── BullMQ Job 状态检查 ──────────────────────
+// ────────────────────── BullMQ job state checks ──────────────────────
 
 type JobState = 'alive' | 'terminal' | 'missing'
 
 const ALL_QUEUES = [imageQueue, videoQueue, voiceQueue, textQueue]
 
 /**
- * 检查 BullMQ 中某个 Job 的真实状态。
- * - alive:    Job 存在且仍可执行（waiting / active / delayed / waiting-children）
- * - terminal: Job 存在但已终态（completed / failed）
- * - missing:  Job 在所有队列中均不存在
+ * Get real state of a BullMQ job.
+ * - alive:    Job exists and can still run (waiting / active / delayed / waiting-children)
+ * - terminal: Job exists but finished (completed / failed)
+ * - missing:  Job not found in any queue
  */
 async function getJobState(taskId: string): Promise<JobState> {
     for (const queue of ALL_QUEUES) {
@@ -60,10 +60,10 @@ async function getJobState(taskId: string): Promise<JobState> {
             if (state === 'completed' || state === 'failed') {
                 return 'terminal'
             }
-            // waiting | active | delayed | waiting-children → 仍然活着
+            // waiting | active | delayed | waiting-children → still alive
             return 'alive'
         } catch {
-            // 单个队列查询失败不影响其他队列
+            // One queue failure does not affect others
             continue
         }
     }
@@ -71,18 +71,18 @@ async function getJobState(taskId: string): Promise<JobState> {
 }
 
 /**
- * 检查 BullMQ Job 是否仍然活着。
- * 供 createTask 去重时调用——如果 Job 已死，则不应复用旧的 active 任务。
+ * Check if BullMQ job is still alive.
+ * Used by createTask for dedup — if job is dead, do not reuse old active task.
  */
 export async function isJobAlive(taskId: string): Promise<boolean> {
     const state = await getJobState(taskId)
     return state === 'alive'
 }
 
-// ────────────────────── 孤儿任务终止 ──────────────────────
+// ────────────────────── Orphan task termination ──────────────────────
 
 /**
- * 将一个孤儿任务标记为 failed 并发送 SSE 事件通知前端。
+ * Mark an orphan task as failed and send SSE event to frontend.
  */
 async function failOrphanedTask(
     task: {
@@ -123,7 +123,7 @@ async function failOrphanedTask(
     })
 
     if (result.count > 0) {
-        // 发送 FAILED 事件，触发前端 SSE 更新 + 数据刷新
+        // Emit FAILED event to trigger frontend SSE update and data refresh
         await publishTaskEvent({
             taskId: task.id,
             projectId: task.projectId,
@@ -135,7 +135,7 @@ async function failOrphanedTask(
             episodeId: task.episodeId,
             payload: {
                 stage: 'reconciled',
-                stageLabel: '任务已自动恢复',
+                stageLabel: 'Task auto-recovered',
                 message: errorMessage,
                 compensationFailed,
             },
@@ -146,11 +146,11 @@ async function failOrphanedTask(
     return result.count > 0
 }
 
-// ────────────────────── 批量对账 ──────────────────────
+// ────────────────────── Batch reconcile ──────────────────────
 
 /**
- * 对账所有 DB 中 active 的任务与 BullMQ 的真实状态。
- * 任何 DB 里 active 但 BullMQ 里 terminal / missing 的任务会被标记为 failed。
+ * Reconcile all DB active tasks with real BullMQ state.
+ * Any task active in DB but terminal/missing in BullMQ is marked failed.
  */
 export async function reconcileActiveTasks(): Promise<string[]> {
     const now = Date.now()
@@ -211,10 +211,10 @@ export async function reconcileActiveTasks(): Promise<string[]> {
 let watchdogTimer: ReturnType<typeof setInterval> | null = null
 
 /**
- * 启动任务 watchdog 定时器。
- * 每个巡检周期执行：
- *   1. sweepStaleTasks — 心跳超时的 processing 任务 → failed
- *   2. reconcileActiveTasks — DB active 但 BullMQ 已死的任务 → failed
+ * Start task watchdog timer.
+ * Each cycle:
+ *   1. sweepStaleTasks — processing tasks past heartbeat timeout → failed
+ *   2. reconcileActiveTasks — DB active but BullMQ job dead → failed
  */
 export function startTaskWatchdog() {
     if (watchdogTimer) return
@@ -227,7 +227,7 @@ export function startTaskWatchdog() {
 
     watchdogTimer = setInterval(async () => {
         try {
-            // 1. 清理心跳超时的 processing 任务（已有逻辑，此前未被调用）
+            // 1. Sweep processing tasks that exceeded heartbeat timeout
             const { sweepStaleTasks } = await import('./service')
             const sweptProcessing = await sweepStaleTasks({
                 processingThresholdMs: PROCESSING_TIMEOUT_MS,
@@ -244,7 +244,7 @@ export function startTaskWatchdog() {
                     episodeId: task.episodeId || null,
                     payload: {
                         stage: 'watchdog_timeout',
-                        stageLabel: '任务超时已终止',
+                        stageLabel: 'Task timed out',
                         message: task.errorMessage,
                         errorCode: task.errorCode,
                         compensationFailed: task.errorCode === 'BILLING_COMPENSATION_FAILED',
@@ -253,7 +253,7 @@ export function startTaskWatchdog() {
                 })
             }
 
-            // 2. 对账 DB vs BullMQ
+            // 2. Reconcile DB vs BullMQ
             const reconciled = await reconcileActiveTasks()
 
             const total = sweptProcessing.length + reconciled.length

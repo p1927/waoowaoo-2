@@ -185,8 +185,7 @@ export function resolveTargetState(
 }
 
 /**
- * 单次查询的 OR 条件上限。
- * 过大的 OR 列表 + ORDER BY 会导致 MySQL sort buffer 溢出（Error 1038）。
+ * Max OR conditions per query; large OR + ORDER BY can cause MySQL sort buffer overflow (Error 1038).
  */
 const QUERY_BATCH_SIZE = 50
 
@@ -215,7 +214,7 @@ export async function queryTaskTargetStates(params: {
 
   const typeFilter = typeUnion.size > 0 ? { type: { in: Array.from(typeUnion) } } : {}
 
-  // 分批查询，避免 MySQL sort buffer 溢出
+  // Batch queries to avoid MySQL sort buffer overflow
   const allRows: Array<{
     id: string
     type: string
@@ -244,7 +243,7 @@ export async function queryTaskTargetStates(params: {
         },
         ...typeFilter,
       },
-      // 不在数据库层排序，改为应用层排序以避免 sort buffer 溢出
+      // Sort in application layer to avoid sort buffer overflow
       select: {
         id: true,
         type: true,
@@ -261,7 +260,7 @@ export async function queryTaskTargetStates(params: {
     allRows.push(...rows)
   }
 
-  // 应用层按 updatedAt desc 排序（每个 target 组内排序即可）
+  // Sort by updatedAt desc in application layer (per target group)
   const grouped = new Map<string, typeof allRows>()
   for (const row of allRows) {
     const key = pairKey(row.targetType, row.targetId)
@@ -273,7 +272,7 @@ export async function queryTaskTargetStates(params: {
     }
   }
 
-  // 对每组按 updatedAt desc 排序
+  // Sort each group by updatedAt desc
   for (const group of grouped.values()) {
     group.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
   }

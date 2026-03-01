@@ -9,8 +9,7 @@ export const authOptions: any = {
   adapter: PrismaAdapter(prisma),
   // Allow access from any Host (for LAN access)
   trustHost: true,
-  // 🔥 根据 URL 协议决定是否使用 Secure Cookie
-  // 局域网 HTTP 访问时需要关闭，否则 Cookie 无法设置
+  // Use Secure Cookie based on URL protocol; disable for local HTTP so cookies can be set
   useSecureCookies: (process.env.NEXTAUTH_URL || '').startsWith('https://'),
   providers: [
     CredentialsProvider({
@@ -36,7 +35,7 @@ export const authOptions: any = {
           return null
         }
 
-        // 验证密码
+        // Verify password
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
 
         if (!isPasswordValid) {

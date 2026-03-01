@@ -211,7 +211,7 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
             status: 'FAILED',
             completed: false,
             failed: true,
-            error: data.error || '任务失败'
+            error: data.error || 'Task failed'
         }
     }
 
