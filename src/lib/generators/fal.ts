@@ -124,12 +124,12 @@ export class FalImageGenerator extends BaseImageGenerator {
         }
 
         if (hasReferenceImages) {
-            // 🔥 转换参考图片为Data URL（适配内网/本地环境）
+            // Convert reference images to Data URL (for intranet/local env)
             const dataUrls = await Promise.all(
                 referenceImages.map(async (url: string) => {
-                    // 如果已经是data URL，直接返回
+                    // If already data URL, return as-is
                     if (url.startsWith('data:')) return url
-                    // 否则转换为Data URL
+                    // Otherwise convert to Data URL
                     return await imageUrlToBase64(url)
                 })
             )
@@ -155,7 +155,7 @@ export class FalImageGenerator extends BaseImageGenerator {
             },
         })
 
-        // 提交异步任务
+        // Submit async task
         const submitResponse = await fetch(`https://queue.fal.run/${endpoint}`, {
             method: 'POST',
             headers: {
@@ -168,14 +168,14 @@ export class FalImageGenerator extends BaseImageGenerator {
 
         if (!submitResponse.ok) {
             const errorText = await submitResponse.text()
-            throw new Error(`FAL 提交失败 (${submitResponse.status}): ${errorText}`)
+            throw new Error(`FAL submit failed (${submitResponse.status}): ${errorText}`)
         }
 
         const submitData = await submitResponse.json()
         const requestId = submitData.request_id
 
         if (!requestId) {
-            throw new Error('FAL 未返回 request_id')
+            throw new Error('FAL did not return request_id')
         }
 
         return {
@@ -189,7 +189,7 @@ export class FalImageGenerator extends BaseImageGenerator {
 }
 
 // ============================================================
-// FAL 视频生成器 (Wan 2.6, Veo 3.1, Sora 2, Kling)
+// FAL video generator (Wan 2.6, Veo 3.1, Sora 2, Kling)
 // ============================================================
 
 export class FalVideoGenerator extends BaseVideoGenerator {
@@ -226,7 +226,7 @@ export class FalVideoGenerator extends BaseVideoGenerator {
             }
         }
 
-        // 获取端点
+        // Get endpoint
         const endpoint = FAL_VIDEO_ENDPOINTS[modelId]
         if (!endpoint) {
             throw new Error(`FAL_VIDEO_MODEL_UNSUPPORTED: ${modelId}`)
@@ -234,7 +234,7 @@ export class FalVideoGenerator extends BaseVideoGenerator {
         const vLogger = createScopedLogger({ module: 'worker.fal-video', action: 'fal_video_generate' })
         vLogger.info({ message: 'FAL video generation request', details: { modelId, endpoint } })
 
-        // 根据模型构建不同的请求体
+        // Build request body based on model
         let input: Record<string, unknown>
 
         switch (modelId) {
@@ -299,15 +299,15 @@ export class FalVideoGenerator extends BaseVideoGenerator {
                 externalId: `FAL:VIDEO:${endpoint}:${requestId}`  // 🔥 标准格式
             }
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : '未知错误'
-            _ulogError(`[FAL Video] 提交失败:`, message)
-            throw new Error(`FAL 视频任务提交失败: ${message}`)
+            const message = error instanceof Error ? error.message : 'Unknown error'
+            _ulogError(`[FAL Video] Submit failed:`, message)
+            throw new Error(`FAL video task submit failed: ${message}`)
         }
     }
 }
 
 // ============================================================
-// 向后兼容别名
+// Backward compatible alias
 // ============================================================
 
 export const FalBananaGenerator = FalImageGenerator

@@ -1,9 +1,9 @@
 /**
- * 统一配置服务
+ * Unified config service
  *
- * 所有 API 通过此服务获取模型配置，确保数据源一致性。
+ * All APIs get model config through this service for consistent data source.
  *
- * 优先级：项目配置 > 用户偏好 > null
+ * Priority: project config > user preference > null
  */
 
 import { prisma } from '@/lib/prisma'
@@ -19,7 +19,7 @@ import { resolveGenerationOptionsForModel } from '@/lib/model-capabilities/looku
 export type ParsedModelKey = { provider: string, modelId: string }
 
 /**
- * 解析模型复合 Key（严格模式，仅接受 provider::modelId）
+ * Parse model composite key (strict mode, only accepts provider::modelId)
  */
 export function parseModelKey(key: string | null | undefined): ParsedModelKey | null {
   const parsed = parseModelKeyStrict(key)
@@ -31,14 +31,14 @@ export function parseModelKey(key: string | null | undefined): ParsedModelKey | 
 }
 
 /**
- * 组合 provider 与 modelId 为标准复合主键。
+ * Compose provider and modelId into standard composite key.
  */
 export function composeModelKey(provider: string, modelId: string): string {
   return composeStrictModelKey(provider, modelId)
 }
 
 /**
- * 从复合 Key 中提取真正的 modelId（用于 API 调用）
+ * Extract actual modelId from composite key (for API calls)
  */
 export function extractModelId(key: string | null | undefined): string | null {
   const parsed = parseModelKey(key)
@@ -46,7 +46,7 @@ export function extractModelId(key: string | null | undefined): string | null {
 }
 
 /**
- * 从模型字段中提取标准 modelKey（provider::modelId）
+ * Extract standard modelKey from model field (provider::modelId)
  */
 export function extractModelKey(key: string | null | undefined): string | null {
   const parsed = parseModelKey(key)

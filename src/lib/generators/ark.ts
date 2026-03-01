@@ -192,7 +192,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
             }
         }
 
-        // 构建请求体
+        // Build request body
         const requestBody: {
             model: string
             prompt: string

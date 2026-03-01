@@ -119,9 +119,9 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
         const state = typeof batchRecord.state === 'string' ? batchRecord.state : 'UNKNOWN'
         logInternal('GeminiBatch', 'INFO', `Query status: ${batchName} -> ${state}`)
 
-        // 检查完成状态
+        // Check completion status
         if (state === 'JOB_STATE_SUCCEEDED') {
-            // 从 inlinedResponses 中提取图片
+            // Extract image from inlinedResponses
             const dest = asRecord(batchRecord.dest)
             const responses = Array.isArray(dest?.inlinedResponses) ? dest.inlinedResponses : []
 
@@ -141,7 +141,7 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
                         const mimeType = typeof inlineData.mimeType === 'string' ? inlineData.mimeType : 'image/png'
                         const imageUrl = `data:${mimeType};base64,${imageBase64}`
 
-                        logInternal('GeminiBatch', 'INFO', `✅ 获取到图片，MIME 类型: ${mimeType}`, { batchName })
+                        logInternal('GeminiBatch', 'INFO', `Image fetched, MIME type: ${mimeType}`, { batchName })
                         return { status: 'completed', imageUrl }
                     }
                 }
@@ -152,13 +152,13 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
             return { status: 'failed', error: `Gemini Batch failed: ${state}` }
         }
 
-        // 仍在处理中 (PENDING, RUNNING 等)
+        // Still processing (PENDING, RUNNING, etc.)
         return { status: 'pending' }
     } catch (error: unknown) {
         const message = getErrorMessage(error)
         const status = getErrorStatus(error)
         logInternal('GeminiBatch', 'ERROR', 'Query error', { batchName, error: message, status })
-        // 如果是 404 或任务不存在，标记为失败（不再重试）
+        // If 404 or task not found, mark as failed (no retry)
         if (status === 404 || message.includes('404') || message.includes('not found') || message.includes('NOT_FOUND')) {
             return { status: 'failed', error: `Batch task not found` }
         }
@@ -167,8 +167,8 @@ export async function queryGeminiBatchStatus(batchName: string, apiKey: string):
 }
 
 /**
- * 查询 Google Veo 视频任务状态
- * @param operationName 操作名称（如 operations/xxx）
+ * Query Google Veo video task status
+ * @param operationName Operation name (e.g. operations/xxx)
  * @param apiKey Google AI API Key
  */
 export async function queryGoogleVideoStatus(operationName: string, apiKey: string): Promise<TaskStatus> {
@@ -185,8 +185,8 @@ export async function queryGoogleVideoStatus(operationName: string, apiKey: stri
         operation.name = operationName
         const op = await ai.operations.getVideosOperation({ operation })
 
-        // 打印完整响应以便调试
-        logInternal('Veo', 'INFO', `${logPrefix} 原始响应`, {
+        // Log full response for debugging
+        logInternal('Veo', 'INFO', `${logPrefix} Raw response`, {
             operationName,
             done: op.done,
             hasError: !!op.error,
@@ -201,23 +201,23 @@ export async function queryGoogleVideoStatus(operationName: string, apiKey: stri
             return { status: 'pending' }
         }
 
-        // 检查操作级错误
+        // Check operation-level error
         if (op.error) {
             const errRecord = asRecord(op.error)
             const message = (typeof errRecord?.message === 'string' && errRecord.message)
                 || (typeof errRecord?.statusMessage === 'string' && errRecord.statusMessage)
-                || 'Veo 任务失败'
-            logInternal('Veo', 'ERROR', `${logPrefix} 操作级错误`, { operationName, error: op.error })
+                || 'Veo task failed'
+            logInternal('Veo', 'ERROR', `${logPrefix} Operation-level error`, { operationName, error: op.error })
             return { status: 'failed', error: message }
         }
 
         const response = op.response
         if (!response) {
-            logInternal('Veo', 'ERROR', `${logPrefix} done=true 但 response 为空`, { operationName })
-            return { status: 'failed', error: 'Veo 任务完成但响应体为空' }
+            logInternal('Veo', 'ERROR', `${logPrefix} done=true but response is empty`, { operationName })
+            return { status: 'failed', error: 'Veo task completed but response body is empty' }
         }
 
-        // 检查 RAI 内容过滤
+        // Check RAI content filtering
         const responseRecord = asRecord(response) || {}
         const raiFilteredCount = responseRecord.raiMediaFilteredCount
         const raiFilteredReasons = responseRecord.raiMediaFilteredReasons
@@ -225,15 +225,15 @@ export async function queryGoogleVideoStatus(operationName: string, apiKey: stri
         if (typeof raiFilteredCount === 'number' && raiFilteredCount > 0) {
             const reasons = Array.isArray(raiFilteredReasons)
                 ? raiFilteredReasons.join(', ')
-                : '未知原因'
-            logInternal('Veo', 'ERROR', `${logPrefix} 视频被 RAI 安全策略过滤`, {
+                : 'Unknown reason'
+            logInternal('Veo', 'ERROR', `${logPrefix} Video filtered by RAI safety policy`, {
                 operationName,
                 raiFilteredCount,
                 raiFilteredReasons: reasons,
             })
             return {
                 status: 'failed',
-                error: `Veo 视频被安全策略过滤 (${raiFilteredCount} 个视频被过滤, 原因: ${reasons})`,
+                error: `Veo video filtered by safety policy (${raiFilteredCount} videos filtered, reason: ${reasons})`,
             }
         }
 

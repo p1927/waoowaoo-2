@@ -7,7 +7,7 @@ import { prisma } from './prisma'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const authOptions: any = {
   adapter: PrismaAdapter(prisma),
-  // 🔥 允许从任意 Host 访问（解决局域网访问问题）
+  // Allow access from any Host (for LAN access)
   trustHost: true,
   // 🔥 根据 URL 协议决定是否使用 Secure Cookie
   // 局域网 HTTP 访问时需要关闭，否则 Cookie 无法设置

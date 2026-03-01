@@ -104,20 +104,20 @@ export async function updateCharacterAppearanceLabels(
                 continue
             }
 
-            // 更新每张图片的标签
+            // Update label for each image
             const newLabelText = `${characterName} - ${appearance.changeReason}`
             const newImageUrls: string[] = await Promise.all(
                 imageUrls.map(async (url) => {
                     if (!url) return ''
                     try {
-                        // 生成新的 key，避免覆盖资产中心的原图
+                        // Generate new key to avoid overwriting Asset Hub original
                         return await updateImageLabel(url, newLabelText, {
                             generateNewKey: true,
                             keyPrefix: `project-char-copy`
                         })
                     } catch (e) {
                         _ulogError(`Failed to update label for image:`, e)
-                        return url // 失败时保留原 URL
+                        return url // Keep original URL on failure
                     }
                 })
             )
@@ -137,8 +137,8 @@ export async function updateCharacterAppearanceLabels(
 }
 
 /**
- * 批量更新场景图片的标签
- * 用于从资产中心复制场景到项目时更新标签
+ * Batch update location image labels
+ * Used when copying location from Asset Hub to project
  */
 export async function updateLocationImageLabels(
     images: Array<{
@@ -155,7 +155,7 @@ export async function updateLocationImageLabels(
         }
 
         try {
-            // 生成新的 key，避免覆盖资产中心的原图
+            // Generate new key to avoid overwriting Asset Hub original
             const newImageUrl = await updateImageLabel(image.imageUrl, locationName, {
                 generateNewKey: true,
                 keyPrefix: `project-loc-copy`

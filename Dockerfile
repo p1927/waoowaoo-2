@@ -9,11 +9,16 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# Install OpenSSL for Prisma
+RUN apk add --no-cache openssl
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Prisma generate + Next.js build
+# Prisma generate + Next.js build (disable SSL verification for Prisma binary download)
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 RUN npm run build
+ENV NODE_TLS_REJECT_UNAUTHORIZED=1
 
 # ==================== Stage 3: Production ====================
 FROM node:20-alpine AS runner
@@ -21,7 +26,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN apk add --no-cache tini
+RUN apk add --no-cache tini openssl
 
 # node_modules（含 devDeps，因为 npm run start 需要 concurrently + tsx）
 COPY --from=builder /app/node_modules ./node_modules
