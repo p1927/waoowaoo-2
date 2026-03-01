@@ -138,7 +138,7 @@ export const POST = apiHandler(async (
       updateData.imageUrl = key
     }
 
-    // 更新数据库
+    // Update database
     await db.characterAppearance.update({
       where: { id: appearance.id },
       data: updateData
@@ -151,7 +151,7 @@ export const POST = apiHandler(async (
     })
 
   } else if (type === 'location') {
-    // 更新场景图片
+    // Update location image
     const location = await db.novelPromotionLocation.findUnique({
       where: { id },
       include: { images: { orderBy: { imageIndex: 'asc' } } }
@@ -161,7 +161,7 @@ export const POST = apiHandler(async (
       throw new ApiError('NOT_FOUND')
     }
 
-    // 如果指定了imageIndex，更新对应的图片记录
+    // If imageIndex specified, update corresponding image record
     if (imageIndex !== null) {
       const targetImageIndex = parseInt(imageIndex)
       const existingImage = location.images?.find((img) => img.imageIndex === targetImageIndex)
@@ -201,7 +201,7 @@ export const POST = apiHandler(async (
         imageIndex: targetImageIndex
       })
     } else {
-      // 创建新的图片记录
+      // Create new image record
       const maxIndex = location.images?.length || 0
       const created = await db.locationImage.create({
         data: {

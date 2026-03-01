@@ -329,7 +329,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                     compact={true}
                 />
 
-                {/* 删除菜单 */}
+                {/* Delete menu */}
                 {showDeleteMenu && appearanceCount > 1 && (
                     <>
                         <div className="fixed inset-0 z-10" onClick={() => setShowDeleteMenu(false)} />
@@ -340,7 +340,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                     </>
                 )}
 
-                {/* 删除确认对话框 - 多图模式也需要 */}
+                {/* Delete confirmation dialog - also for multi-image mode */}
                 {showDeleteConfirm && (
                     <div className="fixed inset-0 glass-overlay flex items-center justify-center z-50">
                         <div className="glass-surface-modal p-4 m-4 max-w-sm">
@@ -356,13 +356,13 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
         )
     }
 
-    // 单图模式
+    // Single-image mode
     return (
         <div className="glass-surface overflow-hidden relative group">
             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
             <input ref={voiceInputRef} type="file" accept="audio/*" onChange={handleUploadVoice} className="hidden" />
 
-            {/* 图片区域 */}
+            {/* Image area */}
             <div className="relative bg-[var(--glass-bg-muted)] min-h-[100px]">
                 {displayImageUrl ? (
                     <>
@@ -413,12 +413,12 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                 )}
             </div>
 
-            {/* 信息区域 */}
+            {/* Info area */}
             <div className="p-3">
                 <div className="flex items-center justify-between">
                     <h3 className="font-medium text-[var(--glass-text-primary)] text-sm truncate">{character.name}</h3>
                     <div className="flex items-center gap-1">
-                        {/* 编辑按钮 */}
+                        {/* Edit button */}
                         <button
                             onClick={() => onEdit?.(character, appearance)}
                             className="glass-btn-base glass-btn-soft h-6 w-6 rounded-md opacity-0 group-hover:opacity-100"
@@ -426,14 +426,14 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                         >
                             <AppIcon name="edit" className="w-4 h-4 text-[var(--glass-text-secondary)]" />
                         </button>
-                        {/* 删除按钮 */}
+                        {/* Delete button */}
                         <button onClick={() => appearanceCount <= 1 ? setShowDeleteConfirm(true) : setShowDeleteMenu(!showDeleteMenu)} className="glass-btn-base glass-btn-soft h-6 w-6 rounded-md text-[var(--glass-tone-danger-fg)] opacity-0 group-hover:opacity-100">
                             <AppIcon name="trash" className="w-4 h-4" />
                         </button>
                     </div>
                 </div>
 
-                {/* 形象切换 */}
+                {/* Appearance switch */}
                 {appearanceCount > 1 && (
                     <div className="flex gap-1 mt-2 overflow-x-auto">
                         {character.appearances.map((app, index) => (
@@ -457,7 +457,7 @@ export function CharacterCard({ character, onImageClick, onImageEdit, onVoiceDes
                 />
             </div>
 
-            {/* 删除确认 */}
+            {/* Delete confirmation */}
             {showDeleteConfirm && (
                 <div className="absolute inset-0 glass-overlay flex items-center justify-center z-20">
                     <div className="glass-surface-modal p-4 m-4">

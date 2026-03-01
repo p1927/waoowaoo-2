@@ -12,8 +12,8 @@ interface ProjectDataResponse {
 }
 
 /**
- * 获取项目基础数据
- * 替代原有的 useProject hook
+ * Fetch project base data
+ * Replaces original useProject hook
  */
 export function useProjectData(projectId: string | null) {
     return useQuery({

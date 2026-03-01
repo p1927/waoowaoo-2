@@ -235,7 +235,7 @@ export const GET = apiHandler(async (
     capabilityOverrides: cleanedOverrides})
 })
 
-// PATCH - 更新小说推文项目配置
+// PATCH - Update novel promotion project config
 export const PATCH = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> },
@@ -296,7 +296,7 @@ export const PATCH = apiHandler(async (
     where: { projectId },
     data: updateData})
 
-  // 同步更新用户偏好配置（配置字段）
+  // Sync update user preference config (config fields)
   const preferenceFields = [
     'analysisModel', 'characterModel', 'locationModel', 'storyboardModel',
     'editModel', 'videoModel', 'videoRatio', 'artStyle', 'ttsRate',

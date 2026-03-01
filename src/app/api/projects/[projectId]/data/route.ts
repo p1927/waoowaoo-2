@@ -34,7 +34,7 @@ export const GET = apiHandler(async (
     throw new ApiError('FORBIDDEN')
   }
 
-  // 🔥 更新最近访问时间（异步，不阻塞响应）
+  // Update last accessed time (async, non-blocking)
   prisma.project.update({
     where: { id: projectId },
     data: { lastAccessedAt: new Date() }

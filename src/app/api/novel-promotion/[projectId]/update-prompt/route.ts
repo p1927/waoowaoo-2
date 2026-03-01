@@ -9,18 +9,18 @@ export const POST = apiHandler(async (
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
   const { shotId, field, value } = await request.json()
 
-  // 验证字段
+  // Validate fields
   if (field !== 'imagePrompt' && field !== 'videoPrompt') {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 更新shot
+  // Update shot
   const updatedShot = await prisma.novelPromotionShot.update({
     where: { id: shotId },
     data: { [field]: value }

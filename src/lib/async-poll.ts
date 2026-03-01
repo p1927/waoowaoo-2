@@ -1,19 +1,18 @@
 import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core'
 
 /**
- * 统一异步任务轮询模块
- * 
- * 🔥 统一格式：PROVIDER:TYPE:REQUEST_ID
- * 
- * 例如：
+ * Unified async task polling module
+ *
+ * Standard format: PROVIDER:TYPE:REQUEST_ID
+ *
+ * Examples:
  * - FAL:VIDEO:fal-ai/wan/v2.6:abc123
  * - FAL:IMAGE:fal-ai/nano-banana-pro:def456
  * - ARK:VIDEO:task_789
  * - ARK:IMAGE:task_xyz
  * - GEMINI:BATCH:batches/ghi012
- * 
- * 注意：
- * - 仅接受标准 externalId（不再兼容历史拼装格式）
+ *
+ * Note: Only accepts standard externalId (no legacy format support)
  */
 
 import { queryFalStatus } from './async-submit'
@@ -35,11 +34,11 @@ function getErrorMessage(error: unknown): string {
         const candidate = (error as { message?: unknown }).message
         if (typeof candidate === 'string') return candidate
     }
-    return '查询异常'
+    return 'Query error'
 }
 
 /**
- * 解析 externalId 获取 provider、type 和请求信息
+ * Parse externalId to get provider, type and request info
  */
 export function parseExternalId(externalId: string): {
     provider: 'FAL' | 'ARK' | 'GEMINI' | 'GOOGLE' | 'MINIMAX' | 'VIDU' | 'OPENAI' | 'UNKNOWN'
@@ -54,12 +53,12 @@ export function parseExternalId(externalId: string): {
 
         if (parts[1] === 'VIDEO' || parts[1] === 'IMAGE') {
             if (parts.length < 4) {
-                throw new Error(`无效 FAL externalId: "${externalId}"，应为 FAL:TYPE:endpoint:requestId`)
+                throw new Error(`Invalid FAL externalId: "${externalId}", expected FAL:TYPE:endpoint:requestId`)
             }
             const endpoint = parts.slice(2, -1).join(':')
             const requestId = parts[parts.length - 1]
             if (!endpoint || !requestId) {
-                throw new Error(`无效 FAL externalId: "${externalId}"，缺少 endpoint 或 requestId`)
+                throw new Error(`Invalid FAL externalId: "${externalId}", missing endpoint or requestId`)
             }
             return {
                 provider: 'FAL',
@@ -68,7 +67,7 @@ export function parseExternalId(externalId: string): {
                 requestId,
             }
         }
-        throw new Error(`无效 FAL externalId: "${externalId}"，TYPE 仅支持 VIDEO/IMAGE`)
+        throw new Error(`Invalid FAL externalId: "${externalId}", TYPE must be VIDEO or IMAGE`)
     }
 
     if (externalId.startsWith('ARK:')) {

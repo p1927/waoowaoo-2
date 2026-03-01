@@ -84,7 +84,7 @@ function isRunningPhase(phase: string | null | undefined) {
     return phase === 'queued' || phase === 'processing'
 }
 
-// ============ 查询 Hooks ============
+// ============ Query Hooks ============
 
 /**
  * Fetch asset hub character list

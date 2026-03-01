@@ -6,7 +6,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * PUT /api/novel-promotion/[projectId]/photography-plan
- * 更新分镜组的摄影方案
+ * Update storyboard group photography plan
  */
 export const PUT = apiHandler(async (
     request: NextRequest,
@@ -14,7 +14,7 @@ export const PUT = apiHandler(async (
 ) => {
     const { projectId } = await context.params
 
-    // 🔐 统一权限验证
+    // Auth verification
     const authResult = await requireProjectAuthLight(projectId)
     if (isErrorResponse(authResult)) return authResult
 
@@ -25,7 +25,7 @@ export const PUT = apiHandler(async (
         throw new ApiError('INVALID_PARAMS')
     }
 
-    // 验证 storyboard 存在
+    // Verify storyboard exists
     const storyboard = await prisma.novelPromotionStoryboard.findUnique({
         where: { id: storyboardId }
     })
@@ -34,7 +34,7 @@ export const PUT = apiHandler(async (
         throw new ApiError('NOT_FOUND')
     }
 
-    // 更新摄影方案
+    // Update photography plan
     const photographyPlanJson = photographyPlan ? JSON.stringify(photographyPlan) : null
 
     await prisma.novelPromotionStoryboard.update({
@@ -42,7 +42,7 @@ export const PUT = apiHandler(async (
         data: { photographyPlan: photographyPlanJson }
     })
 
-    _ulogInfo('[PUT /photography-plan] 更新成功, storyboardId:', storyboardId)
+    _ulogInfo('[PUT /photography-plan] Update success, storyboardId:', storyboardId)
 
     return NextResponse.json({ success: true })
 })

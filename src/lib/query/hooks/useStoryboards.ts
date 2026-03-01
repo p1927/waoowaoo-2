@@ -146,7 +146,7 @@ export function useModifyPanelImage(projectId: string | null, episodeId: string 
 }
 
 /**
- * 生成视频
+ * Generate video
  */
 export function useGenerateVideo(projectId: string | null, episodeId: string | null) {
     const queryClient = useQueryClient()

@@ -11,7 +11,7 @@ import { apiHandler, ApiError } from '@/lib/api-errors'
 
 /**
  * POST /api/novel-promotion/[projectId]/update-asset-label
- * 更新资产图片上的黑边标识符（修改名字后调用）
+ * Update black-bar label on asset images (call after name change)
  */
 export const POST = apiHandler(async (
   request: NextRequest,
@@ -38,7 +38,7 @@ export const POST = apiHandler(async (
   }
 
   if (type === 'character') {
-    // 获取角色的所有形象
+    // Fetch all character appearances
     const character = await prisma.novelPromotionCharacter.findUnique({
       where: { id: id },
       include: { appearances: true }
@@ -116,7 +116,7 @@ export const POST = apiHandler(async (
           newLabelText
         )
 
-        // 更新数据库
+        // Update database
         await prisma.locationImage.update({
           where: { id: image.id },
           data: { imageUrl: newImageUrl }
@@ -137,8 +137,8 @@ export const POST = apiHandler(async (
 })
 
 /**
- * 更新图片的黑边标签
- * 🔥 生成新的 COS key 上传，使 URL 发生变化，浏览器缓存自动失效，前端能看到新标签
+ * Update image black-bar label
+ * Generate new COS key on upload so URL changes, browser cache invalidates, frontend sees new label
  */
 async function updateImageLabel(imageUrl: string, newLabelText: string): Promise<string> {
   const originalKey = await resolveStorageKeyFromMediaValue(imageUrl)

@@ -588,20 +588,20 @@ export async function executePhase3(
     // Build prompt
     const detailPrompt = detailPromptTemplate
         .replace('{panels_json}', JSON.stringify(planPanels, null, 2))
-        .replace('{characters_age_gender}', filteredFullDescription)  // 改用完整描述
+        .replace('{characters_age_gender}', filteredFullDescription)  // Use full description
         .replace('{locations_description}', filteredLocationsDescription)
 
     // Log full prompt sent to AI
     logAIAnalysis(session.user.id, session.user.name, projectId, projectName, {
         action: 'STORYBOARD_PHASE3_PROMPT',
-        input: { 片段标识: clipId, 完整提示词: detailPrompt },
+        input: { clipId, fullPrompt: detailPrompt },
         model: novelPromotionData.analysisModel
     })
 
     void photographyRules
     let finalPanels: StoryboardPanel[] = []
 
-    // 失败后重试一次
+    // Retry once after failure
     for (let attempt = 1; attempt <= 2; attempt++) {
         try {
             const detailResult = await executeAiTextStep({

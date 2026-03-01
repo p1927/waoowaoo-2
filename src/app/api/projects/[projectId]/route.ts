@@ -209,7 +209,7 @@ export const DELETE = apiHandler(async (
   _ulogInfo(`[DELETE] Starting project deletion: ${project.name} (${projectId})`)
   const cosKeys = await collectProjectCOSKeys(projectId)
 
-  // 2. 批量删除 COS 文件
+  // 2. Batch delete COS files
   let cosResult = { success: 0, failed: 0 }
   if (cosKeys.length > 0) {
     _ulogInfo(`[DELETE] Deleting ${cosKeys.length} COS files...`)

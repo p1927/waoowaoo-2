@@ -6,7 +6,7 @@ import { maybeSubmitLLMTask } from '@/lib/llm-observe/route-task'
 
 /**
  * POST /api/novel-promotion/[projectId]/voice-analyze
- * 台词分析（任务化）
+ * Voice line analysis (task-based)
  */
 export const POST = apiHandler(async (
   request: NextRequest,

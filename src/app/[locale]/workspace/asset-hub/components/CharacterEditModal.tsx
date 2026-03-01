@@ -2,8 +2,8 @@
 import { logError as _ulogError } from '@/lib/logging/core'
 
 /**
- * 资产中心 - 角色形象编辑弹窗
- * 与项目级资产库的 CharacterEditModal 保持一致
+ * Asset Hub - Character appearance edit modal
+ * Kept consistent with project-level CharacterEditModal
  */
 
 import { useState } from 'react'
@@ -26,7 +26,7 @@ interface CharacterEditModalProps {
     changeReason: string
     description: string
     onClose: () => void
-    onSave: () => void  // 触发生成图片
+    onSave: () => void  // Trigger image generation
 }
 
 export function CharacterEditModal({
@@ -38,7 +38,7 @@ export function CharacterEditModal({
     onClose,
     onSave
 }: CharacterEditModalProps) {
-    // 🔥 使用 React Query
+    // Use React Query
     const onRefresh = useRefreshGlobalAssets()
     const updateName = useUpdateCharacterName()
     const modifyDescription = useAiModifyCharacterDescription()
@@ -67,7 +67,7 @@ export function CharacterEditModal({
         })
         : null
 
-    // AI 修改描述
+    // AI modify description
     const handleAiModify = async () => {
         if (!aiModifyInstruction.trim()) return
 
@@ -91,7 +91,7 @@ export function CharacterEditModal({
         }
     }
 
-    // 保存名字
+    // Save name
     const handleSaveName = () => {
         if (!editingName.trim() || editingName === characterName) return
 
@@ -107,7 +107,7 @@ export function CharacterEditModal({
         )
     }
 
-    // 仅保存（不生成图片）
+    // Save only (no image generation)
     const handleSaveOnly = async () => {
         try {
             setIsSaving(true)

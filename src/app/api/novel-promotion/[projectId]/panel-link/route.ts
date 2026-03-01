@@ -3,14 +3,14 @@ import { prisma } from '@/lib/prisma'
 import { requireProjectAuthLight, isErrorResponse } from '@/lib/api-auth'
 import { apiHandler, ApiError } from '@/lib/api-errors'
 
-// POST - 更新 panel 的首尾帧链接状态
+// POST - Update panel first/last frame link state
 export const POST = apiHandler(async (
   request: NextRequest,
   context: { params: Promise<{ projectId: string }> }
 ) => {
   const { projectId } = await context.params
 
-  // 🔐 统一权限验证
+  // Auth verification
   const authResult = await requireProjectAuthLight(projectId)
   if (isErrorResponse(authResult)) return authResult
 
@@ -21,7 +21,7 @@ export const POST = apiHandler(async (
     throw new ApiError('INVALID_PARAMS')
   }
 
-  // 更新 panel 的链接状态
+  // Update panel link state
   await prisma.novelPromotionPanel.update({
     where: {
       storyboardId_panelIndex: {

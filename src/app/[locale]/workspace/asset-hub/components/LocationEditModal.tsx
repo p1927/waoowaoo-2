@@ -2,8 +2,8 @@
 import { logError as _ulogError } from '@/lib/logging/core'
 
 /**
- * 资产中心 - 场景编辑弹窗
- * 与项目级资产库的 LocationEditModal 保持一致
+ * Asset Hub - Location edit modal
+ * Kept consistent with project-level LocationEditModal
  */
 
 import { useState } from 'react'
@@ -26,7 +26,7 @@ interface LocationEditModalProps {
     imageIndex: number
     description: string
     onClose: () => void
-    onSave: () => void  // 触发生成图片
+    onSave: () => void  // Trigger image generation
 }
 
 export function LocationEditModal({
@@ -38,7 +38,7 @@ export function LocationEditModal({
     onClose,
     onSave
 }: LocationEditModalProps) {
-    // 🔥 使用 React Query
+    // Use React Query
     const onRefresh = useRefreshGlobalAssets()
     const updateName = useUpdateLocationName()
     const modifyDescription = useAiModifyLocationDescription()
@@ -67,7 +67,7 @@ export function LocationEditModal({
         })
         : null
 
-    // AI 修改描述
+    // AI modify description
     const handleAiModify = async () => {
         if (!aiModifyInstruction.trim()) return
 
@@ -107,17 +107,17 @@ export function LocationEditModal({
         )
     }
 
-    // 仅保存（不生成图片）
+    // Save only (no image generation)
     const handleSaveOnly = async () => {
         try {
             setIsSaving(true)
 
-            // 如果名字变了，先保存名字和 summary
+            // If name changed, save name and summary first
             if (editingName.trim() !== locationName) {
                 await updateName.mutateAsync({ locationId, name: editingName.trim() })
                 await updateSummary.mutateAsync({ locationId, summary: editingDescription })
             } else {
-                // 只保存 summary
+                // Save summary only
                 await updateSummary.mutateAsync({ locationId, summary: editingDescription })
             }
 
@@ -132,24 +132,24 @@ export function LocationEditModal({
         }
     }
 
-    // 保存并生成图片
+    // Save and generate image
     const handleSaveAndGenerate = async () => {
         const descToSave = editingDescription
         const nameToSave = editingName.trim()
 
-        // 立即关闭弹窗
+        // Close modal immediately
         onClose()
 
-            // 后台执行保存和生成
+            // Execute save and generate in background
             ; (async () => {
                 try {
-                    // 保存名字和描述
+                    // Save name and description
                     if (nameToSave !== locationName) {
                         await updateName.mutateAsync({ locationId, name: nameToSave })
                     }
                     await updateSummary.mutateAsync({ locationId, summary: descToSave })
 
-                    // 触发生成
+                    // Trigger generation
                     onSave()
                     onRefresh()
                 } catch (error: unknown) {

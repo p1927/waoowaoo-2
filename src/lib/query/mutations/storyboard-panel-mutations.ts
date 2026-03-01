@@ -25,7 +25,7 @@ export function useRegenerateProjectPanelImage(projectId: string) {
             if (!res.ok) {
                 const error = await res.json().catch(() => ({}))
                 if (res.status === 402) throw new Error('Insufficient balance. Please recharge first.')
-                if (res.status === 400 && String(error?.error || '').includes('敏感')) {
+                if (res.status === 400 && String(error?.error || '').toLowerCase().includes('sensitive')) {
                     throw new Error(resolveTaskErrorMessage(error, 'Content may contain sensitive information. Please modify and try again.'))
                 }
                 if (res.status === 429 || error?.code === 'RATE_LIMIT') {

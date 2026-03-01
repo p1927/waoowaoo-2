@@ -644,10 +644,10 @@ export function cosKeyToSignedUrl(key: string | null, _expires: number = SIGNED_
 }
 
 /**
- * 为Character对象添加签名URL（新版：使用独立表）
+ * Add signed URLs to Character object
  */
 export function addSignedUrlsToCharacter(character: CharacterLike) {
-  // 处理独立的 appearances 数组（已经是对象数组，不是 JSON 字符串）
+  // Process appearances array (object array, not JSON string)
   const appearances = character.appearances?.map((app) => {
     const imageUrls = decodeImageUrlsFromDb(app.imageUrls, 'appearance.imageUrls')
       .map((key) => cosKeyToSignedUrl(key))
@@ -676,16 +676,16 @@ export function addSignedUrlsToCharacter(character: CharacterLike) {
   return {
     ...character,
     appearances,
-    // 处理自定义音色的音频URL
+    // Process custom voice audio URL
     customVoiceUrl: character.customVoiceUrl ? cosKeyToSignedUrl(character.customVoiceUrl) : null
   }
 }
 
 /**
- * 为Location对象添加签名URL（新版：使用独立表）
+ * Add signed URL to Location object
  */
 export function addSignedUrlToLocation(location: LocationLike) {
-  // 处理独立的 images 数组（已经是对象数组，不是 JSON 字符串）
+  // Process images array (object array, not JSON string)
   const images = location.images?.map((img) => ({
     ...img,
     imageUrl: cosKeyToSignedUrl(img.imageUrl)
@@ -698,7 +698,7 @@ export function addSignedUrlToLocation(location: LocationLike) {
 }
 
 /**
- * 为Shot对象添加签名URL
+ * Add signed URLs to Shot object
  */
 export function addSignedUrlsToShot(shot: ShotLike) {
   return {
@@ -709,7 +709,7 @@ export function addSignedUrlsToShot(shot: ShotLike) {
 }
 
 /**
- * 为AssetLibraryCharacter对象添加签名URL
+ * Add signed URL to AssetLibraryCharacter object
  */
 export function addSignedUrlToAssetCharacter(character: { imageUrl: string | null } & UnknownRecord) {
   return {
@@ -719,7 +719,7 @@ export function addSignedUrlToAssetCharacter(character: { imageUrl: string | nul
 }
 
 /**
- * 为AssetLibraryLocation对象添加签名URL
+ * Add signed URL to AssetLibraryLocation object
  */
 export function addSignedUrlToAssetLocation(location: { imageUrl: string | null } & UnknownRecord) {
   return {
@@ -729,11 +729,11 @@ export function addSignedUrlToAssetLocation(location: { imageUrl: string | null 
 }
 
 /**
- * 为Storyboard对象添加签名URL
- * 仅使用 panel.imageUrl 作为唯一图片来源
+ * Add signed URLs to Storyboard object
+ * Uses panel.imageUrl as sole image source
  */
 export function addSignedUrlsToStoryboard(storyboard: StoryboardLike) {
-  // 处理独立的 Panel 记录（Panel 表是唯一数据源）
+  // Process Panel records (Panel table is sole data source)
   let panels: PanelLike[] = []
   if (storyboard.panels && Array.isArray(storyboard.panels)) {
     panels = storyboard.panels.map((dbPanel) => {
@@ -746,14 +746,14 @@ export function addSignedUrlsToStoryboard(storyboard: StoryboardLike) {
         } catch { }
       }
 
-      // panel.imageUrl 为唯一数据源
+      // panel.imageUrl is sole data source
       const imageKey = dbPanel.imageUrl
       let finalImageUrl: string | null = null
       if (imageKey) {
         finalImageUrl = cosKeyToSignedUrl(imageKey)
       }
 
-      // 🔥 处理candidateImages：转换COS key为签名URL，保留PENDING项不变
+      // Process candidateImages: convert COS key to signed URL, keep PENDING items unchanged
       let signedCandidateImages = dbPanel.candidateImages
       if (signedCandidateImages) {
         try {
@@ -761,9 +761,9 @@ export function addSignedUrlsToStoryboard(storyboard: StoryboardLike) {
           if (Array.isArray(candidates)) {
             const signedCandidates = candidates.map((candidate) => {
               if (typeof candidate !== 'string') return candidate
-              // PENDING开头的保持不变（还在生成中）
+              // PENDING prefix stays unchanged (still generating)
               if (candidate.startsWith('PENDING:')) return candidate
-              // 已完成的转换为签名URL
+              // Completed ones convert to signed URL
               return cosKeyToSignedUrl(candidate) || candidate
             })
             signedCandidateImages = JSON.stringify(signedCandidates)
@@ -774,23 +774,23 @@ export function addSignedUrlsToStoryboard(storyboard: StoryboardLike) {
       return {
         ...dbPanel,
         imageUrl: finalImageUrl,
-        // 两步分镜流程：黑白线稿URL
+        // Two-step storyboard: sketch image URL
         sketchImageUrl: cosKeyToSignedUrl(dbPanel.sketchImageUrl),
         videoUrl: dbPanel.videoUrl && !dbPanel.videoUrl.startsWith('http')
           ? getSignedUrl(dbPanel.videoUrl, 7200)
           : dbPanel.videoUrl,
-        // 口型同步视频URL
+        // Lip sync video URL
         lipSyncVideoUrl: dbPanel.lipSyncVideoUrl && !dbPanel.lipSyncVideoUrl.startsWith('http')
           ? getSignedUrl(dbPanel.lipSyncVideoUrl, 7200)
           : dbPanel.lipSyncVideoUrl,
-        // 🔥 候选图签名URL
+        // Candidate image signed URLs
         candidateImages: signedCandidateImages,
         historyCount: panelHistoryCount
       }
     })
   }
 
-  // 计算整组分镜的历史版本数量
+  // Count storyboard history versions
   let historyCount = 0
   if (storyboard.imageHistory) {
     try {
@@ -808,12 +808,12 @@ export function addSignedUrlsToStoryboard(storyboard: StoryboardLike) {
 }
 
 /**
- * 为Project对象的所有资源添加签名URL
+ * Add signed URLs to all Project resources
  */
 export function addSignedUrlsToProject(project: ProjectLike) {
   return {
     ...project,
-    // 处理audioUrl字段(用于novel-promotion的TTS音频)
+    // Process audioUrl (for novel-promotion TTS)
     audioUrl: project.audioUrl ? getSignedUrl(project.audioUrl) : project.audioUrl,
     characters: project.characters?.map(addSignedUrlsToCharacter) || [],
     locations: project.locations?.map(addSignedUrlToLocation) || [],
@@ -823,9 +823,9 @@ export function addSignedUrlsToProject(project: ProjectLike) {
 }
 
 /**
- * 将COS Key或URL转换为Base64格式
- * @param keyOrUrl COS Key（例如：images/xxx.png）或完整URL
- * @returns Base64格式字符串（data:image/png;base64,...）
+ * Convert COS Key or URL to Base64
+ * @param keyOrUrl COS Key (e.g. images/xxx.png) or full URL
+ * @returns Base64 string (data:image/png;base64,...)
  */
 export async function imageUrlToBase64(keyOrUrl: string): Promise<string> {
   try {

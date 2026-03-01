@@ -88,7 +88,7 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
         <div className="fixed inset-0 glass-overlay flex items-center justify-center z-50 p-4">
             <div className="glass-surface-modal max-w-lg w-full max-h-[85vh] overflow-y-auto">
                 <div className="p-6">
-                    {/* 标题 */}
+                    {/* Title */}
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-semibold text-[var(--glass-text-primary)]">
                             {t('modal.newLocation')}
@@ -102,7 +102,7 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
                     </div>
 
                     <div className="space-y-5">
-                        {/* AI 设计区域 */}
+                        {/* AI design area */}
                         <div className="glass-surface-soft border border-[var(--glass-stroke-base)] rounded-xl p-4 space-y-3">
                             <div className="flex items-center gap-2 text-sm font-semibold text-[var(--glass-text-primary)]">
                                 <SparklesIcon className="w-4 h-4" />
@@ -143,7 +143,7 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
                             </p>
                         </div>
 
-                        {/* 场景名称 */}
+                        {/* Location name */}
                         <div className="space-y-2">
                             <label className="glass-field-label block">
                                 {t('modal.locationNameLabel')}
@@ -194,7 +194,7 @@ export function AddLocationModal({ folderId, onClose, onSuccess }: AddLocationMo
                         </div>
                     </div>
 
-                    {/* 按钮区 */}
+                    {/* Button area */}
                     <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-[var(--glass-stroke-base)]">
                         <button
                             onClick={onClose}
