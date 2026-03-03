@@ -2,8 +2,11 @@
  * Volcengine Ark LLM (Responses API) wrapper
  */
 
+const DEFAULT_ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
+
 export interface ArkResponsesOptions {
     apiKey: string
+    baseUrl?: string
     model: string
     input: unknown[]
     thinking?: {
@@ -104,7 +107,7 @@ function extractArkUsage(data: unknown): { promptTokens: number; completionToken
 
 export async function arkResponsesCompletion(options: ArkResponsesOptions): Promise<ArkResponsesResult> {
     if (!options.apiKey) {
-        throw new Error('Please configure Volcengine Ark API Key')
+        throw new Error('Please configure Ark API Key')
     }
 
     const thinking = options.thinking
@@ -114,7 +117,8 @@ export async function arkResponsesCompletion(options: ArkResponsesOptions): Prom
         }
         : undefined
 
-    const response = await fetch('https://ark.cn-beijing.volces.com/api/v3/responses', {
+    const arkBaseUrl = options.baseUrl?.trim() || DEFAULT_ARK_BASE_URL
+    const response = await fetch(`${arkBaseUrl}/responses`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

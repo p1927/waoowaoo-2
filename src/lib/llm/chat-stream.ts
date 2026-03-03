@@ -50,8 +50,24 @@ type OpenAIStreamWithFinal = AsyncIterable<unknown> & {
   finalChatCompletion?: () => Promise<OpenAI.Chat.Completions.ChatCompletion>
 }
 
+const DEFAULT_ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
+
+function isNonVolcengineArk(baseUrl: string | undefined): boolean {
+  return !!baseUrl && !baseUrl.includes('volces.com')
+}
+
+function normalizeArkModelId(modelId: string, baseUrl: string | undefined): string {
+  if (isNonVolcengineArk(baseUrl) && modelId.startsWith('doubao-')) {
+    return modelId.slice('doubao-'.length)
+  }
+  return modelId
+}
+
 function supportsArkReasoningEffort(modelId: string): boolean {
-  return modelId === 'doubao-seed-1-8-251228' || modelId.startsWith('doubao-seed-2-0-')
+  return modelId === 'doubao-seed-1-8-251228'
+    || modelId === 'seed-1-8-251228'
+    || modelId.startsWith('doubao-seed-2-0-')
+    || modelId.startsWith('seed-2-0-')
 }
 
 export async function chatCompletionStream(
@@ -207,10 +223,11 @@ export async function chatCompletionStream(
 
 
     if (providerKey === 'ark') {
-      const { apiKey } = await getProviderConfig(userId, provider)
+      const config = await getProviderConfig(userId, provider)
+      const arkModelId = normalizeArkModelId(resolvedModelId, config.baseUrl)
       const client = new OpenAI({
-        baseURL: 'https://ark.cn-beijing.volces.com/api/v3',
-        apiKey,
+        baseURL: config.baseUrl || DEFAULT_ARK_BASE_URL,
+        apiKey: config.apiKey,
       })
       const useReasoning = options.reasoning ?? true
       const extraParams: Record<string, unknown> = {}
@@ -222,7 +239,7 @@ export async function chatCompletionStream(
 
       emitStreamStage(callbacks, streamStep, 'streaming', provider)
       const stream = await client.chat.completions.create({
-        model: resolvedModelId,
+        model: arkModelId,
         messages,
         temperature: options.temperature ?? 0.7,
         max_completion_tokens: 65535,

@@ -41,8 +41,24 @@ function errorMessage(error: unknown): string {
   return 'unknown error'
 }
 
+const DEFAULT_ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
+
+function isNonVolcengineArk(baseUrl: string | undefined): boolean {
+  return !!baseUrl && !baseUrl.includes('volces.com')
+}
+
+function normalizeArkModelId(modelId: string, baseUrl: string | undefined): string {
+  if (isNonVolcengineArk(baseUrl) && modelId.startsWith('doubao-')) {
+    return modelId.slice('doubao-'.length)
+  }
+  return modelId
+}
+
 function supportsArkReasoningEffort(modelId: string): boolean {
-  return modelId === 'doubao-seed-1-8-251228' || modelId.startsWith('doubao-seed-2-0-')
+  return modelId === 'doubao-seed-1-8-251228'
+    || modelId === 'seed-1-8-251228'
+    || modelId.startsWith('doubao-seed-2-0-')
+    || modelId.startsWith('seed-2-0-')
 }
 
 export async function chatCompletion(
@@ -178,10 +194,11 @@ export async function chatCompletion(
 
 
       if (providerKey === 'ark') {
-        const { apiKey } = await getProviderConfig(userId, provider)
+        const config = await getProviderConfig(userId, provider)
+        const arkModelId = normalizeArkModelId(resolvedModelId, config.baseUrl)
         const client = new OpenAI({
-          baseURL: 'https://ark.cn-beijing.volces.com/api/v3',
-          apiKey,
+          baseURL: config.baseUrl || DEFAULT_ARK_BASE_URL,
+          apiKey: config.apiKey,
         })
         const extraParams: Record<string, unknown> = {}
         if (supportsArkReasoningEffort(resolvedModelId)) {
@@ -191,7 +208,7 @@ export async function chatCompletion(
         }
 
         const completion = await client.chat.completions.create({
-          model: resolvedModelId,
+          model: arkModelId,
           messages: messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
           temperature,
           max_completion_tokens: 65535,

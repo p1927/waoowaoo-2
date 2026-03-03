@@ -229,7 +229,9 @@ export async function queryFalStatus(endpoint: string, requestId: string, apiKey
  * @param taskId Ark task ID
  * @param apiKey ARK API Key
  */
-export async function queryArkVideoStatus(taskId: string, apiKey: string): Promise<{
+const DEFAULT_ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
+
+export async function queryArkVideoStatus(taskId: string, apiKey: string, baseUrl?: string): Promise<{
     status: string
     completed: boolean
     failed: boolean
@@ -237,11 +239,12 @@ export async function queryArkVideoStatus(taskId: string, apiKey: string): Promi
     error?: string
 }> {
     if (!apiKey) {
-        throw new Error('Please configure Volcano Engine API Key')
+        throw new Error('Please configure Ark API Key')
     }
 
+    const arkBaseUrl = baseUrl?.trim() || DEFAULT_ARK_BASE_URL
     const response = await fetch(
-        `https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/${taskId}`,
+        `${arkBaseUrl}/contents/generations/tasks/${taskId}`,
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -307,12 +310,14 @@ export type AsyncTaskType = 'video' | 'image' | 'tts' | 'lipsync'
  * @param taskId Task ID
  * @param apiKey API Key
  * @param endpoint FAL endpoint (FAL only)
+ * @param baseUrl Optional Ark base URL (Ark only)
  */
 export async function queryAsyncTaskStatus(
     provider: AsyncTaskProvider,
     taskId: string,
     apiKey: string,
-    endpoint?: string
+    endpoint?: string,
+    baseUrl?: string
 ): Promise<{
     status: string
     completed: boolean
@@ -323,7 +328,7 @@ export async function queryAsyncTaskStatus(
     if (provider === 'fal' && endpoint) {
         return queryFalStatus(endpoint, taskId, apiKey)
     } else if (provider === 'ark') {
-        return queryArkVideoStatus(taskId, apiKey)
+        return queryArkVideoStatus(taskId, apiKey, baseUrl)
     }
 
     return {

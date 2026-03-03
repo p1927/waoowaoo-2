@@ -147,7 +147,8 @@ export class ArkImageGenerator extends BaseImageGenerator {
     protected async doGenerate(params: ImageGenerateParams): Promise<GenerateResult> {
         const { userId, prompt, referenceImages = [], options = {} } = params
 
-        const { apiKey } = await getProviderConfig(userId, 'ark')
+        const providerConfig = await getProviderConfig(userId, (options as ArkImageOptions).provider || 'ark')
+        const { apiKey, baseUrl: arkBaseUrl } = providerConfig
         const {
             aspectRatio,
             modelId = 'doubao-seedream-4-5-251128',
@@ -231,6 +232,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
         // Call ARK API
         const arkData = await arkImageGeneration(requestBody, {
             apiKey,
+            baseUrl: arkBaseUrl,
             logPrefix: '[ARK Image]'
         })
 
@@ -255,7 +257,8 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
     protected async doGenerate(params: VideoGenerateParams): Promise<GenerateResult> {
         const { userId, imageUrl, prompt = '', options = {} } = params
 
-        const { apiKey } = await getProviderConfig(userId, 'ark')
+        const providerConfig = await getProviderConfig(userId, (options as ArkVideoOptions).provider || 'ark')
+        const { apiKey, baseUrl: arkBaseUrl } = providerConfig
         const {
             modelId = 'doubao-seedance-1-0-pro-fast-251015',
             resolution,
@@ -478,6 +481,7 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
         try {
             const taskData = await arkCreateVideoTask(requestBody, {
                 apiKey,
+                baseUrl: arkBaseUrl,
                 logPrefix: '[ARK Video]'
             })
 

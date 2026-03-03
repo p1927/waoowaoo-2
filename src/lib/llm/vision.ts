@@ -126,7 +126,7 @@ export async function chatCompletionWithVision(
       }
 
       if (providerKey === 'ark') {
-        const { apiKey } = await getProviderConfig(userId, provider)
+        const { apiKey, baseUrl: arkBaseUrl } = await getProviderConfig(userId, provider)
         const { imageUrlToBase64 } = await import('../cos')
 
         const content: ArkVisionContentItem[] = []
@@ -148,9 +148,13 @@ export async function chatCompletionWithVision(
         }
 
         const thinkingType = reasoning ? 'enabled' : 'disabled'
+        const arkModelId = (arkBaseUrl && !arkBaseUrl.includes('volces.com') && resolvedModelId.startsWith('doubao-'))
+          ? resolvedModelId.slice('doubao-'.length)
+          : resolvedModelId
         const { text, usage } = await arkResponsesCompletion({
           apiKey,
-          model: resolvedModelId,
+          baseUrl: arkBaseUrl,
+          model: arkModelId,
           input: [{ role: 'user', content }],
           thinking: { type: thinkingType },
         })
@@ -194,8 +198,8 @@ export async function chatCompletionWithVision(
             _ulogInfo('[LLM Vision] Converting local image to Base64')
           } catch (e) {
             _ulogError('[LLM Vision] Local image conversion failed:', e)
-            const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-            finalUrl = `${baseUrl}${url}`
+            const port = process.env.PORT || '3000'
+            finalUrl = `${process.env.APP_INTERNAL_URL || `http://localhost:${port}`}${url}`
           }
         }
         content.push({ type: 'image_url', image_url: { url: finalUrl } })

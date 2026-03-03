@@ -9,7 +9,11 @@ import { logInfo as _ulogInfo, logError as _ulogError } from '@/lib/logging/core
  * - Detailed error logging
  */
 
-const ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
+const DEFAULT_ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
+
+function resolveArkBaseUrl(baseUrl?: string): string {
+    return baseUrl?.trim() || DEFAULT_ARK_BASE_URL
+}
 
 // Timeout
 const DEFAULT_TIMEOUT_MS = 60 * 1000  // 60s
@@ -260,11 +264,10 @@ async function fetchWithTimeout(
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 
-    // Local mode: relative URLs need full base
     let fullUrl = url
     if (url.startsWith('/')) {
-        // Server fetch needs full URL; use localhost:3000 as base
-        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+        const port = process.env.PORT || '3000'
+        const baseUrl = process.env.APP_INTERNAL_URL || `http://localhost:${port}`
         fullUrl = `${baseUrl}${url}`
     }
 
@@ -358,23 +361,25 @@ export async function arkImageGeneration(
     request: ArkImageGenerationRequest,
     options?: {
         apiKey: string  // Required
+        baseUrl?: string
         timeoutMs?: number
         maxRetries?: number
         logPrefix?: string
     }
 ): Promise<ArkImageGenerationResponse> {
     if (!options?.apiKey) {
-        throw new Error('Please configure Volcengine Ark API Key')
+        throw new Error('Please configure Ark API Key')
     }
 
     const {
         apiKey,
+        baseUrl,
         timeoutMs = DEFAULT_TIMEOUT_MS,
         maxRetries = MAX_RETRIES,
         logPrefix = '[Ark Image]'
     } = options
 
-    const url = `${ARK_BASE_URL}/images/generations`
+    const url = `${resolveArkBaseUrl(baseUrl)}/images/generations`
 
     _ulogInfo(`${logPrefix} Starting image generation, model: ${request.model}`)
     _ulogInfo(`${logPrefix} Request params:`, JSON.stringify({
@@ -418,24 +423,26 @@ export async function arkCreateVideoTask(
     request: ArkVideoTaskRequest,
     options: {
         apiKey: string  // Required
+        baseUrl?: string
         timeoutMs?: number
         maxRetries?: number
         logPrefix?: string
     }
 ): Promise<{ id: string; [key: string]: unknown }> {
     if (!options.apiKey) {
-        throw new Error('Please configure Volcengine Ark API Key')
+        throw new Error('Please configure Ark API Key')
     }
     validateArkVideoTaskRequest(request)
 
     const {
         apiKey,
+        baseUrl,
         timeoutMs = DEFAULT_TIMEOUT_MS,
         maxRetries = MAX_RETRIES,
         logPrefix = '[Ark Video]'
     } = options
 
-    const url = `${ARK_BASE_URL}/contents/generations/tasks`
+    const url = `${resolveArkBaseUrl(baseUrl)}/contents/generations/tasks`
 
     _ulogInfo(`${logPrefix} Creating video task, model: ${request.model}`)
 
@@ -472,23 +479,25 @@ export async function arkQueryVideoTask(
     taskId: string,
     options: {
         apiKey: string  // Required
+        baseUrl?: string
         timeoutMs?: number
         maxRetries?: number
         logPrefix?: string
     }
 ): Promise<ArkVideoTaskResponse> {
     if (!options.apiKey) {
-        throw new Error('Please configure Volcengine Ark API Key')
+        throw new Error('Please configure Ark API Key')
     }
 
     const {
         apiKey,
+        baseUrl,
         timeoutMs = DEFAULT_TIMEOUT_MS,
         maxRetries = MAX_RETRIES,
         logPrefix = '[Ark Video]'
     } = options
 
-    const url = `${ARK_BASE_URL}/contents/generations/tasks/${taskId}`
+    const url = `${resolveArkBaseUrl(baseUrl)}/contents/generations/tasks/${taskId}`
 
     const response = await fetchWithRetry(
         url,

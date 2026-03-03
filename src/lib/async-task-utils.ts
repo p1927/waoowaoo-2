@@ -273,19 +273,23 @@ export async function queryGoogleVideoStatus(operationName: string, apiKey: stri
     }
 }
 
+const DEFAULT_ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
+
 /**
  * Query Seedance video task status.
  * @param taskId Task ID
- * @param apiKey Volcengine API Key
+ * @param apiKey Ark API Key
+ * @param baseUrl Optional Ark base URL (defaults to Volcengine China)
  */
-export async function querySeedanceVideoStatus(taskId: string, apiKey: string): Promise<TaskStatus> {
+export async function querySeedanceVideoStatus(taskId: string, apiKey: string, baseUrl?: string): Promise<TaskStatus> {
     if (!apiKey) {
-        throw new Error('Please configure Volcengine API Key')
+        throw new Error('Please configure Ark API Key')
     }
 
+    const arkBaseUrl = baseUrl?.trim() || DEFAULT_ARK_BASE_URL
     try {
         const queryResponse = await fetch(
-            `https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/${taskId}`,
+            `${arkBaseUrl}/contents/generations/tasks/${taskId}`,
             {
                 method: 'GET',
                 headers: {

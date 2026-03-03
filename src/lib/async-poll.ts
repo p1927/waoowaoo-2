@@ -320,8 +320,8 @@ async function pollArkTask(
     taskId: string,
     userId: string
 ): Promise<PollResult> {
-    const { apiKey } = await getProviderConfig(userId, 'ark')
-    const result = await querySeedanceVideoStatus(taskId, apiKey)
+    const { apiKey, baseUrl } = await getProviderConfig(userId, 'ark')
+    const result = await querySeedanceVideoStatus(taskId, apiKey, baseUrl)
 
     return {
         status: result.status,

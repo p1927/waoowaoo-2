@@ -26,8 +26,8 @@ type OpenAIImageEditSize =
 
 function toAbsoluteUrlIfNeeded(value: string): string {
   if (!value.startsWith('/')) return value
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-  return `${baseUrl}${value}`
+  const port = process.env.PORT || '3000'
+  return `${process.env.APP_INTERNAL_URL || `http://localhost:${port}`}${value}`
 }
 
 function parseDataUrl(value: string): { mimeType: string; base64: string } | null {

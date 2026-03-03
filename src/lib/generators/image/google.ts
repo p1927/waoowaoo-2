@@ -92,8 +92,8 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
                     // Local mode fix: relative path needs full URL
                     let fullUrl = imageData
                     if (imageData.startsWith('/')) {
-                        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-                        fullUrl = `${baseUrl}${imageData}`
+                        const port = process.env.PORT || '3000'
+                        fullUrl = `${process.env.APP_INTERNAL_URL || `http://localhost:${port}`}${imageData}`
                     }
                     const base64DataUrl = await getImageBase64Cached(fullUrl)
                     const base64Start = base64DataUrl.indexOf(';base64,')
@@ -160,13 +160,16 @@ export class GoogleGeminiImageGenerator extends BaseImageGenerator {
             }
         }
 
-        // Check failure reason
         const finishReason = candidate?.finishReason
+        const partTypes = parts.map(p => p.inlineData ? 'inlineData' : p.text ? 'text' : 'unknown')
+        const textContent = parts.filter(p => p.text).map(p => p.text).join(' ').slice(0, 300)
+        _ulogWarn(`[Gemini Image] No image in response. finishReason=${finishReason}, parts=[${partTypes.join(',')}], text="${textContent}"`)
+
         if (finishReason === 'IMAGE_SAFETY' || finishReason === 'SAFETY') {
             throw new Error('Content filtered by safety policy')
         }
 
-        throw new Error('Gemini did not return image')
+        throw new Error(`Gemini did not return image (finishReason=${finishReason}, parts=${partTypes.length})`)
     }
 }
 

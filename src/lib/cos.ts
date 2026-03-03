@@ -119,7 +119,8 @@ export function toFetchableUrl(inputUrl: string): string {
     return inputUrl
   }
   if (inputUrl.startsWith('/')) {
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    const port = process.env.PORT || '3000'
+    const baseUrl = process.env.APP_INTERNAL_URL || `http://localhost:${port}`
     return `${baseUrl}${inputUrl}`
   }
   return inputUrl

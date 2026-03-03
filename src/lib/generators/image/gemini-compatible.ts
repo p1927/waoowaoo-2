@@ -96,8 +96,8 @@ export class GeminiCompatibleImageGenerator extends BaseImageGenerator {
                     // Local mode: relative path needs full URL
                     let fullUrl = imageData
                     if (imageData.startsWith('/')) {
-                        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-                        fullUrl = `${baseUrl}${imageData}`
+                        const port = process.env.PORT || '3000'
+                        fullUrl = `${process.env.APP_INTERNAL_URL || `http://localhost:${port}`}${imageData}`
                     }
                     const base64DataUrl = await getImageBase64Cached(fullUrl)
                     const base64Start = base64DataUrl.indexOf(';base64,')
