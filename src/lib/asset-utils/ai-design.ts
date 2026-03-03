@@ -7,13 +7,13 @@ import { logError as _ulogError } from '@/lib/logging/core'
 import { executeAiTextStep } from '@/lib/ai-runtime'
 import { withTextBilling } from '@/lib/billing'
 import { buildPrompt, PROMPT_IDS } from '@/lib/prompt-i18n'
-import type { Locale } from '@/i18n/routing'
+import type { ContentLocale } from '@/lib/prompt-i18n'
 
 export type AssetType = 'character' | 'location'
 
 export interface AIDesignOptions {
     userId: string
-    locale: Locale
+    locale: ContentLocale
     analysisModel: string
     userInstruction: string
     assetType: AssetType

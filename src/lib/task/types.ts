@@ -1,4 +1,4 @@
-import type { Locale } from '@/i18n/routing'
+import type { ContentLocale } from '@/lib/prompt-i18n'
 
 export const TASK_STATUS = {
   QUEUED: 'queued',
@@ -110,7 +110,7 @@ export type TaskBillingInfo =
 export type TaskJobData = {
   taskId: string
   type: TaskType
-  locale: Locale
+  locale: ContentLocale
   projectId: string
   episodeId?: string | null
   targetType: string

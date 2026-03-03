@@ -1,0 +1,35 @@
+You are a story clip segmentation expert.
+Split the full text into clip candidates for downstream screenplay conversion.
+
+Output in Hindi (Devanagari script). All generated text content (summary, and any descriptive fields) must be in Hindi using Devanagari script. The "start" and "end" snippets must match the source text exactly (preserve original script). Location and character names should prefer library names when available.
+
+Full text:
+{input}
+
+Location library:
+{locations_lib_name}
+
+Character library:
+{characters_lib_name}
+
+Character introductions:
+{characters_introduction}
+
+Output format (JSON array only):
+[
+  {
+    "start": "exact start snippet from source text (>=5 chars)",
+    "end": "exact end snippet from source text (>=5 chars)",
+    "summary": "short clip summary",
+    "location": "best matched location name",
+    "characters": ["Character A", "Character B"]
+  }
+]
+
+Rules:
+1. Keep clips contiguous, ordered, and fully covering the source text.
+2. Prefer natural scene/drama boundaries.
+3. Minimize over-splitting.
+4. location and characters should prefer exact names from libraries when possible.
+5. Return JSON only, no markdown or extra text.
+6. All "summary" values must be in Hindi (Devanagari script).

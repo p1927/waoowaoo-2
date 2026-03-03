@@ -14,7 +14,7 @@ import { TASK_EVENT_TYPE, type TaskBillingInfo, type TaskType } from './types'
 import { buildDefaultTaskBillingInfo, isBillableTaskType, InsufficientBalanceError, prepareTaskBilling } from '@/lib/billing'
 import { ApiError } from '@/lib/api-errors'
 import { getTaskFlowMeta } from '@/lib/llm-observe/stage-pipeline'
-import type { Locale } from '@/i18n/routing'
+import type { ContentLocale } from '@/lib/prompt-i18n'
 import { attachTaskToRun, createRun } from '@/lib/run-runtime/service'
 import { isAiTaskType, workflowTypeFromTaskType } from '@/lib/run-runtime/workflow'
 
@@ -85,7 +85,7 @@ export function normalizeTaskPayload(type: TaskType, payload?: Record<string, un
 
 export async function submitTask(params: {
   userId: string
-  locale: Locale
+  locale: ContentLocale
   projectId: string
   episodeId?: string | null
   type: TaskType

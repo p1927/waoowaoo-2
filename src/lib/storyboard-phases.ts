@@ -9,7 +9,7 @@
 import { executeAiTextStep } from '@/lib/ai-runtime'
 import { logAIAnalysis } from '@/lib/logging/semantic'
 import { buildCharactersIntroduction } from '@/lib/constants'
-import type { Locale } from '@/i18n/routing'
+import type { ContentLocale } from '@/lib/prompt-i18n'
 import { getPromptTemplate, PROMPT_IDS } from '@/lib/prompt-i18n'
 
 // Phase types
@@ -260,7 +260,7 @@ export async function executePhase1(
     session: SessionAsset,
     projectId: string,
     projectName: string,
-    locale: Locale,
+    locale: ContentLocale,
     taskId?: string
 ): Promise<PhaseResult> {
     const clipId = formatClipId(clip)
@@ -395,7 +395,7 @@ export async function executePhase2(
     session: SessionAsset,
     projectId: string,
     projectName: string,
-    locale: Locale,
+    locale: ContentLocale,
     taskId?: string
 ): Promise<PhaseResult> {
     const clipId = formatClipId(clip)
@@ -481,7 +481,7 @@ export async function executePhase2Acting(
     session: SessionAsset,
     projectId: string,
     projectName: string,
-    locale: Locale,
+    locale: ContentLocale,
     taskId?: string
 ): Promise<PhaseResult> {
     const clipId = formatClipId(clip)
@@ -568,7 +568,7 @@ export async function executePhase3(
     session: SessionAsset,
     projectId: string,
     projectName: string,
-    locale: Locale,
+    locale: ContentLocale,
     taskId?: string
 ): Promise<PhaseResult> {
     const clipId = formatClipId(clip)
