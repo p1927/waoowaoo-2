@@ -1,6 +1,30 @@
 [
   {
     "modelType": "image",
+    "provider": "ark",
+    "modelId": "doubao-seedream-4-0-250828",
+    "capabilities": {
+      "image": {
+        "resolutionOptions": [
+          "4K"
+        ]
+      }
+    }
+  },
+  {
+    "modelType": "image",
+    "provider": "ark",
+    "modelId": "doubao-seedream-4-5-251128",
+    "capabilities": {
+      "image": {
+        "resolutionOptions": [
+          "4K"
+        ]
+      }
+    }
+  },
+  {
+    "modelType": "image",
     "provider": "fal",
     "modelId": "banana-2",
     "capabilities": {

@@ -91,6 +91,8 @@ services:
       LLM_STREAM_EPHEMERAL_ENABLED: "true"
       # Node options for dev
       NODE_OPTIONS: "--no-deprecation"
+      # Allow connections to LLM providers with non-standard certificate chains (dev only)
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
     ports:
       - "13000:3000"
       - "13010:3010"

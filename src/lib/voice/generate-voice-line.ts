@@ -112,11 +112,68 @@ function extractGoogleLanguageCode(voiceName: string): string {
   return 'en-US'
 }
 
+const MP3_BITRATE_TABLE: Record<number, ReadonlyArray<number>> = {
+  // MPEG1 Layer III bitrate index → kbps (index 0 = free, 15 = bad)
+  3: [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0],
+}
+
 function getMp3DurationFromBuffer(buffer: Buffer): number {
-  // MP3 bitrate estimation: assume 128kbps for a reasonable estimate
-  const bitrate = 128
-  const durationSec = (buffer.length * 8) / (bitrate * 1000)
+  let totalBits = 0
+  let totalFrames = 0
+  let offset = 0
+
+  // Skip ID3v2 tag if present
+  if (buffer.length > 10 && buffer[0] === 0x49 && buffer[1] === 0x44 && buffer[2] === 0x33) {
+    const tagSize =
+      ((buffer[6] & 0x7f) << 21) |
+      ((buffer[7] & 0x7f) << 14) |
+      ((buffer[8] & 0x7f) << 7) |
+      (buffer[9] & 0x7f)
+    offset = 10 + tagSize
+  }
+
+  // Sample first N frames to compute average bitrate
+  const maxFramesToSample = 64
+  while (offset < buffer.length - 4 && totalFrames < maxFramesToSample) {
+    if (buffer[offset] !== 0xff || (buffer[offset + 1] & 0xe0) !== 0xe0) {
+      offset++
+      continue
+    }
+    const bitrateIndex = (buffer[offset + 2] >> 4) & 0x0f
+    if (bitrateIndex === 0 || bitrateIndex === 15) {
+      offset++
+      continue
+    }
+    const bitrate = MP3_BITRATE_TABLE[3]?.[bitrateIndex]
+    if (!bitrate) {
+      offset++
+      continue
+    }
+    totalBits += bitrate
+    totalFrames++
+
+    // Advance past this frame (MPEG1 Layer III: frameSize = 144 * bitrate * 1000 / sampleRate + padding)
+    const paddingBit = (buffer[offset + 2] >> 1) & 0x01
+    const sampleRateIndex = (buffer[offset + 2] >> 2) & 0x03
+    const sampleRates = [44100, 48000, 32000]
+    const sampleRate = sampleRates[sampleRateIndex] || 44100
+    const frameSize = Math.floor((144 * bitrate * 1000) / sampleRate) + paddingBit
+    offset += Math.max(frameSize, 1)
+  }
+
+  if (totalFrames === 0) {
+    return Math.round((buffer.length * 8) / (32 * 1000) * 1000)
+  }
+
+  const avgBitrateKbps = totalBits / totalFrames
+  const durationSec = (buffer.length * 8) / (avgBitrateKbps * 1000)
   return Math.round(durationSec * 1000)
+}
+
+const GOOGLE_TTS_MAX_RETRIES = 3
+
+function isRetryableHttpStatus(status: number): boolean {
+  return status === 429 || status === 408 || status >= 500
 }
 
 async function generateVoiceWithGoogleTTS(params: {
@@ -129,36 +186,50 @@ async function generateVoiceWithGoogleTTS(params: {
 
   _ulogInfo(`Google TTS: Generating with voice=${voiceName}, lang=${languageCode}`)
 
-  const response = await fetch(`${GOOGLE_TTS_URL}?key=${encodeURIComponent(params.apiKey)}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      input: { text: params.text },
-      voice: { languageCode, name: voiceName },
-      audioConfig: { audioEncoding: 'MP3' },
-    }),
-  })
+  let lastError: Error | null = null
 
-  if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`Google Cloud TTS failed (${response.status}): ${errorText}`)
+  for (let attempt = 1; attempt <= GOOGLE_TTS_MAX_RETRIES; attempt++) {
+    const response = await fetch(`${GOOGLE_TTS_URL}?key=${encodeURIComponent(params.apiKey)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: { text: params.text },
+        voice: { languageCode, name: voiceName },
+        audioConfig: { audioEncoding: 'MP3' },
+      }),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      lastError = new Error(`Google Cloud TTS failed (${response.status}): ${errorText}`)
+
+      if (attempt < GOOGLE_TTS_MAX_RETRIES && isRetryableHttpStatus(response.status)) {
+        const delayMs = 1000 * Math.pow(2, attempt - 1)
+        _ulogInfo(`Google TTS: Attempt ${attempt}/${GOOGLE_TTS_MAX_RETRIES} failed (${response.status}), retrying in ${delayMs}ms`)
+        await new Promise(resolve => setTimeout(resolve, delayMs))
+        continue
+      }
+      throw lastError
+    }
+
+    const data = (await response.json()) as { audioContent?: string }
+    if (!data.audioContent) {
+      throw new Error('Google Cloud TTS did not return audio content')
+    }
+
+    const audioData = Buffer.from(data.audioContent, 'base64')
+    return {
+      audioData,
+      audioDuration: getMp3DurationFromBuffer(audioData),
+    }
   }
 
-  const data = (await response.json()) as { audioContent?: string }
-  if (!data.audioContent) {
-    throw new Error('Google Cloud TTS did not return audio content')
-  }
-
-  const audioData = Buffer.from(data.audioContent, 'base64')
-  return {
-    audioData,
-    audioDuration: getMp3DurationFromBuffer(audioData),
-  }
+  throw lastError ?? new Error('Google Cloud TTS failed after retries')
 }
 
 function matchCharacterBySpeaker(
   speaker: string,
-  characters: Array<{ name: string; customVoiceUrl?: string | null }>
+  characters: Array<{ name: string; customVoiceUrl?: string | null; voiceId?: string | null }>
 ) {
   const exactMatch = characters.find((character) => character.name === speaker)
   if (exactMatch) return exactMatch
@@ -210,7 +281,7 @@ export async function generateVoiceLine(params: {
     throw new Error('Novel promotion project not found')
   }
 
-  let speakerVoices: Record<string, { audioUrl?: string | null }> = {}
+  let speakerVoices: Record<string, { audioUrl?: string | null; voiceId?: string | null; voiceType?: string | null }> = {}
   if (episode?.speakerVoices) {
     try {
       speakerVoices = JSON.parse(episode.speakerVoices)
@@ -231,8 +302,12 @@ export async function generateVoiceLine(params: {
 
   if (providerKey === 'google') {
     const { apiKey } = await getProviderConfig(params.userId, 'google')
+    const character = matchCharacterBySpeaker(line.speaker, projectData.characters || [])
+    const speakerVoice = speakerVoices[line.speaker]
+    const resolvedVoice = character?.voiceId || speakerVoice?.voiceId || undefined
     generated = await generateVoiceWithGoogleTTS({
       text,
+      voice: resolvedVoice ?? undefined,
       apiKey,
     })
   } else if (providerKey === 'fal') {

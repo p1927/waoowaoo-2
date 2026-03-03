@@ -156,13 +156,24 @@ export abstract class BaseVideoGenerator implements VideoGenerator {
 
 export abstract class BaseAudioGenerator implements AudioGenerator {
     async generate(params: AudioGenerateParams): Promise<GenerateResult> {
-        try {
-            return await this.doGenerate(params)
-        } catch (error: unknown) {
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : 'Speech generation failed'
+        const maxRetries = 2
+        let lastError: unknown = null
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                return await this.doGenerate(params)
+            } catch (error: unknown) {
+                lastError = error
+                const message = error instanceof Error ? error.message : String(error)
+                _ulogWarn(`[Audio Generator] Attempt ${attempt}/${maxRetries} failed: ${message}`)
+                if (attempt === maxRetries) break
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
             }
+        }
+
+        return {
+            success: false,
+            error: lastError instanceof Error ? lastError.message : 'Speech generation failed'
         }
     }
 

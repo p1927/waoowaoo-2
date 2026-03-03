@@ -26,15 +26,29 @@ interface PanelData {
 export function createProjectFromPanels(
     episodeId: string,
     panels: PanelData[],
-    voiceLines?: Array<{ id: string; speaker: string; content: string; audioUrl?: string | null }>
+    voiceLines?: Array<{
+        id: string
+        speaker: string
+        content: string
+        audioUrl?: string | null
+        matchedPanelId?: string | null
+    }>
 ): VideoEditorProject {
     // Panels that have video
     const videoPanels = panels.filter(p => p.videoUrl)
 
+    const voiceByPanelId = new Map<string, NonNullable<typeof voiceLines>[number]>()
+    if (voiceLines) {
+        for (const vl of voiceLines) {
+            if (vl.matchedPanelId) {
+                voiceByPanelId.set(vl.matchedPanelId, vl)
+            }
+        }
+    }
+
     // Build video clips
     const timeline: VideoClip[] = videoPanels.map((panel, index) => {
-        // Match voice by index
-        const matchedVoice = voiceLines?.[index]
+        const matchedVoice = (panel.id && voiceByPanelId.get(panel.id)) || voiceLines?.[index]
 
         return {
             id: `clip_${panel.id || panel.storyboardId}_${panel.panelIndex ?? index}`,

@@ -4,8 +4,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install OpenSSL for Prisma
-RUN apk add --no-cache openssl tini
+# Install OpenSSL, CA certificates, and tini
+RUN apk add --no-cache openssl ca-certificates tini
 
 # Copy package files
 COPY package.json package-lock.json ./
@@ -16,10 +16,8 @@ RUN npm ci
 # Copy Prisma schema (needed for generate)
 COPY prisma ./prisma
 
-# Generate Prisma Client (disable SSL verification for Prisma binary download)
-ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-RUN npx prisma generate
-ENV NODE_TLS_REJECT_UNAUTHORIZED=1
+# Generate Prisma Client (inline TLS override for binary download only)
+RUN NODE_TLS_REJECT_UNAUTHORIZED=0 npx prisma generate
 
 # Copy rest of the files (will be overridden by volumes in docker-compose.dev.yml)
 COPY . .
