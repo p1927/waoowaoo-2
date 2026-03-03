@@ -173,7 +173,7 @@ export default function ProfilePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [transactionPagination, setTransactionPagination] = useState<TransactionPagination | null>(null)
   const [projects, setProjects] = useState<ProjectCost[]>([])
-  const [currency, setCurrency] = useState('CNY')
+  const [currency, setCurrency] = useState('USD')
   const [selectedProject, setSelectedProject] = useState<string>('all')
   const [projectDetails, setProjectDetails] = useState<ProjectDetails | null>(null)
   const [loading, setLoading] = useState(true)

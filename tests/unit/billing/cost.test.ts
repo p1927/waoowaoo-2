@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  USD_TO_CNY,
   calcImage,
   calcLipSync,
   calcText,
@@ -12,7 +11,7 @@ import {
 describe('billing/cost', () => {
   it('calculates text cost by known model price table', () => {
     const cost = calcText('anthropic/claude-sonnet-4', 1_000_000, 1_000_000)
-    expect(cost).toBeCloseTo((3 + 15) * USD_TO_CNY, 8)
+    expect(cost).toBeCloseTo(3 + 15, 8)
   })
 
   it('throws when text model pricing is unknown', () => {
@@ -26,8 +25,8 @@ describe('billing/cost', () => {
   it('supports resolution-aware video pricing', () => {
     const cost720 = calcVideo('doubao-seedance-1-0-pro-fast-251015', '720p', 2)
     const cost1080 = calcVideo('doubao-seedance-1-0-pro-fast-251015', '1080p', 2)
-    expect(cost720).toBeCloseTo(0.86, 8)
-    expect(cost1080).toBeCloseTo(2.06, 8)
+    expect(cost720).toBeCloseTo(0.119444, 4)
+    expect(cost1080).toBeCloseTo(0.286111, 4)
     expect(() => calcVideo('doubao-seedance-1-0-pro-fast-251015', '2k', 1)).toThrow('Unsupported video resolution pricing')
     expect(() => calcVideo('unknown-video-model', '720p', 1)).toThrow('Unknown video model pricing')
   })
@@ -44,8 +43,8 @@ describe('billing/cost', () => {
       duration: 12,
     })
 
-    expect(shortDuration).toBeCloseTo(0.292, 8)
-    expect(longDuration).toBeCloseTo(8.808, 8)
+    expect(shortDuration).toBeCloseTo(0.040556, 4)
+    expect(longDuration).toBeCloseTo(1.223333, 4)
   })
 
   it('uses Ark 1.5 official default generateAudio=true when audio is omitted', () => {
@@ -59,8 +58,8 @@ describe('billing/cost', () => {
       generateAudio: false,
     })
 
-    expect(defaultAudio).toBeCloseTo(1.73, 8)
-    expect(muteAudio).toBeCloseTo(0.86, 8)
+    expect(defaultAudio).toBeCloseTo(0.240278, 4)
+    expect(muteAudio).toBeCloseTo(0.119444, 4)
   })
 
   it('supports Ark Seedance 1.0 Lite i2v pricing and duration scaling', () => {
@@ -75,8 +74,8 @@ describe('billing/cost', () => {
       duration: 12,
     })
 
-    expect(shortDuration).toBeCloseTo(0.196, 8)
-    expect(longDuration).toBeCloseTo(5.88, 8)
+    expect(shortDuration).toBeCloseTo(0.027222, 4)
+    expect(longDuration).toBeCloseTo(0.816667, 4)
   })
 
   it('rejects unsupported Ark capability values before pricing', () => {
@@ -104,9 +103,9 @@ describe('billing/cost', () => {
       duration: 6,
     })
 
-    expect(hailuoNormal).toBeCloseTo(2.0, 8)
-    expect(hailuoFirstLast).toBeCloseTo(4.0, 8)
-    expect(t2v).toBeCloseTo(3.0, 8)
+    expect(hailuoNormal).toBeCloseTo(0.277778, 4)
+    expect(hailuoFirstLast).toBeCloseTo(0.555556, 4)
+    expect(t2v).toBeCloseTo(0.416667, 4)
     expect(() => calcVideo('minimax-hailuo-02', '512p', 1, {
       generationMode: 'firstlastframe',
       resolution: '512p',

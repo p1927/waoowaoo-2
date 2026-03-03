@@ -102,17 +102,17 @@ function getModelPriceTexts(model: CustomModel, t: ProviderCardTranslator): stri
     && Number.isFinite(model.priceOutput)
   ) {
     return [
-      t('priceInput', { amount: `¥${formatPriceAmount(model.priceInput)}` }),
-      t('priceOutput', { amount: `¥${formatPriceAmount(model.priceOutput)}` }),
+      t('priceInput', { amount: `$${formatPriceAmount(model.priceInput)}` }),
+      t('priceOutput', { amount: `$${formatPriceAmount(model.priceOutput)}` }),
     ]
   }
 
   const label = typeof model.priceLabel === 'string' ? model.priceLabel.trim() : ''
   if (label) {
-    return [label === '--' ? t('priceUnavailable') : `¥${label}`]
+    return [label === '--' ? t('priceUnavailable') : `$${label}`]
   }
   if (typeof model.price === 'number' && Number.isFinite(model.price) && model.price > 0) {
-    return [`¥${formatPriceAmount(model.price)}`]
+    return [`$${formatPriceAmount(model.price)}`]
   }
   return [t('priceUnavailable')]
 }
@@ -187,7 +187,7 @@ export function ProviderAdvancedFields({
               placeholder={t('pricingOutputLabel')}
               className="glass-input-base px-3 py-1.5 text-[12px] font-mono"
             />
-            <span className="shrink-0 text-[11px] text-[var(--glass-text-tertiary)]">¥/M tokens</span>
+            <span className="shrink-0 text-[11px] text-[var(--glass-text-tertiary)]">$/M tokens</span>
           </div>
         )
       }
@@ -455,6 +455,7 @@ function ModelRow({
 }: ModelRowProps) {
   const priceTexts = getModelPriceTexts(model, t)
   const priceText = priceTexts.join(' / ')
+  const isLivePrice = model.priceSource === 'live'
   const isComingSoonModel = isPresetComingSoonModel(model.provider, model.modelId)
   const rowDisabledClass = model.enabled ? '' : 'opacity-50'
 
@@ -513,6 +514,9 @@ function ModelRow({
                 </span>
               )}
               <span className="shrink-0 text-[11px] text-[var(--glass-text-tertiary)]">{priceText}</span>
+              {isLivePrice && (
+                <span className="shrink-0 rounded bg-emerald-500/15 px-1 py-0.5 text-[9px] font-semibold leading-none text-emerald-600" title="Real-time pricing from provider API">LIVE</span>
+              )}
             </div>
             <span className="break-all text-[11px] text-[var(--glass-text-tertiary)]">{model.modelId}</span>
           </div>

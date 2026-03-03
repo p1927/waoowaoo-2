@@ -429,7 +429,7 @@ export async function recordShadowUsage(
           type: 'shadow_consume',
           amount: 0,
           balanceAfter: toMoneyNumber(balance.balance),
-          description: `[SHADOW] ${params.action} - ${params.model} - ¥${params.cost.toFixed(4)}${metadataSummary ? ` | ${metadataSummary}` : ''}`,
+          description: `[SHADOW] ${params.action} - ${params.model} - $${params.cost.toFixed(4)}${metadataSummary ? ` | ${metadataSummary}` : ''}`,
           relatedId: null,
           freezeId: null,
           projectId: params.projectId || null,
@@ -519,7 +519,7 @@ export async function addBalance(userId: string, amount: number, reasonOrOptions
       })
     })
 
-    _ulogInfo(`[Balance] add balance success: userId=${userId}, amount=¥${amount}, reason=${options.reason || 'N/A'}`)
+    _ulogInfo(`[Balance] add balance success: userId=${userId}, amount=$${amount}, reason=${options.reason || 'N/A'}`)
     return true
   } catch (error) {
     _ulogError('[Balance] add balance failed:', error)

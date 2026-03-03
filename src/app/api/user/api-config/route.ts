@@ -29,6 +29,11 @@ import {
   type PricingApiType,
 } from '@/lib/model-pricing/catalog'
 import { getBillingMode } from '@/lib/billing/mode'
+import {
+  fetchAllLivePricing,
+  buildLivePricingDisplayKey,
+  type LivePricingEntry,
+} from '@/lib/model-pricing/live-pricing'
 
 type ApiModeType = 'gemini-sdk' | 'openai-official'
 type DefaultModelField =
@@ -77,6 +82,7 @@ interface StoredModel {
   priceLabel?: string
   priceInput?: number
   priceOutput?: number
+  priceSource?: 'catalog' | 'live'
   capabilities?: ModelCapabilities
   customPricing?: StoredModelCustomPricing
 }
@@ -87,6 +93,7 @@ interface PricingDisplayItem {
   label: string
   input?: number
   output?: number
+  source?: 'catalog' | 'live'
 }
 
 type PricingDisplayMap = Record<string, PricingDisplayItem>
@@ -222,7 +229,7 @@ function applyVideoDurationRangeIfNeeded(input: {
   }
 }
 
-function buildPricingDisplayMap(): PricingDisplayMap {
+function buildPricingDisplayMap(liveEntries: LivePricingEntry[] = []): PricingDisplayMap {
   const map: PricingDisplayMap = {}
   const entries = listBuiltinPricingCatalog()
 
@@ -272,6 +279,30 @@ function buildPricingDisplayMap(): PricingDisplayMap {
         : `${formatPriceAmount(min)}~${formatPriceAmount(max)}`,
       ...(typeof input === 'number' ? { input } : {}),
       ...(typeof output === 'number' ? { output } : {}),
+      source: 'catalog',
+    }
+  }
+
+  for (const live of liveEntries) {
+    const key = buildLivePricingDisplayKey(live.modelType, live.provider, live.modelId)
+    if (live.inputPerMillion !== undefined && live.outputPerMillion !== undefined) {
+      const liveMin = Math.min(live.inputPerMillion, live.outputPerMillion)
+      const liveMax = Math.max(live.inputPerMillion, live.outputPerMillion)
+      map[key] = {
+        min: liveMin,
+        max: liveMax,
+        label: live.label,
+        input: live.inputPerMillion,
+        output: live.outputPerMillion,
+        source: 'live',
+      }
+    } else if (live.perUnit !== undefined) {
+      map[key] = {
+        min: live.perUnit,
+        max: live.perUnit,
+        label: live.label,
+        source: 'live',
+      }
     }
   }
 
@@ -369,6 +400,7 @@ function withDisplayPricing(model: StoredModel, map: PricingDisplayMap): StoredM
     priceLabel: display.label,
     ...(typeof display.input === 'number' ? { priceInput: display.input } : {}),
     ...(typeof display.output === 'number' ? { priceOutput: display.output } : {}),
+    priceSource: display.source,
   }
 }
 
@@ -1166,7 +1198,11 @@ export const GET = apiHandler(async () => {
   const billingMode = await getBillingMode()
   const parsedModels = parseStoredModels(pref?.customModels)
   const models = billingMode === 'OFF' ? parsedModels : sanitizeModelsForBilling(parsedModels)
-  const pricingDisplay = buildPricingDisplayMap()
+
+  const falProvider = providers.find((p) => p.id === 'fal')
+  const falApiKey = falProvider?.apiKey || null
+  const liveEntries = await fetchAllLivePricing({ falApiKey })
+  const pricingDisplay = buildPricingDisplayMap(liveEntries)
   const pricedModels = models.map((model) => withDisplayPricing(model, pricingDisplay))
 
   // For each gemini-compatible provider, inject unsaved Google preset models (disabled, with full capabilities)

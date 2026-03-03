@@ -48,6 +48,7 @@ export interface CustomModel {
     priceLabel?: string
     priceInput?: number
     priceOutput?: number
+    priceSource?: 'catalog' | 'live'
     enabled: boolean
     capabilities?: ModelCapabilities
     customPricing?: CustomModelPricing
@@ -59,6 +60,7 @@ export interface PricingDisplayItem {
     label: string
     input?: number
     output?: number
+    source?: 'catalog' | 'live'
 }
 
 export type PricingDisplayMap = Record<string, PricingDisplayItem>

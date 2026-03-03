@@ -12,8 +12,8 @@ const ACTION_KEY_PATTERN = /^[a-z][a-z0-9_]*$/
 /**
  * Extract action key from BalanceTransaction.description
  * Supported formats:
- *   "[SHADOW] modify_asset_image - gemini-compatible:... - ¥0.96"
- *   "modify_asset_image - gemini-compatible:... - ¥0.96"
+ *   "[SHADOW] modify_asset_image - gemini-compatible:... - $0.96"
+ *   "modify_asset_image - gemini-compatible:... - $0.96"
  * Returns action key (e.g. "modify_asset_image"), or null on parse failure
  */
 function extractActionFromDescription(description: string | null): string | null {
