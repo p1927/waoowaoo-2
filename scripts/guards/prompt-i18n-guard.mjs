@@ -17,7 +17,7 @@ const allowedPromptTemplateReaders = new Set([
 const languageDirectiveAllowList = new Set([
   'scripts/guards/prompt-i18n-guard.mjs',
 ])
-const languageDirectivePattern = /请用中文|中文输出|use Chinese|output in Chinese/i
+const languageDirectivePattern = /请用中文|中文输出|use Chinese|output in Chinese|use Hindi|output in Hindi|use Sanskrit|output in Sanskrit/i
 
 function fail(title, details = []) {
   console.error(`\n[prompt-i18n-guard] ${title}`)
@@ -97,7 +97,7 @@ function collectLanguageDirectiveViolations() {
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index]
       if (languageDirectivePattern.test(line)) {
-        violations.push(`${relPath}:${index + 1} English template cannot require Chinese output`)
+        violations.push(`${relPath}:${index + 1} English template cannot contain hardcoded language directives`)
       }
     }
   }
@@ -105,10 +105,12 @@ function collectLanguageDirectiveViolations() {
   return violations
 }
 
+const LOCALE_SUFFIXES = ['.en.txt', '.hi.txt', '.sa.txt']
+
 function collectLegacyPromptFiles() {
   return walk(path.join(root, 'lib', 'prompts'))
     .map((fullPath) => toRel(fullPath))
-    .filter((relPath) => relPath.endsWith('.txt') && !relPath.endsWith('.zh.txt') && !relPath.endsWith('.en.txt'))
+    .filter((relPath) => relPath.endsWith('.txt') && !LOCALE_SUFFIXES.some((suffix) => relPath.endsWith(suffix)))
 }
 
 function verifyPromptCatalogCoverage() {
@@ -123,15 +125,14 @@ function verifyPromptCatalogCoverage() {
     fail('No prompt pathStem found in catalog.ts')
   }
 
+  const requiredLocales = ['en', 'hi', 'sa']
   const missing = []
   for (const stem of stems) {
-    const zhPath = path.join(root, 'lib', 'prompts', `${stem}.zh.txt`)
-    const enPath = path.join(root, 'lib', 'prompts', `${stem}.en.txt`)
-    if (!fs.existsSync(zhPath)) {
-      missing.push(`missing zh template: lib/prompts/${stem}.zh.txt`)
-    }
-    if (!fs.existsSync(enPath)) {
-      missing.push(`missing en template: lib/prompts/${stem}.en.txt`)
+    for (const locale of requiredLocales) {
+      const localePath = path.join(root, 'lib', 'prompts', `${stem}.${locale}.txt`)
+      if (!fs.existsSync(localePath)) {
+        missing.push(`missing ${locale} template: lib/prompts/${stem}.${locale}.txt`)
+      }
     }
   }
 

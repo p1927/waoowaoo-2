@@ -5,7 +5,7 @@ User request:
 {user_input}
 
 Requirements:
-1. Output one complete Sanskrit appearance prompt (Devanagari script).
+1. Output one complete Sanskrit (Devanagari script) appearance prompt.
 2. Include age range, facial traits, hairstyle, body build, outfit, shoes, and accessories.
 3. Keep it visual and concrete, no story narration.
 4. Do not include expression, action, background, or camera language.

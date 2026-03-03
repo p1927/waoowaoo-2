@@ -99,7 +99,7 @@ const TYPE_COLORS: Record<string, { bg: string, text: string, border: string }> 
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
-  return date.toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleString('en-US', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 function getCurrencySymbol(currency: string): string {

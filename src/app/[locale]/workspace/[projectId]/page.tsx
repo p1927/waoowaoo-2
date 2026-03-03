@@ -96,7 +96,7 @@ export default function ProjectDetailPage() {
     const getNum = (name: string) => { const m = name.match(/\d+/); return m ? parseInt(m[0], 10) : Infinity }
     return [...(novelPromotionData?.episodes ?? [])].sort((a, b) => {
       const diff = getNum(a.name) - getNum(b.name)
-      return diff !== 0 ? diff : a.name.localeCompare(b.name, 'zh')
+      return diff !== 0 ? diff : a.name.localeCompare(b.name, 'en')
     })
   }, [novelPromotionData?.episodes])
 

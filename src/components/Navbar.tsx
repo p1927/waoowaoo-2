@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import LanguageSwitcher from './LanguageSwitcher'
+import ContentLanguageSelector from './ContentLanguageSelector'
 import { AppIcon } from '@/components/ui/icons'
 
 export default function Navbar() {
@@ -54,6 +55,7 @@ export default function Navbar() {
                   <AppIcon name="userRoundCog" className="w-5 h-5" />
                   {t('profile')}
                 </Link>
+                <ContentLanguageSelector />
                 <LanguageSwitcher />
               </>
 
@@ -71,6 +73,7 @@ export default function Navbar() {
                 >
                   {t('signup')}
                 </Link>
+                <ContentLanguageSelector />
                 <LanguageSwitcher />
               </>
             )}

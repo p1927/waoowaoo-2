@@ -169,19 +169,10 @@ export const PRESET_PROVIDERS: Omit<Provider, 'apiKey' | 'hasApiKey'>[] = [
     { id: 'qwen', name: 'Qwen' },
 ]
 
-const ZH_PROVIDER_NAME_MAP: Record<string, string> = {
-    ark: 'Volcengine Ark',
-    minimax: 'MiniMax',
-    vidu: 'Vidu',
-}
-
-function isZhLocale(locale?: string): boolean {
-    return typeof locale === 'string' && locale.toLowerCase().startsWith('zh')
-}
-
-export function resolvePresetProviderName(providerId: string, fallbackName: string, locale?: string): string {
-    if (!isZhLocale(locale)) return fallbackName
-    return ZH_PROVIDER_NAME_MAP[providerId] ?? fallbackName
+export function resolvePresetProviderName(providerId: string, fallbackName: string, _locale?: string): string {
+    void providerId
+    void _locale
+    return fallbackName
 }
 
 /**

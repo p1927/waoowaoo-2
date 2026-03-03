@@ -1,11 +1,12 @@
 import type { QueryClient, QueryKey } from '@tanstack/react-query'
 import { resolveTaskErrorMessage } from '@/lib/task/error-message'
 
-/** Extract locale prefix from current page URL (/zh/... → zh, /en/... → en), default zh */
+/** Read content language from localStorage, falling back to URL locale, default en */
 export function getPageLocale(): string {
-  if (typeof window === 'undefined') return 'zh'
-  const match = window.location.pathname.match(/^\/(zh|en)(\/|$)/)
-  return match?.[1] ?? 'zh'
+  if (typeof window === 'undefined') return 'en'
+  const stored = localStorage.getItem('waoowaoo_content_locale')
+  if (stored === 'en' || stored === 'hi' || stored === 'sa') return stored
+  return 'en'
 }
 
 /** Inject Accept-Language into RequestInit, do not override if already present */

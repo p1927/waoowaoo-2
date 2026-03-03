@@ -12,8 +12,8 @@ export interface VoiceDesignInput {
     previewText: string
     /** Optional voice name */
     preferredName?: string
-    /** Language, default zh */
-    language?: 'zh' | 'en'
+    /** Language, default hi */
+    language?: 'en' | 'hi' | 'sa'
 }
 
 export interface VoiceDesignResult {
@@ -48,7 +48,7 @@ export async function createVoiceDesign(input: VoiceDesignInput, apiKey: string)
             voice_prompt: input.voicePrompt,
             preview_text: input.previewText,
             preferred_name: input.preferredName || 'custom_voice',
-            language: input.language || 'zh'
+            language: input.language || 'hi'
         },
         parameters: {
             sample_rate: 24000,

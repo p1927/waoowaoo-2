@@ -763,7 +763,7 @@ model GlobalVoice {
   customVoiceMedia MediaObject? @relation("GlobalVoiceCustomVoiceMedia", fields: [customVoiceMediaId], references: [id], onDelete: SetNull)
   voicePrompt    String? // Prompt when AI designing
   gender         String? // male | female | neutral
-  language       String   @default("zh")
+  language       String   @default("hi")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

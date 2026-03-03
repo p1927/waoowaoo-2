@@ -40,3 +40,4 @@ Output format (JSON only):
 Strict constraints:
 1. JSON only.
 2. If no valid location exists, return: {"locations":[]}.
+  

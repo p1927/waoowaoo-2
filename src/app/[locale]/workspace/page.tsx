@@ -164,9 +164,8 @@ export default function WorkspacePage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    // Convert to Beijing time (UTC+8)
-    const beijingTime = new Date(date.getTime() + 8 * 60 * 60 * 1000)
-    return beijingTime.toLocaleDateString('zh-CN', {
+    const localTime = new Date(date.getTime())
+    return localTime.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

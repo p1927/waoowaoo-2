@@ -24,7 +24,9 @@ export const POST = apiHandler(async (request: NextRequest) => {
   const preferredName = typeof body.preferredName === 'string' && body.preferredName.trim()
     ? body.preferredName.trim()
     : 'custom_voice'
-  const language = body.language === 'en' ? 'en' : 'zh'
+  const ALLOWED_VOICE_LANGUAGES = ['en', 'hi', 'sa'] as const
+  const rawLang = typeof body.language === 'string' ? body.language : 'hi'
+  const language = (ALLOWED_VOICE_LANGUAGES as readonly string[]).includes(rawLang) ? rawLang : 'hi'
 
   const promptValidation = validateVoicePrompt(voicePrompt)
   if (!promptValidation.valid) {

@@ -12,8 +12,10 @@ function readRequiredString(value: unknown, field: string): string {
   return value.trim()
 }
 
-function readLanguage(value: unknown): 'zh' | 'en' {
-  return value === 'en' ? 'en' : 'zh'
+function readLanguage(value: unknown): 'en' | 'hi' | 'sa' {
+  if (value === 'en') return 'en'
+  if (value === 'sa') return 'sa'
+  return 'hi'
 }
 
 export async function handleVoiceDesignTask(job: Job<TaskJobData>) {

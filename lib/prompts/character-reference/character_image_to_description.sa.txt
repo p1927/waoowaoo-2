@@ -1,6 +1,6 @@
 # Character Image To Description Prompt
 
-Analyze the provided character image and write one detailed Sanskrit visual description for image generation (Devanagari script).
+Analyze the provided character image and write one detailed Sanskrit (Devanagari script) visual description for image generation.
 
 ## Required content
 Include all of the following:
@@ -27,5 +27,5 @@ Do not mention:
 - Background
 
 ## Output format
-Return one plain Sanskrit paragraph only (Devanagari script, about 120-220 words).
+Return one plain Sanskrit (Devanagari script) paragraph only (about 120-220 words).
 Do not return markdown, bullets, titles, or JSON.

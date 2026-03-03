@@ -117,10 +117,10 @@ export const TTS_RATES = [
 ]
 
 export const TTS_VOICES = [
-  { value: 'zh-CN-YunxiNeural', label: 'Yunxi (male)', preview: 'M' },
-  { value: 'zh-CN-XiaoxiaoNeural', label: 'Xiaoxiao (female)', preview: 'F' },
-  { value: 'zh-CN-YunyangNeural', label: 'Yunyang (male)', preview: 'M' },
-  { value: 'zh-CN-XiaoyiNeural', label: 'Xiaoyi (female)', preview: 'F' }
+  { value: 'hi-IN-MadhurNeural', label: 'Madhur (male)', preview: 'M' },
+  { value: 'hi-IN-SwaraNeural', label: 'Swara (female)', preview: 'F' },
+  { value: 'hi-IN-KunalNeural', label: 'Kunal (male)', preview: 'M' },
+  { value: 'hi-IN-AaravNeural', label: 'Aarav (male)', preview: 'M' },
 ]
 
 export const ART_STYLES = [
@@ -159,7 +159,7 @@ export const ART_STYLES = [
  */
 export function getArtStylePrompt(
   artStyle: string | null | undefined,
-  _locale?: 'zh' | 'en',
+  _locale?: string,
 ): string {
   void _locale
   if (!artStyle) return ''

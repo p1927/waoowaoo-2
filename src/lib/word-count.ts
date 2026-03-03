@@ -2,7 +2,7 @@
  * Word count utility functions
  *
  * Following Microsoft Word's word count rules:
- * - Chinese: 1 count per Chinese character
+ * - Devanagari (Hindi/Sanskrit): space-separated words
  * - English: 1 count per word (space-separated)
  * - Spaces, newlines, and punctuation are not counted
  */
@@ -16,19 +16,18 @@
 export function countWords(text: string): number {
     if (!text) return 0
 
-    // Treat consecutive letters and digits as one "word"; replace and count
     let englishWordCount = 0
     const textWithoutEnglish = text.replace(/[a-zA-Z0-9]+/g, () => {
         englishWordCount++
-        return '' // Remove English words; remainder is CJK and other characters
+        return ''
     })
 
-    // Count Chinese characters
-    // Use Unicode ranges for common CJK + extended A/B
-    const chineseMatches = textWithoutEnglish.match(/[\u4e00-\u9fa5\u3400-\u4dbf\u20000-\u2a6df]/g)
-    const chineseCount = chineseMatches ? chineseMatches.length : 0
+    // Devanagari (Hindi/Sanskrit): \u0900-\u097F, Extended: \uA8E0-\uA8FF, Vedic: \u1CD0-\u1CFF
+    // Count space-separated Devanagari word clusters
+    const devanagariMatches = textWithoutEnglish.match(/[\u0900-\u097F\uA8E0-\uA8FF\u1CD0-\u1CFF]+/g)
+    const devanagariCount = devanagariMatches ? devanagariMatches.length : 0
 
-    return englishWordCount + chineseCount
+    return englishWordCount + devanagariCount
 }
 
 /**

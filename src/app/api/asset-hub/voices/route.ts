@@ -80,7 +80,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             customVoiceMediaId: customVoiceMedia?.id || null,
             voicePrompt: voicePrompt?.trim() || null,
             gender: gender || null,
-            language: language || 'zh'
+            language: language || 'hi'
         }
     })
 

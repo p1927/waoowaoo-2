@@ -22,7 +22,7 @@ export type VoiceDesignMutationPayload = {
   voicePrompt: string
   previewText: string
   preferredName: string
-  language: 'zh'
+  language: string
 }
 
 export type VoiceDesignMutationResult = {
@@ -94,7 +94,7 @@ export default function VoiceDesignDialogBase({
           voicePrompt: voicePrompt.trim(),
           previewText: previewText.trim(),
           preferredName: safeName,
-          language: 'zh',
+          language: 'hi',
         })
 
         if (data.audioBase64) {

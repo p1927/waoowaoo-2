@@ -9,6 +9,7 @@ const catalogPath = path.join(root, 'src', 'lib', 'prompt-i18n', 'catalog.ts')
 const singlePlaceholderPattern = /\{([A-Za-z0-9_]+)\}/g
 const doublePlaceholderPattern = /\{\{([A-Za-z0-9_]+)\}\}/g
 const unresolvedPlaceholderPattern = /\{\{?[A-Za-z0-9_]+\}?\}/g
+const REQUIRED_LOCALES = ['en', 'hi', 'sa']
 
 function fail(title, details = []) {
   console.error(`\n[prompt-ab-regression] ${title}`)
@@ -68,70 +69,62 @@ if (entries.length === 0) {
 const violations = []
 
 for (const entry of entries) {
-  const zhPath = path.join(root, 'lib', 'prompts', `${entry.pathStem}.zh.txt`)
-  const enPath = path.join(root, 'lib', 'prompts', `${entry.pathStem}.en.txt`)
-  if (!fs.existsSync(zhPath)) {
-    violations.push(`missing zh template: lib/prompts/${entry.pathStem}.zh.txt`)
-    continue
+  const templates = {}
+  let skipEntry = false
+  for (const locale of REQUIRED_LOCALES) {
+    const localePath = path.join(root, 'lib', 'prompts', `${entry.pathStem}.${locale}.txt`)
+    if (!fs.existsSync(localePath)) {
+      violations.push(`missing ${locale} template: lib/prompts/${entry.pathStem}.${locale}.txt`)
+      skipEntry = true
+    } else {
+      templates[locale] = fs.readFileSync(localePath, 'utf8')
+    }
   }
-  if (!fs.existsSync(enPath)) {
-    violations.push(`missing en template: lib/prompts/${entry.pathStem}.en.txt`)
-    continue
-  }
+  if (skipEntry) continue
 
-  const zhTemplate = fs.readFileSync(zhPath, 'utf8')
-  const enTemplate = fs.readFileSync(enPath, 'utf8')
   const declared = entry.variableKeys
-  const zhPlaceholders = extractPlaceholders(zhTemplate)
-  const enPlaceholders = extractPlaceholders(enTemplate)
+  const placeholdersByLocale = {}
+  for (const locale of REQUIRED_LOCALES) {
+    placeholdersByLocale[locale] = extractPlaceholders(templates[locale])
+  }
 
-  const missingInZh = setDiff(declared, zhPlaceholders)
-  const missingInEn = setDiff(declared, enPlaceholders)
-  const extraInZh = setDiff(zhPlaceholders, declared)
-  const extraInEn = setDiff(enPlaceholders, declared)
-  const zhOnly = setDiff(zhPlaceholders, enPlaceholders)
-  const enOnly = setDiff(enPlaceholders, zhPlaceholders)
+  for (const locale of REQUIRED_LOCALES) {
+    const missing = setDiff(declared, placeholdersByLocale[locale])
+    const extra = setDiff(placeholdersByLocale[locale], declared)
+    for (const key of missing) {
+      violations.push(`missing {${key}} in ${locale} template: lib/prompts/${entry.pathStem}.${locale}.txt`)
+    }
+    for (const key of extra) {
+      violations.push(`unexpected {${key}} in ${locale} template: lib/prompts/${entry.pathStem}.${locale}.txt`)
+    }
+  }
 
-  for (const key of missingInZh) {
-    violations.push(`missing {${key}} in zh template: lib/prompts/${entry.pathStem}.zh.txt`)
-  }
-  for (const key of missingInEn) {
-    violations.push(`missing {${key}} in en template: lib/prompts/${entry.pathStem}.en.txt`)
-  }
-  for (const key of extraInZh) {
-    violations.push(`unexpected {${key}} in zh template: lib/prompts/${entry.pathStem}.zh.txt`)
-  }
-  for (const key of extraInEn) {
-    violations.push(`unexpected {${key}} in en template: lib/prompts/${entry.pathStem}.en.txt`)
-  }
-  for (const key of zhOnly) {
-    violations.push(`placeholder {${key}} exists only in zh template: ${entry.pathStem}`)
-  }
-  for (const key of enOnly) {
-    violations.push(`placeholder {${key}} exists only in en template: ${entry.pathStem}`)
+  const enPlaceholders = placeholdersByLocale['en']
+  for (const locale of REQUIRED_LOCALES.filter((l) => l !== 'en')) {
+    const localePlaceholders = placeholdersByLocale[locale]
+    const onlyInLocale = setDiff(localePlaceholders, enPlaceholders)
+    const onlyInEn = setDiff(enPlaceholders, localePlaceholders)
+    for (const key of onlyInLocale) {
+      violations.push(`placeholder {${key}} exists only in ${locale} template: ${entry.pathStem}`)
+    }
+    for (const key of onlyInEn) {
+      violations.push(`placeholder {${key}} missing in ${locale} template: ${entry.pathStem}`)
+    }
   }
 
   const variables = Object.fromEntries(
     declared.map((key) => [key, `__AB_SAMPLE_${key.toUpperCase()}__`]),
   )
-  const renderedZh = replaceAll(zhTemplate, variables)
-  const renderedEn = replaceAll(enTemplate, variables)
-
-  const unresolvedZh = renderedZh.match(unresolvedPlaceholderPattern) || []
-  const unresolvedEn = renderedEn.match(unresolvedPlaceholderPattern) || []
-  if (unresolvedZh.length > 0) {
-    violations.push(`unresolved placeholders in zh template: ${entry.pathStem} -> ${unresolvedZh.join(', ')}`)
-  }
-  if (unresolvedEn.length > 0) {
-    violations.push(`unresolved placeholders in en template: ${entry.pathStem} -> ${unresolvedEn.join(', ')}`)
-  }
-
-  for (const [key, sample] of Object.entries(variables)) {
-    if (!renderedZh.includes(sample)) {
-      violations.push(`zh template variable not used after render: ${entry.pathStem}.{${key}}`)
+  for (const locale of REQUIRED_LOCALES) {
+    const rendered = replaceAll(templates[locale], variables)
+    const unresolved = rendered.match(unresolvedPlaceholderPattern) || []
+    if (unresolved.length > 0) {
+      violations.push(`unresolved placeholders in ${locale} template: ${entry.pathStem} -> ${unresolved.join(', ')}`)
     }
-    if (!renderedEn.includes(sample)) {
-      violations.push(`en template variable not used after render: ${entry.pathStem}.{${key}}`)
+    for (const [key, sample] of Object.entries(variables)) {
+      if (!rendered.includes(sample)) {
+        violations.push(`${locale} template variable not used after render: ${entry.pathStem}.{${key}}`)
+      }
     }
   }
 }
@@ -140,4 +133,4 @@ if (violations.length > 0) {
   fail('A/B regression check failed', violations)
 }
 
-console.log(`[prompt-ab-regression] OK (${entries.length} templates checked)`)
+console.log(`[prompt-ab-regression] OK (${entries.length} templates × ${REQUIRED_LOCALES.length} locales checked)`)

@@ -106,7 +106,7 @@ export function useVoiceCreation({ isOpen, folderId, onClose, onSuccess, initial
                     voicePrompt: voicePrompt.trim(),
                     previewText: actualPreviewText,
                     preferredName: safeName,
-                    language: 'zh'
+                    language: 'hi'
                 })
 
                 if (data.audioBase64) {

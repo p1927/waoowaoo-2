@@ -208,7 +208,7 @@ function validateVoiceAnalysisCanary(value) {
 
 function checkTemplateTokens(pathStem, requiredTokens) {
   const violations = []
-  for (const locale of ['zh', 'en']) {
+  for (const locale of ['en', 'hi', 'sa']) {
     const relPath = `lib/prompts/${pathStem}.${locale}.txt`
     const fullPath = path.join(root, relPath)
     if (!fs.existsSync(fullPath)) {

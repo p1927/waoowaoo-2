@@ -66,7 +66,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
             customVoiceUrl: cosUrl,
             voicePrompt: null,
             gender: null,
-            language: 'zh'
+            language: 'hi'
         }
     })
 
