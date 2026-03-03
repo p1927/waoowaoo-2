@@ -1,0 +1,34 @@
+# ==================== Development Dockerfile ====================
+# This Dockerfile is optimized for development with live reload
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install OpenSSL for Prisma
+RUN apk add --no-cache openssl tini
+
+# Copy package files
+COPY package.json package-lock.json ./
+
+# Install all dependencies (including devDependencies)
+RUN npm ci
+
+# Copy Prisma schema (needed for generate)
+COPY prisma ./prisma
+
+# Generate Prisma Client (disable SSL verification for Prisma binary download)
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+RUN npx prisma generate
+ENV NODE_TLS_REJECT_UNAUTHORIZED=1
+
+# Copy rest of the files (will be overridden by volumes in docker-compose.dev.yml)
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p /app/data/uploads /app/logs && touch /app/.env
+
+EXPOSE 3000 3010
+
+ENTRYPOINT ["/sbin/tini", "--"]
+# Default command (can be overridden by docker-compose)
+CMD ["npm", "run", "dev"]

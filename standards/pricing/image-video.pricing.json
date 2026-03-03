@@ -10,13 +10,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 9
+          "amount": 1.25
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 72
+          "amount": 10
         }
       ]
     }
@@ -32,13 +32,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 9
+          "amount": 1.25
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 72
+          "amount": 10
         }
       ]
     }
@@ -54,13 +54,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 0.54
+          "amount": 0.075
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 2.16
+          "amount": 0.3
         }
       ]
     }
@@ -76,13 +76,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 21.6
+          "amount": 3
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 108
+          "amount": 15
         }
       ]
     }
@@ -98,13 +98,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 21.6
+          "amount": 3
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 108
+          "amount": 15
         }
       ]
     }
@@ -120,13 +120,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 14.4
+          "amount": 2
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 86.4
+          "amount": 12
         }
       ]
     }
@@ -142,13 +142,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 14.4
+          "amount": 2
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 86.4
+          "amount": 12
         }
       ]
     }
@@ -164,13 +164,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 3.6
+          "amount": 0.5
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 21.6
+          "amount": 3
         }
       ]
     }
@@ -186,13 +186,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 0.8
+          "amount": 0.111111
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 2
+          "amount": 0.277778
         }
       ]
     }
@@ -208,13 +208,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 3.2
+          "amount": 0.444444
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 16
+          "amount": 2.22222
         }
       ]
     }
@@ -230,13 +230,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 0.6
+          "amount": 0.0833333
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 3.6
+          "amount": 0.5
         }
       ]
     }
@@ -252,13 +252,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 0.2
+          "amount": 0.0277778
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 2
+          "amount": 0.277778
         }
       ]
     }
@@ -274,13 +274,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 0.8
+          "amount": 0.111111
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 2
+          "amount": 0.277778
         }
       ]
     }
@@ -296,13 +296,13 @@
           "when": {
             "tokenType": "input"
           },
-          "amount": 0.3
+          "amount": 0.0416667
         },
         {
           "when": {
             "tokenType": "output"
           },
-          "amount": 0.6
+          "amount": 0.0833333
         }
       ]
     }
@@ -313,7 +313,7 @@
     "modelId": "banana",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.9648
+      "flatAmount": 0.134
     }
   },
   {
@@ -327,19 +327,19 @@
           "when": {
             "resolution": "1K"
           },
-          "amount": 0.576
+          "amount": 0.08
         },
         {
           "when": {
             "resolution": "2K"
           },
-          "amount": 0.864
+          "amount": 0.12
         },
         {
           "when": {
             "resolution": "4K"
           },
-          "amount": 1.152
+          "amount": 0.16
         }
       ]
     }
@@ -350,7 +350,7 @@
     "modelId": "banana-2k",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.9648
+      "flatAmount": 0.134
     }
   },
   {
@@ -359,7 +359,7 @@
     "modelId": "banana-4k",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 1.728
+      "flatAmount": 0.24
     }
   },
   {
@@ -368,7 +368,7 @@
     "modelId": "seedream",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.25
+      "flatAmount": 0.0347222
     }
   },
   {
@@ -377,7 +377,7 @@
     "modelId": "seedream4",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.2
+      "flatAmount": 0.0277778
     }
   },
   {
@@ -386,7 +386,7 @@
     "modelId": "doubao-seedream-4-5-251128",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.25
+      "flatAmount": 0.0347222
     }
   },
   {
@@ -395,7 +395,7 @@
     "modelId": "doubao-seedream-4-0-250828",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.2
+      "flatAmount": 0.0277778
     }
   },
   {
@@ -409,13 +409,13 @@
           "when": {
             "resolution": "2K"
           },
-          "amount": 0.9648
+          "amount": 0.134
         },
         {
           "when": {
             "resolution": "4K"
           },
-          "amount": 1.728
+          "amount": 0.24
         }
       ]
     }
@@ -431,13 +431,13 @@
           "when": {
             "resolution": "2K"
           },
-          "amount": 0.4824
+          "amount": 0.067
         },
         {
           "when": {
             "resolution": "4K"
           },
-          "amount": 0.864
+          "amount": 0.12
         }
       ]
     }
@@ -453,25 +453,25 @@
           "when": {
             "resolution": "0.5K"
           },
-          "amount": 0.324
+          "amount": 0.045
         },
         {
           "when": {
             "resolution": "1K"
           },
-          "amount": 0.4824
+          "amount": 0.067
         },
         {
           "when": {
             "resolution": "2K"
           },
-          "amount": 0.7272
+          "amount": 0.101
         },
         {
           "when": {
             "resolution": "4K"
           },
-          "amount": 1.0872
+          "amount": 0.151
         }
       ]
     }
@@ -482,7 +482,7 @@
     "modelId": "gemini-2.5-flash-image",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.2808
+      "flatAmount": 0.039
     }
   },
   {
@@ -491,7 +491,7 @@
     "modelId": "imagen-4.0-generate-001",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.288
+      "flatAmount": 0.04
     }
   },
   {
@@ -500,7 +500,7 @@
     "modelId": "imagen-4.0-ultra-generate-001",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.432
+      "flatAmount": 0.06
     }
   },
   {
@@ -509,7 +509,7 @@
     "modelId": "imagen-4.0-fast-generate-001",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.144
+      "flatAmount": 0.02
     }
   },
   {
@@ -523,19 +523,19 @@
           "when": {
             "resolution": "480p"
           },
-          "amount": 0.2
+          "amount": 0.0277778
         },
         {
           "when": {
             "resolution": "720p"
           },
-          "amount": 0.43
+          "amount": 0.0597222
         },
         {
           "when": {
             "resolution": "1080p"
           },
-          "amount": 1.03
+          "amount": 0.143056
         }
       ]
     }
@@ -551,19 +551,19 @@
           "when": {
             "resolution": "480p"
           },
-          "amount": 0.1
+          "amount": 0.0138889
         },
         {
           "when": {
             "resolution": "720p"
           },
-          "amount": 0.22
+          "amount": 0.0305556
         },
         {
           "when": {
             "resolution": "1080p"
           },
-          "amount": 0.51
+          "amount": 0.0708333
         }
       ]
     }
@@ -580,42 +580,42 @@
             "resolution": "480p",
             "generateAudio": true
           },
-          "amount": 0.8
+          "amount": 0.111111
         },
         {
           "when": {
             "resolution": "720p",
             "generateAudio": true
           },
-          "amount": 1.73
+          "amount": 0.240278
         },
         {
           "when": {
             "resolution": "1080p",
             "generateAudio": true
           },
-          "amount": 3.89
+          "amount": 0.540278
         },
         {
           "when": {
             "resolution": "480p",
             "generateAudio": false
           },
-          "amount": 0.4
+          "amount": 0.0555556
         },
         {
           "when": {
             "resolution": "720p",
             "generateAudio": false
           },
-          "amount": 0.86
+          "amount": 0.119444
         },
         {
           "when": {
             "resolution": "1080p",
             "generateAudio": false
           },
-          "amount": 1.94
+          "amount": 0.269444
         }
       ]
     }
@@ -632,42 +632,42 @@
             "resolution": "480p",
             "generateAudio": true
           },
-          "amount": 0.4
+          "amount": 0.0555556
         },
         {
           "when": {
             "resolution": "720p",
             "generateAudio": true
           },
-          "amount": 0.86
+          "amount": 0.119444
         },
         {
           "when": {
             "resolution": "1080p",
             "generateAudio": true
           },
-          "amount": 1.94
+          "amount": 0.269444
         },
         {
           "when": {
             "resolution": "480p",
             "generateAudio": false
           },
-          "amount": 0.2
+          "amount": 0.0277778
         },
         {
           "when": {
             "resolution": "720p",
             "generateAudio": false
           },
-          "amount": 0.43
+          "amount": 0.0597222
         },
         {
           "when": {
             "resolution": "1080p",
             "generateAudio": false
           },
-          "amount": 0.97
+          "amount": 0.134722
         }
       ]
     }
@@ -683,19 +683,19 @@
           "when": {
             "resolution": "480p"
           },
-          "amount": 0.73
+          "amount": 0.101389
         },
         {
           "when": {
             "resolution": "720p"
           },
-          "amount": 1.54
+          "amount": 0.213889
         },
         {
           "when": {
             "resolution": "1080p"
           },
-          "amount": 3.67
+          "amount": 0.509722
         }
       ]
     }
@@ -711,19 +711,19 @@
           "when": {
             "resolution": "480p"
           },
-          "amount": 0.36
+          "amount": 0.05
         },
         {
           "when": {
             "resolution": "720p"
           },
-          "amount": 0.77
+          "amount": 0.106944
         },
         {
           "when": {
             "resolution": "1080p"
           },
-          "amount": 1.84
+          "amount": 0.255556
         }
       ]
     }
@@ -739,19 +739,19 @@
           "when": {
             "resolution": "480p"
           },
-          "amount": 0.49
+          "amount": 0.0680556
         },
         {
           "when": {
             "resolution": "720p"
           },
-          "amount": 1.03
+          "amount": 0.143056
         },
         {
           "when": {
             "resolution": "1080p"
           },
-          "amount": 2.45
+          "amount": 0.340278
         }
       ]
     }
@@ -767,19 +767,19 @@
           "when": {
             "resolution": "480p"
           },
-          "amount": 0.24
+          "amount": 0.0333333
         },
         {
           "when": {
             "resolution": "720p"
           },
-          "amount": 0.51
+          "amount": 0.0708333
         },
         {
           "when": {
             "resolution": "1080p"
           },
-          "amount": 1.22
+          "amount": 0.169444
         }
       ]
     }
@@ -797,7 +797,7 @@
             "resolution": "720p",
             "duration": 4
           },
-          "amount": 11.52
+          "amount": 1.6
         },
         {
           "when": {
@@ -805,7 +805,7 @@
             "resolution": "720p",
             "duration": 6
           },
-          "amount": 17.28
+          "amount": 2.4
         },
         {
           "when": {
@@ -813,7 +813,7 @@
             "resolution": "720p",
             "duration": 8
           },
-          "amount": 23.04
+          "amount": 3.2
         },
         {
           "when": {
@@ -821,7 +821,7 @@
             "resolution": "1080p",
             "duration": 8
           },
-          "amount": 23.04
+          "amount": 3.2
         },
         {
           "when": {
@@ -829,7 +829,7 @@
             "resolution": "4k",
             "duration": 8
           },
-          "amount": 34.56
+          "amount": 4.8
         },
         {
           "when": {
@@ -837,7 +837,7 @@
             "resolution": "720p",
             "duration": 8
           },
-          "amount": 23.04
+          "amount": 3.2
         },
         {
           "when": {
@@ -845,7 +845,7 @@
             "resolution": "1080p",
             "duration": 8
           },
-          "amount": 23.04
+          "amount": 3.2
         },
         {
           "when": {
@@ -853,7 +853,7 @@
             "resolution": "4k",
             "duration": 8
           },
-          "amount": 34.56
+          "amount": 4.8
         }
       ]
     }
@@ -871,7 +871,7 @@
             "resolution": "720p",
             "duration": 4
           },
-          "amount": 4.32
+          "amount": 0.6
         },
         {
           "when": {
@@ -879,7 +879,7 @@
             "resolution": "720p",
             "duration": 6
           },
-          "amount": 6.48
+          "amount": 0.9
         },
         {
           "when": {
@@ -887,7 +887,7 @@
             "resolution": "720p",
             "duration": 8
           },
-          "amount": 8.64
+          "amount": 1.2
         },
         {
           "when": {
@@ -895,7 +895,7 @@
             "resolution": "1080p",
             "duration": 8
           },
-          "amount": 8.64
+          "amount": 1.2
         },
         {
           "when": {
@@ -903,7 +903,7 @@
             "resolution": "4k",
             "duration": 8
           },
-          "amount": 20.16
+          "amount": 2.8
         },
         {
           "when": {
@@ -911,7 +911,7 @@
             "resolution": "720p",
             "duration": 8
           },
-          "amount": 8.64
+          "amount": 1.2
         },
         {
           "when": {
@@ -919,7 +919,7 @@
             "resolution": "1080p",
             "duration": 8
           },
-          "amount": 8.64
+          "amount": 1.2
         },
         {
           "when": {
@@ -927,7 +927,7 @@
             "resolution": "4k",
             "duration": 8
           },
-          "amount": 20.16
+          "amount": 2.8
         }
       ]
     }
@@ -944,35 +944,35 @@
             "resolution": "720p",
             "duration": 4
           },
-          "amount": 11.52
+          "amount": 1.6
         },
         {
           "when": {
             "resolution": "720p",
             "duration": 6
           },
-          "amount": 17.28
+          "amount": 2.4
         },
         {
           "when": {
             "resolution": "720p",
             "duration": 8
           },
-          "amount": 23.04
+          "amount": 3.2
         },
         {
           "when": {
             "resolution": "1080p",
             "duration": 8
           },
-          "amount": 23.04
+          "amount": 3.2
         },
         {
           "when": {
             "resolution": "4k",
             "duration": 8
           },
-          "amount": 23.04
+          "amount": 3.2
         }
       ]
     }
@@ -989,35 +989,35 @@
             "resolution": "720p",
             "duration": 4
           },
-          "amount": 4.32
+          "amount": 0.6
         },
         {
           "when": {
             "resolution": "720p",
             "duration": 6
           },
-          "amount": 6.48
+          "amount": 0.9
         },
         {
           "when": {
             "resolution": "720p",
             "duration": 8
           },
-          "amount": 8.64
+          "amount": 1.2
         },
         {
           "when": {
             "resolution": "1080p",
             "duration": 8
           },
-          "amount": 8.64
+          "amount": 1.2
         },
         {
           "when": {
             "resolution": "4k",
             "duration": 8
           },
-          "amount": 8.64
+          "amount": 1.2
         }
       ]
     }
@@ -1033,19 +1033,19 @@
           "when": {
             "duration": 5
           },
-          "amount": 12.6
+          "amount": 1.75
         },
         {
           "when": {
             "duration": 6
           },
-          "amount": 15.12
+          "amount": 2.1
         },
         {
           "when": {
             "duration": 8
           },
-          "amount": 20.16
+          "amount": 2.8
         }
       ]
     }
@@ -1056,7 +1056,7 @@
     "modelId": "fal-wan25",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 1.8
+      "flatAmount": 0.25
     }
   },
   {
@@ -1065,7 +1065,7 @@
     "modelId": "fal-veo31",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 2.88
+      "flatAmount": 0.4
     }
   },
   {
@@ -1074,7 +1074,7 @@
     "modelId": "fal-sora2",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 3.6
+      "flatAmount": 0.5
     }
   },
   {
@@ -1083,7 +1083,7 @@
     "modelId": "fal-kling25",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 2.16
+      "flatAmount": 0.3
     }
   },
   {
@@ -1097,13 +1097,13 @@
           "when": {
             "duration": 5
           },
-          "amount": 0.35
+          "amount": 0.0486111
         },
         {
           "when": {
             "duration": 10
           },
-          "amount": 0.7
+          "amount": 0.0972222
         }
       ]
     }
@@ -1119,79 +1119,79 @@
           "when": {
             "duration": 3
           },
-          "amount": 0.504
+          "amount": 0.07
         },
         {
           "when": {
             "duration": 4
           },
-          "amount": 0.672
+          "amount": 0.0933333
         },
         {
           "when": {
             "duration": 5
           },
-          "amount": 0.84
+          "amount": 0.116667
         },
         {
           "when": {
             "duration": 6
           },
-          "amount": 1.008
+          "amount": 0.14
         },
         {
           "when": {
             "duration": 7
           },
-          "amount": 1.176
+          "amount": 0.163333
         },
         {
           "when": {
             "duration": 8
           },
-          "amount": 1.344
+          "amount": 0.186667
         },
         {
           "when": {
             "duration": 9
           },
-          "amount": 1.512
+          "amount": 0.21
         },
         {
           "when": {
             "duration": 10
           },
-          "amount": 1.68
+          "amount": 0.233333
         },
         {
           "when": {
             "duration": 11
           },
-          "amount": 1.848
+          "amount": 0.256667
         },
         {
           "when": {
             "duration": 12
           },
-          "amount": 2.016
+          "amount": 0.28
         },
         {
           "when": {
             "duration": 13
           },
-          "amount": 2.184
+          "amount": 0.303333
         },
         {
           "when": {
             "duration": 14
           },
-          "amount": 2.352
+          "amount": 0.326667
         },
         {
           "when": {
             "duration": 15
           },
-          "amount": 2.52
+          "amount": 0.35
         }
       ]
     }
@@ -1207,79 +1207,79 @@
           "when": {
             "duration": 3
           },
-          "amount": 0.672
+          "amount": 0.0933333
         },
         {
           "when": {
             "duration": 4
           },
-          "amount": 0.896
+          "amount": 0.124444
         },
         {
           "when": {
             "duration": 5
           },
-          "amount": 1.12
+          "amount": 0.155556
         },
         {
           "when": {
             "duration": 6
           },
-          "amount": 1.344
+          "amount": 0.186667
         },
         {
           "when": {
             "duration": 7
           },
-          "amount": 1.568
+          "amount": 0.217778
         },
         {
           "when": {
             "duration": 8
           },
-          "amount": 1.792
+          "amount": 0.248889
         },
         {
           "when": {
             "duration": 9
           },
-          "amount": 2.016
+          "amount": 0.28
         },
         {
           "when": {
             "duration": 10
           },
-          "amount": 2.24
+          "amount": 0.311111
         },
         {
           "when": {
             "duration": 11
           },
-          "amount": 2.464
+          "amount": 0.342222
         },
         {
           "when": {
             "duration": 12
           },
-          "amount": 2.688
+          "amount": 0.373333
         },
         {
           "when": {
             "duration": 13
           },
-          "amount": 2.912
+          "amount": 0.404444
         },
         {
           "when": {
             "duration": 14
           },
-          "amount": 3.136
+          "amount": 0.435556
         },
         {
           "when": {
             "duration": 15
           },
-          "amount": 3.36
+          "amount": 0.466667
         }
       ]
     }
@@ -1297,7 +1297,7 @@
             "resolution": "768p",
             "duration": 6
           },
-          "amount": 2
+          "amount": 0.277778
         },
         {
           "when": {
@@ -1305,7 +1305,7 @@
             "resolution": "768p",
             "duration": 10
           },
-          "amount": 4
+          "amount": 0.555556
         },
         {
           "when": {
@@ -1313,7 +1313,7 @@
             "resolution": "1080p",
             "duration": 6
           },
-          "amount": 3.5
+          "amount": 0.486111
         }
       ]
     }
@@ -1331,7 +1331,7 @@
             "resolution": "768p",
             "duration": 6
           },
-          "amount": 1.35
+          "amount": 0.1875
         },
         {
           "when": {
@@ -1339,7 +1339,7 @@
             "resolution": "768p",
             "duration": 10
           },
-          "amount": 2.25
+          "amount": 0.3125
         },
         {
           "when": {
@@ -1347,7 +1347,7 @@
             "resolution": "1080p",
             "duration": 6
           },
-          "amount": 2.31
+          "amount": 0.320833
         }
       ]
     }
@@ -1365,7 +1365,7 @@
             "resolution": "512p",
             "duration": 6
           },
-          "amount": 0.6
+          "amount": 0.0833333
         },
         {
           "when": {
@@ -1373,7 +1373,7 @@
             "resolution": "512p",
             "duration": 10
           },
-          "amount": 1
+          "amount": 0.138889
         },
         {
           "when": {
@@ -1381,7 +1381,7 @@
             "resolution": "768p",
             "duration": 6
           },
-          "amount": 2
+          "amount": 0.277778
         },
         {
           "when": {
@@ -1389,7 +1389,7 @@
             "resolution": "768p",
             "duration": 10
           },
-          "amount": 4
+          "amount": 0.555556
         },
         {
           "when": {
@@ -1397,7 +1397,7 @@
             "resolution": "1080p",
             "duration": 6
           },
-          "amount": 3.5
+          "amount": 0.486111
         },
         {
           "when": {
@@ -1405,7 +1405,7 @@
             "resolution": "768p",
             "duration": 6
           },
-          "amount": 2
+          "amount": 0.277778
         },
         {
           "when": {
@@ -1413,7 +1413,7 @@
             "resolution": "768p",
             "duration": 10
           },
-          "amount": 4
+          "amount": 0.555556
         },
         {
           "when": {
@@ -1421,7 +1421,7 @@
             "resolution": "1080p",
             "duration": 6
           },
-          "amount": 3.5
+          "amount": 0.486111
         }
       ]
     }
@@ -1439,7 +1439,7 @@
             "resolution": "720p",
             "duration": 6
           },
-          "amount": 3
+          "amount": 0.416667
         }
       ]
     }
@@ -1457,7 +1457,7 @@
             "resolution": "720p",
             "duration": 6
           },
-          "amount": 3
+          "amount": 0.416667
         }
       ]
     }
@@ -1476,7 +1476,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.4375
+          "amount": 0.0607639
         },
         {
           "when": {
@@ -1485,7 +1485,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.4375
+          "amount": 0.0607639
         },
         {
           "when": {
@@ -1494,7 +1494,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.875
+          "amount": 0.121528
         },
         {
           "when": {
@@ -1503,7 +1503,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.875
+          "amount": 0.121528
         },
         {
           "when": {
@@ -1512,7 +1512,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 1.3125
+          "amount": 0.182292
         },
         {
           "when": {
@@ -1521,7 +1521,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 1.3125
+          "amount": 0.182292
         },
         {
           "when": {
@@ -1530,7 +1530,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 1.75
+          "amount": 0.243056
         },
         {
           "when": {
@@ -1539,7 +1539,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.75
+          "amount": 0.243056
         },
         {
           "when": {
@@ -1548,7 +1548,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -1557,7 +1557,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -1566,7 +1566,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 2.625
+          "amount": 0.364583
         },
         {
           "when": {
@@ -1575,7 +1575,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 2.625
+          "amount": 0.364583
         },
         {
           "when": {
@@ -1584,7 +1584,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 3.0625
+          "amount": 0.425347
         },
         {
           "when": {
@@ -1593,7 +1593,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 3.0625
+          "amount": 0.425347
         },
         {
           "when": {
@@ -1602,7 +1602,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 3.5
+          "amount": 0.486111
         },
         {
           "when": {
@@ -1611,7 +1611,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 3.5
+          "amount": 0.486111
         },
         {
           "when": {
@@ -1620,7 +1620,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 3.9375
+          "amount": 0.546875
         },
         {
           "when": {
@@ -1629,7 +1629,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 3.9375
+          "amount": 0.546875
         },
         {
           "when": {
@@ -1638,7 +1638,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 4.375
+          "amount": 0.607639
         },
         {
           "when": {
@@ -1647,7 +1647,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 4.375
+          "amount": 0.607639
         },
         {
           "when": {
@@ -1656,7 +1656,7 @@
             "duration": 11,
             "generateAudio": false
           },
-          "amount": 4.8125
+          "amount": 0.668403
         },
         {
           "when": {
@@ -1665,7 +1665,7 @@
             "duration": 11,
             "generateAudio": true
           },
-          "amount": 4.8125
+          "amount": 0.668403
         },
         {
           "when": {
@@ -1674,7 +1674,7 @@
             "duration": 12,
             "generateAudio": false
           },
-          "amount": 5.25
+          "amount": 0.729167
         },
         {
           "when": {
@@ -1683,7 +1683,7 @@
             "duration": 12,
             "generateAudio": true
           },
-          "amount": 5.25
+          "amount": 0.729167
         },
         {
           "when": {
@@ -1692,7 +1692,7 @@
             "duration": 13,
             "generateAudio": false
           },
-          "amount": 5.6875
+          "amount": 0.789931
         },
         {
           "when": {
@@ -1701,7 +1701,7 @@
             "duration": 13,
             "generateAudio": true
           },
-          "amount": 5.6875
+          "amount": 0.789931
         },
         {
           "when": {
@@ -1710,7 +1710,7 @@
             "duration": 14,
             "generateAudio": false
           },
-          "amount": 6.125
+          "amount": 0.850694
         },
         {
           "when": {
@@ -1719,7 +1719,7 @@
             "duration": 14,
             "generateAudio": true
           },
-          "amount": 6.125
+          "amount": 0.850694
         },
         {
           "when": {
@@ -1728,7 +1728,7 @@
             "duration": 15,
             "generateAudio": false
           },
-          "amount": 6.5625
+          "amount": 0.911458
         },
         {
           "when": {
@@ -1737,7 +1737,7 @@
             "duration": 15,
             "generateAudio": true
           },
-          "amount": 6.5625
+          "amount": 0.911458
         },
         {
           "when": {
@@ -1746,7 +1746,7 @@
             "duration": 16,
             "generateAudio": false
           },
-          "amount": 7
+          "amount": 0.972222
         },
         {
           "when": {
@@ -1755,7 +1755,7 @@
             "duration": 16,
             "generateAudio": true
           },
-          "amount": 7
+          "amount": 0.972222
         },
         {
           "when": {
@@ -1764,7 +1764,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -1773,7 +1773,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -1782,7 +1782,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -1791,7 +1791,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -1800,7 +1800,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -1809,7 +1809,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -1818,7 +1818,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 3.75
+          "amount": 0.520833
         },
         {
           "when": {
@@ -1827,7 +1827,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 3.75
+          "amount": 0.520833
         },
         {
           "when": {
@@ -1836,7 +1836,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 4.6875
+          "amount": 0.651042
         },
         {
           "when": {
@@ -1845,7 +1845,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 4.6875
+          "amount": 0.651042
         },
         {
           "when": {
@@ -1854,7 +1854,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 5.625
+          "amount": 0.78125
         },
         {
           "when": {
@@ -1863,7 +1863,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 5.625
+          "amount": 0.78125
         },
         {
           "when": {
@@ -1872,7 +1872,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 6.5625
+          "amount": 0.911458
         },
         {
           "when": {
@@ -1881,7 +1881,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 6.5625
+          "amount": 0.911458
         },
         {
           "when": {
@@ -1890,7 +1890,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 7.5
+          "amount": 1.04167
         },
         {
           "when": {
@@ -1899,7 +1899,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 7.5
+          "amount": 1.04167
         },
         {
           "when": {
@@ -1908,7 +1908,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 8.4375
+          "amount": 1.17188
         },
         {
           "when": {
@@ -1917,7 +1917,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 8.4375
+          "amount": 1.17188
         },
         {
           "when": {
@@ -1926,7 +1926,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 9.375
+          "amount": 1.30208
         },
         {
           "when": {
@@ -1935,7 +1935,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 9.375
+          "amount": 1.30208
         },
         {
           "when": {
@@ -1944,7 +1944,7 @@
             "duration": 11,
             "generateAudio": false
           },
-          "amount": 10.3125
+          "amount": 1.43229
         },
         {
           "when": {
@@ -1953,7 +1953,7 @@
             "duration": 11,
             "generateAudio": true
           },
-          "amount": 10.3125
+          "amount": 1.43229
         },
         {
           "when": {
@@ -1962,7 +1962,7 @@
             "duration": 12,
             "generateAudio": false
           },
-          "amount": 11.25
+          "amount": 1.5625
         },
         {
           "when": {
@@ -1971,7 +1971,7 @@
             "duration": 12,
             "generateAudio": true
           },
-          "amount": 11.25
+          "amount": 1.5625
         },
         {
           "when": {
@@ -1980,7 +1980,7 @@
             "duration": 13,
             "generateAudio": false
           },
-          "amount": 12.1875
+          "amount": 1.69271
         },
         {
           "when": {
@@ -1989,7 +1989,7 @@
             "duration": 13,
             "generateAudio": true
           },
-          "amount": 12.1875
+          "amount": 1.69271
         },
         {
           "when": {
@@ -1998,7 +1998,7 @@
             "duration": 14,
             "generateAudio": false
           },
-          "amount": 13.125
+          "amount": 1.82292
         },
         {
           "when": {
@@ -2007,7 +2007,7 @@
             "duration": 14,
             "generateAudio": true
           },
-          "amount": 13.125
+          "amount": 1.82292
         },
         {
           "when": {
@@ -2016,7 +2016,7 @@
             "duration": 15,
             "generateAudio": false
           },
-          "amount": 14.0625
+          "amount": 1.95313
         },
         {
           "when": {
@@ -2025,7 +2025,7 @@
             "duration": 15,
             "generateAudio": true
           },
-          "amount": 14.0625
+          "amount": 1.95313
         },
         {
           "when": {
@@ -2034,7 +2034,7 @@
             "duration": 16,
             "generateAudio": false
           },
-          "amount": 15
+          "amount": 2.08333
         },
         {
           "when": {
@@ -2043,7 +2043,7 @@
             "duration": 16,
             "generateAudio": true
           },
-          "amount": 15
+          "amount": 2.08333
         },
         {
           "when": {
@@ -2052,7 +2052,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 1
+          "amount": 0.138889
         },
         {
           "when": {
@@ -2061,7 +2061,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 1
+          "amount": 0.138889
         },
         {
           "when": {
@@ -2070,7 +2070,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 2
+          "amount": 0.277778
         },
         {
           "when": {
@@ -2079,7 +2079,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 2
+          "amount": 0.277778
         },
         {
           "when": {
@@ -2088,7 +2088,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 3
+          "amount": 0.416667
         },
         {
           "when": {
@@ -2097,7 +2097,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 3
+          "amount": 0.416667
         },
         {
           "when": {
@@ -2106,7 +2106,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 4
+          "amount": 0.555556
         },
         {
           "when": {
@@ -2115,7 +2115,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 4
+          "amount": 0.555556
         },
         {
           "when": {
@@ -2124,7 +2124,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 5
+          "amount": 0.694444
         },
         {
           "when": {
@@ -2133,7 +2133,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 5
+          "amount": 0.694444
         },
         {
           "when": {
@@ -2142,7 +2142,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 6
+          "amount": 0.833333
         },
         {
           "when": {
@@ -2151,7 +2151,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 6
+          "amount": 0.833333
         },
         {
           "when": {
@@ -2160,7 +2160,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 7
+          "amount": 0.972222
         },
         {
           "when": {
@@ -2169,7 +2169,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 7
+          "amount": 0.972222
         },
         {
           "when": {
@@ -2178,7 +2178,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 8
+          "amount": 1.11111
         },
         {
           "when": {
@@ -2187,7 +2187,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 8
+          "amount": 1.11111
         },
         {
           "when": {
@@ -2196,7 +2196,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 9
+          "amount": 1.25
         },
         {
           "when": {
@@ -2205,7 +2205,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 9
+          "amount": 1.25
         },
         {
           "when": {
@@ -2214,7 +2214,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 10
+          "amount": 1.38889
         },
         {
           "when": {
@@ -2223,7 +2223,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 10
+          "amount": 1.38889
         },
         {
           "when": {
@@ -2232,7 +2232,7 @@
             "duration": 11,
             "generateAudio": false
           },
-          "amount": 11
+          "amount": 1.52778
         },
         {
           "when": {
@@ -2241,7 +2241,7 @@
             "duration": 11,
             "generateAudio": true
           },
-          "amount": 11
+          "amount": 1.52778
         },
         {
           "when": {
@@ -2250,7 +2250,7 @@
             "duration": 12,
             "generateAudio": false
           },
-          "amount": 12
+          "amount": 1.66667
         },
         {
           "when": {
@@ -2259,7 +2259,7 @@
             "duration": 12,
             "generateAudio": true
           },
-          "amount": 12
+          "amount": 1.66667
         },
         {
           "when": {
@@ -2268,7 +2268,7 @@
             "duration": 13,
             "generateAudio": false
           },
-          "amount": 13
+          "amount": 1.80556
         },
         {
           "when": {
@@ -2277,7 +2277,7 @@
             "duration": 13,
             "generateAudio": true
           },
-          "amount": 13
+          "amount": 1.80556
         },
         {
           "when": {
@@ -2286,7 +2286,7 @@
             "duration": 14,
             "generateAudio": false
           },
-          "amount": 14
+          "amount": 1.94444
         },
         {
           "when": {
@@ -2295,7 +2295,7 @@
             "duration": 14,
             "generateAudio": true
           },
-          "amount": 14
+          "amount": 1.94444
         },
         {
           "when": {
@@ -2304,7 +2304,7 @@
             "duration": 15,
             "generateAudio": false
           },
-          "amount": 15
+          "amount": 2.08333
         },
         {
           "when": {
@@ -2313,7 +2313,7 @@
             "duration": 15,
             "generateAudio": true
           },
-          "amount": 15
+          "amount": 2.08333
         },
         {
           "when": {
@@ -2322,7 +2322,7 @@
             "duration": 16,
             "generateAudio": false
           },
-          "amount": 16
+          "amount": 2.22222
         },
         {
           "when": {
@@ -2331,7 +2331,7 @@
             "duration": 16,
             "generateAudio": true
           },
-          "amount": 16
+          "amount": 2.22222
         },
         {
           "when": {
@@ -2340,7 +2340,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.4375
+          "amount": 0.0607639
         },
         {
           "when": {
@@ -2349,7 +2349,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.4375
+          "amount": 0.0607639
         },
         {
           "when": {
@@ -2358,7 +2358,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.875
+          "amount": 0.121528
         },
         {
           "when": {
@@ -2367,7 +2367,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.875
+          "amount": 0.121528
         },
         {
           "when": {
@@ -2376,7 +2376,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 1.3125
+          "amount": 0.182292
         },
         {
           "when": {
@@ -2385,7 +2385,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 1.3125
+          "amount": 0.182292
         },
         {
           "when": {
@@ -2394,7 +2394,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 1.75
+          "amount": 0.243056
         },
         {
           "when": {
@@ -2403,7 +2403,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.75
+          "amount": 0.243056
         },
         {
           "when": {
@@ -2412,7 +2412,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -2421,7 +2421,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -2430,7 +2430,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 2.625
+          "amount": 0.364583
         },
         {
           "when": {
@@ -2439,7 +2439,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 2.625
+          "amount": 0.364583
         },
         {
           "when": {
@@ -2448,7 +2448,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 3.0625
+          "amount": 0.425347
         },
         {
           "when": {
@@ -2457,7 +2457,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 3.0625
+          "amount": 0.425347
         },
         {
           "when": {
@@ -2466,7 +2466,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 3.5
+          "amount": 0.486111
         },
         {
           "when": {
@@ -2475,7 +2475,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 3.5
+          "amount": 0.486111
         },
         {
           "when": {
@@ -2484,7 +2484,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 3.9375
+          "amount": 0.546875
         },
         {
           "when": {
@@ -2493,7 +2493,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 3.9375
+          "amount": 0.546875
         },
         {
           "when": {
@@ -2502,7 +2502,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 4.375
+          "amount": 0.607639
         },
         {
           "when": {
@@ -2511,7 +2511,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 4.375
+          "amount": 0.607639
         },
         {
           "when": {
@@ -2520,7 +2520,7 @@
             "duration": 11,
             "generateAudio": false
           },
-          "amount": 4.8125
+          "amount": 0.668403
         },
         {
           "when": {
@@ -2529,7 +2529,7 @@
             "duration": 11,
             "generateAudio": true
           },
-          "amount": 4.8125
+          "amount": 0.668403
         },
         {
           "when": {
@@ -2538,7 +2538,7 @@
             "duration": 12,
             "generateAudio": false
           },
-          "amount": 5.25
+          "amount": 0.729167
         },
         {
           "when": {
@@ -2547,7 +2547,7 @@
             "duration": 12,
             "generateAudio": true
           },
-          "amount": 5.25
+          "amount": 0.729167
         },
         {
           "when": {
@@ -2556,7 +2556,7 @@
             "duration": 13,
             "generateAudio": false
           },
-          "amount": 5.6875
+          "amount": 0.789931
         },
         {
           "when": {
@@ -2565,7 +2565,7 @@
             "duration": 13,
             "generateAudio": true
           },
-          "amount": 5.6875
+          "amount": 0.789931
         },
         {
           "when": {
@@ -2574,7 +2574,7 @@
             "duration": 14,
             "generateAudio": false
           },
-          "amount": 6.125
+          "amount": 0.850694
         },
         {
           "when": {
@@ -2583,7 +2583,7 @@
             "duration": 14,
             "generateAudio": true
           },
-          "amount": 6.125
+          "amount": 0.850694
         },
         {
           "when": {
@@ -2592,7 +2592,7 @@
             "duration": 15,
             "generateAudio": false
           },
-          "amount": 6.5625
+          "amount": 0.911458
         },
         {
           "when": {
@@ -2601,7 +2601,7 @@
             "duration": 15,
             "generateAudio": true
           },
-          "amount": 6.5625
+          "amount": 0.911458
         },
         {
           "when": {
@@ -2610,7 +2610,7 @@
             "duration": 16,
             "generateAudio": false
           },
-          "amount": 7
+          "amount": 0.972222
         },
         {
           "when": {
@@ -2619,7 +2619,7 @@
             "duration": 16,
             "generateAudio": true
           },
-          "amount": 7
+          "amount": 0.972222
         },
         {
           "when": {
@@ -2628,7 +2628,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -2637,7 +2637,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -2646,7 +2646,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -2655,7 +2655,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -2664,7 +2664,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -2673,7 +2673,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -2682,7 +2682,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 3.75
+          "amount": 0.520833
         },
         {
           "when": {
@@ -2691,7 +2691,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 3.75
+          "amount": 0.520833
         },
         {
           "when": {
@@ -2700,7 +2700,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 4.6875
+          "amount": 0.651042
         },
         {
           "when": {
@@ -2709,7 +2709,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 4.6875
+          "amount": 0.651042
         },
         {
           "when": {
@@ -2718,7 +2718,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 5.625
+          "amount": 0.78125
         },
         {
           "when": {
@@ -2727,7 +2727,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 5.625
+          "amount": 0.78125
         },
         {
           "when": {
@@ -2736,7 +2736,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 6.5625
+          "amount": 0.911458
         },
         {
           "when": {
@@ -2745,7 +2745,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 6.5625
+          "amount": 0.911458
         },
         {
           "when": {
@@ -2754,7 +2754,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 7.5
+          "amount": 1.04167
         },
         {
           "when": {
@@ -2763,7 +2763,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 7.5
+          "amount": 1.04167
         },
         {
           "when": {
@@ -2772,7 +2772,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 8.4375
+          "amount": 1.17188
         },
         {
           "when": {
@@ -2781,7 +2781,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 8.4375
+          "amount": 1.17188
         },
         {
           "when": {
@@ -2790,7 +2790,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 9.375
+          "amount": 1.30208
         },
         {
           "when": {
@@ -2799,7 +2799,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 9.375
+          "amount": 1.30208
         },
         {
           "when": {
@@ -2808,7 +2808,7 @@
             "duration": 11,
             "generateAudio": false
           },
-          "amount": 10.3125
+          "amount": 1.43229
         },
         {
           "when": {
@@ -2817,7 +2817,7 @@
             "duration": 11,
             "generateAudio": true
           },
-          "amount": 10.3125
+          "amount": 1.43229
         },
         {
           "when": {
@@ -2826,7 +2826,7 @@
             "duration": 12,
             "generateAudio": false
           },
-          "amount": 11.25
+          "amount": 1.5625
         },
         {
           "when": {
@@ -2835,7 +2835,7 @@
             "duration": 12,
             "generateAudio": true
           },
-          "amount": 11.25
+          "amount": 1.5625
         },
         {
           "when": {
@@ -2844,7 +2844,7 @@
             "duration": 13,
             "generateAudio": false
           },
-          "amount": 12.1875
+          "amount": 1.69271
         },
         {
           "when": {
@@ -2853,7 +2853,7 @@
             "duration": 13,
             "generateAudio": true
           },
-          "amount": 12.1875
+          "amount": 1.69271
         },
         {
           "when": {
@@ -2862,7 +2862,7 @@
             "duration": 14,
             "generateAudio": false
           },
-          "amount": 13.125
+          "amount": 1.82292
         },
         {
           "when": {
@@ -2871,7 +2871,7 @@
             "duration": 14,
             "generateAudio": true
           },
-          "amount": 13.125
+          "amount": 1.82292
         },
         {
           "when": {
@@ -2880,7 +2880,7 @@
             "duration": 15,
             "generateAudio": false
           },
-          "amount": 14.0625
+          "amount": 1.95313
         },
         {
           "when": {
@@ -2889,7 +2889,7 @@
             "duration": 15,
             "generateAudio": true
           },
-          "amount": 14.0625
+          "amount": 1.95313
         },
         {
           "when": {
@@ -2898,7 +2898,7 @@
             "duration": 16,
             "generateAudio": false
           },
-          "amount": 15
+          "amount": 2.08333
         },
         {
           "when": {
@@ -2907,7 +2907,7 @@
             "duration": 16,
             "generateAudio": true
           },
-          "amount": 15
+          "amount": 2.08333
         },
         {
           "when": {
@@ -2916,7 +2916,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 1
+          "amount": 0.138889
         },
         {
           "when": {
@@ -2925,7 +2925,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 1
+          "amount": 0.138889
         },
         {
           "when": {
@@ -2934,7 +2934,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 2
+          "amount": 0.277778
         },
         {
           "when": {
@@ -2943,7 +2943,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 2
+          "amount": 0.277778
         },
         {
           "when": {
@@ -2952,7 +2952,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 3
+          "amount": 0.416667
         },
         {
           "when": {
@@ -2961,7 +2961,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 3
+          "amount": 0.416667
         },
         {
           "when": {
@@ -2970,7 +2970,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 4
+          "amount": 0.555556
         },
         {
           "when": {
@@ -2979,7 +2979,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 4
+          "amount": 0.555556
         },
         {
           "when": {
@@ -2988,7 +2988,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 5
+          "amount": 0.694444
         },
         {
           "when": {
@@ -2997,7 +2997,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 5
+          "amount": 0.694444
         },
         {
           "when": {
@@ -3006,7 +3006,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 6
+          "amount": 0.833333
         },
         {
           "when": {
@@ -3015,7 +3015,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 6
+          "amount": 0.833333
         },
         {
           "when": {
@@ -3024,7 +3024,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 7
+          "amount": 0.972222
         },
         {
           "when": {
@@ -3033,7 +3033,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 7
+          "amount": 0.972222
         },
         {
           "when": {
@@ -3042,7 +3042,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 8
+          "amount": 1.11111
         },
         {
           "when": {
@@ -3051,7 +3051,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 8
+          "amount": 1.11111
         },
         {
           "when": {
@@ -3060,7 +3060,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 9
+          "amount": 1.25
         },
         {
           "when": {
@@ -3069,7 +3069,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 9
+          "amount": 1.25
         },
         {
           "when": {
@@ -3078,7 +3078,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 10
+          "amount": 1.38889
         },
         {
           "when": {
@@ -3087,7 +3087,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 10
+          "amount": 1.38889
         },
         {
           "when": {
@@ -3096,7 +3096,7 @@
             "duration": 11,
             "generateAudio": false
           },
-          "amount": 11
+          "amount": 1.52778
         },
         {
           "when": {
@@ -3105,7 +3105,7 @@
             "duration": 11,
             "generateAudio": true
           },
-          "amount": 11
+          "amount": 1.52778
         },
         {
           "when": {
@@ -3114,7 +3114,7 @@
             "duration": 12,
             "generateAudio": false
           },
-          "amount": 12
+          "amount": 1.66667
         },
         {
           "when": {
@@ -3123,7 +3123,7 @@
             "duration": 12,
             "generateAudio": true
           },
-          "amount": 12
+          "amount": 1.66667
         },
         {
           "when": {
@@ -3132,7 +3132,7 @@
             "duration": 13,
             "generateAudio": false
           },
-          "amount": 13
+          "amount": 1.80556
         },
         {
           "when": {
@@ -3141,7 +3141,7 @@
             "duration": 13,
             "generateAudio": true
           },
-          "amount": 13
+          "amount": 1.80556
         },
         {
           "when": {
@@ -3150,7 +3150,7 @@
             "duration": 14,
             "generateAudio": false
           },
-          "amount": 14
+          "amount": 1.94444
         },
         {
           "when": {
@@ -3159,7 +3159,7 @@
             "duration": 14,
             "generateAudio": true
           },
-          "amount": 14
+          "amount": 1.94444
         },
         {
           "when": {
@@ -3168,7 +3168,7 @@
             "duration": 15,
             "generateAudio": false
           },
-          "amount": 15
+          "amount": 2.08333
         },
         {
           "when": {
@@ -3177,7 +3177,7 @@
             "duration": 15,
             "generateAudio": true
           },
-          "amount": 15
+          "amount": 2.08333
         },
         {
           "when": {
@@ -3186,7 +3186,7 @@
             "duration": 16,
             "generateAudio": false
           },
-          "amount": 16
+          "amount": 2.22222
         },
         {
           "when": {
@@ -3195,7 +3195,7 @@
             "duration": 16,
             "generateAudio": true
           },
-          "amount": 16
+          "amount": 2.22222
         }
       ]
     }
@@ -3214,7 +3214,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.25
+          "amount": 0.0347222
         },
         {
           "when": {
@@ -3223,7 +3223,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.71875
+          "amount": 0.0998264
         },
         {
           "when": {
@@ -3232,7 +3232,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.3125
+          "amount": 0.0434028
         },
         {
           "when": {
@@ -3241,7 +3241,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -3250,7 +3250,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.375
+          "amount": 0.0520833
         },
         {
           "when": {
@@ -3259,7 +3259,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 0.84375
+          "amount": 0.117188
         },
         {
           "when": {
@@ -3268,7 +3268,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.4375
+          "amount": 0.0607639
         },
         {
           "when": {
@@ -3277,7 +3277,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 0.90625
+          "amount": 0.125868
         },
         {
           "when": {
@@ -3286,7 +3286,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 0.5
+          "amount": 0.0694444
         },
         {
           "when": {
@@ -3295,7 +3295,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 0.96875
+          "amount": 0.134549
         },
         {
           "when": {
@@ -3304,7 +3304,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 0.5625
+          "amount": 0.078125
         },
         {
           "when": {
@@ -3313,7 +3313,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 1.03125
+          "amount": 0.143229
         },
         {
           "when": {
@@ -3322,7 +3322,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -3331,7 +3331,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -3340,7 +3340,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 0.6875
+          "amount": 0.0954861
         },
         {
           "when": {
@@ -3349,7 +3349,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 1.15625
+          "amount": 0.16059
         },
         {
           "when": {
@@ -3358,7 +3358,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 0.75
+          "amount": 0.104167
         },
         {
           "when": {
@@ -3367,7 +3367,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 1.21875
+          "amount": 0.169271
         },
         {
           "when": {
@@ -3376,7 +3376,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 0.8125
+          "amount": 0.112847
         },
         {
           "when": {
@@ -3385,7 +3385,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 1.28125
+          "amount": 0.177951
         },
         {
           "when": {
@@ -3394,7 +3394,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.5
+          "amount": 0.0694444
         },
         {
           "when": {
@@ -3403,7 +3403,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.96875
+          "amount": 0.134549
         },
         {
           "when": {
@@ -3412,7 +3412,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -3421,7 +3421,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -3430,7 +3430,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.75
+          "amount": 0.104167
         },
         {
           "when": {
@@ -3439,7 +3439,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 1.21875
+          "amount": 0.169271
         },
         {
           "when": {
@@ -3448,7 +3448,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.875
+          "amount": 0.121528
         },
         {
           "when": {
@@ -3457,7 +3457,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.34375
+          "amount": 0.186632
         },
         {
           "when": {
@@ -3466,7 +3466,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 1
+          "amount": 0.138889
         },
         {
           "when": {
@@ -3475,7 +3475,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 1.46875
+          "amount": 0.203993
         },
         {
           "when": {
@@ -3484,7 +3484,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 1.125
+          "amount": 0.15625
         },
         {
           "when": {
@@ -3493,7 +3493,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 1.59375
+          "amount": 0.221354
         },
         {
           "when": {
@@ -3502,7 +3502,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -3511,7 +3511,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -3520,7 +3520,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 1.375
+          "amount": 0.190972
         },
         {
           "when": {
@@ -3529,7 +3529,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 1.84375
+          "amount": 0.256076
         },
         {
           "when": {
@@ -3538,7 +3538,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 1.5
+          "amount": 0.208333
         },
         {
           "when": {
@@ -3547,7 +3547,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 1.96875
+          "amount": 0.273438
         },
         {
           "when": {
@@ -3556,7 +3556,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 1.625
+          "amount": 0.225694
         },
         {
           "when": {
@@ -3565,7 +3565,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 2.09375
+          "amount": 0.290799
         },
         {
           "when": {
@@ -3574,7 +3574,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.25
+          "amount": 0.0347222
         },
         {
           "when": {
@@ -3583,7 +3583,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.71875
+          "amount": 0.0998264
         },
         {
           "when": {
@@ -3592,7 +3592,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.3125
+          "amount": 0.0434028
         },
         {
           "when": {
@@ -3601,7 +3601,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -3610,7 +3610,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.375
+          "amount": 0.0520833
         },
         {
           "when": {
@@ -3619,7 +3619,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 0.84375
+          "amount": 0.117188
         },
         {
           "when": {
@@ -3628,7 +3628,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.4375
+          "amount": 0.0607639
         },
         {
           "when": {
@@ -3637,7 +3637,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 0.90625
+          "amount": 0.125868
         },
         {
           "when": {
@@ -3646,7 +3646,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 0.5
+          "amount": 0.0694444
         },
         {
           "when": {
@@ -3655,7 +3655,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 0.96875
+          "amount": 0.134549
         },
         {
           "when": {
@@ -3664,7 +3664,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 0.5625
+          "amount": 0.078125
         },
         {
           "when": {
@@ -3673,7 +3673,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 1.03125
+          "amount": 0.143229
         },
         {
           "when": {
@@ -3682,7 +3682,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -3691,7 +3691,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -3700,7 +3700,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 0.6875
+          "amount": 0.0954861
         },
         {
           "when": {
@@ -3709,7 +3709,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 1.15625
+          "amount": 0.16059
         },
         {
           "when": {
@@ -3718,7 +3718,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.5
+          "amount": 0.0694444
         },
         {
           "when": {
@@ -3727,7 +3727,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.96875
+          "amount": 0.134549
         },
         {
           "when": {
@@ -3736,7 +3736,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -3745,7 +3745,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -3754,7 +3754,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.75
+          "amount": 0.104167
         },
         {
           "when": {
@@ -3763,7 +3763,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 1.21875
+          "amount": 0.169271
         },
         {
           "when": {
@@ -3772,7 +3772,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.875
+          "amount": 0.121528
         },
         {
           "when": {
@@ -3781,7 +3781,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.34375
+          "amount": 0.186632
         },
         {
           "when": {
@@ -3790,7 +3790,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 1
+          "amount": 0.138889
         },
         {
           "when": {
@@ -3799,7 +3799,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 1.46875
+          "amount": 0.203993
         },
         {
           "when": {
@@ -3808,7 +3808,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 1.125
+          "amount": 0.15625
         },
         {
           "when": {
@@ -3817,7 +3817,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 1.59375
+          "amount": 0.221354
         },
         {
           "when": {
@@ -3826,7 +3826,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -3835,7 +3835,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -3844,7 +3844,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 1.375
+          "amount": 0.190972
         },
         {
           "when": {
@@ -3853,7 +3853,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 1.84375
+          "amount": 0.256076
         }
       ]
     }
@@ -3872,7 +3872,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.25
+          "amount": 0.0347222
         },
         {
           "when": {
@@ -3881,7 +3881,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.71875
+          "amount": 0.0998264
         },
         {
           "when": {
@@ -3890,7 +3890,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.3125
+          "amount": 0.0434028
         },
         {
           "when": {
@@ -3899,7 +3899,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -3908,7 +3908,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.46875
+          "amount": 0.0651042
         },
         {
           "when": {
@@ -3917,7 +3917,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -3926,7 +3926,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -3935,7 +3935,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -3944,7 +3944,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -3953,7 +3953,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -3962,7 +3962,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -3971,7 +3971,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -3980,7 +3980,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -3989,7 +3989,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -3998,7 +3998,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -4007,7 +4007,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -4016,7 +4016,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -4025,7 +4025,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -4034,7 +4034,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -4043,7 +4043,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 2.03125
+          "amount": 0.282118
         },
         {
           "when": {
@@ -4052,7 +4052,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.46875
+          "amount": 0.0651042
         },
         {
           "when": {
@@ -4061,7 +4061,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -4070,7 +4070,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -4079,7 +4079,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -4088,7 +4088,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -4097,7 +4097,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -4106,7 +4106,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -4115,7 +4115,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -4124,7 +4124,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -4133,7 +4133,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -4142,7 +4142,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 2.03125
+          "amount": 0.282118
         },
         {
           "when": {
@@ -4151,7 +4151,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 2.5
+          "amount": 0.347222
         },
         {
           "when": {
@@ -4160,7 +4160,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 2.34375
+          "amount": 0.325521
         },
         {
           "when": {
@@ -4169,7 +4169,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -4178,7 +4178,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -4187,7 +4187,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -4196,7 +4196,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 2.96875
+          "amount": 0.412326
         },
         {
           "when": {
@@ -4205,7 +4205,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 3.4375
+          "amount": 0.477431
         },
         {
           "when": {
@@ -4214,7 +4214,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 3.28125
+          "amount": 0.455729
         },
         {
           "when": {
@@ -4223,7 +4223,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 3.75
+          "amount": 0.520833
         },
         {
           "when": {
@@ -4232,7 +4232,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -4241,7 +4241,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -4250,7 +4250,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -4259,7 +4259,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -4268,7 +4268,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -4277,7 +4277,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -4286,7 +4286,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -4295,7 +4295,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 3.59375
+          "amount": 0.499132
         },
         {
           "when": {
@@ -4304,7 +4304,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 3.59375
+          "amount": 0.499132
         },
         {
           "when": {
@@ -4313,7 +4313,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 4.0625
+          "amount": 0.564236
         },
         {
           "when": {
@@ -4322,7 +4322,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 4.0625
+          "amount": 0.564236
         },
         {
           "when": {
@@ -4331,7 +4331,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 4.53125
+          "amount": 0.62934
         },
         {
           "when": {
@@ -4340,7 +4340,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 4.53125
+          "amount": 0.62934
         },
         {
           "when": {
@@ -4349,7 +4349,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 5
+          "amount": 0.694444
         },
         {
           "when": {
@@ -4358,7 +4358,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 5
+          "amount": 0.694444
         },
         {
           "when": {
@@ -4367,7 +4367,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 5.46875
+          "amount": 0.759549
         },
         {
           "when": {
@@ -4376,7 +4376,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 5.46875
+          "amount": 0.759549
         },
         {
           "when": {
@@ -4385,7 +4385,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 5.9375
+          "amount": 0.824653
         },
         {
           "when": {
@@ -4394,7 +4394,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 5.9375
+          "amount": 0.824653
         },
         {
           "when": {
@@ -4403,7 +4403,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 6.40625
+          "amount": 0.889757
         },
         {
           "when": {
@@ -4412,7 +4412,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.25
+          "amount": 0.0347222
         },
         {
           "when": {
@@ -4421,7 +4421,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.71875
+          "amount": 0.0998264
         },
         {
           "when": {
@@ -4430,7 +4430,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.3125
+          "amount": 0.0434028
         },
         {
           "when": {
@@ -4439,7 +4439,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -4448,7 +4448,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.46875
+          "amount": 0.0651042
         },
         {
           "when": {
@@ -4457,7 +4457,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -4466,7 +4466,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -4475,7 +4475,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -4484,7 +4484,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -4493,7 +4493,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -4502,7 +4502,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -4511,7 +4511,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -4520,7 +4520,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -4529,7 +4529,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -4538,7 +4538,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -4547,7 +4547,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -4556,7 +4556,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.46875
+          "amount": 0.0651042
         },
         {
           "when": {
@@ -4565,7 +4565,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -4574,7 +4574,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -4583,7 +4583,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -4592,7 +4592,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -4601,7 +4601,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -4610,7 +4610,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -4619,7 +4619,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -4628,7 +4628,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -4637,7 +4637,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -4646,7 +4646,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 2.03125
+          "amount": 0.282118
         },
         {
           "when": {
@@ -4655,7 +4655,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 2.5
+          "amount": 0.347222
         },
         {
           "when": {
@@ -4664,7 +4664,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 2.34375
+          "amount": 0.325521
         },
         {
           "when": {
@@ -4673,7 +4673,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -4682,7 +4682,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -4691,7 +4691,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -4700,7 +4700,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -4709,7 +4709,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -4718,7 +4718,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -4727,7 +4727,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -4736,7 +4736,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -4745,7 +4745,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -4754,7 +4754,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -4763,7 +4763,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 3.59375
+          "amount": 0.499132
         },
         {
           "when": {
@@ -4772,7 +4772,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 3.59375
+          "amount": 0.499132
         },
         {
           "when": {
@@ -4781,7 +4781,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 4.0625
+          "amount": 0.564236
         },
         {
           "when": {
@@ -4790,7 +4790,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 4.0625
+          "amount": 0.564236
         },
         {
           "when": {
@@ -4799,7 +4799,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 4.53125
+          "amount": 0.62934
         },
         {
           "when": {
@@ -4808,7 +4808,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 4.53125
+          "amount": 0.62934
         },
         {
           "when": {
@@ -4817,7 +4817,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 5
+          "amount": 0.694444
         },
         {
           "when": {
@@ -4826,7 +4826,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 5
+          "amount": 0.694444
         },
         {
           "when": {
@@ -4835,7 +4835,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 5.46875
+          "amount": 0.759549
         }
       ]
     }
@@ -4854,7 +4854,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.1875
+          "amount": 0.0260417
         },
         {
           "when": {
@@ -4863,7 +4863,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.65625
+          "amount": 0.0911458
         },
         {
           "when": {
@@ -4872,7 +4872,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.25
+          "amount": 0.0347222
         },
         {
           "when": {
@@ -4881,7 +4881,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.71875
+          "amount": 0.0998264
         },
         {
           "when": {
@@ -4890,7 +4890,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.3125
+          "amount": 0.0434028
         },
         {
           "when": {
@@ -4899,7 +4899,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -4908,7 +4908,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.375
+          "amount": 0.0520833
         },
         {
           "when": {
@@ -4917,7 +4917,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 0.84375
+          "amount": 0.117188
         },
         {
           "when": {
@@ -4926,7 +4926,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 0.4375
+          "amount": 0.0607639
         },
         {
           "when": {
@@ -4935,7 +4935,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 0.90625
+          "amount": 0.125868
         },
         {
           "when": {
@@ -4944,7 +4944,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 0.5
+          "amount": 0.0694444
         },
         {
           "when": {
@@ -4953,7 +4953,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 0.96875
+          "amount": 0.134549
         },
         {
           "when": {
@@ -4962,7 +4962,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 0.5625
+          "amount": 0.078125
         },
         {
           "when": {
@@ -4971,7 +4971,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 1.03125
+          "amount": 0.143229
         },
         {
           "when": {
@@ -4980,7 +4980,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -4989,7 +4989,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -4998,7 +4998,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 0.6875
+          "amount": 0.0954861
         },
         {
           "when": {
@@ -5007,7 +5007,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 1.15625
+          "amount": 0.16059
         },
         {
           "when": {
@@ -5016,7 +5016,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 0.75
+          "amount": 0.104167
         },
         {
           "when": {
@@ -5025,7 +5025,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 1.21875
+          "amount": 0.169271
         },
         {
           "when": {
@@ -5034,7 +5034,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.25
+          "amount": 0.0347222
         },
         {
           "when": {
@@ -5043,7 +5043,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.71875
+          "amount": 0.0998264
         },
         {
           "when": {
@@ -5052,7 +5052,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.3125
+          "amount": 0.0434028
         },
         {
           "when": {
@@ -5061,7 +5061,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -5070,7 +5070,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -5079,7 +5079,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -5088,7 +5088,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -5097,7 +5097,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -5106,7 +5106,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -5115,7 +5115,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -5124,7 +5124,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -5133,7 +5133,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 2.03125
+          "amount": 0.282118
         },
         {
           "when": {
@@ -5142,7 +5142,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -5151,7 +5151,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 2.34375
+          "amount": 0.325521
         },
         {
           "when": {
@@ -5160,7 +5160,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -5169,7 +5169,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -5178,7 +5178,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 2.5
+          "amount": 0.347222
         },
         {
           "when": {
@@ -5187,7 +5187,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 2.96875
+          "amount": 0.412326
         },
         {
           "when": {
@@ -5196,7 +5196,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -5205,7 +5205,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 3.28125
+          "amount": 0.455729
         },
         {
           "when": {
@@ -5214,7 +5214,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -5223,7 +5223,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -5232,7 +5232,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -5241,7 +5241,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -5250,7 +5250,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -5259,7 +5259,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -5268,7 +5268,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 2.03125
+          "amount": 0.282118
         },
         {
           "when": {
@@ -5277,7 +5277,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 2.5
+          "amount": 0.347222
         },
         {
           "when": {
@@ -5286,7 +5286,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 2.34375
+          "amount": 0.325521
         },
         {
           "when": {
@@ -5295,7 +5295,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -5304,7 +5304,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -5313,7 +5313,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -5322,7 +5322,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 2.96875
+          "amount": 0.412326
         },
         {
           "when": {
@@ -5331,7 +5331,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 3.4375
+          "amount": 0.477431
         },
         {
           "when": {
@@ -5340,7 +5340,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 3.28125
+          "amount": 0.455729
         },
         {
           "when": {
@@ -5349,7 +5349,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 3.75
+          "amount": 0.520833
         },
         {
           "when": {
@@ -5358,7 +5358,7 @@
             "duration": 9,
             "generateAudio": false
           },
-          "amount": 3.59375
+          "amount": 0.499132
         },
         {
           "when": {
@@ -5367,7 +5367,7 @@
             "duration": 9,
             "generateAudio": true
           },
-          "amount": 4.0625
+          "amount": 0.564236
         },
         {
           "when": {
@@ -5376,7 +5376,7 @@
             "duration": 10,
             "generateAudio": false
           },
-          "amount": 3.90625
+          "amount": 0.542535
         },
         {
           "when": {
@@ -5385,7 +5385,7 @@
             "duration": 10,
             "generateAudio": true
           },
-          "amount": 4.375
+          "amount": 0.607639
         },
         {
           "when": {
@@ -5394,7 +5394,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.1875
+          "amount": 0.0260417
         },
         {
           "when": {
@@ -5403,7 +5403,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.65625
+          "amount": 0.0911458
         },
         {
           "when": {
@@ -5412,7 +5412,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.25
+          "amount": 0.0347222
         },
         {
           "when": {
@@ -5421,7 +5421,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.71875
+          "amount": 0.0998264
         },
         {
           "when": {
@@ -5430,7 +5430,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.3125
+          "amount": 0.0434028
         },
         {
           "when": {
@@ -5439,7 +5439,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -5448,7 +5448,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.375
+          "amount": 0.0520833
         },
         {
           "when": {
@@ -5457,7 +5457,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 0.84375
+          "amount": 0.117188
         },
         {
           "when": {
@@ -5466,7 +5466,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 0.4375
+          "amount": 0.0607639
         },
         {
           "when": {
@@ -5475,7 +5475,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 0.90625
+          "amount": 0.125868
         },
         {
           "when": {
@@ -5484,7 +5484,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 0.5
+          "amount": 0.0694444
         },
         {
           "when": {
@@ -5493,7 +5493,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 0.96875
+          "amount": 0.134549
         },
         {
           "when": {
@@ -5502,7 +5502,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 0.5625
+          "amount": 0.078125
         },
         {
           "when": {
@@ -5511,7 +5511,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 1.03125
+          "amount": 0.143229
         },
         {
           "when": {
@@ -5520,7 +5520,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -5529,7 +5529,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -5538,7 +5538,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 0.25
+          "amount": 0.0347222
         },
         {
           "when": {
@@ -5547,7 +5547,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 0.71875
+          "amount": 0.0998264
         },
         {
           "when": {
@@ -5556,7 +5556,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 0.3125
+          "amount": 0.0434028
         },
         {
           "when": {
@@ -5565,7 +5565,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 0.78125
+          "amount": 0.108507
         },
         {
           "when": {
@@ -5574,7 +5574,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -5583,7 +5583,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -5592,7 +5592,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 0.9375
+          "amount": 0.130208
         },
         {
           "when": {
@@ -5601,7 +5601,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -5610,7 +5610,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -5619,7 +5619,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -5628,7 +5628,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -5637,7 +5637,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 2.03125
+          "amount": 0.282118
         },
         {
           "when": {
@@ -5646,7 +5646,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -5655,7 +5655,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 2.34375
+          "amount": 0.325521
         },
         {
           "when": {
@@ -5664,7 +5664,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -5673,7 +5673,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -5682,7 +5682,7 @@
             "duration": 1,
             "generateAudio": false
           },
-          "amount": 1.09375
+          "amount": 0.15191
         },
         {
           "when": {
@@ -5691,7 +5691,7 @@
             "duration": 1,
             "generateAudio": true
           },
-          "amount": 1.5625
+          "amount": 0.217014
         },
         {
           "when": {
@@ -5700,7 +5700,7 @@
             "duration": 2,
             "generateAudio": false
           },
-          "amount": 1.40625
+          "amount": 0.195313
         },
         {
           "when": {
@@ -5709,7 +5709,7 @@
             "duration": 2,
             "generateAudio": true
           },
-          "amount": 1.875
+          "amount": 0.260417
         },
         {
           "when": {
@@ -5718,7 +5718,7 @@
             "duration": 3,
             "generateAudio": false
           },
-          "amount": 1.71875
+          "amount": 0.238715
         },
         {
           "when": {
@@ -5727,7 +5727,7 @@
             "duration": 3,
             "generateAudio": true
           },
-          "amount": 2.1875
+          "amount": 0.303819
         },
         {
           "when": {
@@ -5736,7 +5736,7 @@
             "duration": 4,
             "generateAudio": false
           },
-          "amount": 2.03125
+          "amount": 0.282118
         },
         {
           "when": {
@@ -5745,7 +5745,7 @@
             "duration": 4,
             "generateAudio": true
           },
-          "amount": 2.5
+          "amount": 0.347222
         },
         {
           "when": {
@@ -5754,7 +5754,7 @@
             "duration": 5,
             "generateAudio": false
           },
-          "amount": 2.34375
+          "amount": 0.325521
         },
         {
           "when": {
@@ -5763,7 +5763,7 @@
             "duration": 5,
             "generateAudio": true
           },
-          "amount": 2.8125
+          "amount": 0.390625
         },
         {
           "when": {
@@ -5772,7 +5772,7 @@
             "duration": 6,
             "generateAudio": false
           },
-          "amount": 2.65625
+          "amount": 0.368924
         },
         {
           "when": {
@@ -5781,7 +5781,7 @@
             "duration": 6,
             "generateAudio": true
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -5790,7 +5790,7 @@
             "duration": 7,
             "generateAudio": false
           },
-          "amount": 2.96875
+          "amount": 0.412326
         },
         {
           "when": {
@@ -5799,7 +5799,7 @@
             "duration": 7,
             "generateAudio": true
           },
-          "amount": 3.4375
+          "amount": 0.477431
         },
         {
           "when": {
@@ -5808,7 +5808,7 @@
             "duration": 8,
             "generateAudio": false
           },
-          "amount": 3.28125
+          "amount": 0.455729
         },
         {
           "when": {
@@ -5817,7 +5817,7 @@
             "duration": 8,
             "generateAudio": true
           },
-          "amount": 3.75
+          "amount": 0.520833
         }
       ]
     }
@@ -5835,7 +5835,7 @@
             "resolution": "1080p",
             "duration": 5
           },
-          "amount": 2.5
+          "amount": 0.347222
         },
         {
           "when": {
@@ -5843,7 +5843,7 @@
             "resolution": "1080p",
             "duration": 5
           },
-          "amount": 2.5
+          "amount": 0.347222
         }
       ]
     }
@@ -5861,7 +5861,7 @@
             "resolution": "1080p",
             "duration": 5
           },
-          "amount": 2.5
+          "amount": 0.347222
         },
         {
           "when": {
@@ -5869,7 +5869,7 @@
             "resolution": "1080p",
             "duration": 5
           },
-          "amount": 2.5
+          "amount": 0.347222
         }
       ]
     }
@@ -5887,7 +5887,7 @@
             "resolution": "360p",
             "duration": 4
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -5895,7 +5895,7 @@
             "resolution": "720p",
             "duration": 4
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -5903,7 +5903,7 @@
             "resolution": "1080p",
             "duration": 4
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -5911,7 +5911,7 @@
             "resolution": "720p",
             "duration": 8
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -5919,7 +5919,7 @@
             "resolution": "360p",
             "duration": 4
           },
-          "amount": 0.625
+          "amount": 0.0868056
         },
         {
           "when": {
@@ -5927,7 +5927,7 @@
             "resolution": "720p",
             "duration": 4
           },
-          "amount": 1.25
+          "amount": 0.173611
         },
         {
           "when": {
@@ -5935,7 +5935,7 @@
             "resolution": "1080p",
             "duration": 4
           },
-          "amount": 3.125
+          "amount": 0.434028
         },
         {
           "when": {
@@ -5943,7 +5943,7 @@
             "resolution": "720p",
             "duration": 8
           },
-          "amount": 3.125
+          "amount": 0.434028
         }
       ]
     }
@@ -5954,7 +5954,7 @@
     "modelId": "index-tts2",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.0144
+      "flatAmount": 0.002
     }
   },
   {
@@ -5963,7 +5963,7 @@
     "modelId": "fal-ai/index-tts-2/text-to-speech",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.0144
+      "flatAmount": 0.002
     }
   },
   {
@@ -5972,7 +5972,7 @@
     "modelId": "qwen-voice-design",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.2
+      "flatAmount": 0.0277778
     }
   },
   {
@@ -5981,7 +5981,7 @@
     "modelId": "qwen",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.2
+      "flatAmount": 0.0277778
     }
   },
   {
@@ -5990,7 +5990,7 @@
     "modelId": "kling",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.5
+      "flatAmount": 0.0694444
     }
   },
   {
@@ -5999,7 +5999,7 @@
     "modelId": "fal-ai/kling-video/lipsync/audio-to-video",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.5
+      "flatAmount": 0.0694444
     }
   },
   {
@@ -6008,7 +6008,7 @@
     "modelId": "vidu-lipsync",
     "pricing": {
       "mode": "flat",
-      "flatAmount": 0.5
+      "flatAmount": 0.0694444
     }
   }
 ]

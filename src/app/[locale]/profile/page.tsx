@@ -107,7 +107,7 @@ function getCurrencySymbol(currency: string): string {
   if (normalized === 'USD') return '$'
   if (normalized === 'EUR') return 'EUR '
   if (normalized === 'GBP') return 'GBP '
-  return '¥'
+  return '$'
 }
 
 function formatMoney(amount: number, currency: string, digits = 2): string {

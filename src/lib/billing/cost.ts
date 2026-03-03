@@ -19,8 +19,6 @@ import { validateCapabilitySelectionForModel } from '@/lib/model-capabilities/lo
 import { resolveBuiltinPricing } from '@/lib/model-pricing/lookup'
 import type { PricingApiType } from '@/lib/model-pricing/catalog'
 
-export const USD_TO_CNY = 7.2
-
 export const MARKUP = {
   global: 1.0,
   text: 1.0,

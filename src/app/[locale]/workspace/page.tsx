@@ -26,7 +26,7 @@ interface Project {
   description: string | null
   createdAt: string
   updatedAt: string
-  totalCost?: number  // Project total cost (CNY)
+  totalCost?: number  // Project total cost (USD)
   stats?: ProjectStats
 }
 
@@ -38,11 +38,11 @@ interface Pagination {
 }
 
 const PAGE_SIZE = 7 // Plus new project button = 8 total, 2 rows in 4-column layout
-const DEFAULT_BILLING_CURRENCY = 'CNY'
+const DEFAULT_BILLING_CURRENCY = 'USD'
 
 function formatProjectCost(amount: number, currency = DEFAULT_BILLING_CURRENCY): string {
   if (currency === 'USD') return `$${amount.toFixed(2)}`
-  return `¥${amount.toFixed(2)}`
+  return `$${amount.toFixed(2)}`
 }
 
 export default function WorkspacePage() {
