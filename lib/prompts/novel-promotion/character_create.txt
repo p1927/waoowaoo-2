@@ -1,0 +1,55 @@
+Please follow the prompt rules below to execute the user's character generation request
+【Character Generation Requirements (for image generation, Chinese description)】
+
+1. Generate 1 detailed Chinese appearance description for AI image generation use
+
+2. Description requirements highlight character features with detailed texture:
+   - Gender, age range (write specific age intervals, e.g., "around 25 years old", "40-45 years old", "around 50 years old")
+   - Face: Face shape, facial features (e.g., high nose bridge, deep eye sockets, thin lips, etc.)
+   - Eyes: Shape, size (prohibited to describe eye color)
+   - Hair: Color, length, hairstyle, texture (e.g., fluffy curls, silver-gray highlights, slightly curled ends, etc.)
+   - Body type: Height sense, posture, shoulder width, waistline, etc.
+   - Skin: Only describe texture and unique marks (e.g., smooth/rough, freckles, birthmarks, scars, tattoos, etc.), prohibited to describe skin color
+   - Clothing: Style, material, color scheme, details (e.g., motorcycle leather jacket, ripped jeans, metal zippers, embroidery patterns, etc.)
+   - Shoes: Style, color, material (e.g., black combat boots, white canvas shoes, brown leather oxfords, red-soled high heels, embroidered cloth shoes, etc.)
+   - Accessories: Earrings, necklaces, watches, rings, etc. that highlight personality
+
+3. 【Character Type Judgment】
+   - If user describes non-human characters (animals, mythical creatures, well-known IP characters, etc.), not restricted by above human appearance template
+   - Description beginning must start with character name or species name
+   - Describe freely based on actual form, maintain core identifying features
+
+   Examples:
+   - Input "Sun Wukong" → Output: "Sun Wukong, golden fur covering body, wearing golden headband, wearing tiger skin battle skirt, holding golden cudgel..."
+   - Input "a snail" → Output: "Snail, carrying spiral shell, two long thin antennae extending..."
+   - Input "Pikachu" → Output: "Pikachu, yellow round body, red cheeks, lightning-shaped tail, pointed ears with black tips..."
+
+4. Description standards:
+   - Prohibited to write expressions, poses, actions
+   - Prohibited to write background/environment/props
+   - Cannot add emotional adjectives or narrative sentences
+   - 【Prohibited Body Color Description】Prohibited to describe color of any body parts, AI will over-amplify color descriptions causing distortion:
+     ❌ Skin color (e.g., yellowish, fair, wheat-colored, bronze, dark, etc.)
+     ❌ Lip color (e.g., rosy, pink, pale, etc.)
+     ❌ Eye color (e.g., black, brown, blue pupils, etc.)
+     ❌ Complexion (e.g., rosy, pale, sallow, etc.)
+     ✅ Can describe: Skin texture (smooth/rough), unique marks (freckles/scars/tattoos), hair color, clothing color
+   - If original text has appearance description, prioritize original text (but color descriptions still need filtering)
+   - Use Chinese output, length 80-150 characters
+   - Does not include artistic style, art style, lighting effects description (system automatically adds)
+   - 【Era Consistency】Judge era based on story background (ancient/modern/contemporary/future, etc.), character's clothing, hairstyle, accessories must match that era's characteristics
+   - 【Prohibited Uncertain Descriptions】Prohibited to use "or", "possibly", "maybe", "approximately" and other uncertain words, each appearance feature must be clear and specific
+     ❌ Wrong: "Wearing frameless or gold-rimmed glasses", "Height possibly around 170cm"
+     ✅ Correct: "Wearing gold thin-rimmed glasses", "Tall figure around 175cm"
+   - 【Prohibited Abstract Temperament Description】Prohibited to describe abstract temperament, atmosphere, expression, feeling that cannot be visualized
+     ❌ Wrong: "Every gesture exudes wealth", "Powerful aura", "Mature and steady presence"
+     ✅ Correct: Only describe directly visible appearance features
+   - 【Shoes Required】Each complete character description must include shoe description, cannot be omitted
+
+Your goal is to generate a character prompt based on the user's request and the above rules
+Below is the user's generation instruction: {user_input}
+
+Send JSON format to me, only return the following JSON format, prohibited to return any content other than JSON, comments, text, etc., only return pure JSON format without any markdown markers, JSON format as follows:
+{
+  "prompt": "xxxxx"
+}

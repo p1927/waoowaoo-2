@@ -1,0 +1,64 @@
+Please follow the prompt rules below to execute the user's scene modification request
+
+【Scene Name】
+{location_name}
+
+【Scene Generation Requirements (for image generation, Chinese description)】
+
+1. **Beginning must clearly state scene name**:
+   - Description beginning must mark spatial attribute in form of 「{location_name}」
+   - Example: 「Palace」Hall floor laid with... / 「Living Room」Sunlight through window...
+   - This way AI can clearly understand what type of space this is when generating images
+
+2. Each scene generates 1 Chinese environment description for AI image generation use
+
+3. Must contain specific visual elements, describe according to following structure:
+
+   **Spatial Positioning**: Clearly state scene type
+   - Indoor: Living room/bedroom/kitchen/office/hospital ward/classroom, etc.
+   - Outdoor: Street/alley/park/valley/seaside/square, etc.
+   
+   **Main Structure**: Describe visible architectural elements
+   - Wall/floor/ceiling material and color (e.g., "white walls"/"wooden floor"/"concrete floor"/"tile floor")
+   - Door/window position and type (e.g., "large window on left"/"wooden door on right"/"floor-to-ceiling window"/"glass door")
+   - Architectural features (e.g., "high ceiling"/"arched door"/"brick wall"/"glass curtain wall")
+   
+   **Furniture/Props**: List main objects in scene
+   - Furniture placement (e.g., "sofa in center"/"bookshelf by wall"/"bed by window"/"desk")
+   - Characteristic props (e.g., "lamp on table"/"painting on wall"/"carpet on floor"/"books on bookshelf")
+   - Plant decoration (e.g., "potted plant on windowsill"/"green plant in corner")
+   
+   **Lighting Environment**: Describe light source and lighting effects
+   - Natural light: Time period + light characteristics
+     * Daytime: Sunlight through curtains from window/bright daylight from window/soft morning light
+     * Night: Moonlight from window/night scene outside window/lights outside window
+   - Artificial light: Light source type + position
+     * Ceiling chandelier lighting/wall sconce soft light/table lamp local lighting/floor lamp/spotlight
+   
+   **Atmosphere Details**: Supplement environmental characteristics
+   - Overall tone: Warm tone/cool tone/neutral color/bright/dim
+   - Spatial sense: Spacious/narrow/strong depth/open/enclosed
+   - State characteristics: Tidy/messy/old/modern/minimalist/retro
+
+4. Description standards:
+   - Use specific nouns, avoid abstract adjectives
+     * ✅ Good: "Wooden desk"/"Gray fabric sofa"/"White curtains"
+     * ❌ Bad: "Elegant furniture"/"Comfortable environment"/"Warm atmosphere"
+   - Describe fixed elements, don't write main character specific actions, emotions
+   - 【Crowd Handling Rules】If user requests adding crowds, or scene itself implies crowds (e.g., banquet, market, etc.):
+     * Can add vague crowd description: "crowd", "guests", "passersby", etc.
+     * Example: "Two or three guests chatting in distance of hall", "Passersby hurriedly walking at street corner"
+   - Length controlled to 60-100 characters
+   - Does not include artistic style description (e.g., "American comic style"/"watercolor style"), style automatically added by system
+   - Does not include lighting effects description (e.g., "dramatic lighting"/"soft gradient"), controlled by style
+
+Your goal is to modify based on user's modification instruction on top of original scene description
+
+Current scene description: {location_input}
+
+User's modification instruction: {user_input}
+
+Send JSON format to me, only return the following JSON format, prohibited to return any content other than JSON, comments, text, etc., only return pure JSON format without any markdown markers, JSON format as follows
+{
+  "prompt": "「Scene Name」xxxxx"
+}

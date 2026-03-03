@@ -41,8 +41,8 @@ model CharacterAppearance {
   updatedAt            DateTime                @default(now()) @updatedAt
   previousImageUrl     String?
   previousImageUrls    String?
-  previousDescription  String? // 上一次的描述词（用于撤回）
-  previousDescriptions String? // 上一次的描述词数组（用于撤回）
+  previousDescription  String? // Previous description (for undo)
+  previousDescriptions String? // Previous descriptions array (for undo)
   imageMediaId         String?
   imageMedia           MediaObject?            @relation("CharacterAppearanceImageMedia", fields: [imageMediaId], references: [id], onDelete: SetNull)
   character            NovelPromotionCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
@@ -63,7 +63,7 @@ model LocationImage {
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @default(now()) @updatedAt
   previousImageUrl    String?
-  previousDescription String? // 上一次的描述词（用于撤回）
+  previousDescription String? // Previous description (for undo)
   imageMediaId        String?
   imageMedia          MediaObject?             @relation("LocationImageMedia", fields: [imageMediaId], references: [id], onDelete: SetNull)
   location            NovelPromotionLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
@@ -88,8 +88,8 @@ model NovelPromotionCharacter {
   voiceType               String?
   profileData             String?
   profileConfirmed        Boolean               @default(false)
-  introduction            String? // 角色介绍（身份、关系、称呼映射，如"我"对应此角色）
-  sourceGlobalCharacterId String? // 🆕 来源全局角色ID（复制时记录）
+  introduction            String? // Character introduction (identity, relationships, title mapping, e.g., "I" corresponds to this character)
+  sourceGlobalCharacterId String? // 🆕 Source global character ID (recorded when copying)
   appearances             CharacterAppearance[]
   novelPromotionProject   NovelPromotionProject @relation(fields: [novelPromotionProjectId], references: [id], onDelete: Cascade)
 
@@ -102,10 +102,10 @@ model NovelPromotionLocation {
   id                      String                @id @default(uuid())
   novelPromotionProjectId String
   name                    String
-  summary                 String? // 场景简要描述（用途/人物关联）
+  summary                 String? // Scene brief description (purpose/character association)
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @default(now()) @updatedAt
-  sourceGlobalLocationId  String? // 🆕 来源全局场景ID（复制时记录）
+  sourceGlobalLocationId  String? // 🆕 Source global location ID (recorded when copying)
   images                  LocationImage[]
   novelPromotionProject   NovelPromotionProject @relation(fields: [novelPromotionProjectId], references: [id], onDelete: Cascade)
 
@@ -140,11 +140,11 @@ model NovelPromotionEpisode {
   @@map("novel_promotion_episodes")
 }
 
-// 视频编辑器项目 - 存储剪辑数据
+// Video editor project - stores editing data
 model VideoEditorProject {
   id           String                @id @default(uuid())
   episodeId    String                @unique
-  projectData  String // JSON 存储编辑项目数据
+  projectData  String // JSON storing editing project data
   renderStatus String? // pending | rendering | completed | failed
   renderTaskId String?
   outputUrl    String?
@@ -201,7 +201,7 @@ model NovelPromotionPanel {
   videoPrompt       String?
   firstLastFramePrompt String?
   videoUrl          String?
-  videoGenerationMode String?                 // 视频生成方式：normal | firstlastframe
+  videoGenerationMode String?                 // Video generation mode: normal | firstlastframe
   videoMediaId      String?
   videoMedia        MediaObject?              @relation("NovelPromotionPanelVideoMedia", fields: [videoMediaId], references: [id], onDelete: SetNull)
   createdAt         DateTime                  @default(now())
@@ -217,7 +217,7 @@ model NovelPromotionPanel {
   sketchImageMediaId String?
   sketchImageMedia  MediaObject?              @relation("NovelPromotionPanelSketchMedia", fields: [sketchImageMediaId], references: [id], onDelete: SetNull)
   photographyRules  String?
-  actingNotes       String? // 演技指导数据 JSON
+  actingNotes       String? // Acting direction data JSON
   previousImageUrl  String?
   previousImageMediaId String?
   previousImageMedia MediaObject?             @relation("NovelPromotionPanelPreviousImageMedia", fields: [previousImageMediaId], references: [id], onDelete: SetNull)
@@ -239,18 +239,18 @@ model NovelPromotionProject {
   projectId       String                    @unique
   createdAt       DateTime                  @default(now())
   updatedAt       DateTime                  @default(now()) @updatedAt
-  analysisModel   String? // 用户配置的分析模型（nullable，必须配置后才能使用）
-  imageModel      String? // 用户配置的图片模型
-  videoModel      String? // 用户配置的视频模型
+  analysisModel   String? // User-configured analysis model (nullable, must be configured before use)
+  imageModel      String? // User-configured image model
+  videoModel      String? // User-configured video model
   videoRatio      String                    @default("9:16")
   ttsRate         String                    @default("+50%")
   globalAssetText String?
   artStyle        String                    @default("american-comic")
   artStylePrompt  String?
-  characterModel  String? // 用户配置的角色图片模型
-  locationModel   String? // 用户配置的场景图片模型
-  storyboardModel String? // 用户配置的分镜图片模型
-  editModel       String? // 用户配置的修图/编辑模型
+  characterModel  String? // User-configured character image model
+  locationModel   String? // User-configured location image model
+  storyboardModel String? // User-configured storyboard image model
+  editModel       String? // User-configured image editing model
   videoResolution String                    @default("720p")
   capabilityOverrides String?
   workflowMode    String                    @default("srt")
@@ -408,7 +408,7 @@ model User {
   balance       UserBalance?
   preferences   UserPreference?
 
-  // 资产中心
+  // Asset Hub
   globalAssetFolders GlobalAssetFolder[]
   globalCharacters   GlobalCharacter[]
   globalLocations    GlobalLocation[]
@@ -422,13 +422,13 @@ model User {
 model UserPreference {
   id              String   @id @default(uuid())
   userId          String   @unique
-  analysisModel   String? // 用户配置的分析模型（nullable，必须配置后才能使用）
-  characterModel  String? // 用户配置的角色图片模型
-  locationModel   String? // 用户配置的场景图片模型
-  storyboardModel String? // 用户配置的分镜图片模型
-  editModel       String? // 用户配置的修图模型
-  videoModel      String? // 用户配置的视频模型
-  lipSyncModel    String? // 用户配置的口型同步模型
+  analysisModel   String? // User-configured analysis model (nullable, must be configured before use)
+  characterModel  String? // User-configured character image model
+  locationModel   String? // User-configured location image model
+  storyboardModel String? // User-configured storyboard image model
+  editModel       String? // User-configured image editing model
+  videoModel      String? // User-configured video model
+  lipSyncModel    String? // User-configured lip-sync model
   videoRatio      String   @default("9:16")
   videoResolution String   @default("720p")
   artStyle        String   @default("american-comic")
@@ -438,18 +438,18 @@ model UserPreference {
   imageResolution String   @default("2K")
   capabilityDefaults String?
 
-  // API Key 配置（极简版）
+  // API Key configuration (minimal version)
   llmBaseUrl  String? @default("https://openrouter.ai/api/v1")
-  llmApiKey   String? // 加密存储
-  falApiKey   String? // FAL（图片+视频+语音）
-  googleAiKey String? // Google AI（Gemini 图片）
-  arkApiKey   String? // 火山引擎（Seedream+Seedance）
-  qwenApiKey  String? // 阿里百炼（声音设计）
+  llmApiKey   String? // Encrypted storage
+  falApiKey   String? // FAL (image + video + audio)
+  googleAiKey String? // Google AI (Gemini image)
+  arkApiKey   String? // Volcengine (Seedream + Seedance)
+  qwenApiKey  String? // Alibaba Qwen (voice design)
 
-  // 自定义模型列表 + 价格（JSON）
+  // Custom model list + pricing (JSON)
   customModels String?
 
-  // 自定义 OpenAI 兼容提供商列表（JSON，包含加密的 API Key）
+  // Custom OpenAI-compatible provider list (JSON, contains encrypted API Key)
   customProviders String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -626,9 +626,9 @@ model TaskEvent {
   @@map("task_events")
 }
 
-// ==================== 资产中心 ====================
+// ==================== Asset Hub ====================
 
-// 资产文件夹（一层，不支持嵌套）
+// Asset folder (single level, nested folders not supported)
 model GlobalAssetFolder {
   id        String   @id @default(uuid())
   userId    String
@@ -645,7 +645,7 @@ model GlobalAssetFolder {
   @@map("global_asset_folders")
 }
 
-// 全局角色（结构与 NovelPromotionCharacter 一致）
+// Global character (structure consistent with NovelPromotionCharacter)
 model GlobalCharacter {
   id               String   @id @default(uuid())
   userId           String
@@ -659,7 +659,7 @@ model GlobalCharacter {
   customVoiceUrl   String?
   customVoiceMediaId String?
   customVoiceMedia MediaObject? @relation("GlobalCharacterVoiceMedia", fields: [customVoiceMediaId], references: [id], onDelete: SetNull)
-  globalVoiceId    String? // 绑定的全局音色 ID
+  globalVoiceId    String? // Bound global voice ID
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -673,7 +673,7 @@ model GlobalCharacter {
   @@map("global_characters")
 }
 
-// 全局角色形象（结构与 CharacterAppearance 一致）
+// Global character appearance (structure consistent with CharacterAppearance)
 model GlobalCharacterAppearance {
   id                   String   @id @default(uuid())
   characterId          String
@@ -690,8 +690,8 @@ model GlobalCharacterAppearance {
   previousImageMediaId String?
   previousImageMedia   MediaObject? @relation("GlobalCharacterAppearancePreviousImageMedia", fields: [previousImageMediaId], references: [id], onDelete: SetNull)
   previousImageUrls    String?
-  previousDescription  String? // 上一次的描述词（用于撤回）
-  previousDescriptions String? // 上一次的描述词数组（用于撤回）
+  previousDescription  String? // Previous description (for undo)
+  previousDescriptions String? // Previous descriptions array (for undo)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
@@ -704,7 +704,7 @@ model GlobalCharacterAppearance {
   @@map("global_character_appearances")
 }
 
-// 全局场景（结构与 NovelPromotionLocation 一致）
+// Global location (structure consistent with NovelPromotionLocation)
 model GlobalLocation {
   id        String   @id @default(uuid())
   userId    String
@@ -723,7 +723,7 @@ model GlobalLocation {
   @@map("global_locations")
 }
 
-// 全局场景图片（结构与 LocationImage 一致）
+// Global location image (structure consistent with LocationImage)
 model GlobalLocationImage {
   id                  String   @id @default(uuid())
   locationId          String
@@ -736,7 +736,7 @@ model GlobalLocationImage {
   previousImageUrl    String?
   previousImageMediaId String?
   previousImageMedia  MediaObject? @relation("GlobalLocationImagePreviousImageMedia", fields: [previousImageMediaId], references: [id], onDelete: SetNull)
-  previousDescription String? // 上一次的描述词（用于撤回）
+  previousDescription String? // Previous description (for undo)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -749,19 +749,19 @@ model GlobalLocationImage {
   @@map("global_location_images")
 }
 
-// 全局音色库
+// Global voice library
 model GlobalVoice {
   id             String   @id @default(uuid())
   userId         String
   folderId       String?
-  name           String // 音色名称
-  description    String? // 详细描述
-  voiceId        String? // qwen-tts-vd 的 voice ID
+  name           String // Voice name
+  description    String? // Detailed description
+  voiceId        String? // qwen-tts-vd voice ID
   voiceType      String   @default("qwen-designed") // qwen-designed | custom
-  customVoiceUrl String? // 上传的音频 URL（预览用）
+  customVoiceUrl String? // Uploaded audio URL (for preview)
   customVoiceMediaId String?
   customVoiceMedia MediaObject? @relation("GlobalVoiceCustomVoiceMedia", fields: [customVoiceMediaId], references: [id], onDelete: SetNull)
-  voicePrompt    String? // AI 设计时的提示词
+  voicePrompt    String? // Prompt when AI designing
   gender         String? // male | female | neutral
   language       String   @default("zh")
   createdAt      DateTime @default(now())

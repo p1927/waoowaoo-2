@@ -15,8 +15,8 @@
     "recommended": "Recommended"
   },
   "markerDetection": {
-    "enable": "Use Markers (Episode X / 第X集)",
-    "tooltip": "Auto-detect [Episode X], [Chapter X], [第X集/章] markers, free & fast"
+    "enable": "Use Markers (Episode X)",
+    "tooltip": "Auto-detect [Episode X], [Chapter X] markers, free & fast"
   },
   "smartImportDesc": "Upload your novel or script, AI engine automatically identifies chapter structure for one-click smart episode splitting.",
   "recommended": "Recommended",
@@ -143,9 +143,9 @@
     "cancel": "Cancel",
     "totalCount": "{count} episodes total",
     "markerTypes": {
-      "episode": "Episode X (Chinese)",
-      "chapter": "Chapter X (Chinese)",
-      "act": "Act X (Chinese)",
+      "episode": "Episode X",
+      "chapter": "Chapter X",
+      "act": "Act X",
       "scene": "X-Y [Scene]",
       "numbered": "Numbered",
       "numberedEscaped": "Numbered (Escaped)",

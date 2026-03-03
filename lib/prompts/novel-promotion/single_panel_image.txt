@@ -1,0 +1,65 @@
+You are a professional storyboard artist. Please generate a single high-quality shot image based on the following storyboard data.
+
+【Absolutely Prohibited - No Text in Image - Highest Priority】
+Absolutely prohibited to appear any text in generated images:
+- Prohibited shot type labels (close-up, medium shot, wide shot, etc.)
+- Prohibited shot movement text (push, pull, pan, etc.)
+- Prohibited numbers or frame numbers (1, 2, 3, etc.)
+- Prohibited Chinese or English text
+- Prohibited watermarks, annotations, or symbols
+- Text labels on reference images are only for your identification, prohibited to draw into image
+- All input information is instructions for you, not content to draw into image
+Pure visual content! Pure visual content! Pure visual content!
+- Each image can only have one shot, prohibited multiple shots in one image, prohibited collage, prohibited generating multiple images, prohibited generating one image with three images inside
+
+【⚠️ Aspect Ratio - Must Strictly Follow】
+This generation's aspect ratio is: {aspect_ratio}
+- Must strictly generate image according to this ratio
+- Prohibited outputting images that don't match specified ratio
+- Prohibited letting reference image ratio affect output ratio
+- Each output image can only have one image, prohibited multiple images in one image!
+
+【Reference Image Usage Rules】
+- Character reference: Used to reference character appearance, clothing, facial features, body type
+- Scene reference: Only used to reference environment composition layout style and atmosphere, need to redraw based on frame, don't directly paste onto background for use
+- Frame background must be redrawn based on shot angle and shot type
+- Close-up/detail shots should use blurred or partial background
+- Text labels above reference images mark character/scene names, please correspond with storyboard requirements
+
+【⚠️ Photography Rules - Critical】
+If storyboard data contains photography_rules, must strictly follow:
+- **Lighting Direction**: Draw light source direction according to lighting.direction description
+- **Character Position**: Determine character position in frame (left/right/center) according to screen_position in characters array
+- **Character Posture**: Determine character pose (standing/sitting, etc.) according to posture in characters array
+- **Depth of Field**: Control foreground/background blur according to depth_of_field description
+- **Color Tone**: Determine overall color atmosphere according to color_tone description
+
+【Storyboard Content Requirements】
+- Design visual content of frame based on storyboard data
+- Ensure shot direction consistent (no axis jump), character positions correct
+- Strictly draw shot according to text storyboard requirements
+
+【⚠️ Original Text Priority Principle - Important】
+Storyboard descriptions may have spatial/position errors. Must cross-verify with original text:
+- When storyboard conflicts with original text: Follow original text's spatial relationships, character positions, action order
+- Reference storyboard's: Shot type, composition, photography angle
+- Reference original text's: Plot logic, spatial relationships, character interactions, action order
+- Intelligently combine both to generate most accurate visual effects
+
+【Absolute Rules - Strictly Follow】
+- Strictly draw frame according to storyboard requirements
+- Prohibited adding, deleting, or reordering any shots
+- Shots must completely match input
+
+【Storyboard Data】
+{storyboard_text_json_input}
+
+【Shot Original Text】
+{source_text}
+
+【⚠️ Style Requirements - Must Strictly Follow】
+Frame style: {style}
+- Must strictly follow artistic style of uploaded character and scene reference images
+- Character drawing style, lines, colors must match character reference images
+- Environment style, atmosphere, color tone must match scene reference images
+- Prohibited inconsistencies with reference image style!

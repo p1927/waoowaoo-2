@@ -45,24 +45,24 @@ services:
     container_name: waoowaoo-app
     restart: unless-stopped
     environment:
-      # 数据库（指向容器内部 MySQL，用服务名 mysql 而非 localhost）
+      # Database (points to container internal MySQL, use service name mysql instead of localhost)
       DATABASE_URL: "mysql://root:waoowaoo123@mysql:3306/waoowaoo"
-      # Redis（指向容器内部 Redis，用服务名 redis）
+      # Redis (points to container internal Redis, use service name redis)
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       REDIS_USERNAME: ""
       REDIS_PASSWORD: ""
       REDIS_TLS: ""
-      # 存储：默认本地存储
+      # Storage: default local storage
       STORAGE_TYPE: local
-      # 认证
+      # Authentication
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: "waoowaoo-default-secret-2026"
-      # 内部密钥
+      # Internal secrets
       CRON_SECRET: "waoowaoo-docker-cron-secret"
       INTERNAL_TASK_TOKEN: "waoowaoo-docker-task-token"
       API_ENCRYPTION_KEY: "waoowaoo-opensource-fixed-key-2026"
-      # Worker 配置
+      # Worker configuration
       WATCHDOG_INTERVAL_MS: "30000"
       TASK_HEARTBEAT_TIMEOUT_MS: "90000"
       QUEUE_CONCURRENCY_IMAGE: "50"
@@ -75,7 +75,7 @@ services:
       BULL_BOARD_BASE_PATH: "/admin/queues"
       BULL_BOARD_USER: ""
       BULL_BOARD_PASSWORD: ""
-      # 日志
+      # Logging
       LOG_UNIFIED_ENABLED: "true"
       LOG_LEVEL: "INFO"
       LOG_FORMAT: "json"
@@ -83,9 +83,9 @@ services:
       LOG_AUDIT_ENABLED: "true"
       LOG_SERVICE: "waoowaoo"
       LOG_REDACT_KEYS: "password,token,apiKey,apikey,authorization,cookie,secret,access_token,refresh_token"
-      # 计费
+      # Billing
       BILLING_MODE: "OFF"
-      # 流式
+      # Streaming
       LLM_STREAM_EPHEMERAL_ENABLED: "true"
     ports:
       - "13000:3000"

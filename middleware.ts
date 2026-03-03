@@ -4,9 +4,9 @@ import { routing } from './src/i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-    // 匹配所有路径，除了 api、_next/static、_next/image、favicon.ico 等
+    // Match all paths except api, _next/static, _next/image, favicon.ico, etc.
     matcher: [
-        // 匹配所有路径
+        // Match all paths
         '/((?!api|m|_next/static|_next/image|favicon.ico|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.svg|.*\\.gif|.*\\.ico).*)'
     ]
 };

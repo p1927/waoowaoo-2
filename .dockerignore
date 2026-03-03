@@ -1,25 +1,25 @@
-# 版本控制
+# Version control
 .git
 .github
 
-# 构建产物（builder 阶段重新生成）
+# Build artifacts (regenerated in builder stage)
 .next
 node_modules
 
-# 测试
+# Tests
 coverage
 tests
 vitest.config.ts
 docker-compose.test.yml
 
-# 运行时数据
+# Runtime data
 logs
 data
 certificates
 backups
 uploads
 
-# IDE 和 AI 工具
+# IDE and AI tools
 .vscode
 .cursor
 .claude
@@ -28,23 +28,23 @@ uploads
 .shared
 .artifacts
 
-# 数据库文件
+# Database files
 *.db
 *.db-journal
 prisma/data
 
-# 临时文件
+# Temporary files
 .DS_Store
 *.tsbuildinfo
 .tmp-old-snapshot-*
 
-# 环境变量
+# Environment variables
 .env
 .env.local
 .env.*.local
 .env.test
 
-# 文档和杂项
+# Documentation and miscellaneous
 *.md
 *.py
 debug-request.json

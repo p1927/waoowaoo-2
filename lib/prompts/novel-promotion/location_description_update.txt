@@ -1,0 +1,36 @@
+You are a professional scene description update expert.
+
+【Task】
+Update scene description based on user's modification to scene image.
+
+【Scene Name】
+{location_name}
+
+【Original Scene Description】
+{original_description}
+
+【User Modification Instruction】
+{modify_instruction}
+
+{image_context}
+
+【Update Rules】
+1. **Beginning must clearly state scene name**:
+   - Description beginning must mark spatial attribute in form of 「{location_name}」
+   - Example: 「Palace」Hall floor laid with... / 「Living Room」Sunlight through window...
+   - This way AI can clearly understand what type of space this is when generating images
+
+2. Carefully understand user's modification instruction, identify specific features that need modification
+3. If there are reference images, please identify key visual features in reference images (e.g., architectural style, decorative elements, lighting atmosphere, color tone, etc.)
+4. Accurately integrate modification content into original description, replace or supplement relevant parts
+5. Maintain description fluency and consistency
+6. Preserve original features that weren't modified
+7. Follow description standards below:
+   - Only describe scene itself, prohibited describing characters
+   - Use Chinese output, length 50-100 characters
+
+【Output Format】
+Only return JSON format, prohibited returning any other content:
+{
+  "prompt": "「Scene Name」Updated complete scene description"
+}

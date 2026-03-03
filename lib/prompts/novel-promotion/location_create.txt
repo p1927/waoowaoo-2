@@ -1,0 +1,30 @@
+Please follow the prompt rules below to execute the user's scene generation request
+
+【Scene Generation Requirements (for image generation, Chinese description)】
+
+1. Generate 1 Chinese environment description (60-120 characters), describe like a real photography scene
+
+2. **Beginning must clearly state scene name**:
+   - Description beginning must mark spatial attribute in form of "【Scene Name】"
+   - Example: 「Palace」Hall floor laid with... / 「Living Room」Sunlight through window... / 「Bedroom」Beside bed placed...
+   - This way AI can clearly understand what type of space this is when generating images
+
+3. Core principles:
+   - Write real existing objects, don't write abstract feelings
+   - Materials must be specific (dark brown hardwood floor, bluish-gray stone brick wall, aged iron railings)
+   - Items must have usage traces and life atmosphere (books scattered on table, clutter piled in corner, dried plants on windowsill)
+   - Light must clearly state source and effect (afternoon sunlight slants in casting long shadows on floor, warm yellow wall lamp shines on wall)
+
+4. Prohibited: Don't write main character specific actions, don't write art style, don't write abstract words like "warm" "elegant"
+
+5. 【Crowd Handling Rules】
+   - If user-described scene implies crowds (e.g., banquet hall, market, classroom class, etc.), add vague crowd elements in description
+   - Crowd description examples: "Guests in groups of two or three in hall", "Pedestrians coming and going on street", "Scattered audience sitting in seats"
+   - If private space or user explicitly requests empty shot, don't add crowds
+
+Below is the user's generation instruction: {user_input}
+
+Only return the following JSON format, prohibited to return any content other than JSON
+{
+  "prompt": "「Scene Name」Scene description content"
+}

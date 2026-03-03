@@ -28,33 +28,33 @@ ENV NODE_ENV=production
 
 RUN apk add --no-cache tini openssl
 
-# node_modules（含 devDeps，因为 npm run start 需要 concurrently + tsx）
+# node_modules (including devDeps, as npm run start requires concurrently + tsx)
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Next.js 构建产物
+# Next.js build output
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
-# Prisma schema（db push 需要）
+# Prisma schema (required for db push)
 COPY --from=builder /app/prisma ./prisma
 
-# Worker 和 Watchdog 源码（tsx 运行 TypeScript）
+# Worker and Watchdog source code (tsx runs TypeScript)
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/lib ./lib
 
-# 定价和配置标准
+# Pricing and configuration standards
 COPY --from=builder /app/standards ./standards
 
-# 国际化 + 配置文件
+# Internationalization + configuration files
 COPY --from=builder /app/messages ./messages
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/middleware.ts ./middleware.ts
 COPY --from=builder /app/postcss.config.mjs ./postcss.config.mjs
 
-# 本地存储数据目录 + 空 .env（tsx --env-file=.env 需要文件存在，实际 env 由 docker-compose 注入）
+# Local storage data directory + empty .env (tsx --env-file=.env requires file to exist, actual env injected by docker-compose)
 RUN mkdir -p /app/data/uploads /app/logs && touch /app/.env
 
 EXPOSE 3000 3010
