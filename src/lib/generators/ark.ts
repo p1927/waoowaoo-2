@@ -105,6 +105,15 @@ const ARK_SEEDANCE_MODEL_SPECS: Record<string, ArkSeedanceModelSpec> = {
         supportsFrames: false,
         resolutionOptions: ['480p', '720p', '1080p'],
     },
+    'doubao-seedance-2-0-260128': {
+        durationMin: 4,
+        durationMax: 15,
+        supportsFirstLastFrame: true,
+        supportsGenerateAudio: true,
+        supportsDraft: true,
+        supportsFrames: false,
+        resolutionOptions: ['480p', '720p', '1080p'],
+    },
 }
 
 const ARK_VIDEO_ALLOWED_RATIOS = new Set(['16:9', '4:3', '1:1', '3:4', '9:16', '21:9', 'adaptive'])

@@ -104,8 +104,10 @@
       "google_step1": "Go to Google AI Studio and create an API Key",
       "minimax_step1": "Go to MiniMax platform and get an API Key",
       "vidu_step1": "Go to the Vidu platform and click 'Create API Key'",
+      "luma_step1": "Go to Luma AI and create an API Key",
       "openai_compatible_step1": "Enter any OpenAI-compatible service Base URL and API key",
       "gemini_compatible_step1": "Enter any Gemini-compatible service Base URL and API key",
+      "groq_step1": "Go to the Groq console and create an API Key",
       "qwen_step1": "Go to Alibaba Cloud Bailian platform and get an API Key"
     }
   }

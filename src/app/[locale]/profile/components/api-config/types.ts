@@ -84,8 +84,16 @@ export const PRESET_MODELS: PresetModel[] = [
     { modelId: 'anthropic/claude-sonnet-4', name: 'Claude Sonnet 4', type: 'llm', provider: 'openrouter' },
     // Google AI Studio text models
     { modelId: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro', type: 'llm', provider: 'google' },
+    { modelId: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash Lite', type: 'llm', provider: 'google' },
     { modelId: 'gemini-3-pro-preview', name: 'Gemini 3 Pro', type: 'llm', provider: 'google' },
     { modelId: 'gemini-3-flash-preview', name: 'Gemini 3 Flash', type: 'llm', provider: 'google' },
+    { modelId: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', type: 'llm', provider: 'google' },
+    { modelId: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', type: 'llm', provider: 'google' },
+    // Groq Cloud text models
+    { modelId: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', type: 'llm', provider: 'groq' },
+    { modelId: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', type: 'llm', provider: 'groq' },
+    { modelId: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', type: 'llm', provider: 'groq' },
+    { modelId: 'openai/gpt-oss-20b', name: 'GPT OSS 20B', type: 'llm', provider: 'groq' },
     // Volcengine Doubao text models
     { modelId: 'doubao-seed-1-8-251228', name: 'Doubao Seed 1.8', type: 'llm', provider: 'ark' },
     { modelId: 'doubao-seed-2-0-pro-260215', name: 'Doubao Seed 2.0 Pro', type: 'llm', provider: 'ark' },
@@ -110,7 +118,7 @@ export const PRESET_MODELS: PresetModel[] = [
     { modelId: 'doubao-seedance-1-0-pro-fast-251015', name: 'Seedance 1.0 Pro Fast', type: 'video', provider: 'ark' },
     { modelId: 'doubao-seedance-1-0-lite-i2v-250428', name: 'Seedance 1.0 Lite', type: 'video', provider: 'ark' },
     { modelId: 'doubao-seedance-1-5-pro-251215', name: 'Seedance 1.5 Pro', type: 'video', provider: 'ark' },
-    { modelId: 'doubao-seedance-2-0-260128', name: 'Seedance 2.0（Coming soon）', type: 'video', provider: 'ark' },
+    { modelId: 'doubao-seedance-2-0-260128', name: 'Seedance 2.0', type: 'video', provider: 'ark' },
     { modelId: 'doubao-seedance-1-0-pro-250528', name: 'Seedance 1.0 Pro', type: 'video', provider: 'ark' },
     // Google Veo
     { modelId: 'veo-3.1-generate-preview', name: 'Veo 3.1', type: 'video', provider: 'google' },
@@ -131,6 +139,10 @@ export const PRESET_MODELS: PresetModel[] = [
     { modelId: 'fal-ai/kling-video/lipsync/audio-to-video', name: 'Kling Lip Sync', type: 'lipsync', provider: 'fal' },
     { modelId: 'vidu-lipsync', name: 'Vidu Lip Sync', type: 'lipsync', provider: 'vidu' },
 
+    // Luma video models
+    { modelId: 'ray-2', name: 'Ray 2', type: 'video', provider: 'luma' },
+    { modelId: 'ray-flash-2', name: 'Ray 2 Flash', type: 'video', provider: 'luma' },
+
     // MiniMax video models
     { modelId: 'minimax-hailuo-2.3', name: 'Hailuo 2.3', type: 'video', provider: 'minimax' },
     { modelId: 'minimax-hailuo-2.3-fast', name: 'Hailuo 2.3 Fast', type: 'video', provider: 'minimax' },
@@ -148,9 +160,7 @@ export const PRESET_MODELS: PresetModel[] = [
     { modelId: 'vidu2.0', name: 'Vidu 2.0', type: 'video', provider: 'vidu' },
 ]
 
-const PRESET_COMING_SOON_MODEL_KEYS = new Set<string>([
-    encodeModelKey('ark', 'doubao-seedance-2-0-260128'),
-])
+const PRESET_COMING_SOON_MODEL_KEYS = new Set<string>([])
 
 export function isPresetComingSoonModel(provider: string, modelId: string): boolean {
     return PRESET_COMING_SOON_MODEL_KEYS.has(encodeModelKey(provider, modelId))
@@ -164,10 +174,12 @@ export function isPresetComingSoonModelKey(modelKey: string): boolean {
 export const PRESET_PROVIDERS: Omit<Provider, 'apiKey' | 'hasApiKey'>[] = [
     { id: 'ark', name: 'Volcengine Ark' },
     { id: 'google', name: 'Google AI Studio' },
+    { id: 'groq', name: 'Groq Cloud', baseUrl: 'https://api.groq.com/openai/v1' },
     { id: 'openrouter', name: 'OpenRouter', baseUrl: 'https://openrouter.ai/api/v1' },
     { id: 'minimax', name: 'MiniMax Hailuo' },
     { id: 'vidu', name: 'Vidu' },
     { id: 'fal', name: 'FAL' },
+    { id: 'luma', name: 'Luma' },
     { id: 'qwen', name: 'Qwen' },
 ]
 
@@ -306,6 +318,24 @@ export const PROVIDER_TUTORIALS: ProviderTutorial[] = [
             {
                 text: 'vidu_step1',
                 url: 'https://platform.vidu.cn/api-keys'
+            }
+        ]
+    },
+    {
+        providerId: 'groq',
+        steps: [
+            {
+                text: 'groq_step1',
+                url: 'https://console.groq.com/keys'
+            }
+        ]
+    },
+    {
+        providerId: 'luma',
+        steps: [
+            {
+                text: 'luma_step1',
+                url: 'https://lumalabs.ai/dream-machine/api/keys'
             }
         ]
     },

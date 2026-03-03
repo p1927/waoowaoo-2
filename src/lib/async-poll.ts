@@ -41,7 +41,7 @@ function getErrorMessage(error: unknown): string {
  * Parse externalId to get provider, type and request info
  */
 export function parseExternalId(externalId: string): {
-    provider: 'FAL' | 'ARK' | 'GEMINI' | 'GOOGLE' | 'MINIMAX' | 'VIDU' | 'OPENAI' | 'UNKNOWN'
+    provider: 'FAL' | 'ARK' | 'GEMINI' | 'GOOGLE' | 'MINIMAX' | 'VIDU' | 'OPENAI' | 'LUMA' | 'UNKNOWN'
     type: 'VIDEO' | 'IMAGE' | 'BATCH' | 'UNKNOWN'
     endpoint?: string
     requestId: string
@@ -156,9 +156,23 @@ export function parseExternalId(externalId: string): {
         }
     }
 
+    if (externalId.startsWith('LUMA:')) {
+        const parts = externalId.split(':')
+        const type = parts[1]
+        const requestId = parts.slice(2).join(':')
+        if (type !== 'VIDEO' || !requestId) {
+            throw new Error(`Invalid LUMA externalId: "${externalId}", expected LUMA:VIDEO:generationId`)
+        }
+        return {
+            provider: 'LUMA',
+            type: 'VIDEO',
+            requestId,
+        }
+    }
+
     throw new Error(
         `Unrecognized externalId format: "${externalId}". ` +
-        `Supported: FAL:TYPE:endpoint:requestId, ARK:TYPE:requestId, GEMINI:BATCH:batchName, GOOGLE:VIDEO:operationName, MINIMAX:TYPE:taskId, VIDU:TYPE:taskId, OPENAI:VIDEO:providerToken:videoId`
+        `Supported: FAL:TYPE:endpoint:requestId, ARK:TYPE:requestId, GEMINI:BATCH:batchName, GOOGLE:VIDEO:operationName, MINIMAX:TYPE:taskId, VIDU:TYPE:taskId, OPENAI:VIDEO:providerToken:videoId, LUMA:VIDEO:generationId`
     )
 }
 
@@ -192,6 +206,8 @@ export async function pollAsyncTask(
             return await pollViduTask(parsed.requestId, userId)
         case 'OPENAI':
             return await pollOpenAIVideoTask(parsed.requestId, userId, parsed.providerToken)
+        case 'LUMA':
+            return await pollLumaTask(parsed.requestId, userId)
         default:
             // Unknown provider, throw directly
             throw new Error(`Unknown provider: ${parsed.provider}`)
@@ -592,13 +608,103 @@ async function queryViduTaskStatus(
     }
 }
 
+/**
+ * Luma task polling
+ */
+async function pollLumaTask(
+    generationId: string,
+    userId: string
+): Promise<PollResult> {
+    const { apiKey } = await getProviderConfig(userId, 'luma')
+    const result = await queryLumaTaskStatus(generationId, apiKey)
+
+    return {
+        status: result.status,
+        videoUrl: result.videoUrl,
+        resultUrl: result.videoUrl,
+        error: result.error
+    }
+}
+
+/**
+ * Query Luma generation status
+ */
+async function queryLumaTaskStatus(
+    generationId: string,
+    apiKey: string
+): Promise<{ status: 'pending' | 'completed' | 'failed'; videoUrl?: string; error?: string }> {
+    const logPrefix = '[Luma Query]'
+
+    try {
+        const response = await fetch(
+            `https://api.lumalabs.ai/dream-machine/v1/generations/${encodeURIComponent(generationId)}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            },
+        )
+
+        if (!response.ok) {
+            const errorText = await response.text()
+            _ulogError(`${logPrefix} Query failed:`, response.status, errorText)
+            return {
+                status: 'failed',
+                error: `Luma: Query failed ${response.status}`,
+            }
+        }
+
+        const data = await response.json() as Record<string, unknown>
+        const state = typeof data.state === 'string' ? data.state : ''
+
+        if (state === 'completed') {
+            const assets = data.assets as Record<string, unknown> | undefined
+            const videoUrl = typeof assets?.video === 'string' ? assets.video : ''
+            if (!videoUrl) {
+                _ulogError(`${logPrefix} id=${generationId} completed but no video URL`)
+                return {
+                    status: 'failed',
+                    error: 'Luma: Generation completed but no video returned',
+                }
+            }
+
+            _ulogInfo(`${logPrefix} id=${generationId} complete, video URL: ${videoUrl.substring(0, 80)}...`)
+            return {
+                status: 'completed',
+                videoUrl,
+            }
+        }
+
+        if (state === 'failed') {
+            const reason = typeof data.failure_reason === 'string'
+                ? data.failure_reason
+                : 'Generation failed'
+            _ulogError(`${logPrefix} id=${generationId} failed: ${reason}`)
+            return {
+                status: 'failed',
+                error: `Luma: ${reason}`,
+            }
+        }
+
+        // queued, dreaming -> pending
+        return { status: 'pending' }
+    } catch (error: unknown) {
+        const errorMessage = getErrorMessage(error)
+        _ulogError(`${logPrefix} id=${generationId} exception:`, error)
+        return {
+            status: 'failed',
+            error: `Luma: ${errorMessage}`,
+        }
+    }
+}
+
 // ==================== Format helpers ====================
 
 /**
  * Create standard format externalId
  */
 export function formatExternalId(
-    provider: 'FAL' | 'ARK' | 'GEMINI' | 'GOOGLE' | 'MINIMAX' | 'VIDU' | 'OPENAI',
+    provider: 'FAL' | 'ARK' | 'GEMINI' | 'GOOGLE' | 'MINIMAX' | 'VIDU' | 'OPENAI' | 'LUMA',
     type: 'VIDEO' | 'IMAGE' | 'BATCH',
     requestId: string,
     endpoint?: string,

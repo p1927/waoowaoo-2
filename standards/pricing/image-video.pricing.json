@@ -177,6 +177,72 @@
   },
   {
     "apiType": "text",
+    "provider": "google",
+    "modelId": "gemini-3.1-flash-lite-preview",
+    "pricing": {
+      "mode": "capability",
+      "tiers": [
+        {
+          "when": {
+            "tokenType": "input"
+          },
+          "amount": 0.25
+        },
+        {
+          "when": {
+            "tokenType": "output"
+          },
+          "amount": 1.5
+        }
+      ]
+    }
+  },
+  {
+    "apiType": "text",
+    "provider": "google",
+    "modelId": "gemini-2.5-pro",
+    "pricing": {
+      "mode": "capability",
+      "tiers": [
+        {
+          "when": {
+            "tokenType": "input"
+          },
+          "amount": 1.25
+        },
+        {
+          "when": {
+            "tokenType": "output"
+          },
+          "amount": 10
+        }
+      ]
+    }
+  },
+  {
+    "apiType": "text",
+    "provider": "google",
+    "modelId": "gemini-2.5-flash",
+    "pricing": {
+      "mode": "capability",
+      "tiers": [
+        {
+          "when": {
+            "tokenType": "input"
+          },
+          "amount": 0.3
+        },
+        {
+          "when": {
+            "tokenType": "output"
+          },
+          "amount": 2.5
+        }
+      ]
+    }
+  },
+  {
+    "apiType": "text",
     "provider": "ark",
     "modelId": "doubao-seed-1-8-251228",
     "pricing": {
@@ -668,6 +734,58 @@
             "generateAudio": false
           },
           "amount": 0.134722
+        }
+      ]
+    }
+  },
+  {
+    "apiType": "video",
+    "provider": "ark",
+    "modelId": "doubao-seedance-2-0-260128",
+    "pricing": {
+      "mode": "capability",
+      "tiers": [
+        {
+          "when": {
+            "resolution": "480p",
+            "generateAudio": true
+          },
+          "amount": 0.166667
+        },
+        {
+          "when": {
+            "resolution": "720p",
+            "generateAudio": true
+          },
+          "amount": 0.361111
+        },
+        {
+          "when": {
+            "resolution": "1080p",
+            "generateAudio": true
+          },
+          "amount": 0.805556
+        },
+        {
+          "when": {
+            "resolution": "480p",
+            "generateAudio": false
+          },
+          "amount": 0.0833333
+        },
+        {
+          "when": {
+            "resolution": "720p",
+            "generateAudio": false
+          },
+          "amount": 0.180556
+        },
+        {
+          "when": {
+            "resolution": "1080p",
+            "generateAudio": false
+          },
+          "amount": 0.402778
         }
       ]
     }
@@ -5944,6 +6062,50 @@
             "duration": 8
           },
           "amount": 0.434028
+        }
+      ]
+    }
+  },
+  {
+    "apiType": "video",
+    "provider": "luma",
+    "modelId": "ray-2",
+    "pricing": {
+      "mode": "capability",
+      "tiers": [
+        {
+          "when": {
+            "duration": 5
+          },
+          "amount": 0.4
+        },
+        {
+          "when": {
+            "duration": 9
+          },
+          "amount": 0.72
+        }
+      ]
+    }
+  },
+  {
+    "apiType": "video",
+    "provider": "luma",
+    "modelId": "ray-flash-2",
+    "pricing": {
+      "mode": "capability",
+      "tiers": [
+        {
+          "when": {
+            "duration": 5
+          },
+          "amount": 0.12
+        },
+        {
+          "when": {
+            "duration": 9
+          },
+          "amount": 0.216
         }
       ]
     }
