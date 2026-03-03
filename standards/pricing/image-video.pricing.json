@@ -6129,6 +6129,15 @@
     }
   },
   {
+    "apiType": "voice",
+    "provider": "google",
+    "modelId": "google-cloud-tts",
+    "pricing": {
+      "mode": "flat",
+      "flatAmount": 0.0005
+    }
+  },
+  {
     "apiType": "voice-design",
     "provider": "system",
     "modelId": "qwen-voice-design",

@@ -135,6 +135,7 @@ export const PRESET_MODELS: PresetModel[] = [
 
     // Audio models
     { modelId: 'fal-ai/index-tts-2/text-to-speech', name: 'IndexTTS 2', type: 'audio', provider: 'fal' },
+    { modelId: 'google-cloud-tts', name: 'Google Cloud TTS', type: 'audio', provider: 'google' },
     // Lip-sync models
     { modelId: 'fal-ai/kling-video/lipsync/audio-to-video', name: 'Kling Lip Sync', type: 'lipsync', provider: 'fal' },
     { modelId: 'vidu-lipsync', name: 'Vidu Lip Sync', type: 'lipsync', provider: 'vidu' },

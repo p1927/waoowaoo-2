@@ -1209,8 +1209,11 @@ export const GET = apiHandler(async () => {
   // gemini-compatible is essentially same baseURL/key change; models and capabilities match Google official
   const GEMINI_COMPATIBLE_PRESETS: { type: UnifiedModelType; modelId: string; name: string }[] = [
     { type: 'llm', modelId: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro' },
+    { type: 'llm', modelId: 'gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash Lite' },
     { type: 'llm', modelId: 'gemini-3-pro-preview', name: 'Gemini 3 Pro' },
     { type: 'llm', modelId: 'gemini-3-flash-preview', name: 'Gemini 3 Flash' },
+    { type: 'llm', modelId: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
+    { type: 'llm', modelId: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
     { type: 'image', modelId: 'gemini-3-pro-image-preview', name: 'Banana Pro' },
     { type: 'image', modelId: 'gemini-3.1-flash-image-preview', name: 'Nano Banana 2' },
     { type: 'image', modelId: 'gemini-2.5-flash-image', name: 'Gemini 2.5 Flash Image' },

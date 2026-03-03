@@ -1,7 +1,7 @@
 import { logInfo as _ulogInfo } from '@/lib/logging/core'
 import { fal } from '@fal-ai/client'
 import { prisma } from '@/lib/prisma'
-import { getAudioApiKey, getProviderKey, resolveModelSelectionOrSingle } from '@/lib/api-config'
+import { getAudioApiKey, getProviderConfig, getProviderKey, resolveModelSelectionOrSingle } from '@/lib/api-config'
 import { extractCOSKey, getSignedUrl, imageUrlToBase64, toFetchableUrl, uploadToCOS } from '@/lib/cos'
 import { resolveStorageKeyFromMediaValue } from '@/lib/media/service'
 
@@ -103,6 +103,59 @@ async function generateVoiceWithIndexTTS2(params: {
   }
 }
 
+const GOOGLE_TTS_URL = 'https://texttospeech.googleapis.com/v1/text:synthesize'
+const GOOGLE_TTS_DEFAULT_VOICE = 'en-US-Neural2-F'
+
+function extractGoogleLanguageCode(voiceName: string): string {
+  const parts = voiceName.split('-')
+  if (parts.length >= 2) return `${parts[0]}-${parts[1]}`
+  return 'en-US'
+}
+
+function getMp3DurationFromBuffer(buffer: Buffer): number {
+  // MP3 bitrate estimation: assume 128kbps for a reasonable estimate
+  const bitrate = 128
+  const durationSec = (buffer.length * 8) / (bitrate * 1000)
+  return Math.round(durationSec * 1000)
+}
+
+async function generateVoiceWithGoogleTTS(params: {
+  text: string
+  voice?: string
+  apiKey: string
+}): Promise<{ audioData: Buffer; audioDuration: number }> {
+  const voiceName = params.voice && params.voice !== 'default' ? params.voice : GOOGLE_TTS_DEFAULT_VOICE
+  const languageCode = extractGoogleLanguageCode(voiceName)
+
+  _ulogInfo(`Google TTS: Generating with voice=${voiceName}, lang=${languageCode}`)
+
+  const response = await fetch(`${GOOGLE_TTS_URL}?key=${encodeURIComponent(params.apiKey)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      input: { text: params.text },
+      voice: { languageCode, name: voiceName },
+      audioConfig: { audioEncoding: 'MP3' },
+    }),
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(`Google Cloud TTS failed (${response.status}): ${errorText}`)
+  }
+
+  const data = (await response.json()) as { audioContent?: string }
+  if (!data.audioContent) {
+    throw new Error('Google Cloud TTS did not return audio content')
+  }
+
+  const audioData = Buffer.from(data.audioContent, 'base64')
+  return {
+    audioData,
+    audioDuration: getMp3DurationFromBuffer(audioData),
+  }
+}
+
 function matchCharacterBySpeaker(
   speaker: string,
   characters: Array<{ name: string; customVoiceUrl?: string | null }>
@@ -166,51 +219,61 @@ export async function generateVoiceLine(params: {
     }
   }
 
-  const character = matchCharacterBySpeaker(line.speaker, projectData.characters || [])
-  const speakerVoice = speakerVoices[line.speaker]
-  const referenceAudioUrl = character?.customVoiceUrl || speakerVoice?.audioUrl
-  if (!referenceAudioUrl) {
-    throw new Error('Please set reference audio for this speaker first')
-  }
-
   const text = (line.content || '').trim()
   if (!text) {
     throw new Error('Voice line text is empty')
   }
 
-  // Normalize referenceAudioUrl to an accessible URL (supports /m/m_xxx media route format)
-  let fullAudioUrl: string
-  if (referenceAudioUrl.startsWith('http') || referenceAudioUrl.startsWith('data:')) {
-    fullAudioUrl = referenceAudioUrl
-  } else if (referenceAudioUrl.startsWith('/m/')) {
-    const storageKey = await resolveStorageKeyFromMediaValue(referenceAudioUrl)
-    if (!storageKey) {
-      throw new Error(`Cannot resolve reference audio path: ${referenceAudioUrl}`)
-    }
-    fullAudioUrl = getSignedUrl(storageKey, 3600)
-  } else if (referenceAudioUrl.startsWith('/api/files/')) {
-    const storageKey = extractCOSKey(referenceAudioUrl)
-    fullAudioUrl = storageKey ? getSignedUrl(storageKey, 3600) : referenceAudioUrl
-  } else {
-    fullAudioUrl = getSignedUrl(referenceAudioUrl, 3600)
-  }
   const audioSelection = await resolveModelSelectionOrSingle(params.userId, params.audioModel, 'audio')
   const providerKey = getProviderKey(audioSelection.provider).toLowerCase()
-  if (providerKey !== 'fal') {
+
+  let generated: { audioData: Buffer; audioDuration: number }
+
+  if (providerKey === 'google') {
+    const { apiKey } = await getProviderConfig(params.userId, 'google')
+    generated = await generateVoiceWithGoogleTTS({
+      text,
+      apiKey,
+    })
+  } else if (providerKey === 'fal') {
+    const character = matchCharacterBySpeaker(line.speaker, projectData.characters || [])
+    const speakerVoice = speakerVoices[line.speaker]
+    const referenceAudioUrl = character?.customVoiceUrl || speakerVoice?.audioUrl
+    if (!referenceAudioUrl) {
+      throw new Error('Please set reference audio for this speaker first')
+    }
+
+    let fullAudioUrl: string
+    if (referenceAudioUrl.startsWith('http') || referenceAudioUrl.startsWith('data:')) {
+      fullAudioUrl = referenceAudioUrl
+    } else if (referenceAudioUrl.startsWith('/m/')) {
+      const storageKey = await resolveStorageKeyFromMediaValue(referenceAudioUrl)
+      if (!storageKey) {
+        throw new Error(`Cannot resolve reference audio path: ${referenceAudioUrl}`)
+      }
+      fullAudioUrl = getSignedUrl(storageKey, 3600)
+    } else if (referenceAudioUrl.startsWith('/api/files/')) {
+      const storageKey = extractCOSKey(referenceAudioUrl)
+      fullAudioUrl = storageKey ? getSignedUrl(storageKey, 3600) : referenceAudioUrl
+    } else {
+      fullAudioUrl = getSignedUrl(referenceAudioUrl, 3600)
+    }
+
+    const falApiKey = await getAudioApiKey(params.userId, audioSelection.modelKey)
+    generated = await generateVoiceWithIndexTTS2({
+      endpoint: audioSelection.modelId,
+      referenceAudioUrl: fullAudioUrl,
+      text,
+      emotionPrompt: line.emotionPrompt,
+      strength: line.emotionStrength ?? 0.4,
+      falApiKey,
+    })
+  } else {
     throw new Error(`AUDIO_PROVIDER_UNSUPPORTED: ${audioSelection.provider}`)
   }
-  const falApiKey = await getAudioApiKey(params.userId, audioSelection.modelKey)
 
-  const generated = await generateVoiceWithIndexTTS2({
-    endpoint: audioSelection.modelId,
-    referenceAudioUrl: fullAudioUrl,
-    text,
-    emotionPrompt: line.emotionPrompt,
-    strength: line.emotionStrength ?? 0.4,
-    falApiKey,
-  })
-
-  const audioKey = `voice/${params.projectId}/${episodeId}/${line.id}.wav`
+  const audioExt = providerKey === 'google' ? 'mp3' : 'wav'
+  const audioKey = `voice/${params.projectId}/${episodeId}/${line.id}.${audioExt}`
   const cosKey = await uploadToCOS(generated.audioData, audioKey)
 
   await checkCancelled?.()

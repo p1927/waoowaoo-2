@@ -18,7 +18,7 @@ import {
 } from './image'
 import { GoogleVeoVideoGenerator } from './video/google'
 import { OpenAICompatibleVideoGenerator, LumaVideoGenerator } from './video'
-import { QwenTTSGenerator } from './audio'
+import { QwenTTSGenerator, GoogleCloudTTSGenerator } from './audio'
 import { MinimaxVideoGenerator } from './minimax'
 import { ViduVideoGenerator } from './vidu'
 import { getProviderKey } from '@/lib/api-config'
@@ -96,6 +96,8 @@ export function createAudioGenerator(provider: string): AudioGenerator {
     switch (providerKey) {
         case 'qwen':
             return new QwenTTSGenerator()
+        case 'google':
+            return new GoogleCloudTTSGenerator()
         default:
             throw new Error(`Unknown audio generator provider: ${provider}`)
     }

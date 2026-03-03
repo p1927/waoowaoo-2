@@ -3,3 +3,4 @@
  */
 
 export { QwenTTSGenerator } from './qwen'
+export { GoogleCloudTTSGenerator } from './google-tts'
