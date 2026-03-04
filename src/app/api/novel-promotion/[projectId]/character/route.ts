@@ -24,20 +24,29 @@ export const PATCH = apiHandler(async (
   if (isErrorResponse(authResult)) return authResult
 
   const body = await request.json()
-  const { characterId, name, introduction } = body
+  const { characterId, name, introduction, voiceType, voiceId, customVoiceUrl } = body
 
   if (!characterId) {
     throw new ApiError('INVALID_PARAMS')
   }
 
-  if (!name && introduction === undefined) {
+  if (!name && introduction === undefined && voiceType === undefined && voiceId === undefined && customVoiceUrl === undefined) {
     throw new ApiError('INVALID_PARAMS')
   }
 
   // Build update payload
-  const updateData: { name?: string; introduction?: string } = {}
+  const updateData: { 
+    name?: string
+    introduction?: string
+    voiceType?: 'custom' | 'qwen-designed' | 'uploaded' | null
+    voiceId?: string | null
+    customVoiceUrl?: string | null
+  } = {}
   if (name) updateData.name = name.trim()
   if (introduction !== undefined) updateData.introduction = introduction.trim()
+  if (voiceType !== undefined) updateData.voiceType = voiceType
+  if (voiceId !== undefined) updateData.voiceId = voiceId
+  if (customVoiceUrl !== undefined) updateData.customVoiceUrl = customVoiceUrl
 
   // Update character
   const character = await prisma.novelPromotionCharacter.update({

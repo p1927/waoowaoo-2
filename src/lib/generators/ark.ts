@@ -118,6 +118,21 @@ const ARK_SEEDANCE_MODEL_SPECS: Record<string, ArkSeedanceModelSpec> = {
 
 const ARK_VIDEO_ALLOWED_RATIOS = new Set(['16:9', '4:3', '1:1', '3:4', '9:16', '21:9', 'adaptive'])
 
+const DEFAULT_ARK_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
+
+function isNonVolcengineArk(baseUrl: string | undefined): boolean {
+    if (!baseUrl) return false
+    const normalized = baseUrl.trim().toLowerCase()
+    return !normalized.includes('volces.com') && !normalized.includes('volcengine.com')
+}
+
+function normalizeArkModelId(modelId: string, baseUrl: string | undefined): string {
+    if (isNonVolcengineArk(baseUrl) && modelId.startsWith('doubao-')) {
+        return modelId.replace(/^doubao-/, '')
+    }
+    return modelId
+}
+
 function isInteger(value: unknown): value is number {
     return typeof value === 'number' && Number.isInteger(value)
 }
@@ -203,6 +218,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
         }
 
         // Build request body
+        const normalizedModelId = normalizeArkModelId(modelId, arkBaseUrl)
         const requestBody: {
             model: string
             prompt: string
@@ -213,7 +229,7 @@ export class ArkImageGenerator extends BaseImageGenerator {
             size?: string
             image?: string[]
         } = {
-            model: modelId,
+            model: normalizedModelId,
             prompt: prompt,
             sequential_image_generation: 'disabled',
             response_format: 'url',
@@ -304,7 +320,13 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
         // Parse batch mode
         const isBatchMode = modelId.endsWith('-batch')
         const realModel = isBatchMode ? modelId.replace('-batch', '') : modelId
-        const modelSpec = ARK_SEEDANCE_MODEL_SPECS[realModel]
+        
+        // For model spec lookup, try with doubao- prefix first, then without
+        let modelSpec = ARK_SEEDANCE_MODEL_SPECS[realModel]
+        if (!modelSpec && !realModel.startsWith('doubao-')) {
+            // Try with doubao- prefix for BytePlus models
+            modelSpec = ARK_SEEDANCE_MODEL_SPECS[`doubao-${realModel}`]
+        }
         if (!modelSpec) {
             throw new Error(`ARK_VIDEO_MODEL_UNSUPPORTED: ${realModel}`)
         }
@@ -426,7 +448,7 @@ export class ArkVideoGenerator extends BaseVideoGenerator {
             generate_audio?: boolean
             draft?: boolean
         } = {
-            model: realModel,
+            model: normalizeArkModelId(realModel, arkBaseUrl),
             content
         }
 

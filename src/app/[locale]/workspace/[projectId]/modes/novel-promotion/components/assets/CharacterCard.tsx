@@ -248,6 +248,7 @@ _ulogInfo(`[CharacterCard] ${character.name}-${appearance.changeReason}:`, {
       <VoiceSettings
         characterId={character.id}
         characterName={character.name}
+        voiceId={character.voiceId}
         customVoiceUrl={character.customVoiceUrl}
         projectId={projectId}
         onVoiceChange={onVoiceChange}
@@ -416,6 +417,7 @@ _ulogInfo(`[CharacterCard] ${character.name}-${appearance.changeReason}:`, {
     <VoiceSettings
       characterId={character.id}
       characterName={character.name}
+      voiceId={character.voiceId}
       customVoiceUrl={character.customVoiceUrl}
       projectId={projectId}
       onVoiceChange={onVoiceChange}

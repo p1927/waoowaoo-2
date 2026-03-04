@@ -35,8 +35,11 @@ export function useVoiceSpeakerState({
   const getSpeakerVoiceUrl = useCallback((speaker: string): string | null => {
     const character = speakerCharacterMap[speaker]
     if (character?.customVoiceUrl) return character.customVoiceUrl
+    // Check for voiceId (predefined Google TTS voices)
+    if (character?.voiceId) return character.voiceId
     const speakerVoice = speakerVoices[speaker]
     if (speakerVoice?.audioUrl) return speakerVoice.audioUrl
+    if (speakerVoice?.voiceId) return speakerVoice.voiceId
     return null
   }, [speakerCharacterMap, speakerVoices])
 

@@ -19,16 +19,17 @@ type VoiceLineRow = {
 
 type CharacterRow = {
   name: string
+  voiceId: string | null
   customVoiceUrl: string | null
 }
 
 function parseSpeakerVoices(raw: string | null | undefined) {
-  if (!raw) return {} as Record<string, { audioUrl?: string | null }>
+  if (!raw) return {} as Record<string, { voiceId?: string | null; audioUrl?: string | null }>
   const parsed = JSON.parse(raw)
   if (!parsed || typeof parsed !== 'object') {
     throw new ApiError('INVALID_PARAMS')
   }
-  return parsed as Record<string, { audioUrl?: string | null }>
+  return parsed as Record<string, { voiceId?: string | null; audioUrl?: string | null }>
 }
 
 function matchCharacterBySpeaker(speaker: string, characters: CharacterRow[]) {
@@ -39,11 +40,15 @@ function matchCharacterBySpeaker(speaker: string, characters: CharacterRow[]) {
 function getSpeakerVoiceUrl(
   speaker: string,
   characters: CharacterRow[],
-  speakerVoices: Record<string, { audioUrl?: string | null }>,
+  speakerVoices: Record<string, { voiceId?: string | null; audioUrl?: string | null }>,
 ) {
   const character = matchCharacterBySpeaker(speaker, characters)
   if (character?.customVoiceUrl) return character.customVoiceUrl
-  return speakerVoices[speaker]?.audioUrl || null
+  // Check for voiceId (predefined Google TTS voices)
+  if (character?.voiceId) return character.voiceId
+  if (speakerVoices[speaker]?.audioUrl) return speakerVoices[speaker].audioUrl
+  if (speakerVoices[speaker]?.voiceId) return speakerVoices[speaker].voiceId
+  return null
 }
 
 export const POST = apiHandler(async (
@@ -82,6 +87,7 @@ export const POST = apiHandler(async (
       characters: {
         select: {
           name: true,
+          voiceId: true,
           customVoiceUrl: true}}}})
   if (!projectData) {
     throw new ApiError('NOT_FOUND')
